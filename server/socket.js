@@ -1,0 +1,337 @@
+import { Server } from 'socket.io';
+import { prisma } from './db.js';
+
+export let io = null;
+
+// In-memory room state matching Base44's LiveRoom actor with interactive Co-host support
+const rooms = new Map();
+
+function getOrCreateRoom(roomId) {
+  if (!rooms.has(roomId)) {
+    rooms.set(roomId, {
+      broadcasterId: null,
+      broadcasterSocketId: null,
+      activeSpeaker: null, // { connId, socketId, name, avatar }
+      pinnedVerse: null, // { verseKey, surahName, ayahNum, arabic, translation }
+      raisedHands: new Map(), // connId -> { connId, socketId, name, avatar, ts }
+      viewers: new Map(), // socketId -> { id, name }
+      chat: [],
+      nextSeat: 1,
+    });
+  }
+  return rooms.get(roomId);
+}
+
+export function initSocket(server) {
+  io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST'],
+    },
+    path: '/socket.io',
+  });
+
+  io.on('connection', (socket) => {
+    let currentRoomId = null;
+    let clientConnId = socket.handshake.query.connId || socket.id;
+
+    // Broadcast updated global presence count to all clients
+    io.emit('presence:global', { count: Math.max(1, io.engine.clientsCount) });
+
+    // Join a live streaming room
+    socket.on('join_room', ({ roomId, connId }) => {
+      currentRoomId = roomId;
+      if (connId) clientConnId = connId;
+
+      socket.join(roomId);
+      const room = getOrCreateRoom(roomId);
+
+      // Send initial state to the client
+      socket.emit('message', {
+        type: 'room_state',
+        hasBroadcaster: !!room.broadcasterId,
+        viewerCount: room.viewers.size,
+        activeSpeaker: room.activeSpeaker,
+        pinnedVerse: room.pinnedVerse,
+        handRaisedList: [...room.raisedHands.values()],
+        chat: room.chat.slice(-50),
+      });
+    });
+
+    // Scholar announcement: broadcast new live session to all connected clients
+    socket.on('scholar:start_broadcast', (sessionData) => {
+      socket.broadcast.emit('scholar:live_started', sessionData);
+    });
+
+    // Social notification: like or comment alert
+    socket.on('social:activity', (data) => {
+      socket.broadcast.emit('social:notification', data);
+    });
+
+    // Handle LiveRoom messages
+    socket.on('message', (msg) => {
+      if (!currentRoomId || typeof msg !== 'object' || msg === null) return;
+      const room = getOrCreateRoom(currentRoomId);
+
+      // Broadcaster claiming the stream
+      if (msg.type === 'claim_broadcaster') {
+        if (!room.broadcasterId || room.broadcasterId === clientConnId) {
+          room.broadcasterId = clientConnId;
+          room.broadcasterSocketId = socket.id;
+          io.to(currentRoomId).emit('message', { type: 'broadcaster_online' });
+          socket.emit('message', { type: 'broadcaster_claimed' });
+        } else {
+          socket.emit('message', {
+            type: 'error',
+            message: 'بازپخش دیگری در حال انجام است',
+          });
+        }
+      }
+
+      // Viewer joining stream
+      if (msg.type === 'viewer_join') {
+        if (room.viewers.size >= 50) {
+          socket.emit('message', { type: 'error', message: 'اتاق پر است' });
+          return;
+        }
+
+        room.viewers.set(clientConnId, {
+          socketId: socket.id,
+          seat: room.nextSeat++,
+          name: String(msg.name || 'بیننده').slice(0, 50),
+        });
+
+        io.to(currentRoomId).emit('message', {
+          type: 'presence',
+          viewerCount: room.viewers.size,
+        });
+
+        if (room.broadcasterSocketId) {
+          io.to(room.broadcasterSocketId).emit('message', {
+            type: 'viewer_joined',
+            viewerId: clientConnId,
+          });
+        }
+      }
+
+      // WebRTC signaling: offer
+      if (msg.type === 'offer' && msg.target) {
+        const targetViewer = room.viewers.get(msg.target);
+        const targetSocketId = targetViewer ? targetViewer.socketId : (msg.target === room.broadcasterId ? room.broadcasterSocketId : null);
+        if (targetSocketId) {
+          io.to(targetSocketId).emit('message', {
+            type: 'offer',
+            from: clientConnId,
+            sdp: msg.sdp,
+          });
+        }
+      }
+
+      // WebRTC signaling: answer
+      if (msg.type === 'answer' && msg.target) {
+        const targetViewer = room.viewers.get(msg.target);
+        const targetSocketId = targetViewer ? targetViewer.socketId : (msg.target === room.broadcasterId ? room.broadcasterSocketId : null);
+        if (targetSocketId) {
+          io.to(targetSocketId).emit('message', {
+            type: 'answer',
+            from: clientConnId,
+            sdp: msg.sdp,
+          });
+        }
+      }
+
+      // WebRTC signaling: ICE candidates
+      if (msg.type === 'ice' && msg.target) {
+        const targetViewer = room.viewers.get(msg.target);
+        const targetSocketId = targetViewer ? targetViewer.socketId : (msg.target === room.broadcasterId ? room.broadcasterSocketId : null);
+        if (targetSocketId) {
+          io.to(targetSocketId).emit('message', {
+            type: 'ice',
+            from: clientConnId,
+            candidate: msg.candidate,
+          });
+        }
+      }
+
+      // Co-host: Hand Raise Request
+      if (msg.type === 'raise_hand') {
+        room.raisedHands.set(clientConnId, {
+          connId: clientConnId,
+          socketId: socket.id,
+          name: String(msg.name || 'بیننده').slice(0, 50),
+          avatar: String(msg.avatar || ''),
+          ts: Date.now(),
+        });
+        io.to(currentRoomId).emit('message', {
+          type: 'hand_raised_list',
+          list: [...room.raisedHands.values()],
+        });
+      }
+
+      // Co-host: Lower Hand / Cancel Request
+      if (msg.type === 'lower_hand') {
+        const targetId = msg.targetConnId || clientConnId;
+        room.raisedHands.delete(targetId);
+        io.to(currentRoomId).emit('message', {
+          type: 'hand_raised_list',
+          list: [...room.raisedHands.values()],
+        });
+      }
+
+      // Co-host: Scholar accepts speaker
+      if (msg.type === 'accept_speaker' && (room.broadcasterId === clientConnId || room.broadcasterSocketId === socket.id)) {
+        const target = room.raisedHands.get(msg.targetConnId);
+        if (target) {
+          room.raisedHands.delete(msg.targetConnId);
+          room.activeSpeaker = target;
+
+          // Notify the accepted viewer
+          io.to(target.socketId).emit('message', {
+            type: 'speaker_accepted',
+            connId: target.connId,
+          });
+
+          // Broadcast active speaker to the room
+          io.to(currentRoomId).emit('message', {
+            type: 'active_speaker_changed',
+            speaker: target,
+          });
+          io.to(currentRoomId).emit('message', {
+            type: 'hand_raised_list',
+            list: [...room.raisedHands.values()],
+          });
+        }
+      }
+
+      // Co-host: Scholar dismisses/kicks speaker
+      if (msg.type === 'kick_speaker' && (room.broadcasterId === clientConnId || room.broadcasterSocketId === socket.id)) {
+        if (room.activeSpeaker) {
+          const prev = room.activeSpeaker;
+          room.activeSpeaker = null;
+          io.to(prev.socketId).emit('message', { type: 'speaker_kicked' });
+          io.to(currentRoomId).emit('message', {
+            type: 'active_speaker_changed',
+            speaker: null,
+          });
+        }
+      }
+
+      // Pinned Quran Verse for Live Stream
+      if (msg.type === 'pin_verse' && (room.broadcasterId === clientConnId || room.broadcasterSocketId === socket.id)) {
+        room.pinnedVerse = msg.verse;
+        io.to(currentRoomId).emit('message', {
+          type: 'pinned_verse_changed',
+          verse: msg.verse,
+        });
+        if (msg.verse?.verseKey) {
+          const sysMsg = {
+            author: 'سامانه تدبّر',
+            text: `آیه شریفه ${msg.verse.verseKey} توسط استاد به عنوان محور گفتگو پین شد.`,
+            system: true,
+            ts: Date.now(),
+          };
+          room.chat.push(sysMsg);
+          if (room.chat.length > 200) room.chat.shift();
+          io.to(currentRoomId).emit('message', { type: 'chat', message: sysMsg });
+        }
+      }
+
+      if (msg.type === 'unpin_verse' && (room.broadcasterId === clientConnId || room.broadcasterSocketId === socket.id)) {
+        room.pinnedVerse = null;
+        io.to(currentRoomId).emit('message', {
+          type: 'pinned_verse_changed',
+          verse: null,
+        });
+      }
+
+      // Chat messages
+      if (msg.type === 'chat') {
+        const entry = {
+          author: String(msg.author || 'کاربر').slice(0, 50),
+          text: String(msg.text || '').slice(0, 500),
+          ts: Date.now(),
+        };
+        room.chat.push(entry);
+        if (room.chat.length > 200) room.chat.shift();
+        io.to(currentRoomId).emit('message', { type: 'chat', message: entry });
+      }
+    });
+
+    // --- Khatm Sessions Realtime Handlers ---
+    socket.on('khatm:join', ({ sessionId }) => {
+      if (sessionId) {
+        socket.join(`khatm_${sessionId}`);
+      }
+    });
+
+    socket.on('khatm:leave', ({ sessionId }) => {
+      if (sessionId) {
+        socket.leave(`khatm_${sessionId}`);
+      }
+    });
+
+    socket.on('khatm:salawat', async ({ sessionId, amount = 1 }) => {
+      if (!sessionId) return;
+      try {
+        const updated = await prisma.khatmSession.update({
+          where: { id: sessionId },
+          data: { salawat_count: { increment: Math.min(amount, 100) } },
+        });
+        io.to(`khatm_${sessionId}`).emit('khatm:salawat_updated', {
+          sessionId,
+          salawat_count: updated.salawat_count,
+        });
+      } catch (e) {
+        console.error('Khatm salawat increment error:', e.message);
+      }
+    });
+
+    // Cleanup on disconnect
+    socket.on('disconnect', () => {
+      if (!currentRoomId) return;
+      const room = rooms.get(currentRoomId);
+      if (!room) return;
+
+      if (room.broadcasterSocketId === socket.id || room.broadcasterId === clientConnId) {
+        room.broadcasterId = null;
+        room.broadcasterSocketId = null;
+        io.to(currentRoomId).emit('message', { type: 'broadcaster_offline' });
+      }
+
+      if (room.raisedHands.has(clientConnId)) {
+        room.raisedHands.delete(clientConnId);
+        io.to(currentRoomId).emit('message', {
+          type: 'hand_raised_list',
+          list: [...room.raisedHands.values()],
+        });
+      }
+
+      if (room.activeSpeaker?.connId === clientConnId) {
+        room.activeSpeaker = null;
+        io.to(currentRoomId).emit('message', {
+          type: 'active_speaker_changed',
+          speaker: null,
+        });
+      }
+
+      if (room.viewers.has(clientConnId)) {
+        room.viewers.delete(clientConnId);
+        io.to(currentRoomId).emit('message', {
+          type: 'presence',
+          viewerCount: room.viewers.size,
+        });
+        if (room.broadcasterSocketId) {
+          io.to(room.broadcasterSocketId).emit('message', {
+            type: 'viewer_left',
+            viewerId: clientConnId,
+          });
+        }
+      }
+
+      // Update global presence
+      io.emit('presence:global', { count: Math.max(1, io.engine.clientsCount) });
+    });
+  });
+
+  return io;
+}

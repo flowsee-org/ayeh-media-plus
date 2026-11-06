@@ -1,0 +1,306 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String    @id @default(uuid())
+  phone           String?   @unique
+  email           String?   @unique
+  password        String?
+  full_name       String?
+  role            String    @default("user") // "admin" | "user"
+  is_scholar      Boolean   @default(false)
+  avatar_config   String?
+  avatar_url      String?
+  bio             String?
+  streak_days     Int       @default(0)
+  max_streak      Int       @default(0)
+  last_active_date DateTime?
+  total_xp        Int       @default(0)
+  spiritual_level String    @default("مستمع") // مستمع, قاری, اهل تدبر, حافظ, خادم قرآن
+  created_date    DateTime  @default(now())
+  updated_date    DateTime  @updatedAt
+}
+
+model Verse {
+  id                         String   @id @default(uuid())
+  surah_number               Int
+  surah_name_english         String?
+  surah_name_arabic          String?
+  surah_name_transliteration String?
+  surah_type                 String   @default("meccan")
+  surah_verse_count          Int?
+  verse_number               Int
+  verse_key                  String   // e.g. "7:31"
+  arabic                     String
+  translation                String?
+  transliteration            String?
+  audio_url                  String?
+  reciter                    String?
+  word_analysis              String?  // JSON string
+  tafsir                     String?  // JSON or text
+  reflections                String?  // JSON string
+  themes                     String?  // JSON string
+  linguistic_gems            String?  // JSON string
+  hadith_connections         String?  // JSON string
+  historical_context         String?
+  scholars_lectures          String?  // JSON string
+  videos                     String?  // JSON string array: [{ title, scholar, url, duration }]
+  images                     String?  // JSON string array
+  tags                       String?  // JSON string array
+  difficulty_level           String?  // beginner, intermediate, advanced
+  created_date               DateTime @default(now())
+  updated_date               DateTime @updatedAt
+}
+
+model Post {
+  id                String   @id @default(uuid())
+  author_id         String
+  author_name       String
+  author_avatar     String?
+  content           String
+  type              String   @default("reflection") // reflection, verse_share, image, video, question
+  verse_key         String?
+  verse_text        String?
+  verse_arabic      String?
+  verse_translation String?
+  media_url         String?
+  media_type        String?  // image, audio, video
+  image_url         String?
+  video_url         String?
+  video_title       String?
+  likes_count       Int      @default(0)
+  liked_by          String?  // JSON string array
+  comments_count    Int      @default(0)
+  tags              String?  // JSON string array
+  created_date      DateTime @default(now())
+  updated_date      DateTime @updatedAt
+}
+
+model Comment {
+  id           String   @id @default(uuid())
+  post_id      String
+  author_id    String
+  author_name  String
+  content      String
+  likes_count  Int      @default(0)
+  created_date DateTime @default(now())
+}
+
+model Scholar {
+  id           String   @id @default(uuid())
+  name         String
+  name_arabic  String?
+  title        String?
+  bio          String?
+  birth_year   String?
+  death_year   String?
+  avatar_url   String?
+  verified     Boolean  @default(false)
+  books        String?  // JSON string array
+  sources      String?  // JSON string array
+  created_date DateTime @default(now())
+}
+
+model Topic {
+  id           String   @id @default(uuid())
+  name         String
+  name_arabic  String?
+  slug         String?
+  description  String?
+  category     String   @default("ethics")
+  icon         String?
+  theme_color  String?
+  verse_keys   String?  // JSON string array
+  verse_count  Int      @default(0)
+  created_date DateTime @default(now())
+}
+
+model Collection {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  theme_color   String?
+  icon          String?
+  cover_pattern String   @default("stars")
+  verse_keys    String?  // JSON string array
+  verse_count   Int      @default(0)
+  user_id       String?
+  created_date  DateTime @default(now())
+}
+
+model Competition {
+  id                String   @id @default(uuid())
+  title             String
+  description       String?
+  type              String   @default("recitation")
+  prize_title       String?
+  prize_description String?
+  prize_value       String?
+  rules             String?  // JSON string array
+  deadline          String?
+  status            String   @default("active")
+  entries_count     Int      @default(0)
+  created_date      DateTime @default(now())
+}
+
+model CompetitionEntry {
+  id             String   @id @default(uuid())
+  competition_id String
+  author_id      String
+  author_name    String
+  title          String?
+  content        String?
+  media_url      String?
+  verse_key      String?
+  votes_count    Int      @default(0)
+  voted_by       String?  // JSON string array
+  created_date   DateTime @default(now())
+}
+
+model Story {
+  id               String    @id @default(uuid())
+  author_id        String
+  author_name      String
+  author_avatar    String?
+  media_url        String?
+  media_type       String    @default("image")
+  caption          String?
+  verse_key        String?
+  verse_text       String?
+  background_color String?
+  views_count      Int       @default(0)
+  viewed_by        String?   // JSON string array
+  expires_at       DateTime?
+  created_date     DateTime  @default(now())
+}
+
+model LiveSession {
+  id             String   @id @default(uuid())
+  scholar_id     String
+  scholar_name   String?
+  scholar_avatar String?
+  title          String
+  description    String?
+  status         String   @default("live")
+  viewer_count   Int      @default(0)
+  room_id        String
+  verse_key      String?
+  created_date   DateTime @default(now())
+}
+
+model Notification {
+  id              String   @id @default(uuid())
+  recipient_id    String
+  actor_id        String
+  actor_name      String?
+  type            String   @default("like")
+  post_id         String?
+  post_excerpt    String?
+  live_session_id String?
+  read            Boolean  @default(false)
+  created_date    DateTime @default(now())
+}
+
+model Follow {
+  id            String   @id @default(uuid())
+  follower_id   String
+  follower_name String?
+  scholar_id    String
+  scholar_name  String?
+  created_date  DateTime @default(now())
+}
+
+model Podcast {
+  id             String   @id @default(uuid())
+  title          String
+  scholar_id     String?
+  scholar_name   String?
+  scholar_avatar String?
+  audio_url      String
+  cover_image    String?
+  duration       String?
+  description    String?
+  chapters       String?  // JSON string: [{ title, timestamp, seconds }]
+  verse_keys     String?  // JSON string array: ["7:31"]
+  views_count    Int      @default(0)
+  likes_count    Int      @default(0)
+  created_date   DateTime @default(now())
+  updated_date   DateTime @updatedAt
+}
+
+model KhatmSession {
+  id             String      @id @default(uuid())
+  title          String
+  description    String?
+  intention      String?     // نیت ختم (صلواتی، هدیه به اموات، شفا و ...)
+  target_type    String      @default("juz") // "juz" (30) or "hezb" (60)
+  total_parts    Int         @default(30)
+  is_private     Boolean     @default(false)
+  invite_code    String?
+  creator_id     String
+  creator_name   String?
+  creator_avatar String?
+  status         String      @default("active") // "active" | "completed"
+  salawat_count  Int         @default(0)
+  deadline       String?
+  created_date   DateTime    @default(now())
+  updated_date   DateTime    @updatedAt
+}
+
+model KhatmPart {
+  id           String      @id @default(uuid())
+  session_id   String
+  part_number  Int         // 1 to 30 or 1 to 60
+  user_id      String?
+  user_name    String?
+  user_avatar  String?
+  status       String      @default("available") // "available" | "reserved" | "completed"
+  reserved_at  DateTime?
+  completed_at DateTime?
+  created_date DateTime    @default(now())
+  updated_date DateTime    @updatedAt
+}
+
+model KhatmDua {
+  id           String      @id @default(uuid())
+  session_id   String
+  user_id      String
+  user_name    String
+  user_avatar  String?
+  message      String
+  created_date DateTime    @default(now())
+}
+
+model UserBadge {
+  id           String   @id @default(uuid())
+  user_id      String
+  badge_id     String   // e.g. "streak_7", "first_khatm", "quiz_master"
+  badge_name   String
+  badge_icon   String   // Lucide icon name or emoji
+  description  String
+  tier         String   @default("bronze") // "bronze" | "silver" | "gold" | "diamond"
+  unlocked_at  DateTime @default(now())
+  created_date DateTime @default(now())
+}
+
+model DailyQuestProgress {
+  id             String   @id @default(uuid())
+  user_id        String
+  date           String   // "YYYY-MM-DD" date string
+  quest_type     String   // "reading" | "quiz" | "social"
+  title          String
+  description    String?
+  is_completed   Boolean  @default(false)
+  progress_value Int      @default(0)
+  target_value   Int      @default(1)
+  xp_rewarded    Int      @default(0)
+  created_date   DateTime @default(now())
+  updated_date   DateTime @updatedAt
+}
+

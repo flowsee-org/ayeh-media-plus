@@ -1,0 +1,7 @@
+{
+  "/(main)/community/page": "app/(main)/community/page.js",
+  "/(main)/quran/page": "app/(main)/quran/page.js",
+  "/(main)/verse/[surah]/[ayah]/page": "app/(main)/verse/[surah]/[ayah]/page.js",
+  "/(main)/profile/page": "app/(main)/profile/page.js",
+  "/(main)/live/page": "app/(main)/live/page.js"
+}

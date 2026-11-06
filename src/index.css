@@ -1,0 +1,417 @@
+/* ── Persian & Arabic Typography ── */
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&display=swap');
+
+/* ── 3 Core Brand Typefaces from /fonts/antic/ ── */
+
+/* 1. KALAMEH (کلمه) — Headings, Grand Titles, Big Numbers & Calligraphic Displays */
+@font-face {
+  font-family: 'Kalameh';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/antic/kalameh/Kalameh-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Kalameh';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/antic/kalameh/Kalameh-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Kalameh';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/antic/kalameh/Kalameh-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Kalameh';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/antic/kalameh/Kalameh-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Kalameh';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/antic/kalameh/Kalameh-ExtraBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Kalameh';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/antic/kalameh/Kalameh-Black.woff2') format('woff2');
+}
+
+/* 2. PEYDA (پیدا) — Modern UI Controls, Buttons, Tabs, Badges & Navigation */
+@font-face {
+  font-family: 'Peyda';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/antic/peyda/Peyda-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Peyda';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/antic/peyda/Peyda-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Peyda';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/antic/peyda/Peyda-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Peyda';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/antic/peyda/Peyda-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Peyda';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/antic/peyda/Peyda-ExtraBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Peyda';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/antic/peyda/Peyda-Black.woff2') format('woff2');
+}
+
+/* 3. YEKAN BAKH (یکان بخ) — Body text, Tafsir readings, Translations & Editorial */
+@font-face {
+  font-family: 'YekanBakh';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/antic/yekan-bakh/YekanBakh-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'YekanBakh';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/antic/yekan-bakh/YekanBakh-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'YekanBakh';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/antic/yekan-bakh/YekanBakh-Bold.woff2') format('woff2');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Human-Crafted Modern Persian Design System (Light Mode) ── */
+    --background: 210 20% 98%;       /* crisp porcelain #f8fafc */
+    --foreground: 222 47% 11%;       /* deep slate #0f172a */
+
+    --card: 0 0% 100%;               /* pure white card */
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Royal Court Green (سبز درباری اصیل ایرانی) */
+    --primary: 164 74% 28%;          /* #127457 Royal Court Emerald */
+    --primary-foreground: 0 0% 100%;
+
+    /* Warm Amber / Saffron Accent */
+    --accent: 38 92% 50%;            /* #f59e0b */
+    --accent-foreground: 222 47% 11%;
+
+    --secondary: 160 20% 96%;        /* gentle court mist #f0f7f4 */
+    --secondary-foreground: 164 60% 15%;
+
+    --muted: 160 15% 94%;
+    --muted-foreground: 215 16% 47%; /* #64748b */
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;          /* clean slate border #e2e8f0 */
+    --input: 214 32% 91%;
+    --ring: 164 74% 28%;
+
+    --radius: 0.75rem;
+
+    /* Semantic Typography Hierarchy */
+    --font-heading: 'Kalameh', sans-serif;
+    --font-display: 'Kalameh', sans-serif;
+    --font-ui: 'Peyda', 'Kalameh', system-ui, sans-serif;
+    --font-body: 'YekanBakh', 'Peyda', system-ui, sans-serif;
+    --font-arabic: 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 164 74% 28%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 38 92% 50%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 164 74% 28%;
+  }
+
+  .dark {
+    /* ── Elegant Midnight Obsidian (Dark Mode) ── */
+    --background: 224 45% 6%;        /* deep obsidian #090d16 */
+    --foreground: 210 40% 98%;       /* crisp light #f8fafc */
+
+    --card: 222 47% 10%;             /* elevated dark slate #0f172a */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Luminous Royal Court Emerald (سبز درباری شبانه درخشان) */
+    --primary: 160 84% 39%;          /* #10b981 Radiant Court Emerald */
+    --primary-foreground: 224 45% 6%;
+
+    /* Golden Amber */
+    --accent: 38 92% 52%;
+    --accent-foreground: 224 45% 6%;
+
+    --secondary: 165 30% 12%;        /* deep forest moss #0d1f1a */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 65%; /* #94a3b8 */
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 33% 18%;           /* subtle border #1e293b */
+    --input: 217 33% 18%;
+    --ring: 160 84% 39%;
+
+    --sidebar-background: 224 45% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 160 84% 39%;
+    --sidebar-primary-foreground: 224 45% 6%;
+    --sidebar-accent: 38 92% 52%;
+    --sidebar-accent-foreground: 224 45% 6%;
+    --sidebar-border: 217 33% 18%;
+    --sidebar-ring: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    letter-spacing: normal;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-body);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+  }
+
+  button, input, select, textarea, nav, tab {
+    font-family: var(--font-ui);
+  }
+
+  /* Quranic Arabic Script Enhancement */
+  .font-arabic {
+    font-family: var(--font-arabic) !important;
+    font-feature-settings: "calt", "liga", "mset";
+    line-height: 2.4;
+    word-spacing: 0.14em;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  .font-kalameh {
+    font-family: 'Kalameh', sans-serif !important;
+  }
+
+  .font-peyda {
+    font-family: 'Peyda', sans-serif !important;
+  }
+
+  .font-yekan {
+    font-family: 'YekanBakh', sans-serif !important;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.18);
+    color: hsl(var(--foreground));
+  }
+
+  /* Clean Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.25);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+}
+
+@layer utilities {
+  /* ── Subtle Geometric Patterns (Restrained & Elegant) ── */
+  .pattern-islamic {
+    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.12) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .pattern-grid {
+    background-image: linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+                      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* ── Modern Standard Glass & Surfaces ── */
+  .glass-card {
+    background: hsl(var(--card) / 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border));
+  }
+
+  /* ── Persian Orsi & Haft-Rang Art System ── */
+  .orsi-glass-card {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .orsi-rainbow-sheen {
+    background: linear-gradient(
+      115deg,
+      rgba(244, 63, 94, 0.12) 0%,
+      rgba(245, 158, 11, 0.15) 25%,
+      rgba(16, 185, 129, 0.14) 50%,
+      rgba(14, 165, 233, 0.16) 75%,
+      rgba(168, 85, 247, 0.12) 100%
+    );
+  }
+
+  .muqarnas-glow {
+    box-shadow: 0 0 50px -10px rgba(245, 158, 11, 0.25);
+  }
+
+  .gold-trim-border {
+    border-image: linear-gradient(to bottom right, #f59e0b, #10b981, #d97706) 1;
+  }
+
+  .glass-header {
+    background: hsl(var(--background) / 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  /* ── Restrained Typography Gradients ── */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(38 92% 50%), hsl(28 95% 55%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 60%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-emerald {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 60%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Crisp, Professional Shadows ── */
+  .shadow-soft {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-premium {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  }
+
+  .shadow-gold-glow {
+    box-shadow: 0 2px 10px -2px hsl(var(--accent) / 0.3);
+  }
+
+  .shadow-emerald-glow, .shadow-blue-glow {
+    box-shadow: 0 2px 10px -2px hsl(var(--primary) / 0.3);
+  }
+
+  .ornament-divider {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--border)) 50%, transparent 100%);
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* ── Quranic Typography & Diacritic Themes ── */
+  .quran-theme-ruby .quran-waqf-mark {
+    color: #e11d48;
+    font-weight: 700;
+  }
+  .quran-theme-gold .quran-waqf-mark {
+    color: #f59e0b;
+    font-weight: 700;
+  }
+  .quran-theme-turquoise .quran-waqf-mark {
+    color: #0d9488;
+    font-weight: 700;
+  }
+  .quran-theme-classic .quran-waqf-mark {
+    color: hsl(var(--accent));
+  }
+}
