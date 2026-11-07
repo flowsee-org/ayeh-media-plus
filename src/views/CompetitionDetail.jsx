@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
 import { Image } from "@/components/ui/image";
@@ -32,11 +32,11 @@ export default function CompetitionDetail() {
 
   useEffect(() => {
     if (!authUser) {
-      base44.auth.me().then(setLocalUser).catch(() => {});
+      api.auth.me().then(setLocalUser).catch(() => {});
     }
     Promise.all([
-      base44.entities.Competition.get(id).catch(() => null),
-      base44.entities.CompetitionEntry.filter({ competition_id: id }, "-votes_count", 100).catch(() => []),
+      api.entities.Competition.get(id).catch(() => null),
+      api.entities.CompetitionEntry.filter({ competition_id: id }, "-votes_count", 100).catch(() => []),
     ]).then(([c, e]) => {
       setComp(c);
       setEntries(e);
@@ -62,7 +62,7 @@ export default function CompetitionDetail() {
       )
     );
     try {
-      await base44.entities.CompetitionEntry.update(entry.id, {
+      await api.entities.CompetitionEntry.update(entry.id, {
         voted_by: newVotedBy,
         votes_count: newVotedBy.length,
       });
@@ -261,7 +261,7 @@ export default function CompetitionDetail() {
             onClose={() => setShowSubmit(false)}
             onSubmitted={() => {
               setShowSubmit(false);
-              base44.entities.CompetitionEntry.filter(
+              api.entities.CompetitionEntry.filter(
                 { competition_id: id },
                 "-votes_count",
                 100
@@ -524,7 +524,6 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         const url = URL.createObjectURL(blob);
-        setRecordedBlob(blob);
         setRecordedUrl(url);
 
         // Package as file ready for upload
@@ -560,7 +559,6 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
 
   // Discard & re-record
   const resetRecording = () => {
-    setRecordedBlob(null);
     if (recordedUrl) URL.revokeObjectURL(recordedUrl);
     setRecordedUrl(null);
     setFileToUpload(null);
@@ -590,12 +588,12 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
       let media_type = "audio";
 
       if (fileToUpload) {
-        const up = await base44.integrations.Core.UploadFile({ file: fileToUpload });
+        const up = await api.integrations.Core.UploadFile({ file: fileToUpload });
         media_url = up.file_url;
         media_type = fileToUpload.type?.startsWith("video") ? "video" : "audio";
       }
 
-      await base44.entities.CompetitionEntry.create({
+      await api.entities.CompetitionEntry.create({
         competition_id: comp.id,
         author_id: user.id,
         author_name: user.full_name || user.email,
@@ -609,7 +607,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
       });
 
       // Update participant counter
-      await base44.entities.Competition.update(comp.id, {
+      await api.entities.Competition.update(comp.id, {
         participants_count: (comp.participants_count || 0) + 1,
       }).catch(() => {});
 

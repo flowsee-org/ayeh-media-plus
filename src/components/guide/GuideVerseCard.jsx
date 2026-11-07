@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BookOpen, Film, Lightbulb, Loader2, Plus, ArrowLeft, Copy, Check } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import CreatePost from "@/components/community/CreatePost";
 
 export default function GuideVerseCard({ match, user, verse }) {
@@ -108,7 +108,7 @@ export default function GuideVerseCard({ match, user, verse }) {
       {/* Actions */}
       <div className="flex flex-wrap items-center gap-2.5 border-t border-border/70 bg-card p-4 sm:px-8 font-ui">
         <button
-          onClick={() => (user ? setComposing(true) : base44.auth.redirectToLogin())}
+          onClick={() => (user ? setComposing(true) : api.auth.redirectToLogin())}
           className="flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
         >
           <Plus className="h-4 w-4" /> ساخت پست تدبّری

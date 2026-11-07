@@ -1,5 +1,12 @@
 import { Server } from 'socket.io';
+import jwt from 'jsonwebtoken';
 import { prisma } from './db.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'ayeh_default_secret_2026';
+
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:5173', 'http://localhost:5000'];
 
 export let io = null;
 
@@ -22,18 +29,66 @@ function getOrCreateRoom(roomId) {
   return rooms.get(roomId);
 }
 
+async function authenticateSocket(socket, next) {
+  try {
+    const token = socket.handshake.query?.token;
+    if (!token) {
+      // Allow anonymous connections but mark them as unauthenticated
+      socket.data.user = null;
+      socket.data.authenticated = false;
+      return next();
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        phone: true,
+        email: true,
+        full_name: true,
+        role: true,
+        is_scholar: true,
+        avatar_url: true,
+      },
+    });
+
+    if (!user) {
+      socket.data.user = null;
+      socket.data.authenticated = false;
+      return next();
+    }
+
+    socket.data.user = user;
+    socket.data.authenticated = true;
+    socket.data.connId = socket.handshake.query?.connId || socket.id;
+    next();
+  } catch (err) {
+    // Invalid/expired token — allow anonymous but unauthenticated
+    socket.data.user = null;
+    socket.data.authenticated = false;
+    next();
+  }
+}
+
 export function initSocket(server) {
   io = new Server(server, {
     cors: {
-      origin: '*',
+      origin: allowedOrigins,
       methods: ['GET', 'POST'],
+      credentials: true,
     },
     path: '/socket.io',
   });
 
+  // Authenticate socket connections via JWT token
+  io.use(authenticateSocket);
+
   io.on('connection', (socket) => {
     let currentRoomId = null;
-    let clientConnId = socket.handshake.query.connId || socket.id;
+    let clientConnId = socket.data.connId || socket.id;
+    const isAuthenticated = !!socket.data.authenticated;
+    const socketUser = socket.data.user;
 
     // Broadcast updated global presence count to all clients
     io.emit('presence:global', { count: Math.max(1, io.engine.clientsCount) });
@@ -71,10 +126,24 @@ export function initSocket(server) {
     // Handle LiveRoom messages
     socket.on('message', (msg) => {
       if (!currentRoomId || typeof msg !== 'object' || msg === null) return;
+
+      // Require authentication for privileged operations
+      const requireAuth = () => {
+        if (!isAuthenticated) {
+          socket.emit('message', {
+            type: 'error',
+            message: 'ورود به سامانه الزامی است',
+          });
+          return false;
+        }
+        return true;
+      };
+
       const room = getOrCreateRoom(currentRoomId);
 
-      // Broadcaster claiming the stream
+      // Broadcaster claiming the stream (requires authentication)
       if (msg.type === 'claim_broadcaster') {
+        if (!requireAuth()) return;
         if (!room.broadcasterId || room.broadcasterId === clientConnId) {
           room.broadcasterId = clientConnId;
           room.broadcasterSocketId = socket.id;
@@ -88,7 +157,7 @@ export function initSocket(server) {
         }
       }
 
-      // Viewer joining stream
+      // Viewer joining stream (anonymous allowed)
       if (msg.type === 'viewer_join') {
         if (room.viewers.size >= 50) {
           socket.emit('message', { type: 'error', message: 'اتاق پر است' });

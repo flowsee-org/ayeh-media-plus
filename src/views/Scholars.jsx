@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Users, BookOpen, Loader2, Radio, ChevronLeft } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import FollowButton from "@/components/live/FollowButton";
@@ -14,8 +14,8 @@ export default function Scholars() {
 
   useEffect(() => {
     Promise.all([
-      base44.entities.Scholar.list("-created_date", 50).catch(() => []),
-      base44.entities.LiveSession.list("-created_date", 100).catch(() => []),
+      api.entities.Scholar.list("-created_date", 50).catch(() => []),
+      api.entities.LiveSession.list("-created_date", 100).catch(() => []),
     ]).then(([historical, sessions]) => {
       setScholars(historical);
       const map = new Map();

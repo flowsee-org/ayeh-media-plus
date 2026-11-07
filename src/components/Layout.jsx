@@ -20,7 +20,7 @@ import {
   Flame,
   Palette,
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useScholar } from "@/lib/scholarAccess";
 import NotificationBell from "./notifications/NotificationBell";
 import LiveNotifications from "./notifications/LiveNotifications";
@@ -74,20 +74,13 @@ export default function Layout({ children }) {
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user: authUser, openAuthModal } = useAuth();
-  const [user, setUser] = useState(null);
   const [onlineCount, setOnlineCount] = useState(1);
   const { isScholar } = useScholar();
 
-  const activeUser = authUser || user;
+  const activeUser = authUser;
 
   useEffect(() => {
-    if (!authUser) {
-      base44.auth.me().then(setUser).catch(() => {});
-    }
-  }, [authUser]);
-
-  useEffect(() => {
-    const unsub = base44.socket?.on("presence:global", (data) => {
+    const unsub = api.socket?.on("presence:global", (data) => {
       if (typeof data?.count === "number") {
         setOnlineCount(data.count);
       }
@@ -288,7 +281,7 @@ export default function Layout({ children }) {
               </div>
 
               {/* User badge in drawer */}
-              {user ? (
+              {activeUser ? (
                 <div className="relative mx-4 mt-4 rounded-xl border border-accent/25 bg-gradient-to-br from-accent/10 to-primary/10 p-3 shadow-soft">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">

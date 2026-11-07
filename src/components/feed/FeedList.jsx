@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
 import { togglePostLike } from "@/lib/social";
@@ -29,7 +29,7 @@ export default function FeedList() {
   const user = authUser || localUser;
 
   const fetchPage = useCallback(async (nextCursor) => {
-    const page = await base44.entities.Post.list({
+    const page = await api.entities.Post.list({
       sort: "-created_date",
       limit: PAGE_SIZE,
       ...(nextCursor ? { cursor: nextCursor } : {}),
@@ -49,7 +49,7 @@ export default function FeedList() {
   }, [fetchPage]);
 
   useEffect(() => {
-    base44.auth.me().then(setLocalUser).catch(() => {});
+    api.auth.me().then(setLocalUser).catch(() => {});
     reset();
   }, [reset]);
 
@@ -107,7 +107,7 @@ export default function FeedList() {
     if (!user || post.author_id !== user.id) return;
     if (!window.confirm("این پست حذف شود؟")) return;
     try {
-      await base44.entities.Post.delete(post.id);
+      await api.entities.Post.delete(post.id);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
     } catch {}
   };

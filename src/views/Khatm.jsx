@@ -12,7 +12,7 @@ import {
   HeartHandshake,
   BookMarked,
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
 
@@ -61,7 +61,7 @@ export default function Khatm() {
   const loadSessions = async () => {
     try {
       setLoading(true);
-      const res = await base44.entities.KhatmSession.list("-created_date", 50);
+      const res = await api.entities.KhatmSession.list("-created_date", 50);
       const items = Array.isArray(res) ? res : res.items || [];
       setSessions(items);
 
@@ -84,7 +84,7 @@ export default function Khatm() {
     loadSessions();
 
     // Subscribe to real-time session changes
-    const unsub = base44.entities.KhatmSession.subscribe(() => {
+    const unsub = api.entities.KhatmSession.subscribe(() => {
       loadSessions();
     });
     return () => unsub?.();
@@ -105,7 +105,7 @@ export default function Khatm() {
         ? Math.random().toString(36).substring(2, 8).toUpperCase()
         : null;
 
-      const newSession = await base44.entities.KhatmSession.create({
+      const newSession = await api.entities.KhatmSession.create({
         title: createForm.title.trim(),
         description: createForm.description.trim() || null,
         intention: finalIntention,
@@ -133,7 +133,7 @@ export default function Khatm() {
           status: "available",
         });
       }
-      await base44.entities.KhatmPart.bulkCreate(partsPayload);
+      await api.entities.KhatmPart.bulkCreate(partsPayload);
 
       toast.success("دوره ختم قرآن با موفقیت ایجاد شد 🎉");
       setShowCreateModal(false);
@@ -156,7 +156,7 @@ export default function Khatm() {
 
     try {
       setJoining(true);
-      const res = await base44.entities.KhatmSession.filter({ invite_code: code });
+      const res = await api.entities.KhatmSession.filter({ invite_code: code });
       const found = Array.isArray(res) ? res[0] : res?.items?.[0];
       if (found) {
         toast.success(`به دوره «${found.title}» خوش آمدید`);
@@ -535,7 +535,7 @@ function KhatmCard({ session }) {
     let isMounted = true;
     async function fetchStats() {
       try {
-        const parts = await base44.entities.KhatmPart.filter({ session_id: session.id });
+        const parts = await api.entities.KhatmPart.filter({ session_id: session.id });
         const items = Array.isArray(parts) ? parts : parts.items || [];
         if (isMounted) {
           const comp = items.filter((p) => p.status === "completed").length;

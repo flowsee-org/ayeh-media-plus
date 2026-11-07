@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { getAyah, RECITERS, getAudioUrl } from "@/lib/quranApi";
 import { SURAH_DATA } from "@/lib/surahData";
 import { markVerseRead } from "@/lib/readingTracker";
@@ -171,7 +171,7 @@ export default function VerseDetail() {
     const key = `${surah}:${ayah}`;
     Promise.all([
       getAyah(Number(surah), Number(ayah)).catch(() => null),
-      base44.entities.Verse.filter({ verse_key: key }, "-created_date", 5).catch(() => []),
+      api.entities.Verse.filter({ verse_key: key }, "-created_date", 5).catch(() => []),
     ])
       .then(async ([a, refls]) => {
         setAyahData(a);
@@ -183,7 +183,7 @@ export default function VerseDetail() {
           const map = {};
           await Promise.all(
             ids.map(async (sid) => {
-              try { map[sid] = await base44.entities.Scholar.get(sid); } catch { map[sid] = { name: "نامشخص" }; }
+              try { map[sid] = await api.entities.Scholar.get(sid); } catch { map[sid] = { name: "نامشخص" }; }
             })
           );
           setScholars(map);

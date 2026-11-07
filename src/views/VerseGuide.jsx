@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { getAyah } from "@/lib/quranApi";
 import ProblemForm from "@/components/guide/ProblemForm";
 import GuideVerseCard from "@/components/guide/GuideVerseCard";
@@ -34,7 +34,7 @@ export default function VerseGuide() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    api.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const search = async (text) => {
@@ -44,7 +44,7 @@ export default function VerseGuide() {
     setResult(null);
     setVerses({});
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await api.integrations.Core.InvokeLLM({
         prompt: PROMPT(text),
         response_json_schema: {
           type: "object",

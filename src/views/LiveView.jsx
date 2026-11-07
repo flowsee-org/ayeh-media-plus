@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Loader2, Users, Send, Radio, Lock, Hand, Mic, VideoOff } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import FollowButton from "@/components/live/FollowButton";
@@ -37,11 +37,11 @@ export default function LiveView() {
     let cancelled = false;
 
     (async () => {
-      const me = await base44.auth.me().catch(() => null);
+      const me = await api.auth.me().catch(() => null);
       if (cancelled) return;
       setUser(me);
 
-      const s = await base44.entities.LiveSession.get(id).catch(() => null);
+      const s = await api.entities.LiveSession.get(id).catch(() => null);
       if (cancelled) return;
       setSession(s);
       if (!s) {
@@ -54,7 +54,7 @@ export default function LiveView() {
       if (me?.id) {
         allowed = me.id === s.scholar_id;
         if (!allowed) {
-          const res = await base44.entities.Follow
+          const res = await api.entities.Follow
             .filter({ follower_id: me.id, scholar_id: s.scholar_id })
             .catch(() => ({ items: [] }));
           allowed = (res.items || []).length > 0;
@@ -87,7 +87,7 @@ export default function LiveView() {
       sessionStorage.setItem("liveConnId", connId);
     }
 
-    const conn = base44.actors.LiveRoom(sess.room_id).connect({ id: connId });
+    const conn = api.actors.LiveRoom(sess.room_id).connect({ id: connId });
     connRef.current = conn;
 
     const sub = conn.subscribe((msg) => {
@@ -237,7 +237,7 @@ export default function LiveView() {
     return () => {
       if (localStream) localStream.getTracks().forEach((t) => t.stop());
       if (pcRef.current) pcRef.current.close();
-      if (subRef.current) subRef.current.unsubscribe();
+      if (subRef.current) subRef.current();
       if (connRef.current) connRef.current.close();
     };
   }, [localStream]);

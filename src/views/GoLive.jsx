@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import {
   Radio, Send, Users, VideoOff, Hand, Check, X, MicOff, Sparkles,
   BookOpen, ChevronRight, ChevronLeft, Pin, PinOff, Search, Loader2,
@@ -43,7 +43,7 @@ export default function GoLive() {
   const pcsRef = useRef(new Map()); // viewerId -> RTCPeerConnection
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    api.auth.me().then(setUser).catch(() => {});
   }, []);
 
   const loadVerse = useCallback(async (vKey) => {
@@ -149,7 +149,7 @@ export default function GoLive() {
       setStream(mediaStream);
 
       // Create LiveSession record
-      const session = await base44.entities.LiveSession.create({
+      const session = await api.entities.LiveSession.create({
         scholar_id: user.id,
         scholar_name: user.full_name || user.email,
         scholar_avatar: user.avatar_config || "",
@@ -162,7 +162,7 @@ export default function GoLive() {
       setSessionId(session.id);
 
       // Connect to LiveRoom actor via socket
-      const conn = base44.actors.LiveRoom(session.room_id).connect({ id: `scholar-${user.id}` });
+      const conn = api.actors.LiveRoom(session.room_id).connect({ id: `scholar-${user.id}` });
       connRef.current = conn;
 
       conn.send({ type: "claim_broadcaster" });
@@ -174,7 +174,7 @@ export default function GoLive() {
       }
 
       // Announce stream to network
-      base44.socket?.emit("scholar:start_broadcast", {
+      api.socket?.emit("scholar:start_broadcast", {
         sessionId: session.id,
         scholarId: user.id,
         scholarName: user.full_name,
@@ -260,7 +260,7 @@ export default function GoLive() {
     if (subRef.current) subRef.current();
     if (connRef.current) connRef.current.close();
     if (sessionId) {
-      await base44.entities.LiveSession.update(sessionId, { status: "ended" }).catch(() => {});
+      await api.entities.LiveSession.update(sessionId, { status: "ended" }).catch(() => {});
     }
     navigate("/talks");
   };

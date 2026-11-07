@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { getAyah, getSurahList } from "@/lib/quranApi";
 import { CollectionCover, IslamicBorder, SectionOrnament, VerseMarker } from "@/components/IslamicDecorations";
@@ -25,7 +25,7 @@ export default function CollectionDetail() {
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      base44.entities.Collection.get(id).catch(() => null),
+      api.entities.Collection.get(id).catch(() => null),
       getSurahList(),
     ]).then(async ([col, surahList]) => {
       setCollection(col);
@@ -35,7 +35,7 @@ export default function CollectionDetail() {
 
       if (col?.verse_keys?.length) {
         // Load verses: first from entity, then from API
-        const allVerses = await base44.entities.Verse.list("-created_date", 200).catch(() => []);
+        const allVerses = await api.entities.Verse.list("-created_date", 200).catch(() => []);
         const entityMap = {};
         allVerses.forEach(v => { entityMap[v.verse_key] = v; });
 

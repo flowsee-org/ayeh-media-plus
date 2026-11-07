@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
 import { recordEngagement } from "@/lib/personalization";
@@ -26,11 +26,11 @@ export default function PostDetail() {
 
   useEffect(() => {
     if (!authUser) {
-      base44.auth.me().then(setLocalUser).catch(() => {});
+      api.auth.me().then(setLocalUser).catch(() => {});
     }
     Promise.all([
-      base44.entities.Post.get(id).catch(() => null),
-      base44.entities.Comment.filter({ post_id: id }, "-created_date", 100).catch(() => []),
+      api.entities.Post.get(id).catch(() => null),
+      api.entities.Comment.filter({ post_id: id }, "-created_date", 100).catch(() => []),
     ]).then(([p, c]) => {
       setPost(p);
       setComments(c);
@@ -72,7 +72,7 @@ export default function PostDetail() {
     if (!user || !post || post.author_id !== user.id) return;
     if (!window.confirm("آیا از حذف این پست مطمئن هستید؟")) return;
     try {
-      await base44.entities.Post.delete(post.id);
+      await api.entities.Post.delete(post.id);
       toast.success("پست با موفقیت حذف شد");
       navigate("/community");
     } catch {

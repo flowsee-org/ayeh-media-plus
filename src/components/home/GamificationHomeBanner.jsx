@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Flame, Trophy, ArrowRight, Brain, CheckCircle2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function GamificationHomeBanner() {
@@ -10,7 +10,7 @@ export default function GamificationHomeBanner() {
 
   useEffect(() => {
     let isMounted = true;
-    base44.gamification
+    api.gamification
       .getStatus()
       .then((res) => {
         if (isMounted) setStatus(res);

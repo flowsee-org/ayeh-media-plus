@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import {
   X,
@@ -48,7 +48,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
 
     setUploadingAudio(true);
     try {
-      const res = await base44.integrations.Core.UploadPublicFile({ file });
+      const res = await api.integrations.Core.UploadPublicFile({ file });
       if (res.file_url) {
         setAudioUrl(res.file_url);
         toast.success("فایل صوتی با موفقیت بارگذاری شد");
@@ -97,7 +97,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
         .map((k) => k.trim())
         .filter(Boolean);
 
-      const created = await base44.entities.Podcast.create({
+      const created = await api.entities.Podcast.create({
         title: title.trim(),
         scholar_id: user?.id || null,
         scholar_name: user?.full_name || user?.email || "استاد محترم",

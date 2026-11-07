@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { TOPIC_CATEGORIES } from "@/lib/topicData";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { IslamicStar, SectionOrnament } from "@/components/IslamicOrnaments";
@@ -23,11 +23,11 @@ export default function Topics() {
   const [topicEntities, setTopicEntities] = useState([]);
 
   const load = () => {
-    base44.entities.Verse.list("-created_date", 200)
+    api.entities.Verse.list("-created_date", 200)
       .then(setVerses)
       .catch(() => {});
     if (selectedTopic) {
-      base44.entities.Topic.filter({ name: selectedTopic })
+      api.entities.Topic.filter({ name: selectedTopic })
         .then(setTopicEntities)
         .catch(() => {});
     }
@@ -39,7 +39,7 @@ export default function Topics() {
 
   useEffect(() => {
     if (selectedTopic) {
-      base44.entities.Topic.filter({ name: selectedTopic })
+      api.entities.Topic.filter({ name: selectedTopic })
         .then(setTopicEntities)
         .catch(() => {});
     } else {

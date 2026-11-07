@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link, useNavigate } from "react-router-dom";
+import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/AuthContext";
 
 export default function Login() {
   const { openAuthModal } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,10 +22,10 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.loginViaEmailPassword(email, password);
+      await api.auth.loginViaEmailPassword(email, password);
       const params = new URLSearchParams(window.location.search);
       const returnTo = params.get("returnTo");
-      window.location.href = returnTo || "/";
+      navigate(returnTo || "/");
     } catch (err) {
       setError(err.message || "ایمیل یا رمز عبور اشتباه است");
     } finally {
@@ -61,7 +62,7 @@ export default function Login() {
           {/* Quick Phone + Numerical Captcha OTP Login Button */}
           <button
             type="button"
-            onClick={() => openAuthModal(() => { window.location.href = "/"; })}
+            onClick={() => openAuthModal(() => { navigate("/"); })}
             className="w-full mb-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm"
           >
             <Phone className="w-4 h-4 text-orange-400" />

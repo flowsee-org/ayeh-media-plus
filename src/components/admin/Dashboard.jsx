@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Loader2, BookOpen, ScrollText, MessageCircle, Users, FolderHeart, Compass, Trophy } from "lucide-react";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
@@ -22,7 +22,7 @@ export default function Dashboard({ onNavigate }) {
     const entities = [...new Set(CARDS.map((c) => c.entity))];
     Promise.all(
       entities.map((e) =>
-        base44.entities[e].list("-created_date", 200).catch(() => [])
+        api.entities[e].list("-created_date", 200).catch(() => [])
       )
     ).then((results) => {
       const byEntity = {};

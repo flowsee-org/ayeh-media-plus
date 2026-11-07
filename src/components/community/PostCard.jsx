@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Image } from "@/components/ui/image";
 import {
   Heart, MessageCircle, Send, BookOpen, Video, Image as ImageIcon,
@@ -141,7 +141,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
     if (!showComments) {
       setLoadingComments(true);
       try {
-        const c = await base44.entities.Comment.filter({ post_id: post.id }, "-created_date", 50);
+        const c = await api.entities.Comment.filter({ post_id: post.id }, "-created_date", 50);
         setComments(c);
       } catch {}
       setLoadingComments(false);

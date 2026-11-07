@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Image } from "@/components/ui/image";
 import { Heart, MessageCircle, Loader2, NotebookPen } from "lucide-react";
 
@@ -13,7 +13,7 @@ export default function MyPostsGrid({ userId }) {
 
   useEffect(() => {
     if (!userId) return;
-    base44.entities.Post
+    api.entities.Post
       .filter({ author_id: userId }, { sort: "-created_date", limit: 30 })
       .then((res) => setPosts(res.items || []))
       .catch(() => {})

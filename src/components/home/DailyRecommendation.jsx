@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { getRecommendations, getProfileSummary } from "@/lib/recommendationEngine";
 import { Loader2, Sparkles, ArrowLeft, BookOpen, Compass } from "lucide-react";
 
@@ -17,7 +17,7 @@ export default function DailyRecommendation() {
   useEffect(() => {
     (async () => {
       try {
-        const page = await base44.entities.Verse.list({
+        const page = await api.entities.Verse.list({
           limit: 100,
           fields: ["verse_key", "arabic", "translation", "tags", "surah_number", "classical_tafsir", "modern_tafsir", "tadabbur", "reflections"],
         });

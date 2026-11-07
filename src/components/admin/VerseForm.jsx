@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Field, Modal, inputCls } from "./shared";
 import SelectInput from "./SelectInput";
 
@@ -77,9 +77,9 @@ export default function VerseForm({ initial, onClose, onSaved }) {
       const t = Number(form.estimated_reading_time);
       if (t) payload.estimated_reading_time = t;
       if (initial?.id) {
-        await base44.entities.Verse.update(initial.id, payload);
+        await api.entities.Verse.update(initial.id, payload);
       } else {
-        await base44.entities.Verse.create(payload);
+        await api.entities.Verse.create(payload);
       }
       onSaved();
     } catch (e) {

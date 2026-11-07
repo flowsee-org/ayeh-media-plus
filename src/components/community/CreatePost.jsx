@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { X, Loader2, BookOpen, Sparkles, Image as ImageIcon, HelpCircle, Send, Video } from "lucide-react";
 import { Avatar } from "./shared";
 import { useScholar } from "@/lib/scholarAccess";
@@ -30,7 +30,7 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await api.integrations.Core.UploadFile({ file });
       setImageUrl(file_url);
     } catch {}
     setUploading(false);
@@ -40,7 +40,7 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await api.integrations.Core.UploadFile({ file });
       setVideoUrl(file_url);
     } catch {}
     setUploading(false);
@@ -51,7 +51,7 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
     setSaving(true);
     setErr(null);
     try {
-      const created = await base44.entities.Post.create({
+      const created = await api.entities.Post.create({
         author_id: user?.id || "guest",
         author_name: user?.full_name || user?.phone || user?.email || "کاربر تدبّر",
         author_avatar: user?.avatar_config || user?.avatar_url || "",

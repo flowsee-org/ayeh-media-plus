@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Loader2, Pencil, Search } from "lucide-react";
 import { EmptyState, Field, Modal, inputCls } from "./shared";
 
@@ -29,7 +29,7 @@ export default function TafsirAdmin() {
 
   const reload = () => {
     setLoading(true);
-    base44.entities.Verse.list("-created_date", 200)
+    api.entities.Verse.list("-created_date", 200)
       .then(setItems)
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -117,7 +117,7 @@ function TafsirForm({ initial, onClose, onSaved }) {
       FIELDS.forEach(({ key, list }) => {
         payload[key] = list ? lines(form[key]) : form[key];
       });
-      await base44.entities.Verse.update(initial.id, payload);
+      await api.entities.Verse.update(initial.id, payload);
       onSaved();
     } catch (e) {
       setErr(e.message || "خطا در ذخیره");

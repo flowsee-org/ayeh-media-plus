@@ -1,17 +1,19 @@
-import { base44 } from '@/api/base44Client';
+import api from "@/lib/api";
 
 export async function loginWithMfa(email, password) {
-  return await base44.auth.loginViaEmailPassword(email, password);
+  return await api.auth.loginViaEmailPassword(email, password);
 }
 
 export async function continueMfa(result, returnTo) {
-  window.location.assign(returnTo || '/');
+  if (typeof window !== "undefined") {
+    window.location.href = returnTo || "/";
+  }
 }
 
 export async function loginWithSocial(provider, returnTo) {
-  return base44.auth.loginWithProvider(provider, returnTo);
+  return api.auth.loginWithProvider(provider, returnTo);
 }
 
 export function loginWithGoogle(returnTo) {
-  return loginWithSocial('google', returnTo);
+  return loginWithSocial("google", returnTo);
 }

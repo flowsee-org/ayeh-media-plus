@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { getBookmarks, removeBookmark, getSavedPosts, toggleSavedPost } from "@/lib/readingTracker";
 import { getAyah, getSurahList } from "@/lib/quranApi";
@@ -45,7 +45,7 @@ export default function Bookmarks() {
       setPostsLoading(false);
       return;
     }
-    base44.entities.Post.filter({ id: { $in: ids } }, "-created_date", 50)
+    api.entities.Post.filter({ id: { $in: ids } }, "-created_date", 50)
       .then(setPosts)
       .catch(() => setPosts([]))
       .finally(() => setPostsLoading(false));

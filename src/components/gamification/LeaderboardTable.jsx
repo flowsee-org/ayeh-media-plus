@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Trophy, Flame, Sparkles, Medal, User } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 
 const LEAGUE_BADGES = {
   فردوس: {
@@ -35,7 +35,7 @@ export default function LeaderboardTable() {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
-        const res = await base44.gamification.getLeaderboard(filterType);
+        const res = await api.gamification.getLeaderboard(filterType);
         if (isMounted && res?.leaderboard) {
           setLeaderboard(res.leaderboard);
         }

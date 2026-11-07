@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { getAyah, getSurahList } from "@/lib/quranApi";
 import { markVerseRead, getReadVerses } from "@/lib/readingTracker";
 import { toast } from "react-hot-toast";
@@ -61,9 +61,9 @@ export default function CollectionStudy() {
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      base44.entities.Collection.get(id).catch(() => null),
+      api.entities.Collection.get(id).catch(() => null),
       getSurahList(),
-      base44.entities.Scholar.list({ limit: 50 }).catch(() => ({ items: [] })),
+      api.entities.Scholar.list({ limit: 50 }).catch(() => ({ items: [] })),
     ]).then(async ([col, surahList, scholarList]) => {
       setCollection(col);
       const sm = {};
@@ -74,7 +74,7 @@ export default function CollectionStudy() {
       setScholars(smap);
 
       if (col?.verse_keys?.length) {
-        const allVerses = await base44.entities.Verse.list("-created_date", 200).catch(() => []);
+        const allVerses = await api.entities.Verse.list("-created_date", 200).catch(() => []);
         const entityMap = {};
         allVerses.forEach(v => { entityMap[v.verse_key] = v; });
 

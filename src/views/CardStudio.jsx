@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { toast } from "react-hot-toast";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { PRESETS, serializeAvatar } from "@/lib/avatars";
 import {
@@ -132,7 +132,7 @@ export default function CardStudio() {
       setVerseKey(targetKey);
 
       // Try fetching verse data from backend entities
-      base44.entities.Verse.filter({ verse_key: targetKey })
+      api.entities.Verse.filter({ verse_key: targetKey })
         .then((items) => {
           if (items && items.length > 0) {
             const v = items[0];
@@ -268,7 +268,7 @@ export default function CardStudio() {
       const uploadData = await uploadRes.json();
       const imageUrl = uploadData.file_url || svgDataUri;
 
-      await base44.entities.Story.create({
+      await api.entities.Story.create({
         author_id: user.id,
         author_name: user.full_name || "کاربر آیه",
         author_avatar: user.avatar_url || null,
@@ -281,7 +281,7 @@ export default function CardStudio() {
       });
 
       // Track gamification XP for sharing
-      base44.gamification?.trackActivity({ type: "social", duration_seconds: 30 }).catch(() => {});
+      api.gamification?.trackActivity({ type: "social", duration_seconds: 30 }).catch(() => {});
 
       confetti({ particleCount: 90, spread: 60, origin: { y: 0.6 } });
       toast.success("کارت آیه با موفقیت در استوری‌های سامانه منتشر شد ✨");
@@ -315,7 +315,7 @@ export default function CardStudio() {
       const uploadData = await uploadRes.json();
       const imageUrl = uploadData.file_url || svgDataUri;
 
-      await base44.entities.Post.create({
+      await api.entities.Post.create({
         author_id: user.id,
         author_name: user.full_name || "کاربر آیه",
         author_avatar: user.avatar_url || null,
@@ -330,7 +330,7 @@ export default function CardStudio() {
         tags: ["کارت_آیه", "تدبر", surahName.replace(/\s+/g, "_")],
       });
 
-      base44.gamification?.trackActivity({ type: "social" }).catch(() => {});
+      api.gamification?.trackActivity({ type: "social" }).catch(() => {});
 
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       toast.success("کارت آیه در فید جامعه قرآنی به اشتراک گذاشته شد 🌟");

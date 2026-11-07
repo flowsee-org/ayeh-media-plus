@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { getSurahList } from "@/lib/quranApi";
 import { JUZ_DATA } from "@/lib/juzData";
 import { ALL_TOPICS } from "@/lib/topicData";
@@ -57,7 +57,7 @@ export default function SearchPage() {
       )
     );
     try {
-      const all = await base44.entities.Verse.list("-created_date", 100);
+      const all = await api.entities.Verse.list("-created_date", 100);
       setReflResults(
         all.filter(
           (v) =>

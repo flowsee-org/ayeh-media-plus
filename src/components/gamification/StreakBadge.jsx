@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Flame, Sparkles } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function StreakBadge({ compact = false }) {
@@ -16,7 +16,7 @@ export default function StreakBadge({ compact = false }) {
     let isMounted = true;
     const fetchStatus = async () => {
       try {
-        const res = await base44.gamification.getStatus();
+        const res = await api.gamification.getStatus();
         if (isMounted && res) {
           setData({
             streak_days: res.streak_days || 0,

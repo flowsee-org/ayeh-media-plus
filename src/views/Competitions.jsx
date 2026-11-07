@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import CompetitionCard from "@/components/community/CompetitionCard";
 import Leaderboard from "@/components/community/Leaderboard";
 import FeaturedPrize from "@/components/community/FeaturedPrize";
@@ -21,7 +21,7 @@ export default function Competitions() {
   const [filter, setFilter] = useState("all");
 
   const load = () => {
-    base44.entities.Competition.list("-created_date", 50)
+    api.entities.Competition.list("-created_date", 50)
       .then(setComps)
       .catch(() => {})
       .finally(() => setLoading(false));

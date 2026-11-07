@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import StoryBar from "@/components/stories/StoryBar";
 import StoryViewer from "@/components/stories/StoryViewer";
@@ -17,8 +17,8 @@ export default function StoryBarProvider() {
 
   const load = useCallback(async () => {
     const [me, all] = await Promise.all([
-      !authUser ? base44.auth.me().catch(() => null) : Promise.resolve(authUser),
-      base44.entities.Story.filter(
+      !authUser ? api.auth.me().catch(() => null) : Promise.resolve(authUser),
+      api.entities.Story.filter(
         { created_date: { $gt: new Date(Date.now() - DAY).toISOString() } },
         { sort: "-created_date", limit: 100 }
       ).catch(() => ({ items: [] })),
@@ -66,7 +66,7 @@ export default function StoryBarProvider() {
       )
     );
     // Server-side: add user to viewed_by (fire and forget)
-    base44.entities.Story.update(storyId, {
+    api.entities.Story.update(storyId, {
       viewed_by: [...(stories.find((s) => s.id === storyId)?.viewed_by || []), user.id],
     }).catch(() => {});
   };

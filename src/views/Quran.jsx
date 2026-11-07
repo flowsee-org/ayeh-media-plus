@@ -10,7 +10,7 @@ import BackButton from "@/components/BackButton";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import { useReadingPrefs, renderQuranWaqf, DIACRITIC_THEMES } from "@/lib/readingPrefs";
 import MushafSettingsModal from "@/components/quran/MushafSettingsModal";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
 
@@ -32,7 +32,7 @@ export default function Quran() {
   useEffect(() => {
     if (view === "surah" || view === "juz") {
       const timer = setTimeout(() => {
-        base44.gamification.trackActivity({ type: "reading", duration_seconds: 60 }).catch(() => {});
+        api.gamification.trackActivity({ type: "reading", duration_seconds: 60 }).catch(() => {});
       }, 5000);
       return () => clearTimeout(timer);
     }
@@ -42,11 +42,11 @@ export default function Quran() {
     if (!khatmPartId) return;
     try {
       setCompletingKhatm(true);
-      await base44.entities.KhatmPart.update(khatmPartId, {
+      await api.entities.KhatmPart.update(khatmPartId, {
         status: "completed",
         completed_at: new Date(),
       });
-      base44.gamification.trackActivity({ type: "social", action_detail: "تکمیل سهم ختم قرآن" }).catch(() => {});
+      api.gamification.trackActivity({ type: "social", action_detail: "تکمیل سهم ختم قرآن" }).catch(() => {});
       confetti({
         particleCount: 100,
         spread: 70,

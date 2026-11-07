@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { toast } from "react-hot-toast";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function DailyQuestsCard({ onProgressUpdate }) {
@@ -31,8 +31,8 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
     try {
       setLoading(true);
       const [st, dc] = await Promise.all([
-        base44.gamification.getStatus(),
-        base44.gamification.getDailyContent(),
+        api.gamification.getStatus(),
+        api.gamification.getDailyContent(),
       ]);
       setStatus(st);
       setDailyContent(dc);
@@ -65,7 +65,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
     setTimeout(async () => {
       try {
         if (user) {
-          const res = await base44.gamification.trackActivity({
+          const res = await api.gamification.trackActivity({
             type: "audio",
             duration_seconds: 15,
             verse_key: dailyContent.featured_verse.verse_key,
@@ -93,7 +93,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
     try {
       setSubmittingQuiz(true);
-      const res = await base44.gamification.completeQuest({
+      const res = await api.gamification.completeQuest({
         quest_type: "quiz",
         answer_index: selectedOption,
       });
@@ -131,7 +131,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
     }
     try {
       setSubmittingSocial(true);
-      const res = await base44.gamification.completeQuest({
+      const res = await api.gamification.completeQuest({
         quest_type: "social",
         action_detail: "صلوات نذر ختم قرآن",
       });

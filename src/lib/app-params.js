@@ -1,6 +1,13 @@
 const isNode = typeof window === 'undefined';
-const windowObj = isNode ? { localStorage: new Map() } : window;
-const storage = windowObj.localStorage;
+const storage = isNode
+  ? {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+      key: () => null,
+      get length() { return 0; },
+    }
+  : window.localStorage;
 
 const toSnakeCase = (str) => {
 	return str.replace(/([A-Z])/g, '_$1').toLowerCase();

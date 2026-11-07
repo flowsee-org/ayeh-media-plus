@@ -9,7 +9,7 @@ import {
   CheckCircle2,
   User,
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
 
@@ -41,7 +41,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const loadCaptcha = async () => {
     try {
       setLoadingCaptcha(true);
-      const res = await base44.auth.getCaptcha();
+      const res = await api.auth.getCaptcha();
       if (res?.captchaId && res?.svg) {
         setCaptchaData(res);
         setCaptchaAnswer("");
@@ -101,7 +101,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
     try {
       setSendingOtp(true);
-      const res = await base44.auth.sendOtpPhone({
+      const res = await api.auth.sendOtpPhone({
         phone: cleanPhone,
         captchaId: captchaData.captchaId,
         captchaAnswer: captchaAnswer.trim(),
@@ -135,7 +135,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
     try {
       setVerifyingOtp(true);
-      const res = await base44.auth.verifyOtpPhone({
+      const res = await api.auth.verifyOtpPhone({
         phone: phone.trim(),
         otp: cleanOtp,
       });
@@ -173,7 +173,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
       let finalUser = currentUser;
 
       if (!skip && fullName.trim()) {
-        const updateRes = await base44.auth.completeProfile({
+        const updateRes = await api.auth.completeProfile({
           full_name: fullName.trim(),
         });
         if (updateRes.user) {

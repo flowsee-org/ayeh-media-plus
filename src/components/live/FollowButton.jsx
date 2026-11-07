@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { UserPlus, UserCheck, Loader2 } from "lucide-react";
 
 /**
@@ -13,11 +13,11 @@ export default function FollowButton({ scholarId, scholarName = "", className = 
 
   useEffect(() => {
     if (!scholarId) return;
-    base44.auth.me().then((u) => {
+    api.auth.me().then((u) => {
       if (!u?.id) { setLoading(false); return; }
       setUser(u);
       if (u.id === scholarId) { setLoading(false); return; }
-      base44.entities.Follow.filter({ follower_id: u.id, scholar_id: scholarId })
+      api.entities.Follow.filter({ follower_id: u.id, scholar_id: scholarId })
         .then((res) => setFollowing((res.items || res || []).length > 0))
         .catch(() => {})
         .finally(() => setLoading(false));
@@ -29,11 +29,11 @@ export default function FollowButton({ scholarId, scholarName = "", className = 
     setToggling(true);
     try {
       if (following) {
-        await base44.entities.Follow.deleteMany({ follower_id: user.id, scholar_id: scholarId });
+        await api.entities.Follow.deleteMany({ follower_id: user.id, scholar_id: scholarId });
         setFollowing(false);
         onChange?.(false);
       } else {
-        await base44.entities.Follow.create({
+        await api.entities.Follow.create({
           follower_id: user.id,
           follower_name: user.full_name || user.email || "کاربر",
           scholar_id: scholarId,

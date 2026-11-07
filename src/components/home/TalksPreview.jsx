@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Video, PlayCircle, Clock, ArrowLeft, Loader2, BookOpen, Sparkles } from "lucide-react";
 
 export default function TalksPreview() {
@@ -8,7 +8,7 @@ export default function TalksPreview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.Verse.list("-created_date", 100)
+    api.entities.Verse.list("-created_date", 100)
       .then(setVerses)
       .catch(() => {})
       .finally(() => setLoading(false));

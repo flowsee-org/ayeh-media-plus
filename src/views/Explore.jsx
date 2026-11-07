@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { togglePostLike } from "@/lib/social";
 import { toast } from "react-hot-toast";
 import { trackSessionSignal, detectMood } from "@/lib/exploreEngine";
@@ -48,10 +48,10 @@ export default function Explore() {
 
   const load = async () => {
     const [ps, me, verses, collections] = await Promise.all([
-      base44.entities.Post.list("-created_date", 80).catch(() => []),
-      base44.auth.me().catch(() => null),
-      base44.entities.Verse.list("-created_date", 100).catch(() => []),
-      base44.entities.Collection.list("-created_date", 30).catch(() => []),
+      api.entities.Post.list("-created_date", 80).catch(() => []),
+      api.auth.me().catch(() => null),
+      api.entities.Verse.list("-created_date", 100).catch(() => []),
+      api.entities.Collection.list("-created_date", 30).catch(() => []),
     ]);
     setUser(me);
 

@@ -3,16 +3,25 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../db.js';
 import { authenticate } from '../middleware/auth.js';
+import {
+  validateBody,
+  sendOtpPhoneSchema,
+  verifyOtpPhoneSchema,
+  registerSchema,
+  verifyOtpSchema,
+  resendOtpSchema,
+  loginSchema,
+  resetPasswordRequestSchema,
+  resetPasswordSchema,
+  completeProfileSchema,
+  updateMeSchema,
+} from '../lib/validation.js';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'ayeh_default_secret_2026';
 
-// In-memory OTP store for email verification
-const otpStore = new Map();
-
-// In-memory Captcha & Phone OTP stores
-const captchaStore = new Map();
-const phoneOtpStore = new Map();
+// Database-backed OTP / captcha store (replaces in-memory Maps so data
+// survives server restarts and works across multiple instances).
 
 // Helper to convert Persian/Arabic digits to English digits
 function toEnglishDigits(str) {
@@ -23,7 +32,7 @@ function toEnglishDigits(str) {
     .trim();
 }
 
-function generateNumericSvgCaptcha() {
+async function generateNumericSvgCaptcha() {
   // 4 random digits
   const digits = Math.floor(1000 + Math.random() * 9000).toString();
   const width = 140;
@@ -69,9 +78,12 @@ function generateNumericSvgCaptcha() {
   </svg>`;
 
   const captchaId = Math.random().toString(36).substring(2, 10);
-  captchaStore.set(captchaId, {
-    answer: digits,
-    expiresAt: Date.now() + 5 * 60 * 1000,
+  await prisma.authCaptcha.create({
+    data: {
+      captcha_id: captchaId,
+      answer: digits,
+      expires_at: new Date(Date.now() + 5 * 60 * 1000),
+    },
   });
 
   return { captchaId, svg };
@@ -86,23 +98,29 @@ function generateToken(user) {
 }
 
 // GET /api/auth/captcha
-router.get('/captcha', (req, res) => {
-  const { captchaId, svg } = generateNumericSvgCaptcha();
-  res.json({ captchaId, svg });
+router.get('/captcha', async (req, res) => {
+  try {
+    const { captchaId, svg } = await generateNumericSvgCaptcha();
+    res.json({ captchaId, svg });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to generate captcha', error: err.message });
+  }
 });
 
 // POST /api/auth/send-otp-phone
 router.post('/send-otp-phone', async (req, res) => {
   try {
-    const { phone, captchaId, captchaAnswer } = req.body;
+    const validation = validateBody(res, sendOtpPhoneSchema, req.body);
+    if (!validation.success) return;
+    const { phone, captchaId, captchaAnswer } = validation.data;
 
     if (!phone || !captchaId || !captchaAnswer) {
       return res.status(400).json({ message: 'شماره همراه و کد امنیتی الزامی است' });
     }
 
-    // Verify Captcha
-    const cap = captchaStore.get(captchaId);
-    if (!cap || cap.expiresAt < Date.now()) {
+    // Verify Captcha (database-backed)
+    const cap = await prisma.authCaptcha.findUnique({ where: { captcha_id: captchaId } });
+    if (!cap || cap.expires_at < new Date()) {
       return res.status(400).json({ message: 'کد امنیتی منقضی شده است. تصویر جدید دریافت کنید' });
     }
 
@@ -110,7 +128,7 @@ router.post('/send-otp-phone', async (req, res) => {
     if (cleanAnswer !== cap.answer) {
       return res.status(400).json({ message: 'کد امنیتی اشتباه است' });
     }
-    captchaStore.delete(captchaId);
+    await prisma.authCaptcha.delete({ where: { captcha_id: captchaId } });
 
     // Validate and format Phone
     let cleanPhone = toEnglishDigits(phone).replace(/[\s-+]/g, '');
@@ -126,9 +144,18 @@ router.post('/send-otp-phone', async (req, res) => {
 
     // Generate 5-digit OTP
     const otp = Math.floor(10000 + Math.random() * 90000).toString();
-    phoneOtpStore.set(cleanPhone, {
-      otp,
-      expiresAt: Date.now() + 5 * 60 * 1000,
+    // Upsert phone OTP (update existing or create new)
+    await prisma.authOtp.upsert({
+      where: { phone: cleanPhone },
+      update: {
+        code: otp,
+        expires_at: new Date(Date.now() + 5 * 60 * 1000),
+      },
+      create: {
+        phone: cleanPhone,
+        code: otp,
+        expires_at: new Date(Date.now() + 5 * 60 * 1000),
+      },
     });
 
     console.log(`[SMS/AUTH] Verification code for ${cleanPhone}: ${otp}`);
@@ -148,7 +175,9 @@ router.post('/send-otp-phone', async (req, res) => {
 // POST /api/auth/verify-otp-phone
 router.post('/verify-otp-phone', async (req, res) => {
   try {
-    const { phone, otp } = req.body;
+    const validation = validateBody(res, verifyOtpPhoneSchema, req.body);
+    if (!validation.success) return;
+    const { phone, otp } = validation.data;
     if (!phone || !otp) {
       return res.status(400).json({ message: 'شماره همراه و کد تایید الزامی است' });
     }
@@ -161,15 +190,17 @@ router.post('/verify-otp-phone', async (req, res) => {
     }
 
     const cleanOtp = toEnglishDigits(otp);
-    const record = phoneOtpStore.get(cleanPhone);
+    const record = await prisma.authOtp.findUnique({ where: { phone: cleanPhone } });
 
     // Allow generated OTP or fallback dev code '12345'
-    const isValid = (record && record.otp === cleanOtp) || cleanOtp === '12345';
+    const isValid =
+      (record && record.code === cleanOtp && record.expires_at >= new Date()) ||
+      cleanOtp === '12345';
     if (!isValid) {
       return res.status(400).json({ message: 'کد تایید اشتباه یا منقضی شده است' });
     }
 
-    phoneOtpStore.delete(cleanPhone);
+    await prisma.authOtp.delete({ where: { phone: cleanPhone } });
 
     // Find or create user
     let user = await prisma.user.findUnique({ where: { phone: cleanPhone } });
@@ -220,10 +251,9 @@ router.post('/verify-otp-phone', async (req, res) => {
 // POST /api/auth/complete-profile
 router.post('/complete-profile', authenticate({ required: true }), async (req, res) => {
   try {
-    const { full_name } = req.body;
-    if (!full_name || !full_name.trim()) {
-      return res.status(400).json({ message: 'نام و نام خانوادگی الزامی است' });
-    }
+    const validation = validateBody(res, completeProfileSchema, req.body);
+    if (!validation.success) return;
+    const { full_name } = validation.data;
 
     const updated = await prisma.user.update({
       where: { id: req.user.id },
@@ -248,10 +278,9 @@ router.post('/complete-profile', authenticate({ required: true }), async (req, r
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, full_name } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
-    }
+    const validation = validateBody(res, registerSchema, req.body);
+    if (!validation.success) return;
+    const { email, password, full_name } = validation.data;
 
     const normalizedEmail = email.trim().toLowerCase();
     const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
@@ -270,7 +299,18 @@ router.post('/register', async (req, res) => {
 
     // Store OTP (default demo OTP is '123456', or random 6 digits)
     const otp = '123456';
-    otpStore.set(normalizedEmail, { otp, expiresAt: Date.now() + 15 * 60 * 1000 });
+    await prisma.authOtp.upsert({
+      where: { email: normalizedEmail },
+      update: {
+        code: otp,
+        expires_at: new Date(Date.now() + 15 * 60 * 1000),
+      },
+      create: {
+        email: normalizedEmail,
+        code: otp,
+        expires_at: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    });
     console.log(`[AUTH] Verification OTP for ${normalizedEmail}: ${otp}`);
 
     res.json({
@@ -287,10 +327,9 @@ router.post('/register', async (req, res) => {
 // POST /api/auth/verify-otp
 router.post('/verify-otp', async (req, res) => {
   try {
-    const { email, otpCode } = req.body;
-    if (!email || !otpCode) {
-      return res.status(400).json({ message: 'Email and verification code are required' });
-    }
+    const validation = validateBody(res, verifyOtpSchema, req.body);
+    if (!validation.success) return;
+    const { email, otpCode } = validation.data;
 
     const normalizedEmail = email.trim().toLowerCase();
     const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
@@ -298,14 +337,16 @@ router.post('/verify-otp', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const record = otpStore.get(normalizedEmail);
+    const record = await prisma.authOtp.findUnique({ where: { email: normalizedEmail } });
     // In development or if code matches (accepts generated code or fallback '123456')
-    const isValid = (record && record.otp === otpCode) || otpCode === '123456';
+    const isValid =
+      (record && record.code === otpCode && record.expires_at >= new Date()) ||
+      otpCode === '123456';
     if (!isValid) {
       return res.status(400).json({ message: 'Invalid or expired verification code' });
     }
 
-    otpStore.delete(normalizedEmail);
+    await prisma.authOtp.delete({ where: { email: normalizedEmail } });
     const token = generateToken(user);
 
     const safeUser = {
@@ -335,22 +376,38 @@ router.post('/verify-otp', async (req, res) => {
 
 // POST /api/auth/resend-otp
 router.post('/resend-otp', async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email required' });
-  const normalizedEmail = email.trim().toLowerCase();
-  const otp = '123456';
-  otpStore.set(normalizedEmail, { otp, expiresAt: Date.now() + 15 * 60 * 1000 });
-  console.log(`[AUTH] Resent OTP for ${normalizedEmail}: ${otp}`);
-  res.json({ success: true, message: 'Code resent' });
+  try {
+    const validation = validateBody(res, resendOtpSchema, req.body);
+    if (!validation.success) return;
+    const { email } = validation.data;
+    const normalizedEmail = email.trim().toLowerCase();
+    const otp = '123456';
+    await prisma.authOtp.upsert({
+      where: { email: normalizedEmail },
+      update: {
+        code: otp,
+        expires_at: new Date(Date.now() + 15 * 60 * 1000),
+      },
+      create: {
+        email: normalizedEmail,
+        code: otp,
+        expires_at: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    });
+    console.log(`[AUTH] Resent OTP for ${normalizedEmail}: ${otp}`);
+    res.json({ success: true, message: 'Code resent' });
+  } catch (err) {
+    console.error('Resend OTP error:', err);
+    res.status(500).json({ message: 'Failed to resend code', error: err.message });
+  }
 });
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
-    }
+    const validation = validateBody(res, loginSchema, req.body);
+    if (!validation.success) return;
+    const { email, password } = validation.data;
 
     const normalizedEmail = email.trim().toLowerCase();
     const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
@@ -398,7 +455,9 @@ router.get('/me', authenticate({ required: true }), (req, res) => {
 // PATCH & PUT /api/auth/me
 const updateMeHandler = async (req, res) => {
   try {
-    const { full_name, avatar_config, avatar_url, bio } = req.body;
+    const validation = validateBody(res, updateMeSchema, req.body);
+    if (!validation.success) return;
+    const { full_name, avatar_config, avatar_url, bio } = validation.data;
     const updated = await prisma.user.update({
       where: { id: req.user.id },
       data: {
@@ -433,8 +492,9 @@ router.put('/me', authenticate({ required: true }), updateMeHandler);
 
 // POST /api/auth/reset-password-request
 router.post('/reset-password-request', async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: 'Email required' });
+  const validation = validateBody(res, resetPasswordRequestSchema, req.body);
+  if (!validation.success) return;
+  const { email } = validation.data;
   const normalizedEmail = email.trim().toLowerCase();
   const resetToken = jwt.sign({ email: normalizedEmail, type: 'reset' }, JWT_SECRET, { expiresIn: '1h' });
   console.log(`[AUTH] Password reset link for ${normalizedEmail}: /reset-password?token=${resetToken}`);
@@ -444,10 +504,9 @@ router.post('/reset-password-request', async (req, res) => {
 // POST /api/auth/reset-password
 router.post('/reset-password', async (req, res) => {
   try {
-    const { resetToken, newPassword } = req.body;
-    if (!resetToken || !newPassword) {
-      return res.status(400).json({ message: 'Reset token and new password are required' });
-    }
+    const validation = validateBody(res, resetPasswordSchema, req.body);
+    if (!validation.success) return;
+    const { resetToken, newPassword } = validation.data;
 
     const decoded = jwt.verify(resetToken, JWT_SECRET);
     if (decoded.type !== 'reset' || !decoded.email) {

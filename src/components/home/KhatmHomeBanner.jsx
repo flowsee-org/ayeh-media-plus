@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, ArrowLeft, HeartHandshake } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 
 export default function KhatmHomeBanner() {
   const [featuredKhatm, setFeaturedKhatm] = useState(null);
@@ -10,11 +10,11 @@ export default function KhatmHomeBanner() {
   useEffect(() => {
     async function loadFeatured() {
       try {
-        const sessions = await base44.entities.KhatmSession.list("-created_date", 1);
+        const sessions = await api.entities.KhatmSession.list("-created_date", 1);
         const item = Array.isArray(sessions) ? sessions[0] : sessions?.items?.[0];
         if (item) {
           setFeaturedKhatm(item);
-          const parts = await base44.entities.KhatmPart.filter({ session_id: item.id });
+          const parts = await api.entities.KhatmPart.filter({ session_id: item.id });
           const items = Array.isArray(parts) ? parts : parts.items || [];
           setCompletedCount(items.filter((p) => p.status === "completed").length);
         }

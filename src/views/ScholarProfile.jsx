@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import FollowButton from "@/components/live/FollowButton";
 import BackButton from "@/components/BackButton";
@@ -31,19 +31,19 @@ export default function ScholarProfile() {
 
   useEffect(() => {
     (async () => {
-      const current = await base44.auth.me().catch(() => null);
+      const current = await api.auth.me().catch(() => null);
 
       const [res, scholarEntity] = await Promise.all([
-        base44.entities.LiveSession
+        api.entities.LiveSession
           .filter({ scholar_id: id }, { sort: "-created_date", limit: 100 })
           .catch(() => ({ items: [] })),
-        base44.entities.Scholar.get(id).catch(() => null),
+        api.entities.Scholar.get(id).catch(() => null),
       ]);
       setSessions(res.items || []);
       setScholar(scholarEntity);
 
       if (current?.id && current.id !== id) {
-        const f = await base44.entities.Follow
+        const f = await api.entities.Follow
           .filter({ follower_id: current.id, scholar_id: id })
           .catch(() => ({ items: [] }));
         setFollowed((f.items || []).length > 0);

@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import PostCard from "@/components/community/PostCard";
 import { MessageCircle, TrendingUp, Heart, Sparkles, Trophy, ArrowLeft, Plus, Loader2, Hash } from "lucide-react";
@@ -12,10 +12,10 @@ export default function CommunityFeed() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    api.auth.me().then(setUser).catch(() => {});
     Promise.all([
-      base44.entities.Post.list("-created_date", 100).catch(() => []),
-      base44.entities.Competition.filter({ status: "active" }).catch(() => []),
+      api.entities.Post.list("-created_date", 100).catch(() => []),
+      api.entities.Competition.filter({ status: "active" }).catch(() => []),
     ]).then(([p, c]) => {
       setPosts(p);
       setCompetitions(c);
@@ -45,7 +45,7 @@ export default function CommunityFeed() {
     // Optimistic: update immediately, revert if the API call fails
     setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, liked_by: newLikedBy, likes_count: newLikedBy.length } : p)));
     try {
-      await base44.entities.Post.update(post.id, { liked_by: newLikedBy, likes_count: newLikedBy.length });
+      await api.entities.Post.update(post.id, { liked_by: newLikedBy, likes_count: newLikedBy.length });
     } catch {
       setPosts((prev) => prev.map((p) => (p.id === post.id ? post : p)));
       toast.error("ثبت لایک ناموفق بود. دوباره تلاش کنید.");

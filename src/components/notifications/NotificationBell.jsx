@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { timeAgo } from "@/components/community/shared";
 import { Bell, Heart, MessageCircle, CheckCheck, Loader2, Radio } from "lucide-react";
 
@@ -17,19 +17,19 @@ export default function NotificationBell() {
   const load = async (uid) => {
     setLoading(true);
     try {
-      setItems(await base44.entities.Notification.filter({ recipient_id: uid }, "-created_date", 30));
+      setItems(await api.entities.Notification.filter({ recipient_id: uid }, "-created_date", 30));
     } catch {}
     setLoading(false);
   };
 
   useEffect(() => {
     let unsub;
-    base44.auth.me().then((u) => {
+    api.auth.me().then((u) => {
       if (!u?.id) return;
       setUser(u);
       load(u.id);
       try {
-        unsub = base44.entities.Notification.subscribe(() => load(u.id));
+        unsub = api.entities.Notification.subscribe(() => load(u.id));
       } catch {}
     }).catch(() => {});
     return () => unsub?.();
@@ -51,7 +51,7 @@ export default function NotificationBell() {
     setOpen(false);
     if (!n.read) {
       setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
-      try { await base44.entities.Notification.update(n.id, { read: true }); } catch {}
+      try { await api.entities.Notification.update(n.id, { read: true }); } catch {}
     }
     if (n.type === "live" && n.live_session_id) navigate(`/live/${n.live_session_id}`);
     else if (n.post_id) navigate(`/community/${n.post_id}`);
@@ -59,7 +59,12 @@ export default function NotificationBell() {
 
   const markAll = async () => {
     try {
-      await base44.entities.Notification.updateMany({ recipient_id: user.id, read: false }, { $set: { read: true } });
+      const unreadItems = items.filter((n) => !n.read);
+      await Promise.all(
+        unreadItems.map((n) =>
+          api.entities.Notification.update(n.id, { read: true })
+        )
+      );
       setItems((prev) => prev.map((x) => ({ ...x, read: true })));
     } catch {}
   };

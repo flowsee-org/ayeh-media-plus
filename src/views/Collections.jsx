@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { CollectionCover, SectionOrnament } from "@/components/IslamicDecorations";
 import { Bookmark, Share2, Clock, BookOpen, Loader2, FolderHeart } from "lucide-react";
@@ -21,7 +21,7 @@ export default function Collections() {
   };
 
   const loadCollections = () => {
-    base44.entities.Collection.list("-created_date", 100)
+    api.entities.Collection.list("-created_date", 100)
       .then(setCollections)
       .catch(() => {})
       .finally(() => setLoading(false));

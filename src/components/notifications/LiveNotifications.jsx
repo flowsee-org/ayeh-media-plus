@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { Heart, MessageCircle, Radio, Sparkles } from "lucide-react";
 
@@ -18,7 +18,7 @@ export default function LiveNotifications() {
     let unsubLiveStarted;
     let unsubSocial;
 
-    base44.auth
+    api.auth
       .me()
       .then((u) => {
         if (!u?.id) return;
@@ -26,7 +26,7 @@ export default function LiveNotifications() {
 
         // 1. Listen for new persistent Notification records in DB
         try {
-          unsubDb = base44.entities.Notification.subscribe((event) => {
+          unsubDb = api.entities.Notification.subscribe((event) => {
             if (event.type !== "create") return;
             const n = event.data || {};
             if (n.recipient_id !== uidRef.current || seenRef.current.has(n.id)) return;
@@ -101,7 +101,7 @@ export default function LiveNotifications() {
 
     // 2. Real-time direct Socket.io announcement for Live Broadcasts
     try {
-      unsubLiveStarted = base44.socket.on("scholar:live_started", (session) => {
+      unsubLiveStarted = api.socket.on("scholar:live_started", (session) => {
         if (!session?.id) return;
         const key = `live_${session.id}`;
         if (seenRef.current.has(key)) return;
@@ -161,7 +161,7 @@ export default function LiveNotifications() {
 
     // 3. Real-time direct Socket.io push for social notifications
     try {
-      unsubSocial = base44.socket.on("social:notification", (data) => {
+      unsubSocial = api.socket.on("social:notification", (data) => {
         if (!data || data.recipient_id !== uidRef.current) return;
         const key = `social_${data.id || Date.now()}`;
         if (seenRef.current.has(key)) return;

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { X, Loader2, Camera } from "lucide-react";
 
 export default function CreateStory({ user, onPosted, onClose }) {
@@ -21,7 +21,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
     try {
       const isVideo = f.type.startsWith("video/");
       setMediaType(isVideo ? "video" : "image");
-      const res = await base44.integrations.Core.UploadPublicFile({ file: f });
+      const res = await api.integrations.Core.UploadPublicFile({ file: f });
       setMediaUrl(res.file_url);
     } catch {
       setError("خطا در بارگذاری فایل");
@@ -34,7 +34,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
     setPosting(true);
     setError("");
     try {
-      await base44.entities.Story.create({
+      await api.entities.Story.create({
         author_id: user?.id || "guest",
         author_name: user?.full_name || user?.phone || user?.email || "کاربر تدبّر",
         author_avatar: user?.avatar_url || "",

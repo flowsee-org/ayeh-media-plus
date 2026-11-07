@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 
 /** Scholars & teachers may create tadabbur content; everyone else is read-only. */
 export function isScholarUser(user) {
@@ -11,7 +11,7 @@ export function useScholar() {
   const [state, setState] = useState({ user: null, loading: true });
 
   useEffect(() => {
-    base44.auth
+    api.auth
       .me()
       .then((user) => setState({ user, loading: false }))
       .catch(() => setState({ user: null, loading: false }));

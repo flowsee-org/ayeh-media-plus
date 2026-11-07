@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Trophy, ArrowLeft, Gift } from "lucide-react";
 
 /** Bold prize strip: shows active competitions and their prizes above the feed. */
@@ -8,7 +8,7 @@ export default function ActivePrizeStrip() {
   const [comps, setComps] = useState([]);
 
   useEffect(() => {
-    base44.entities.Competition.filter({ status: "active" })
+    api.entities.Competition.filter({ status: "active" })
       .then((list) => setComps((list || []).slice(0, 3)))
       .catch(() => {});
   }, []);

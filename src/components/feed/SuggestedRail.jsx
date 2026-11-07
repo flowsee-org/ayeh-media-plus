@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { BookOpen, Compass, Users, ArrowLeft } from "lucide-react";
 
 /** Instagram-style right rail: suggestions, scholars and a daily verse. */
@@ -10,15 +10,15 @@ export default function SuggestedRail() {
   const [verse, setVerse] = useState(null);
 
   useEffect(() => {
-    base44.entities.Collection
+    api.entities.Collection
       .list({ sort: "-created_date", limit: 4 })
       .then((r) => setCollections(r.items || []))
       .catch(() => {});
-    base44.entities.Scholar
+    api.entities.Scholar
       .list({ sort: "name", limit: 5 })
       .then((r) => setScholars(r.items || []))
       .catch(() => {});
-    base44.entities.Verse
+    api.entities.Verse
       .list({ sort: "-created_date", limit: 10 })
       .then((r) => setVerse((r.items || [])[0] || null))
       .catch(() => {});

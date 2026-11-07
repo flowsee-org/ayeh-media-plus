@@ -1,4 +1,4 @@
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { recordEngagement } from "@/lib/personalization";
 
 /* Fallback topic: posts without tags are scored by their type */
@@ -12,7 +12,7 @@ export async function togglePostLike(post, user) {
   const isLiked = likedBy.includes(user.id);
   const liked_by = isLiked ? likedBy.filter((id) => id !== user.id) : [...likedBy, user.id];
   const likes_count = liked_by.length;
-  await base44.entities.Post.update(post.id, { liked_by, likes_count });
+  await api.entities.Post.update(post.id, { liked_by, likes_count });
   if (!isLiked) {
     recordEngagement(tagsOf(post), 3);
     notifyPostOwner({ post, actor: user, type: "like" });
@@ -24,7 +24,7 @@ export async function togglePostLike(post, user) {
 export async function notifyPostOwner({ post, actor, type, excerpt }) {
   if (!post?.author_id || !actor || post.author_id === actor.id) return;
   try {
-    await base44.entities.Notification.create({
+    await api.entities.Notification.create({
       recipient_id: post.author_id,
       actor_id: actor.id,
       actor_name: actor.full_name || actor.email,

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { LayoutDashboard, BookOpen, ScrollText, MessageCircle, Users, FolderHeart, Compass, Shield, Loader2, Plus, Trash2, Pencil, Lock } from "lucide-react";
 import Dashboard from "@/components/admin/Dashboard";
@@ -143,7 +143,7 @@ function useList(loader) {
 }
 
 function VersesAdmin() {
-  const { items, loading, reload } = useList(() => base44.entities.Verse.list("-created_date", 100));
+  const { items, loading, reload } = useList(() => api.entities.Verse.list("-created_date", 100));
   const [form, setForm] = useState(null); // null = بسته، {} = آیه جدید، آبجکت = ویرایش
 
   return (
@@ -169,7 +169,7 @@ function VersesAdmin() {
               <button onClick={() => setForm(v)} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition" title="ویرایش">
                 <Pencil className="h-4 w-4" />
               </button>
-              <button onClick={async () => { await base44.entities.Verse.delete(v.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition" title="حذف">
+              <button onClick={async () => { await api.entities.Verse.delete(v.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition" title="حذف">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -190,7 +190,7 @@ function VersesAdmin() {
 }
 
 function ScholarsAdmin() {
-  const { items, loading, reload } = useList(() => base44.entities.Scholar.list("-created_date", 100));
+  const { items, loading, reload } = useList(() => api.entities.Scholar.list("-created_date", 100));
   const [show, setShow] = useState(false);
 
   return (
@@ -207,12 +207,12 @@ function ScholarsAdmin() {
         <div className="space-y-2">
           {items.map((s) => (
             <div key={s.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name?.[0]}</div>
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name ? s.name[0] : "?"}</div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium">{s.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1">{s.title} · {s.specialization}</p>
+                <p className="text-xs text-muted-foreground line-clamp-1">{s.title} · {s.bio?.slice(0, 30) || ""}</p>
               </div>
-              <button onClick={async () => { await base44.entities.Scholar.delete(s.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
+              <button onClick={async () => { await api.entities.Scholar.delete(s.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -231,7 +231,7 @@ function ScholarForm({ onClose, onSaved }) {
   const submit = async () => {
     setSaving(true);
     try {
-      await base44.entities.Scholar.create({
+      await api.entities.Scholar.create({
         ...form,
         books: form.books.split(",").map((s) => s.trim()).filter(Boolean),
       });
@@ -258,7 +258,7 @@ function ScholarForm({ onClose, onSaved }) {
 }
 
 function CollectionsAdmin() {
-  const { items, loading, reload } = useList(() => base44.entities.Collection.list("-created_date", 100));
+  const { items, loading, reload } = useList(() => api.entities.Collection.list("-created_date", 100));
   const [show, setShow] = useState(false);
 
   return (
@@ -280,7 +280,7 @@ function CollectionsAdmin() {
                 <div className="text-sm font-medium">{c.name}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1">{c.description}</p>
               </div>
-              <button onClick={async () => { await base44.entities.Collection.delete(c.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
+              <button onClick={async () => { await api.entities.Collection.delete(c.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -301,7 +301,7 @@ function CollectionForm({ onClose, onSaved }) {
     try {
       const keys = form.verse_keys.split(",").map((s) => s.trim()).filter(Boolean);
       const topics = form.related_topics.split(",").map((s) => s.trim()).filter(Boolean);
-      await base44.entities.Collection.create({
+      await api.entities.Collection.create({
         name: form.name,
         description: form.description,
         theme_color: form.theme_color,
@@ -357,7 +357,7 @@ function CollectionForm({ onClose, onSaved }) {
 }
 
 function TopicsAdmin() {
-  const { items, loading, reload } = useList(() => base44.entities.Topic.list("-created_date", 100));
+  const { items, loading, reload } = useList(() => api.entities.Topic.list("-created_date", 100));
   const [show, setShow] = useState(false);
 
   return (
@@ -379,7 +379,7 @@ function TopicsAdmin() {
                 <div className="text-sm font-medium">{t.name}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1">{t.description} · {(t.verse_keys || []).length} آیه</p>
               </div>
-              <button onClick={async () => { await base44.entities.Topic.delete(t.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
+              <button onClick={async () => { await api.entities.Topic.delete(t.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -399,7 +399,7 @@ function TopicForm({ onClose, onSaved }) {
     setSaving(true);
     try {
       const keys = form.verse_keys.split(",").map((s) => s.trim()).filter(Boolean);
-      await base44.entities.Topic.create({ ...form, verse_keys: keys, verse_count: keys.length });
+      await api.entities.Topic.create({ ...form, verse_keys: keys, verse_count: keys.length });
       onSaved();
     } catch {}
     setSaving(false);

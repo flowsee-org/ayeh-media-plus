@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Plus, Trash2, Loader2, Pencil } from "lucide-react";
 import { EmptyState, Field, Modal, inputCls } from "./shared";
 import SelectInput from "./SelectInput";
@@ -21,7 +21,7 @@ export default function PostsAdmin() {
 
   const reload = () => {
     setLoading(true);
-    base44.entities.Post.list("-created_date", 100)
+    api.entities.Post.list("-created_date", 100)
       .then(setItems)
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -53,7 +53,7 @@ export default function PostsAdmin() {
               <button onClick={() => setForm(p)} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition shrink-0" title="ویرایش">
                 <Pencil className="h-4 w-4" />
               </button>
-              <button onClick={async () => { await base44.entities.Post.delete(p.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition shrink-0" title="حذف">
+              <button onClick={async () => { await api.entities.Post.delete(p.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition shrink-0" title="حذف">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -110,9 +110,9 @@ function PostForm({ initial, onClose, onSaved }) {
         if (form[k]) payload[k] = form[k];
       });
       if (initial?.id) {
-        await base44.entities.Post.update(initial.id, payload);
+        await api.entities.Post.update(initial.id, payload);
       } else {
-        await base44.entities.Post.create(payload);
+        await api.entities.Post.create(payload);
       }
       onSaved();
     } catch (e) {

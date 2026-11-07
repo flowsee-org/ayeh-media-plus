@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link, useNavigate } from "react-router-dom";
+import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { IslamicStar } from "@/components/IslamicOrnaments";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +33,7 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await base44.auth.register({ email, password, full_name: fullName });
+      await api.auth.register({ email, password, full_name: fullName });
       setShowOtp(true);
     } catch (err) {
       setError(err.message || "خطا در ثبت‌نام. لطفاً دوباره تلاش کنید.");
@@ -45,13 +46,11 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const result = await base44.auth.verifyOtp({ email, otpCode });
-      if (result?.access_token) {
-        base44.auth.setToken(result.access_token);
-      }
+      const result = await api.auth.verifyOtp({ email, otpCode });
+      // verifyOtp already stores the token in base44Client; no need to set again.
       const params = new URLSearchParams(window.location.search);
       const returnTo = params.get("returnTo");
-      window.location.href = returnTo || "/";
+      navigate(returnTo || "/");
     } catch (err) {
       setError(err.message || "کد تأیید نامعتبر است");
     } finally {
@@ -62,7 +61,7 @@ export default function Register() {
   const handleResend = async () => {
     setError("");
     try {
-      await base44.auth.resendOtp(email);
+      await api.auth.resendOtp(email);
     } catch (err) {
       setError(err.message || "ارسال مجدد کد ناموفق بود");
     }

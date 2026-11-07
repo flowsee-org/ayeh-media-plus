@@ -304,3 +304,25 @@ model DailyQuestProgress {
   updated_date   DateTime @updatedAt
 }
 
+// Database-backed OTP / captcha store (replaces in-memory Maps so data
+// survives server restarts and works across multiple instances).
+model AuthOtp {
+  id          String   @id @default(uuid())
+  email       String?  @unique
+  phone       String?  @unique
+  code        String
+  expires_at  DateTime
+  created_date DateTime @default(now())
+  @@index([email])
+  @@index([phone])
+}
+
+model AuthCaptcha {
+  id         String   @id @default(uuid())
+  captcha_id String   @unique
+  answer     String
+  expires_at DateTime
+  created_date DateTime @default(now())
+  @@index([captcha_id])
+}
+

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { IslamicNumberBadge } from "@/components/IslamicOrnaments";
 import {
@@ -42,8 +42,8 @@ export default function Talks() {
   const loadData = useCallback(() => {
     setLoading(true);
     Promise.all([
-      base44.entities.Podcast.list("-created_date", 100).catch(() => ({ items: [] })),
-      base44.entities.Verse.list("-created_date", 200).catch(() => ({ items: [] })),
+      api.entities.Podcast.list("-created_date", 100).catch(() => ({ items: [] })),
+      api.entities.Verse.list("-created_date", 200).catch(() => ({ items: [] })),
     ])
       .then(([podRes, verseRes]) => {
         setPodcasts(podRes.items || podRes || []);

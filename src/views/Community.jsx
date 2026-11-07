@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { togglePostLike } from "@/lib/social";
 import { toast } from "react-hot-toast";
@@ -38,7 +38,7 @@ export default function Community() {
 
   useEffect(() => {
     if (!authUser) {
-      base44.auth.me().then(setUser).catch(() => {});
+      api.auth.me().then(setUser).catch(() => {});
     }
   }, [authUser]);
 
@@ -49,7 +49,7 @@ export default function Community() {
   const loadPosts = async () => {
     setLoading(true);
     try {
-      setPosts(await base44.entities.Post.list("-created_date", 60));
+      setPosts(await api.entities.Post.list("-created_date", 60));
     } catch {}
     setLoading(false);
   };
@@ -104,7 +104,7 @@ export default function Community() {
     if (!currentUser || post.author_id !== currentUser.id) return;
     if (!window.confirm("آیا از حذف این پست مطمئن هستید؟")) return;
     try {
-      await base44.entities.Post.delete(post.id);
+      await api.entities.Post.delete(post.id);
       setPosts((prev) => prev.filter((p) => p.id !== post.id));
       toast.success("پست با موفقیت حذف شد");
     } catch {

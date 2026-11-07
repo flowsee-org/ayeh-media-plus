@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { IslamicStar } from "@/components/IslamicOrnaments";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const resetToken = searchParams.get("token");
 
   const [newPassword, setNewPassword] = useState("");
@@ -31,10 +32,10 @@ export default function ResetPassword() {
     }
     setLoading(true);
     try {
-      await base44.auth.resetPassword({ resetToken, newPassword });
+      await api.auth.resetPassword({ resetToken, newPassword });
       setSuccess(true);
       setTimeout(() => {
-        window.location.href = "/login";
+        navigate("/login");
       }, 2000);
     } catch (err) {
       setError(err.message || "پیوند بازیابی رمز عبور نامعتبر است یا منقضی شده است");

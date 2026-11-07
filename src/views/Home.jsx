@@ -8,14 +8,14 @@ import IslamicArtShowcase from "@/components/home/IslamicArtShowcase";
 import TalksPreview from "@/components/home/TalksPreview";
 import FeedList from "@/components/feed/FeedList";
 import SuggestedRail from "@/components/feed/SuggestedRail";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 
 export default function Home() {
   const [dailyVerse, setDailyVerse] = useState(null);
 
   useEffect(() => {
     // Pick a featured curated verse for hero
-    base44.entities.Verse.list("-created_date", 5)
+    api.entities.Verse.list("-created_date", 5)
       .then((items) => {
         if (items && items.length > 0) {
           setDailyVerse(items[0]);

@@ -29,9 +29,25 @@ const server = http.createServer(app);
 initSocket(server);
 
 // Middleware
-app.use(cors());
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:5173', 'http://localhost:5000'];
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'), false);
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Warn if using the default JWT secret in production
+if (process.env.NODE_ENV === 'production' && process.env.JWT_SECRET === 'ayeh_default_secret_2026') {
+  console.warn('⚠️  WARNING: Using default JWT_SECRET in production. Set JWT_SECRET in .env');
+}
 
 // Serve static uploaded files
 const uploadDir = path.join(__dirname, 'uploads');

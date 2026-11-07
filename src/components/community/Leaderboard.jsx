@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { Trophy, Crown, Flame } from "lucide-react";
 import { Avatar } from "./shared";
 
@@ -16,7 +16,7 @@ export default function Leaderboard() {
   const [rows, setRows] = useState(null);
 
   useEffect(() => {
-    base44.entities.CompetitionEntry.list("-votes_count", 300)
+    api.entities.CompetitionEntry.list("-votes_count", 300)
       .then((entries) => {
         const map = {};
         entries.forEach((e) => {

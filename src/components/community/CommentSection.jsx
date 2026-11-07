@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { notifyPostOwner } from "@/lib/social";
 import { toast } from "react-hot-toast";
 import { trackEngagement } from "@/lib/engagement";
@@ -31,14 +31,14 @@ export default function CommentSection({ postId, post, currentUser, comments: in
     if (!text.trim() || !currentUser) return;
     setPosting(true);
     try {
-      const c = await base44.entities.Comment.create({
+      const c = await api.entities.Comment.create({
         post_id: postId,
         author_id: currentUser.id,
         author_name: currentUser.full_name || currentUser.email,
         content: text.trim(),
       });
       update([c, ...comments]);
-      await base44.entities.Post.update(postId, { comments_count: comments.length + 1 });
+      await api.entities.Post.update(postId, { comments_count: comments.length + 1 });
       if (post) notifyPostOwner({ post, actor: currentUser, type: "comment", excerpt: text.trim() });
       setText("");
       trackEngagement("social");
@@ -61,7 +61,7 @@ export default function CommentSection({ postId, post, currentUser, comments: in
     setLiked(isLiked ? liked.filter((id) => id !== comment.id) : [...liked, comment.id]);
     update(prevList.map((c) => (c.id === comment.id ? { ...c, likes_count: newCount } : c)));
     try {
-      await base44.entities.Comment.update(comment.id, { likes_count: newCount });
+      await api.entities.Comment.update(comment.id, { likes_count: newCount });
     } catch {
       setLiked(isLiked ? [...liked, comment.id] : liked.filter((id) => id !== comment.id));
       update(prevList);
@@ -75,9 +75,9 @@ export default function CommentSection({ postId, post, currentUser, comments: in
     if (!currentUser || comment.author_id !== currentUser.id) return;
     if (!window.confirm("آیا از حذف این نظر مطمئن هستید؟")) return;
     try {
-      await base44.entities.Comment.delete(comment.id);
+      await api.entities.Comment.delete(comment.id);
       update(comments.filter((c) => c.id !== comment.id));
-      await base44.entities.Post.update(postId, { comments_count: Math.max(0, comments.length - 1) });
+      await api.entities.Post.update(postId, { comments_count: Math.max(0, comments.length - 1) });
       toast.success("نظر با موفقیت حذف شد");
     } catch {
       toast.error("حذف نظر ناموفق بود");

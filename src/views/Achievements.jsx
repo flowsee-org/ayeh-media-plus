@@ -10,7 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import DailyQuestsCard from "@/components/gamification/DailyQuestsCard";
 import BadgeGallery from "@/components/gamification/BadgeGallery";
@@ -24,7 +24,7 @@ export default function Achievements() {
 
   const fetchStatus = async () => {
     try {
-      const res = await base44.gamification.getStatus();
+      const res = await api.gamification.getStatus();
       setStatus(res);
     } catch (err) {
       console.error("Error fetching gamification status:", err);

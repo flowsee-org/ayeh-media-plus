@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import { toast } from "react-hot-toast";
 import {
@@ -24,7 +24,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
     setSaving(true);
     try {
       const avatar_config = serializeAvatar(selected.id, selected.cfg);
-      await base44.auth.updateMe({ avatar_config });
+      await api.auth.updateMe({ avatar_config });
       onSaved(avatar_config);
       toast.success(`شخصیت «${selected.name}» انتخاب شد`);
       onOpenChange(false);

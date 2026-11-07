@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 
 /**
  * Live bar: shows ONLY live sessions from scholars the user follows
@@ -12,14 +12,14 @@ export default function LiveBar() {
   const [sessions, setSessions] = useState([]);
 
   const load = async () => {
-    const me = await base44.auth.me().catch(() => null);
+    const me = await api.auth.me().catch(() => null);
     if (!me?.id) {
       setSessions([]);
       return;
     }
     const [followRes, liveRes] = await Promise.all([
-      base44.entities.Follow.filter({ follower_id: me.id }, { limit: 200 }).catch(() => ({ items: [] })),
-      base44.entities.LiveSession.filter({ status: "live" }, { sort: "-created_date", limit: 30 })
+      api.entities.Follow.filter({ follower_id: me.id }, { limit: 200 }).catch(() => ({ items: [] })),
+      api.entities.LiveSession.filter({ status: "live" }, { sort: "-created_date", limit: 30 })
         .catch(() => ({ items: [] })),
     ]);
     const followed = new Set((followRes.items || []).map((f) => f.scholar_id));
@@ -33,9 +33,9 @@ export default function LiveBar() {
   useEffect(() => {
     load();
     const id = setInterval(load, 30000);
-    const unsub = base44.entities.LiveSession.subscribe((event) => {
-      if (event.type === "create") load();
-      if (event.type === "update" && event.data?.status === "ended") load();
+    const unsub = api.entities.LiveSession.subscribe((event) => {
+      if (event.action === "create") load();
+      if (event.action === "update" && event.data?.status === "ended") load();
     });
     return () => { clearInterval(id); unsub(); };
   }, []);

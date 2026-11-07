@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import { PRESETS, serializeAvatar } from "@/lib/avatars";
 import { CARD_THEMES, CARD_FORMATS, buildVerseCardSvg, svgToDataUrl, svgToPngBlob } from "@/lib/verseCard";
@@ -62,8 +62,8 @@ export default function VerseCardStudio({ user, onClose, onPosted }) {
     try {
       const blob = await svgToPngBlob(svg, format.width, format.height);
       const file = new File([blob], `ayeh-card-${formatId}-${Date.now()}.png`, { type: "image/png" });
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
-      const created = await base44.entities.Post.create({
+      const { file_url } = await api.integrations.Core.UploadPublicFile({ file });
+      const created = await api.entities.Post.create({
         author_id: user.id,
         author_name: user.full_name || user.email,
         author_avatar: avatarValue,

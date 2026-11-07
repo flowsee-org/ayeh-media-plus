@@ -16,12 +16,11 @@ import {
   Check,
   Copy,
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { JUZ_DATA } from "@/lib/juzData";
 import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
-import { io } from "socket.io-client";
 
 export default function KhatmDetail() {
   const { id } = useParams();
@@ -48,7 +47,7 @@ export default function KhatmDetail() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const sessionData = await base44.entities.KhatmSession.get(id);
+      const sessionData = await api.entities.KhatmSession.get(id);
       if (!sessionData) {
         toast.error("دوره ختم مورد نظر یافت نشد");
         navigate("/khatm");
@@ -58,7 +57,7 @@ export default function KhatmDetail() {
       setSalawatCount(sessionData.salawat_count || 0);
 
       // Load parts
-      const partsRes = await base44.entities.KhatmPart.filter(
+      const partsRes = await api.entities.KhatmPart.filter(
         { session_id: id },
         "part_number",
         100
@@ -69,7 +68,7 @@ export default function KhatmDetail() {
       setParts(partsList);
 
       // Load Duas
-      const duasRes = await base44.entities.KhatmDua.filter(
+      const duasRes = await api.entities.KhatmDua.filter(
         { session_id: id },
         "-created_date",
         50
@@ -86,38 +85,38 @@ export default function KhatmDetail() {
   useEffect(() => {
     loadData();
 
-    // Socket.io real-time connection
-    const socket = io({
-      path: "/socket.io",
-      transports: ["websocket", "polling"],
-      autoConnect: true,
-    });
-    socketRef.current = socket;
+    // Socket.io real-time connection (uses authenticated global socket from api)
+    const socket = api.socket.get();
+    if (socket) {
+      socketRef.current = socket;
 
-    socket.emit("khatm:join", { sessionId: id });
+      socket.emit("khatm:join", { sessionId: id });
 
-    socket.on("khatm:salawat_updated", (data) => {
-      if (data.sessionId === id) {
-        setSalawatCount(data.salawat_count);
-      }
-    });
+      socket.on("khatm:salawat_updated", (data) => {
+        if (data.sessionId === id) {
+          setSalawatCount(data.salawat_count);
+        }
+      });
+    }
 
     // Entity change subscriptions
-    const unsubPart = base44.entities.KhatmPart.subscribe((event) => {
+    const unsubPart = api.entities.KhatmPart.subscribe((event) => {
       if (event.data?.session_id === id || event.data?.[0]?.session_id === id) {
         loadData();
       }
     });
 
-    const unsubDua = base44.entities.KhatmDua.subscribe((event) => {
+    const unsubDua = api.entities.KhatmDua.subscribe((event) => {
       if (event.data?.session_id === id) {
         loadData();
       }
     });
 
     return () => {
-      socket.emit("khatm:leave", { sessionId: id });
-      socket.disconnect();
+      if (socket) {
+        socket.emit("khatm:leave", { sessionId: id });
+        socket.off("khatm:salawat_updated");
+      }
       unsubPart?.();
       unsubDua?.();
     };
@@ -141,7 +140,7 @@ export default function KhatmDetail() {
   const doReservePart = async (part, targetUser) => {
     if (!targetUser) return;
     try {
-      const updated = await base44.entities.KhatmPart.update(part.id, {
+      const updated = await api.entities.KhatmPart.update(part.id, {
         status: "reserved",
         user_id: targetUser.id,
         user_name: targetUser.full_name || "کاربر آیه پلاس",
@@ -172,7 +171,7 @@ export default function KhatmDetail() {
   // Cancel Reservation
   const handleCancelReservation = async (part) => {
     try {
-      const updated = await base44.entities.KhatmPart.update(part.id, {
+      const updated = await api.entities.KhatmPart.update(part.id, {
         status: "available",
         user_id: null,
         user_name: null,
@@ -193,7 +192,7 @@ export default function KhatmDetail() {
   // Mark Part Completed
   const handleCompletePart = async (part) => {
     try {
-      const updated = await base44.entities.KhatmPart.update(part.id, {
+      const updated = await api.entities.KhatmPart.update(part.id, {
         status: "completed",
         completed_at: new Date(),
       });
@@ -223,7 +222,7 @@ export default function KhatmDetail() {
 
     try {
       setSubmittingDua(true);
-      const newDua = await base44.entities.KhatmDua.create({
+      const newDua = await api.entities.KhatmDua.create({
         session_id: id,
         user_id: user?.id || "guest",
         user_name: user?.full_name || "همراه قرآنی",

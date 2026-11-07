@@ -1,7 +1,7 @@
 'use client';
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import { getAudioUrl } from "@/lib/quranApi";
 import { getSurahByNumber } from "@/lib/surahData";
@@ -119,7 +119,7 @@ export default function Assistant() {
     setLoading(true);
 
     try {
-      const res = await base44.integrations.Core.InvokeLLM({
+      const res = await api.integrations.Core.InvokeLLM({
         prompt: `${SYSTEM_FRAMING}\n\nپیام یا حال روحی کاربر:\n"""${text}"""`,
         response_json_schema: {
           type: "object",

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import api from "@/lib/api";
 import {
   getReadCount, getProgressPercent, getRecentVerses, getUniqueSurahsRead,
   getJuzReadCount, getJuzVerseCounts, getBookmarksCount, getNotesCount,
@@ -38,7 +38,7 @@ export default function Profile() {
 
   useEffect(() => {
     Promise.all([
-      base44.auth.me().catch(() => null),
+      api.auth.me().catch(() => null),
       getSurahList().catch(() => []),
     ]).then(([u, s]) => {
       setUser(u);
@@ -288,8 +288,8 @@ function SettingsSection({ user }) {
   const handleDeleteAccount = async () => {
     if (!user) return;
     try {
-      await base44.entities.User.delete(user.id);
-      base44.auth.logout("/login");
+      await api.entities.User.delete(user.id);
+      api.auth.logout("/login");
     } catch {
       toast.error("حذف حساب در دسترس نیست. لطفاً از بخش پشتیبانی پیگیر باشید.");
     }

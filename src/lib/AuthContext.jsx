@@ -1,10 +1,12 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
+import { useRouter } from 'next/navigation';
+import api from "@/lib/api";
 import AuthModal from '@/components/auth/AuthModal';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
@@ -26,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   const checkAppState = async () => {
     try {
       setAuthError(null);
-      const token = base44.auth.getToken();
+      const token = api.auth.getToken();
       if (token) {
         await checkUserAuth();
       } else {
@@ -44,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   const checkUserAuth = async () => {
     try {
       setIsLoadingAuth(true);
-      const currentUser = await base44.auth.me();
+      const currentUser = await api.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
@@ -60,7 +62,10 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
-    base44.auth.logout(shouldRedirect ? '/login' : null);
+    api.auth.logout(null); // clear token without redirect
+    if (shouldRedirect) {
+      router.push('/login');
+    }
   };
 
   const openAuthModal = (callback = null) => {
