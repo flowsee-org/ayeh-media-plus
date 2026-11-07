@@ -9,9 +9,12 @@ import DailyQuests from "@/components/engagement/DailyQuests";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
-export default function AchievementsShelf({ readCount = 0, surahsRead = 0, notesCount = 0, bookmarksCount = 0 }) {
+export default function AchievementsShelf({ readCount = 0, surahsRead = 0, completedSurahs, notesCount = 0, bookmarksCount = 0 }) {
   const [snap, setSnap] = useState(getEngagementSnapshot);
   const [showQuests, setShowQuests] = useState(true);
+
+  // "Surah complete" must mean every verse was read, not just one verse.
+  const fullyReadSurahs = completedSurahs ?? surahsRead;
 
   useEffect(() => {
     const refresh = () => setSnap(getEngagementSnapshot());
@@ -51,7 +54,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, notes
       title: "فاتح سوره",
       description: "تلاوت کامل حداقل یک سوره",
       icon: Library,
-      unlocked: surahsRead >= 1,
+      unlocked: fullyReadSurahs >= 1,
       color: "from-blue-500/20 to-cyan-500/10 text-blue-500 border-blue-500/30",
     },
     {

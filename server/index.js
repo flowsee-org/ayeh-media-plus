@@ -44,9 +44,10 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Warn if using the default JWT secret in production
+// Warn if the well-known default JWT secret is explicitly configured in
+// production. Missing secrets already abort startup in server/lib/jwt.js.
 if (process.env.NODE_ENV === 'production' && process.env.JWT_SECRET === 'ayeh_default_secret_2026') {
-  console.warn('⚠️  WARNING: Using default JWT_SECRET in production. Set JWT_SECRET in .env');
+  console.warn('⚠️  WARNING: Using the default JWT_SECRET in production. Set a unique JWT_SECRET in .env');
 }
 
 // Serve static uploaded files

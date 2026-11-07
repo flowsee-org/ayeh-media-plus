@@ -1,8 +1,7 @@
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { prisma } from './db.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'ayeh_default_secret_2026';
+import { JWT_SECRET } from './lib/jwt.js';
 
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
@@ -113,14 +112,34 @@ export function initSocket(server) {
       });
     });
 
-    // Scholar announcement: broadcast new live session to all connected clients
+    // Scholar announcement: broadcast new live session to all connected clients.
+    // Only authenticated scholars/admins may announce a broadcast.
     socket.on('scholar:start_broadcast', (sessionData) => {
-      socket.broadcast.emit('scholar:live_started', sessionData);
+      const canBroadcast = socketUser && (socketUser.is_scholar || socketUser.role === 'admin');
+      if (!canBroadcast) {
+        socket.emit('message', { type: 'error', message: 'ورود به سامانه الزامی است' });
+        return;
+      }
+      socket.broadcast.emit('scholar:live_started', {
+        ...sessionData,
+        scholar_id: socketUser.id,
+        scholar_name: sessionData?.scholar_name || socketUser.full_name,
+      });
     });
 
-    // Social notification: like or comment alert
+    // Social notification: like or comment alert.
+    // Requires authentication; the actor identity always comes from the socket
+    // session, never from client-supplied data.
     socket.on('social:activity', (data) => {
-      socket.broadcast.emit('social:notification', data);
+      if (!socketUser) {
+        socket.emit('message', { type: 'error', message: 'ورود به سامانه الزامی است' });
+        return;
+      }
+      socket.broadcast.emit('social:notification', {
+        ...(data && typeof data === 'object' ? data : {}),
+        actor_id: socketUser.id,
+        actor_name: socketUser.full_name || 'کاربر آیه',
+      });
     });
 
     // Handle LiveRoom messages
@@ -339,12 +358,19 @@ export function initSocket(server) {
       }
     });
 
-    socket.on('khatm:salawat', async ({ sessionId, amount = 1 }) => {
+    socket.on('khatm:salawat', async ({ sessionId, amount = 1 } = {}) => {
       if (!sessionId) return;
+      if (!socketUser) {
+        socket.emit('message', { type: 'error', message: 'ورود به سامانه الزامی است' });
+        return;
+      }
+      // Clamp to a sane positive integer: never let a client decrement or
+      // inflate the counter with a negative/huge amount.
+      const increment = Math.min(100, Math.max(1, Math.floor(Number(amount) || 1)));
       try {
         const updated = await prisma.khatmSession.update({
-          where: { id: sessionId },
-          data: { salawat_count: { increment: Math.min(amount, 100) } },
+          where: { id: String(sessionId) },
+          data: { salawat_count: { increment } },
         });
         io.to(`khatm_${sessionId}`).emit('khatm:salawat_updated', {
           sessionId,

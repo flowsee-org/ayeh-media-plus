@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { prisma } from '../db.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'ayeh_default_secret_2026';
+import { JWT_SECRET } from '../lib/jwt.js';
 
 export const authenticate = (options = { required: true }) => {
   return async (req, res, next) => {

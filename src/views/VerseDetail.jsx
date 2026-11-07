@@ -6,6 +6,7 @@ import api from "@/lib/api";
 import { getAyah, RECITERS, getAudioUrl } from "@/lib/quranApi";
 import { SURAH_DATA } from "@/lib/surahData";
 import { markVerseRead } from "@/lib/readingTracker";
+import { scopedKey } from "@/lib/storageScope";
 import ReflectionCard from "@/components/ReflectionCard";
 import IslamicPattern from "@/components/IslamicPattern";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
@@ -140,7 +141,7 @@ export default function VerseDetail() {
 
   useEffect(() => {
     const key = `${surah}:${ayah}`;
-    const bookmarks = JSON.parse(localStorage.getItem("tadabbur-bookmarks") || "[]");
+    const bookmarks = JSON.parse(localStorage.getItem(scopedKey("tadabbur-bookmarks")) || "[]");
     setBookmarked(bookmarks.includes(key));
   }, [surah, ayah]);
 
@@ -154,12 +155,12 @@ export default function VerseDetail() {
 
   const toggleBookmark = () => {
     const key = `${surah}:${ayah}`;
-    const bookmarks = JSON.parse(localStorage.getItem("tadabbur-bookmarks") || "[]");
+    const bookmarks = JSON.parse(localStorage.getItem(scopedKey("tadabbur-bookmarks")) || "[]");
     const wasBookmarked = bookmarks.includes(key);
     const updated = wasBookmarked
       ? bookmarks.filter((b) => b !== key)
       : [...bookmarks, key];
-    localStorage.setItem("tadabbur-bookmarks", JSON.stringify(updated));
+    localStorage.setItem(scopedKey("tadabbur-bookmarks"), JSON.stringify(updated));
     setBookmarked(updated.includes(key));
     if (!wasBookmarked) trackEngagement("bookmark");
   };
@@ -822,7 +823,9 @@ function Related({ reflection }) {
 function Notes({ verseKey }) {
   const [notes, setNotes] = useState("");
   const [savedStatus, setSavedStatus] = useState(false);
-  const storageKey = `tadabbur-notes-${verseKey}`;
+  // Notes are namespaced per account so two users on the same browser don't
+  // read each other's tadabbur notes (and the profile note count matches).
+  const storageKey = scopedKey(`tadabbur-notes-${verseKey}`);
 
   useEffect(() => {
     setNotes(localStorage.getItem(storageKey) || "");

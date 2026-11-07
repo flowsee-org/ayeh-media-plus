@@ -105,11 +105,12 @@ async function runTests() {
 
   // 9. Socket.io Live Room connection
   console.log('9. Testing Socket.io LiveRoom...');
-  await new Promise((resolve) => {
+  await new Promise((resolve, reject) => {
     const socket = ioc('http://localhost:5000', {
       path: '/socket.io',
       transports: ['websocket'],
     });
+    let receivedRoomState = false;
 
     socket.on('connect', () => {
       console.log('   Socket.io connected ✅');
@@ -118,15 +119,25 @@ async function runTests() {
 
     socket.on('message', (msg) => {
       if (msg.type === 'room_state') {
+        receivedRoomState = true;
         console.log('   Received room_state from LiveRoom actor ✅');
         socket.disconnect();
         resolve(true);
       }
     });
 
+    socket.on('connect_error', (err) => {
+      socket.disconnect();
+      reject(new Error(`Socket.io connection failed: ${err.message}`));
+    });
+
     setTimeout(() => {
       socket.disconnect();
-      resolve(true);
+      if (receivedRoomState) {
+        resolve(true);
+      } else {
+        reject(new Error('Socket.io room_state was not received before timeout'));
+      }
     }, 3000);
   });
 
@@ -201,6 +212,7 @@ async function runTests() {
     const scholarSocket = ioc('http://localhost:5000', {
       path: '/socket.io',
       transports: ['websocket'],
+      query: { token },
     });
 
     const viewerSocket = ioc('http://localhost:5000', {
@@ -231,14 +243,25 @@ async function runTests() {
     });
 
     scholarSocket.on('message', (msg) => {
-      if (msg.type === 'hand_raised_list' && msg.list?.some((h) => h.connId === 'viewer-conn-2')) {
-        handRaiseReceived = true;
-        // Broadcast scholar live started announcement
-        scholarSocket.emit('scholar:start_broadcast', {
-          id: 'test-session-123',
-          title: 'جلسه تفسیری زنده',
-          scholar_name: 'استاد نمونه',
-        });
+      // A scholar that joins after a hand was raised receives the pending list
+      // in `room_state` rather than a live `hand_raised_list` event, so accept
+      // both shapes.
+      const raisedList =
+        msg.type === 'hand_raised_list'
+          ? msg.list
+          : msg.type === 'room_state'
+            ? msg.handRaisedList
+            : null;
+      if (raisedList?.some((h) => h.connId === 'viewer-conn-2')) {
+        if (!handRaiseReceived) {
+          handRaiseReceived = true;
+          // Broadcast scholar live started announcement
+          scholarSocket.emit('scholar:start_broadcast', {
+            id: 'test-session-123',
+            title: 'جلسه تفسیری زنده',
+            scholar_name: 'استاد نمونه',
+          });
+        }
       }
     });
 

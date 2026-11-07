@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import api from "@/lib/api";
+import { setStorageScope } from "@/lib/storageScope";
 import AuthModal from '@/components/auth/AuthModal';
 
 const AuthContext = createContext();
@@ -24,6 +25,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkAppState();
   }, []);
+
+  // Keep localStorage namespaced to the signed-in account so study progress,
+  // bookmarks and gamification never leak between users on one browser.
+  useEffect(() => {
+    setStorageScope(user?.id || null);
+  }, [user?.id]);
 
   const checkAppState = async () => {
     try {

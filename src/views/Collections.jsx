@@ -6,17 +6,18 @@ import { toast } from "react-hot-toast";
 import { CollectionCover, SectionOrnament } from "@/components/IslamicDecorations";
 import { Bookmark, Share2, Clock, BookOpen, Loader2, FolderHeart } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
+import { scopedKey } from "@/lib/storageScope";
 
 export default function Collections() {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [saved, setSaved] = useState(() => JSON.parse(localStorage.getItem("saved-collections") || "[]"));
+  const [saved, setSaved] = useState(() => JSON.parse(localStorage.getItem(scopedKey("saved-collections")) || "[]"));
 
   const toggleSave = (id) => {
     const isSaved = saved.includes(id);
     const updated = isSaved ? saved.filter(s => s !== id) : [...saved, id];
     setSaved(updated);
-    localStorage.setItem("saved-collections", JSON.stringify(updated));
+    localStorage.setItem(scopedKey("saved-collections"), JSON.stringify(updated));
     toast.success(!isSaved ? "مجموعه به نشان‌شده‌ها اضافه شد" : "مجموعه از نشان‌شده‌ها حذف شد");
   };
 

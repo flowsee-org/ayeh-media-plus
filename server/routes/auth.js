@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../db.js';
 import { authenticate } from '../middleware/auth.js';
+import { JWT_SECRET, IS_PRODUCTION } from '../lib/jwt.js';
 import {
   validateBody,
   sendOtpPhoneSchema,
@@ -18,7 +19,18 @@ import {
 } from '../lib/validation.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'ayeh_default_secret_2026';
+
+// Fixed demo codes are a development convenience only. They must never be
+// accepted in production, otherwise anyone who knows a phone/email can log in
+// without receiving a real OTP.
+const DEV_PHONE_OTP = '12345';
+const DEV_EMAIL_OTP = '123456';
+
+function generateEmailOtp() {
+  return IS_PRODUCTION
+    ? String(Math.floor(100000 + Math.random() * 900000))
+    : DEV_EMAIL_OTP;
+}
 
 // Database-backed OTP / captcha store (replaces in-memory Maps so data
 // survives server restarts and works across multiple instances).
@@ -164,7 +176,8 @@ router.post('/send-otp-phone', async (req, res) => {
       success: true,
       message: 'کد تأیید پیامک شد',
       phone: cleanPhone,
-      dev_otp: otp, // Available in dev for seamless testing
+      // Never leak the code in production; it is a dev convenience only.
+      ...(!IS_PRODUCTION ? { dev_otp: otp } : {}),
     });
   } catch (err) {
     console.error('Send OTP Phone error:', err);
@@ -192,15 +205,19 @@ router.post('/verify-otp-phone', async (req, res) => {
     const cleanOtp = toEnglishDigits(otp);
     const record = await prisma.authOtp.findUnique({ where: { phone: cleanPhone } });
 
-    // Allow generated OTP or fallback dev code '12345'
+    // Accept the stored OTP, plus the fixed dev code outside production.
     const isValid =
       (record && record.code === cleanOtp && record.expires_at >= new Date()) ||
-      cleanOtp === '12345';
+      (!IS_PRODUCTION && cleanOtp === DEV_PHONE_OTP);
     if (!isValid) {
       return res.status(400).json({ message: 'کد تایید اشتباه یا منقضی شده است' });
     }
 
-    await prisma.authOtp.delete({ where: { phone: cleanPhone } });
+    // The dev fallback code is accepted without a stored record, so only
+    // consume the OTP row when one actually exists.
+    if (record) {
+      await prisma.authOtp.delete({ where: { phone: cleanPhone } });
+    }
 
     // Find or create user
     let user = await prisma.user.findUnique({ where: { phone: cleanPhone } });
@@ -297,8 +314,8 @@ router.post('/register', async (req, res) => {
       },
     });
 
-    // Store OTP (default demo OTP is '123456', or random 6 digits)
-    const otp = '123456';
+    // Store a random 6-digit OTP (fixed demo code outside production).
+    const otp = generateEmailOtp();
     await prisma.authOtp.upsert({
       where: { email: normalizedEmail },
       update: {
@@ -338,15 +355,17 @@ router.post('/verify-otp', async (req, res) => {
     }
 
     const record = await prisma.authOtp.findUnique({ where: { email: normalizedEmail } });
-    // In development or if code matches (accepts generated code or fallback '123456')
+    // Accept the stored OTP, plus the fixed dev code outside production.
     const isValid =
       (record && record.code === otpCode && record.expires_at >= new Date()) ||
-      otpCode === '123456';
+      (!IS_PRODUCTION && otpCode === DEV_EMAIL_OTP);
     if (!isValid) {
       return res.status(400).json({ message: 'Invalid or expired verification code' });
     }
 
-    await prisma.authOtp.delete({ where: { email: normalizedEmail } });
+    if (record) {
+      await prisma.authOtp.delete({ where: { email: normalizedEmail } });
+    }
     const token = generateToken(user);
 
     const safeUser = {
@@ -381,7 +400,7 @@ router.post('/resend-otp', async (req, res) => {
     if (!validation.success) return;
     const { email } = validation.data;
     const normalizedEmail = email.trim().toLowerCase();
-    const otp = '123456';
+    const otp = generateEmailOtp();
     await prisma.authOtp.upsert({
       where: { email: normalizedEmail },
       update: {
@@ -492,13 +511,37 @@ router.put('/me', authenticate({ required: true }), updateMeHandler);
 
 // POST /api/auth/reset-password-request
 router.post('/reset-password-request', async (req, res) => {
-  const validation = validateBody(res, resetPasswordRequestSchema, req.body);
-  if (!validation.success) return;
-  const { email } = validation.data;
-  const normalizedEmail = email.trim().toLowerCase();
-  const resetToken = jwt.sign({ email: normalizedEmail, type: 'reset' }, JWT_SECRET, { expiresIn: '1h' });
-  console.log(`[AUTH] Password reset link for ${normalizedEmail}: /reset-password?token=${resetToken}`);
-  res.json({ success: true, message: 'Password reset email sent (if account exists)', resetToken });
+  try {
+    const validation = validateBody(res, resetPasswordRequestSchema, req.body);
+    if (!validation.success) return;
+    const { email } = validation.data;
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Only mint a token for an existing account, but always answer with the
+    // same generic message so the endpoint cannot be used to enumerate users.
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    let devToken;
+    if (user) {
+      const resetToken = jwt.sign(
+        { email: normalizedEmail, type: 'reset' },
+        JWT_SECRET,
+        { expiresIn: '1h' }
+      );
+      console.log(`[AUTH] Password reset link for ${normalizedEmail}: /reset-password?token=${resetToken}`);
+      // In production the token is only delivered out-of-band (email/SMS).
+      // Returning it from the API would let any caller reset any account.
+      if (!IS_PRODUCTION) devToken = resetToken;
+    }
+
+    res.json({
+      success: true,
+      message: 'Password reset email sent (if account exists)',
+      ...(devToken ? { resetToken: devToken } : {}),
+    });
+  } catch (err) {
+    console.error('Reset password request error:', err);
+    res.status(500).json({ message: 'Failed to request password reset' });
+  }
 });
 
 // POST /api/auth/reset-password
@@ -522,6 +565,72 @@ router.post('/reset-password', async (req, res) => {
     res.json({ success: true, message: 'Password updated successfully' });
   } catch (err) {
     res.status(400).json({ message: 'Invalid or expired reset token', error: err.message });
+  }
+});
+
+// DELETE /api/auth/me — permanently delete the signed-in account and all of
+// its dependent data. The generic entities API intentionally cannot do this
+// because deleting a User row alone would orphan posts, comments, badges, etc.
+router.delete('/me', authenticate({ required: true }), async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Sessions created by this user own their parts and duas; delete those
+    // explicitly because the schema has no cascade relations.
+    const ownedSessions = await prisma.khatmSession.findMany({
+      where: { creator_id: userId },
+      select: { id: true },
+    });
+    const ownedSessionIds = ownedSessions.map((s) => s.id);
+
+    const ops = [
+      prisma.post.deleteMany({ where: { author_id: userId } }),
+      prisma.comment.deleteMany({ where: { author_id: userId } }),
+      prisma.story.deleteMany({ where: { author_id: userId } }),
+      prisma.competitionEntry.deleteMany({ where: { author_id: userId } }),
+      prisma.notification.deleteMany({
+        where: { OR: [{ recipient_id: userId }, { actor_id: userId }] },
+      }),
+      prisma.follow.deleteMany({
+        where: { OR: [{ follower_id: userId }, { scholar_id: userId }] },
+      }),
+      prisma.khatmDua.deleteMany({ where: { user_id: userId } }),
+      ...(ownedSessionIds.length
+        ? [
+            prisma.khatmPart.deleteMany({ where: { session_id: { in: ownedSessionIds } } }),
+            prisma.khatmDua.deleteMany({ where: { session_id: { in: ownedSessionIds } } }),
+            prisma.khatmSession.deleteMany({ where: { id: { in: ownedSessionIds } } }),
+          ]
+        : []),
+      // Reserved parts are structural: release them instead of deleting.
+      prisma.khatmPart.updateMany({
+        where: { user_id: userId },
+        data: {
+          user_id: null,
+          user_name: null,
+          user_avatar: null,
+          status: 'available',
+          reserved_at: null,
+        },
+      }),
+      prisma.userBadge.deleteMany({ where: { user_id: userId } }),
+      prisma.dailyQuestProgress.deleteMany({ where: { user_id: userId } }),
+      prisma.podcast.deleteMany({ where: { scholar_id: userId } }),
+      prisma.liveSession.deleteMany({ where: { scholar_id: userId } }),
+      // Curated collections are platform content; keep them, drop the owner.
+      prisma.collection.updateMany({ where: { user_id: userId }, data: { user_id: null } }),
+      ...(user.email ? [prisma.authOtp.deleteMany({ where: { email: user.email } })] : []),
+      ...(user.phone ? [prisma.authOtp.deleteMany({ where: { phone: user.phone } })] : []),
+      prisma.user.delete({ where: { id: userId } }),
+    ];
+
+    await prisma.$transaction(ops);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete account error:', err);
+    res.status(500).json({ message: 'Failed to delete account', error: err.message });
   }
 });
 

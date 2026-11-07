@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "@/lib/api";
+import { scopedKey } from "@/lib/storageScope";
 import { toast } from "react-hot-toast";
 import { getAyah, getSurahList } from "@/lib/quranApi";
 import { CollectionCover, IslamicBorder, SectionOrnament, VerseMarker } from "@/components/IslamicDecorations";
@@ -18,7 +19,7 @@ export default function CollectionDetail() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const savedList = JSON.parse(localStorage.getItem("saved-collections") || "[]");
+    const savedList = JSON.parse(localStorage.getItem(scopedKey("saved-collections")) || "[]");
     setSaved(savedList.includes(id));
   }, [id]);
 
@@ -66,10 +67,10 @@ export default function CollectionDetail() {
   }, [id]);
 
   const toggleSave = () => {
-    const savedList = JSON.parse(localStorage.getItem("saved-collections") || "[]");
+    const savedList = JSON.parse(localStorage.getItem(scopedKey("saved-collections")) || "[]");
     const isSaved = savedList.includes(id);
     const updated = isSaved ? savedList.filter(s => s !== id) : [...savedList, id];
-    localStorage.setItem("saved-collections", JSON.stringify(updated));
+    localStorage.setItem(scopedKey("saved-collections"), JSON.stringify(updated));
     setSaved(!isSaved);
     toast.success(!isSaved ? "مجموعه به نشان‌شده‌ها اضافه شد" : "مجموعه از نشان‌شده‌ها حذف شد");
   };

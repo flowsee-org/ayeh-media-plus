@@ -2,19 +2,24 @@ import { useState } from "react";
 import { CalendarClock, Download } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-const pad = (n) => String(n).padStart(2, "0");
-
 /** Builds an .ics file for a daily recitation plan (works with Google Calendar import). */
 function buildIcs({ time, days, minutes, reminder }) {
   const [hh, mm] = time.split(":").map(Number);
+
+  // Start at the next occurrence of the chosen time: if today's slot has
+  // already passed, begin tomorrow so the first reminder isn't in the past.
   const start = new Date();
   start.setHours(hh, mm, 0, 0);
+  if (start.getTime() <= Date.now()) {
+    start.setDate(start.getDate() + 1);
+  }
 
-  const dt = (d) =>
-    `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  // Emit UTC (trailing "Z") so the event is interpreted unambiguously in any
+  // calendar/timezone. A local-time value without TZID/VTIMEZONE shifts.
+  const dt = (d) => `${d.toISOString().replace(/[-:]/g, "").split(".")[0]}Z`;
 
   const end = new Date(start.getTime() + minutes * 60000);
-  const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const stamp = dt(new Date());
 
   return [
     "BEGIN:VCALENDAR",
@@ -23,7 +28,7 @@ function buildIcs({ time, days, minutes, reminder }) {
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:tadabbur-plan-${stamp}@tangible-deep-quran-path.base44.app`,
+    `UID:tadabbur-plan-${stamp}@ayeh.media`,
     `DTSTAMP:${stamp}`,
     `DTSTART:${dt(start)}`,
     `DTEND:${dt(end)}`,

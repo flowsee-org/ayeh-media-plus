@@ -26,7 +26,7 @@ const INTENTION_SUGGESTIONS = [
 
 export default function Khatm() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
 
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,6 +92,10 @@ export default function Khatm() {
 
   const handleCreateSession = async (e) => {
     e.preventDefault();
+    if (!user?.id) {
+      openAuthModal();
+      return;
+    }
     if (!createForm.title.trim()) {
       toast.error("لطفاً عنوان دوره را وارد کنید");
       return;

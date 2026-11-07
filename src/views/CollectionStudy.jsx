@@ -4,6 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import api from "@/lib/api";
 import { getAyah, getSurahList } from "@/lib/quranApi";
 import { markVerseRead, getReadVerses } from "@/lib/readingTracker";
+import { scopedKey } from "@/lib/storageScope";
 import { toast } from "react-hot-toast";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import BackButton from "@/components/BackButton";
@@ -48,7 +49,7 @@ export default function CollectionStudy() {
     const updated = { ...readVerses };
     if (isCurrentlyRead) {
       delete updated[v.verse_key];
-      localStorage.setItem("tadabbur-read-verses", JSON.stringify(updated));
+      localStorage.setItem(scopedKey("tadabbur-read-verses"), JSON.stringify(updated));
       setReadVerses(updated);
       toast.success("علامت مطالعه برداشته شد");
     } else {

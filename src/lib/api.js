@@ -157,6 +157,12 @@ export const auth = {
       body: JSON.stringify(updates),
     }),
 
+  // Permanently delete the signed-in account and all of its data.
+  deleteAccount: async () =>
+    await request("/auth/me", {
+      method: "DELETE",
+    }),
+
   logout: (redirectUrl) => {
     setStoredToken(null);
     if (redirectUrl && typeof window !== "undefined") {
@@ -205,15 +211,17 @@ function createEntityClient(entityName) {
     filter: async (query = {}, sortOrOptions, limit) => {
       let sort = "-created_date";
       let lim = limit || 100;
+      let skip = 0;
       if (typeof sortOrOptions === "string") {
         sort = sortOrOptions;
       } else if (typeof sortOrOptions === "object" && sortOrOptions !== null) {
         if (sortOrOptions.sort) sort = sortOrOptions.sort;
         if (sortOrOptions.limit) lim = sortOrOptions.limit;
+        if (sortOrOptions.skip) skip = sortOrOptions.skip;
       }
       const res = await request(`/entities/${entityName}/filter`, {
         method: "POST",
-        body: JSON.stringify({ query, sort, limit: lim }),
+        body: JSON.stringify({ query, sort, limit: lim, skip }),
       });
       return makeResultArray(res.items || [], res);
     },

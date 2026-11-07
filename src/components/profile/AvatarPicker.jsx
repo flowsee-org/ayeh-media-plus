@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import { toast } from "react-hot-toast";
@@ -16,6 +16,13 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
   const current = characterInfo(currentConfig);
   const [presetId, setPresetId] = useState(current?.id || null);
   const [saving, setSaving] = useState(false);
+
+  // The saved avatar config arrives after the first render (profile data is
+  // fetched async), so re-sync the highlighted preset when it becomes known
+  // and whenever the dialog is opened.
+  useEffect(() => {
+    if (open) setPresetId(characterInfo(currentConfig)?.id || null);
+  }, [open, currentConfig]);
 
   const selected = PRESETS.find((p) => p.id === presetId);
 

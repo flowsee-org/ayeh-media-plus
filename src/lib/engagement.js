@@ -1,5 +1,8 @@
 /* موتور درگیرسازی روزانه — استریک، امتیاز و مأموریت‌های روزانه (localStorage) */
+import { scopedKey } from "@/lib/storageScope";
+
 const KEY = "tadabbur-engagement-v1";
+const storageKey = () => scopedKey(KEY);
 const BONUS_XP = 50;
 export const ENGAGEMENT_EVENT = "tadabbur-engagement";
 
@@ -23,11 +26,11 @@ const LEVELS = [
 const dayStr = (d = new Date()) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 
 function load() {
-  try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; }
+  try { return JSON.parse(localStorage.getItem(storageKey())); } catch { return null; }
 }
 
 function save(state) {
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
+  try { localStorage.setItem(storageKey(), JSON.stringify(state)); } catch {}
   window.dispatchEvent(new Event(ENGAGEMENT_EVENT));
 }
 

@@ -2,8 +2,13 @@ import { Router } from 'express';
 import { Prisma } from '@prisma/client';
 import { prisma } from '../db.js';
 import { io } from '../socket.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
+
+// Populate req.user when a token is present. Public reads stay open, but every
+// write below requires an authenticated user and an ownership/role check.
+router.use(authenticate({ required: false }));
 
 // Introspect Prisma model scalar fields
 const modelFieldsMap = new Map();
@@ -165,12 +170,155 @@ function parseWhere(query) {
   return where;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   Authorization policy
+   ───────────────────────────────────────────────────────────
+   - Public reads are allowed, except for account/secret entities.
+   - Every write requires authentication.
+   - Entities owned by a user can only be changed by that user (or an admin).
+   - Entities with no owner (verse, topic, scholar, competition…) are
+     admin-only to write.
+   ═══════════════════════════════════════════════════════════ */
+
+// Never readable/writable through the generic API.
+const HIDDEN_ENTITIES = new Set(['AuthOtp', 'AuthCaptcha']);
+// Writable by admins only (account rows are managed through /api/auth).
+const ADMIN_ONLY_ENTITIES = new Set(['User']);
+// Candidate columns that identify the owner of a row.
+const OWNER_FIELDS = ['author_id', 'creator_id', 'user_id', 'follower_id', 'recipient_id', 'scholar_id'];
+// Entities where the owner column is authoritative for update/delete.
+const STRICT_OWNER_ENTITIES = new Set([
+  'Post',
+  'Comment',
+  'Story',
+  'CompetitionEntry',
+  'KhatmSession',
+  'KhatmDua',
+  'Collection',
+  'Podcast',
+  'Follow',
+  'Notification',
+  'LiveSession',
+]);
+
+const isAdmin = (req) => req.user?.role === 'admin';
+
+// Some fields are legitimately changed by users who don't own the row:
+// likes, comment counts, story views and competition votes. Restrict such
+// cross-user updates to exactly these columns.
+const CROSS_USER_UPDATE_FIELDS = {
+  Post: new Set(['liked_by', 'likes_count', 'comments_count']),
+  Story: new Set(['viewed_by', 'views_count']),
+  Podcast: new Set(['likes_count', 'views_count']),
+  CompetitionEntry: new Set(['votes_count', 'voted_by']),
+};
+
+function fieldsOf(entityName) {
+  const modelName = entityName.charAt(0).toLowerCase() + entityName.slice(1);
+  return modelFieldsMap.get(modelName) || null;
+}
+
+function ownerFieldFor(entityName) {
+  const fields = fieldsOf(entityName);
+  if (!fields) return null;
+  return OWNER_FIELDS.find((f) => fields.has(f)) || null;
+}
+
+function deny(res, status, message) {
+  res.status(status).json({ message });
+  return false;
+}
+
+function ensureReadable(req, res, entityName) {
+  if (HIDDEN_ENTITIES.has(entityName)) return deny(res, 403, 'Forbidden');
+  // Account rows are only exposed through /api/auth/me.
+  if (ADMIN_ONLY_ENTITIES.has(entityName) && !isAdmin(req)) {
+    return deny(res, 403, 'Admin access required');
+  }
+  return true;
+}
+
+function ensureWritable(req, res, entityName) {
+  if (!req.user) return deny(res, 401, 'Authentication required');
+  if (HIDDEN_ENTITIES.has(entityName)) return deny(res, 403, 'Forbidden');
+  if (ADMIN_ONLY_ENTITIES.has(entityName) && !isAdmin(req)) {
+    return deny(res, 403, 'Admin access required');
+  }
+  if (!ownerFieldFor(entityName) && !STRICT_OWNER_ENTITIES.has(entityName) && !isAdmin(req)) {
+    return deny(res, 403, 'Admin access required');
+  }
+  return true;
+}
+
+// Force ownership/identity fields on create so clients cannot impersonate.
+function applyCreatePolicy(req, entityName, payload) {
+  if (isAdmin(req) || !STRICT_OWNER_ENTITIES.has(entityName)) return payload;
+  const fields = fieldsOf(entityName);
+
+  // Notifications are addressed to someone else: the client legitimately
+  // supplies recipient_id, while the actor identity is always the caller.
+  if (entityName === 'Notification') {
+    if (fields?.has('actor_id')) payload.actor_id = req.user.id;
+    if (fields?.has('actor_name')) payload.actor_name = req.user.full_name || 'کاربر آیه';
+    return payload;
+  }
+
+  const ownerField = ownerFieldFor(entityName);
+  if (ownerField) payload[ownerField] = req.user.id;
+  if (fields?.has('author_name')) payload.author_name = req.user.full_name || 'کاربر آیه';
+  if (fields?.has('creator_name')) payload.creator_name = req.user.full_name || 'کاربر آیه';
+  if (fields?.has('follower_name')) payload.follower_name = req.user.full_name || 'کاربر آیه';
+  if (fields?.has('user_name')) payload.user_name = req.user.full_name || 'کاربر آیه';
+  return payload;
+}
+
+// Prevent a non-admin from re-assigning ownership on update.
+function applyUpdatePolicy(req, entityName, payload) {
+  if (isAdmin(req) || !STRICT_OWNER_ENTITIES.has(entityName)) return payload;
+  const ownerField = ownerFieldFor(entityName);
+  if (ownerField) delete payload[ownerField];
+  return payload;
+}
+
+async function ensureCanMutateRecord(req, res, entityName, id, payload, action) {
+  if (!req.user) return deny(res, 401, 'Authentication required');
+  if (HIDDEN_ENTITIES.has(entityName)) return deny(res, 403, 'Forbidden');
+  if (ADMIN_ONLY_ENTITIES.has(entityName)) {
+    return isAdmin(req) ? true : deny(res, 403, 'Admin access required');
+  }
+
+  const ownerField = ownerFieldFor(entityName);
+  if (!ownerField) {
+    return isAdmin(req) ? true : deny(res, 403, 'Admin access required');
+  }
+  if (isAdmin(req) || !STRICT_OWNER_ENTITIES.has(entityName)) return true;
+
+  const model = getPrismaModel(entityName);
+  const record = await model.findUnique({ where: { id } });
+  if (!record) return deny(res, 404, 'Record not found');
+  if (record[ownerField] === req.user.id) return true;
+
+  // Allow the narrow cross-user updates (likes, views, votes) but never the
+  // entry itself.
+  if (action === 'update' && payload) {
+    const allowed = CROSS_USER_UPDATE_FIELDS[entityName];
+    if (allowed && Object.keys(payload).every((k) => allowed.has(k))) return true;
+  }
+
+  return deny(res, 403, 'You can only modify your own records');
+}
+
+/* ── Routes ── */
+
 // GET /api/entities/:entity - List / Filter records
 router.get('/:entity', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureReadable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) {
-      return res.status(404).json({ message: `Entity ${req.params.entity} not found` });
+      return res.status(404).json({ message: `Entity ${entityName} not found` });
     }
 
     const { limit, sort, cursor, fields: _f, select: _s, skip: _sk, ...filterParams } = req.query;
@@ -178,21 +326,24 @@ router.get('/:entity', async (req, res) => {
     const orderBy = parseSort(sort || '-created_date');
     const where = parseWhere(filterParams);
 
-    const items = await model.findMany({
-      where,
-      orderBy,
-      take,
-      ...(cursor && { skip: 1, cursor: { id: cursor } }),
-    });
+    const [items, total] = await Promise.all([
+      model.findMany({
+        where,
+        orderBy,
+        take,
+        ...(cursor && { skip: 1, cursor: { id: cursor } }),
+      }),
+      model.count({ where }),
+    ]);
 
     const parsedItems = items.map(deserializeRecord);
 
     // Provide both array behavior and pagination metadata
     res.json({
       items: parsedItems,
-      has_more: items.length === take,
+      has_more: items.length === take && total > items.length,
       next_cursor: items.length > 0 ? items[items.length - 1].id : null,
-      total: parsedItems.length,
+      total,
     });
   } catch (err) {
     console.error(`List ${req.params.entity} error:`, err);
@@ -203,27 +354,30 @@ router.get('/:entity', async (req, res) => {
 // POST /api/entities/:entity/filter - Complex filter query (used when body has objects like $in)
 router.post('/:entity/filter', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureReadable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) {
-      return res.status(404).json({ message: `Entity ${req.params.entity} not found` });
+      return res.status(404).json({ message: `Entity ${entityName} not found` });
     }
 
-    const { query = {}, sort = '-created_date', limit = 100 } = req.body;
+    const { query = {}, sort = '-created_date', limit = 100, skip = 0 } = req.body;
     const take = limit ? Math.min(parseInt(limit, 10), 500) : 100;
+    const offset = Math.max(0, parseInt(skip, 10) || 0);
     const orderBy = parseSort(sort);
     const where = parseWhere(query);
 
-    const items = await model.findMany({
-      where,
-      orderBy,
-      take,
-    });
+    const [items, total] = await Promise.all([
+      model.findMany({ where, orderBy, take, skip: offset }),
+      model.count({ where }),
+    ]);
 
     const parsedItems = items.map(deserializeRecord);
     res.json({
       items: parsedItems,
-      has_more: items.length === take,
-      total: parsedItems.length,
+      has_more: offset + items.length < total,
+      total,
     });
   } catch (err) {
     console.error(`Filter ${req.params.entity} error:`, err);
@@ -234,7 +388,10 @@ router.post('/:entity/filter', async (req, res) => {
 // GET /api/entities/:entity/:id - Get single record
 router.get('/:entity/:id', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureReadable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
 
     const item = await model.findUnique({ where: { id: req.params.id } });
@@ -249,17 +406,24 @@ router.get('/:entity/:id', async (req, res) => {
 // POST /api/entities/:entity - Create record
 router.post('/:entity', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureWritable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
 
-    const payload = filterModelFields(req.params.entity, serializePayload(req.body));
+    const payload = applyCreatePolicy(
+      req,
+      entityName,
+      filterModelFields(entityName, serializePayload(req.body))
+    );
     const created = await model.create({ data: payload });
     const result = deserializeRecord(created);
 
     // Broadcast change to active subscribers
     if (io) {
       io.emit('entity:change', {
-        entity: req.params.entity,
+        entity: entityName,
         action: 'create',
         data: result,
       });
@@ -275,13 +439,17 @@ router.post('/:entity', async (req, res) => {
 // POST /api/entities/:entity/bulk - Bulk create records
 router.post('/:entity/bulk', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureWritable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
 
     const items = Array.isArray(req.body) ? req.body : req.body.items || [];
     const serializedItems = items
       .map(serializePayload)
-      .map((item) => filterModelFields(req.params.entity, item));
+      .map((item) => filterModelFields(entityName, item))
+      .map((item) => applyCreatePolicy(req, entityName, item));
 
     const created = await prisma.$transaction(
       serializedItems.map((item) => model.create({ data: item }))
@@ -291,7 +459,7 @@ router.post('/:entity/bulk', async (req, res) => {
 
     if (io) {
       io.emit('entity:change', {
-        entity: req.params.entity,
+        entity: entityName,
         action: 'bulkCreate',
         data: parsed,
       });
@@ -306,12 +474,20 @@ router.post('/:entity/bulk', async (req, res) => {
 // PUT & PATCH /api/entities/:entity/:id - Update record
 const updateHandler = async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureWritable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
 
-    const payload = filterModelFields(req.params.entity, serializePayload(req.body));
+    let payload = filterModelFields(entityName, serializePayload(req.body));
     // Remove id from payload if passed
     delete payload.id;
+
+    if (!(await ensureCanMutateRecord(req, res, entityName, req.params.id, payload, 'update'))) {
+      return;
+    }
+    payload = applyUpdatePolicy(req, entityName, payload);
 
     const updated = await model.update({
       where: { id: req.params.id },
@@ -321,7 +497,7 @@ const updateHandler = async (req, res) => {
 
     if (io) {
       io.emit('entity:change', {
-        entity: req.params.entity,
+        entity: entityName,
         action: 'update',
         data: result,
       });
@@ -339,14 +515,21 @@ router.patch('/:entity/:id', updateHandler);
 // DELETE /api/entities/:entity/:id - Delete single record
 router.delete('/:entity/:id', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureWritable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
+
+    if (!(await ensureCanMutateRecord(req, res, entityName, req.params.id, null, 'delete'))) {
+      return;
+    }
 
     await model.delete({ where: { id: req.params.id } });
 
     if (io) {
       io.emit('entity:change', {
-        entity: req.params.entity,
+        entity: entityName,
         action: 'delete',
         data: { id: req.params.id },
       });
@@ -361,15 +544,28 @@ router.delete('/:entity/:id', async (req, res) => {
 // POST /api/entities/:entity/delete-many - Delete multiple records matching filter
 router.post('/:entity/delete-many', async (req, res) => {
   try {
-    const model = getPrismaModel(req.params.entity);
+    const entityName = req.params.entity;
+    if (!ensureWritable(req, res, entityName)) return;
+
+    const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
 
     const where = parseWhere(req.body);
+
+    // Non-admins may only mass-delete rows they own.
+    if (!isAdmin(req)) {
+      const ownerField = ownerFieldFor(entityName);
+      if (!ownerField || !STRICT_OWNER_ENTITIES.has(entityName)) {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+      where[ownerField] = req.user.id;
+    }
+
     const result = await model.deleteMany({ where });
 
     if (io) {
       io.emit('entity:change', {
-        entity: req.params.entity,
+        entity: entityName,
         action: 'deleteMany',
         data: req.body,
       });

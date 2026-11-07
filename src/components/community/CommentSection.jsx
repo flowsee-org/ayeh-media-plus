@@ -4,16 +4,17 @@ import api from "@/lib/api";
 import { notifyPostOwner } from "@/lib/social";
 import { toast } from "react-hot-toast";
 import { trackEngagement } from "@/lib/engagement";
+import { scopedKey } from "@/lib/storageScope";
 import { Avatar, timeAgo } from "./shared";
 import { Heart, Trash2, Send, Loader2 } from "lucide-react";
 
 const LIKED_KEY = "tadabbur-liked-comments";
 
 function getLiked() {
-  try { return JSON.parse(localStorage.getItem(LIKED_KEY) || "[]"); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(scopedKey(LIKED_KEY)) || "[]"); } catch { return []; }
 }
 function setLiked(arr) {
-  localStorage.setItem(LIKED_KEY, JSON.stringify(arr));
+  localStorage.setItem(scopedKey(LIKED_KEY), JSON.stringify(arr));
 }
 
 export default function CommentSection({ postId, post, currentUser, comments: initialComments, onCountChange }) {

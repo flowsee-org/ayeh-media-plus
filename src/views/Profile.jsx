@@ -5,8 +5,9 @@ import api from "@/lib/api";
 import {
   getReadCount, getProgressPercent, getRecentVerses, getUniqueSurahsRead,
   getJuzReadCount, getJuzVerseCounts, getBookmarksCount, getNotesCount,
-  TOTAL_QURAN_VERSES,
+  getCompletedSurahs, TOTAL_QURAN_VERSES,
 } from "@/lib/readingTracker";
+import { setStorageScope, clearScopedUserData } from "@/lib/storageScope";
 import { JUZ_DATA } from "@/lib/juzData";
 import { getSurahList } from "@/lib/quranApi";
 import IslamicPattern from "@/components/IslamicPattern";
@@ -41,6 +42,8 @@ export default function Profile() {
       api.auth.me().catch(() => null),
       getSurahList().catch(() => []),
     ]).then(([u, s]) => {
+      // Make sure stats are read from this user's namespace, not the guest one.
+      setStorageScope(u?.id || null);
       setUser(u);
       setAvatarCfg(parseAvatar(u?.avatar_config));
       setSurahs(s);
@@ -56,6 +59,7 @@ export default function Profile() {
   const readCount = getReadCount();
   const progress = getProgressPercent();
   const surahsRead = getUniqueSurahsRead();
+  const completedSurahs = getCompletedSurahs();
   const juzRead = getJuzReadCount();
   const juzVerseCounts = getJuzVerseCounts();
   const bookmarksCount = getBookmarksCount();
@@ -154,6 +158,7 @@ export default function Profile() {
       <AchievementsShelf
         readCount={readCount}
         surahsRead={surahsRead}
+        completedSurahs={completedSurahs}
         notesCount={notesCount}
         bookmarksCount={bookmarksCount}
       />
@@ -288,7 +293,10 @@ function SettingsSection({ user }) {
   const handleDeleteAccount = async () => {
     if (!user) return;
     try {
-      await api.entities.User.delete(user.id);
+      // The backend removes the user and every dependent record in one
+      // transaction; the generic entity endpoint deliberately can't.
+      await api.auth.deleteAccount();
+      clearScopedUserData(user.id);
       api.auth.logout("/login");
     } catch {
       toast.error("حذف حساب در دسترس نیست. لطفاً از بخش پشتیبانی پیگیر باشید.");
