@@ -323,10 +323,16 @@ router.get('/daily-content', async (req, res) => {
     const quizIndex = dayOfYear % DAILY_QUIZZES.length;
     const quiz = DAILY_QUIZZES[quizIndex];
 
-    // Fetch related verse if exists
-    const verse = await prisma.verse.findFirst({
-      where: { verse_key: quiz.verse_key },
-    });
+    // Fetch related verse if Verse model exists in schema
+    let verse = null;
+    try {
+      verse = await prisma.verse.findFirst({
+        where: { verse_key: quiz.verse_key },
+      });
+    } catch (e) {
+      // Verse model not in schema — use fallback content below
+      console.log('Verse model not available, using fallback content');
+    }
 
     res.json({
       date: getTodayDateString(),

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { scopedKey } from "@/lib/storageScope";
 import { toast } from "react-hot-toast";

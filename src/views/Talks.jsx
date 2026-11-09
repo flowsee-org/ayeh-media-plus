@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { IslamicNumberBadge } from "@/components/IslamicOrnaments";
@@ -42,8 +42,16 @@ export default function Talks() {
   const loadData = useCallback(() => {
     setLoading(true);
     Promise.all([
-      api.entities.Podcast.list("-created_date", 100).catch(() => ({ items: [] })),
-      api.entities.Verse.list("-created_date", 200).catch(() => ({ items: [] })),
+      // Podcast model doesn't exist - use Video with category=talk
+      api.entities.Video.filter(
+        { category: "talk", status: "published" },
+        { sort: "-created_date", limit: 100 }
+      ).catch(() => ({ items: [] })),
+      // Verse model doesn't exist - use Video with category=lecture
+      api.entities.Video.filter(
+        { category: "lecture", status: "published" },
+        { sort: "-created_date", limit: 200 }
+      ).catch(() => ({ items: [] })),
     ])
       .then(([podRes, verseRes]) => {
         setPodcasts(podRes.items || podRes || []);
@@ -161,10 +169,10 @@ export default function Talks() {
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
               <Headphones className="h-3.5 w-3.5" /> درس‌گفتارهای صوتی و تصویری اساتید
             </div>
-            <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+            <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
               گفتارها و پادکست‌های تفسیری
             </h1>
-            <p className="font-yekan text-muted-foreground text-sm max-w-xl mx-auto">
+            <p className="font-doran text-muted-foreground text-sm max-w-xl mx-auto">
               سلسله مباحث تدبّر در قرآن و درس‌های معرفتی — همراه با قابلیت پخش پیوسته در سراسر سایت، سرفصل‌های موضوعی و کنترل سرعت.
             </p>
 
@@ -381,15 +389,18 @@ export default function Talks() {
                           )}
                         </button>
 
-                        {pod.verse_keys?.[0] && (
-                          <Link
-                            to={`/quran?verse=${pod.verse_keys[0]}`}
-                            className="text-xs text-muted-foreground hover:text-accent font-medium flex items-center gap-1 transition-colors"
-                          >
-                            <BookOpen className="h-3 w-3" />
-                            <span>آیه {pod.verse_keys[0]}</span>
-                          </Link>
-                        )}
+                        {pod.verse_keys?.[0] && (() => {
+                            const [surah] = pod.verse_keys[0].split(':');
+                            return (
+                              <Link
+                                to={`/quran?surah=${surah}`}
+                                className="text-xs text-muted-foreground hover:text-accent font-medium flex items-center gap-1 transition-colors"
+                              >
+                                <BookOpen className="h-3 w-3" />
+                                <span>آیه {pod.verse_keys[0]}</span>
+                              </Link>
+                            );
+                          })()}
                       </div>
                     </div>
                   );

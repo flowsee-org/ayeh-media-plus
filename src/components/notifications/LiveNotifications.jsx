@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { Heart, MessageCircle, Radio, Sparkles } from "lucide-react";

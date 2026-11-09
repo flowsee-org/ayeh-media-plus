@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { notifyPostOwner } from "@/lib/social";
 import { toast } from "react-hot-toast";

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { Video, PlayCircle, Clock, ArrowLeft, Loader2, BookOpen, Sparkles } from "lucide-react";
 
@@ -37,10 +37,10 @@ export default function TalksPreview() {
             <Video className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-kalameh font-bold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-rokh-bold font-bold text-xl sm:text-2xl text-foreground">
               گفتارهای منتخب اساتید
             </h2>
-            <p className="font-yekan text-xs sm:text-sm text-muted-foreground mt-0.5">دروس و تدبّرهای علامه طباطبایی، دکتر شمالی و دیگر مفسران</p>
+            <p className="font-doran text-xs sm:text-sm text-muted-foreground mt-0.5">دروس و تدبّرهای علامه طباطبایی، دکتر شمالی و دیگر مفسران</p>
           </div>
         </div>
         <Link to="/talks" className="inline-flex items-center gap-1.5 font-ui text-xs sm:text-sm font-semibold text-primary hover:underline">
@@ -80,7 +80,7 @@ export default function TalksPreview() {
               {/* Content */}
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h3 className="font-kalameh font-bold text-base leading-snug mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="font-rokh-bold font-bold text-base leading-snug mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors">
                     {talk.title || "گفتار قرآنی"}
                   </h3>
                   {talk.scholar && (
@@ -101,7 +101,7 @@ export default function TalksPreview() {
       ) : (
         <div className="rounded-2xl border border-dashed border-border p-10 text-center bg-card">
           <Sparkles className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="font-yekan text-sm text-muted-foreground mb-4">گفتارهای جدید اساتید به‌زودی بارگذاری خواهند شد.</p>
+          <p className="font-doran text-sm text-muted-foreground mb-4">گفتارهای جدید اساتید به‌زودی بارگذاری خواهند شد.</p>
           <Link to="/quran" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 transition-opacity">
             مرور مصحف شریف
           </Link>

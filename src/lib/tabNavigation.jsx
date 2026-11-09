@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "@/lib/router-compat";
 
 /* Per-tab navigation stack: each bottom-tab remembers the routes the user
    visited inside it (sessionStorage). Switching tabs restores the tab's

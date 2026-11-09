@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { getAyah, getSurahList } from "@/lib/quranApi";
 import { markVerseRead, getReadVerses } from "@/lib/readingTracker";

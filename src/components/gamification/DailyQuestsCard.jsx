@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import {
   BookOpen,
   Brain,
@@ -177,7 +177,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
             <span className="p-1.5 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-900 text-white shadow-sm">
               <Sparkles className="w-4 h-4 text-amber-300" />
             </span>
-            <h3 className="text-lg font-bold font-kalameh text-foreground">
+            <h3 className="text-lg font-bold font-rokh-bold text-foreground">
               مأموریت‌های سه‌گانه روز
             </h3>
           </div>
@@ -189,7 +189,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
         {/* Progress pill */}
         <div className="flex items-center gap-3 bg-muted/60 px-4 py-2 rounded-2xl border border-border shrink-0">
           <div className="text-right">
-            <div className="text-xs font-bold font-kalameh text-foreground">
+            <div className="text-xs font-bold font-rokh-bold text-foreground">
               {completedCount} از ۳ تکمیل شده
             </div>
             <div className="text-[10px] text-muted-foreground">
@@ -229,7 +229,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold font-kalameh text-foreground">
+                  <span className="text-sm font-bold font-rokh-bold text-foreground">
                     {quests[0]?.title || "تلاوت و استماع آیه روز"}
                   </span>
                   <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
@@ -247,7 +247,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
                       <span>آیه منتخب امروز: {dailyContent.featured_verse.verse_key}</span>
                       <button
                         onClick={handlePlayVerseAudio}
-                        className="flex items-center gap-1 text-primary hover:underline font-kalameh font-bold"
+                        className="flex items-center gap-1 text-primary hover:underline font-rokh-bold font-bold"
                       >
                         <Volume2 className="w-3.5 h-3.5" />
                         {audioPlaying ? "توقف تلاوت" : "پخش صوت"}
@@ -266,13 +266,13 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
             <div className="shrink-0 self-center">
               {quests[0]?.is_completed ? (
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-kalameh font-bold">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-rokh-bold font-bold">
                   انجام شد
                 </span>
               ) : (
                 <Link
                   to="/quran"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-kalameh font-bold transition-transform active:scale-95"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-rokh-bold font-bold transition-transform active:scale-95"
                 >
                   ورود به قرآن
                   <ArrowRight className="w-3.5 h-3.5 rotate-180" />
@@ -307,7 +307,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
               </div>
               <div className="w-full">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold font-kalameh text-foreground">
+                  <span className="text-sm font-bold font-rokh-bold text-foreground">
                     {quests[1]?.title || "تدبر مفهومی و کوییز آیه روز"}
                   </span>
                   <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
@@ -321,7 +321,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
                 {/* The Quiz Box */}
                 {dailyContent?.quiz && (
                   <div className="mt-3 p-3.5 rounded-xl bg-card border border-primary/20">
-                    <div className="flex items-center gap-1.5 text-xs font-bold font-kalameh text-primary mb-1.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold font-rokh-bold text-primary mb-1.5">
                       <HelpCircle className="w-3.5 h-3.5" />
                       موضوع: {dailyContent.quiz.theme}
                     </div>
@@ -353,7 +353,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
                           <button
                             onClick={handleQuizSubmit}
                             disabled={selectedOption === null || submittingQuiz}
-                            className="px-4 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-kalameh disabled:opacity-50 transition-all flex items-center gap-1.5"
+                            className="px-4 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-rokh-bold disabled:opacity-50 transition-all flex items-center gap-1.5"
                           >
                             {submittingQuiz ? "در حال ثبت..." : "ثبت پاسخ و تدبر"}
                           </button>
@@ -361,7 +361,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
                       </div>
                     ) : (
                       <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-200">
-                        <div className="font-bold flex items-center gap-1.5 mb-1 font-kalameh">
+                        <div className="font-bold flex items-center gap-1.5 mb-1 font-rokh-bold">
                           <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                           پاسخ شما با موفقیت ثبت شد
                         </div>
@@ -402,7 +402,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold font-kalameh text-foreground">
+                  <span className="text-sm font-bold font-rokh-bold text-foreground">
                     {quests[2]?.title || "مشارکت معنوی در ختم یا جامعه"}
                   </span>
                   <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
@@ -417,14 +417,14 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
             <div className="shrink-0 self-center">
               {quests[2]?.is_completed ? (
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-kalameh font-bold">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-rokh-bold font-bold">
                   انجام شد
                 </span>
               ) : (
                 <button
                   onClick={handleQuickSalawat}
                   disabled={submittingSocial}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-600 text-white hover:bg-amber-700 text-xs font-kalameh font-bold transition-transform active:scale-95 disabled:opacity-50 shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-600 text-white hover:bg-amber-700 text-xs font-rokh-bold font-bold transition-transform active:scale-95 disabled:opacity-50 shadow-sm"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   {submittingSocial ? "در حال ثبت..." : "نذر صلوات روز"}

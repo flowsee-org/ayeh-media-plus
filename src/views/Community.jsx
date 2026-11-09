@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { togglePostLike } from "@/lib/social";
@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 
 const CHIPS = [
-  { id: "all", label: "همه", icon: Sparkles },
-  { id: "tadabbur", label: "تدبّر", icon: Sparkles, match: (p) => p.type === "reflection" || (p.tags || []).includes("تدبّر") },
-  { id: "recitation", label: "تلاوت", icon: Video, match: (p) => (p.tags || []).includes("تلاوت") || p.type === "video" },
-  { id: "tafsir", label: "تفسیر", icon: Compass, match: (p) => (p.tags || []).includes("تفسیر") },
-  { id: "verses", label: "آیات", icon: BookOpen, match: (p) => Boolean(p.verse_key) || p.type === "verse_share" },
-  { id: "questions", label: "پرسش‌ها", icon: HelpCircle, match: (p) => p.type === "question" },
+  { id: "all", label: "همه تدبّرها", icon: Sparkles },
+  { id: "tadabbur", label: "تدبّر و تفکر", icon: Sparkles, match: (p) => p.type === "reflection" || (p.tags || []).includes("تدبّر") },
+  { id: "recitation", label: "تلاوت‌ها", icon: Video, match: (p) => (p.tags || []).includes("تلاوت") || p.type === "video" },
+  { id: "tafsir", label: "تفسیر و نکات", icon: Compass, match: (p) => (p.tags || []).includes("تفسیر") },
+  { id: "verses", label: "آیات در زندگی", icon: BookOpen, match: (p) => Boolean(p.verse_key) || p.type === "verse_share" },
+  { id: "questions", label: "پرسش و پاسخ", icon: HelpCircle, match: (p) => p.type === "question" },
 ];
 
 export default function Community() {
@@ -120,15 +120,15 @@ export default function Community() {
 
   return (
     <PullToRefresh onRefresh={loadPosts}>
-      <div className="mx-auto max-w-[500px] px-3 pb-8 pt-2 sm:px-0 sm:py-6 animate-fade-in font-yekan">
+      <div className="mx-auto max-w-[500px] px-3 pb-8 pt-2 sm:px-0 sm:py-6 animate-fade-in font-doran">
         {/* Compact & Clean Page Header */}
         <div className="mb-4 flex items-center justify-between gap-3 px-1 pt-1">
           <div>
-            <h1 className="font-kalameh font-bold text-2xl text-foreground tracking-tight">
-              جامعه قرآنی
+            <h1 className="font-rokh-bold font-bold text-2xl text-foreground tracking-tight">
+              جامعه تدبّر
             </h1>
-            <p className="font-yekan text-xs text-muted-foreground mt-0.5">
-              آیه، تلاوت و تجربیات معنوی اهل تدبّر
+            <p className="font-doran text-xs text-muted-foreground mt-0.5">
+              جایی که آیات در زندگی‌ها رویداد می‌شوند
             </p>
           </div>
           <Link
@@ -136,7 +136,7 @@ export default function Community() {
             className="flex shrink-0 items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-3.5 py-1.5 font-ui text-xs font-bold text-accent transition-all hover:bg-accent/20 hover:scale-[1.02]"
           >
             <Trophy className="h-3.5 w-3.5 text-accent" />
-            <span>مسابقات</span>
+            <span>چالش‌های قرآنی</span>
           </Link>
         </div>
 
@@ -156,7 +156,7 @@ export default function Community() {
               className="ring-2 ring-primary/20"
             />
             <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium">
-              آیه، تدبّر یا نکته‌ای قرآنی به اشتراک بگذارید...
+              آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
               <Plus className="h-4 w-4" />
@@ -170,14 +170,14 @@ export default function Community() {
               className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent/10 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/20 font-ui"
             >
               <Palette className="h-3.5 w-3.5" />
-              <span>ساخت کارت آیه</span>
+              <span>سازماندهی بصری آیه</span>
             </button>
             <button
               onClick={handleOpenCreate}
               className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-secondary/80 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-secondary font-ui"
             >
               <Sparkles className="h-3.5 w-3.5 text-accent" />
-              <span>ثبت تدبّر</span>
+              <span>نوشتن تدبّر</span>
             </button>
           </div>
         </div>
@@ -227,18 +227,18 @@ export default function Community() {
             <Sparkles className="h-8 w-8 text-accent/50 mx-auto mb-3" />
             <p className="text-sm font-semibold text-foreground mb-1">
               {selectedChip === "all"
-                ? "هنوز پستی منتشر نشده است"
-                : "در این دسته‌بندی پستی یافت نشد"}
+                ? "هنوز کسی تدبّری به اشتراک نگذاشته"
+                : "در این دسته‌بندی تدبّری یافت نشد"}
             </p>
             <p className="text-xs text-muted-foreground mb-4">
-              نخستین نفری باشید که در این بخش تدبّر یا آیه‌ای به اشتراک می‌گذارد!
+              نخستین نفری باشید که آیه‌ای را به زندگی خود متصل می‌کند و با دیگران به اشتراک می‌گذارد
             </p>
             <button
               onClick={handleOpenCreate}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-bold hover:shadow-soft transition-all"
             >
               <Plus className="h-4 w-4" />
-              <span>ارسال پست جدید</span>
+              <span>تدبّر خود را بنویسید</span>
             </button>
           </div>
         )}

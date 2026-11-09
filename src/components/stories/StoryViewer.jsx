@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { X, Send } from "lucide-react";
 
 const STORY_DURATION = 5000; // 5s per story

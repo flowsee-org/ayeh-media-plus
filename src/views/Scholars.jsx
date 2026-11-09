@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { Users, BookOpen, Loader2, Radio, ChevronLeft } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
@@ -56,10 +56,10 @@ export default function Scholars() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
             <Users className="h-3.5 w-3.5" /> اساتید و مفسران کلام‌الله
           </div>
-          <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
             علما و مفسران قرآن کریم
           </h1>
-          <p className="font-yekan text-muted-foreground text-sm max-w-lg mx-auto">
+          <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
             سیری در آرا و تدبّرهای مفسران بزرگ جهان اسلام و اساتید معاصر
           </p>
         </div>

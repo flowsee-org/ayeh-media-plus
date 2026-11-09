@@ -1,3 +1,6 @@
+// Ayeh Media Plus — Enhanced Schema with RBAC, Quranic Videos, Competitions, Moderation
+// Development: SQLite | Production: PostgreSQL
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
@@ -7,89 +10,499 @@ generator client {
   provider = "prisma-client-js"
 }
 
+/// ============================================================================
+/// USER & ROLE SYSTEM — Multi-tier RBAC
+/// ============================================================================
+
 model User {
-  id              String    @id @default(uuid())
-  phone           String?   @unique
-  email           String?   @unique
+  id              String   @id @default(uuid())
+  phone           String?  @unique
+  email           String?  @unique
   password        String?
   full_name       String?
-  role            String    @default("user") // "admin" | "user"
-  is_scholar      Boolean   @default(false)
-  avatar_config   String?
+  role            String   @default("user") // admin | moderator | creator | user | anonymous
+  is_scholar      Boolean  @default(false)
   avatar_url      String?
+  avatar_config   String?  // JSON: avatar character config
   bio             String?
-  streak_days     Int       @default(0)
-  max_streak      Int       @default(0)
+  streak_days     Int      @default(0)
+  max_streak      Int      @default(0)
   last_active_date DateTime?
-  total_xp        Int       @default(0)
-  spiritual_level String    @default("مستمع") // مستمع, قاری, اهل تدبر, حافظ, خادم قرآن
-  created_date    DateTime  @default(now())
-  updated_date    DateTime  @updatedAt
+  total_xp        Int      @default(0)
+  spiritual_level String   @default("مستمع")
+  is_banned       Boolean  @default(false)
+  banned_reason   String?
+  banned_until    DateTime?
+  email_verified  Boolean  @default(false)
+  phone_verified  Boolean  @default(false)
+  preferences     String?  // JSON: theme, language, playback_speed, audio_only
+  created_date    DateTime @default(now())
+  updated_date    DateTime @updatedAt
+
+  videos          Video[]      @relation("VideoUploader")
+  comments        Comment[]    @relation("CommentAuthor")
+  posts           Post[]       @relation("PostAuthor")
+  likes           Like[]       @relation("LikeAuthor")
+  votes           Vote[]       @relation("VoteAuthor")
+  reviewedReports Report[]     @relation("ReportReviewer")
+  sentNotifications Notification[] @relation("NotificationActor")
+  collections     Collection[] @relation("CollectionOwner")
+  bookmarks       Bookmark[]   @relation("BookmarkAuthor")
+  follows         Follow[]     @relation("FollowRelations")
+  followedBy      Follow[]     @relation("FollowedUser")
+  competitionEntries CompetitionEntry[] @relation("CompetitionEntryAuthor")
+  organizedCompetitions Competition[] @relation("CompetitionOrganizer")
+  notifications   Notification[] @relation("NotificationRecipient")
+  reports         Report[]     @relation("ReportAuthor")
+  moderationActions ModerationAction[] @relation("ModerationActionAuthor")
+  badges          UserBadge[]  @relation("UserBadgeOwner")
+  questProgress   DailyQuestProgress[] @relation("QuestProgressOwner")
+  authOtps        AuthOtp[]    @relation("AuthOtpOwner")
+
+  @@index([role])
+  @@index([email])
+  @@index([phone])
 }
 
-model Verse {
-  id                         String   @id @default(uuid())
-  surah_number               Int
-  surah_name_english         String?
-  surah_name_arabic          String?
-  surah_name_transliteration String?
-  surah_type                 String   @default("meccan")
-  surah_verse_count          Int?
-  verse_number               Int
-  verse_key                  String   // e.g. "7:31"
-  arabic                     String
-  translation                String?
-  transliteration            String?
-  audio_url                  String?
-  reciter                    String?
-  word_analysis              String?  // JSON string
-  tafsir                     String?  // JSON or text
-  reflections                String?  // JSON string
-  themes                     String?  // JSON string
-  linguistic_gems            String?  // JSON string
-  hadith_connections         String?  // JSON string
-  historical_context         String?
-  scholars_lectures          String?  // JSON string
-  videos                     String?  // JSON string array: [{ title, scholar, url, duration }]
-  images                     String?  // JSON string array
-  tags                       String?  // JSON string array
-  difficulty_level           String?  // beginner, intermediate, advanced
-  created_date               DateTime @default(now())
-  updated_date               DateTime @updatedAt
+/// ============================================================================
+/// VIDEO / RECITATION CONTENT — Core platform media
+/// ============================================================================
+
+model Video {
+  id                String   @id @default(uuid())
+  title             String
+  description       String?
+  category          String   @default("recitation") // recitation, tafsir, competition, gathering, lecture, nasheed
+  media_url         String   // hosted video/audio URL
+  media_type        String   @default("video") // video | audio
+  thumbnail_url     String?
+  duration          String?  // ISO 8601 duration or seconds string
+  verse_key         String?  // e.g. "2:255"
+  verse_arabic      String?
+  translation       String?
+  transliteration   String?
+  tafsir            String?
+  reciter_id        String?
+  reciter_name      String?
+  reciter_bio       String?
+  scholar_id        String?
+  scholar_name      String?
+  competition_id    String?
+  is_live           Boolean  @default(false)
+  is_competition    Boolean  @default(false)
+  competition_year  String?
+  competition_category String?
+  venue             String?
+  prize             String?
+  competition_details String?
+  // Approval workflow
+  status            String   @default("pending_review") // pending_review | verified | published | archived | rejected
+  rejection_reason  String?
+  reviewed_by       String?  // moderator/admin user id
+  reviewed_at       DateTime?
+  // Engagement
+  views_count       Int      @default(0)
+  likes_count       Int      @default(0)
+  dislikes_count    Int      @default(0)
+  comments_count    Int      @default(0)
+  watch_time_minutes Int     @default(0)
+  completion_rate   Float    @default(0)
+  tags              String?  // JSON string array
+  language          String   @default("ar")
+  quality           String   @default("1080p") // 360p, 720p, 1080p, 4k
+  // Audio-only mode support
+  audio_only_url    String?
+  chapters          String?  // JSON: [{ title, start_time, end_time, verse_key }]
+  // Downloads
+  download_enabled  Boolean  @default(false)
+  download_url      String?
+  // Transcoding / adaptive streaming
+  hls_url           String?   // master HLS playlist URL
+  qualities         String?   // JSON: [{ name, url, height, width, bitrate }]
+  source_url        String?   // original uploaded file URL (kept for download)
+  source_width      Int?
+  source_height     Int?
+  source_duration   Int?      // seconds
+  created_date      DateTime @default(now())
+  updated_date      DateTime @updatedAt
+
+  uploader          User?      @relation("VideoUploader", fields: [reciter_id], references: [id])
+  comments          Comment[]  @relation("CommentVideo")
+  likes             Like[]     @relation("LikeVideo")
+  bookmarks         Bookmark[] @relation("BookmarkVideo")
+
+  @@index([category])
+  @@index([status])
+  @@index([verse_key])
+  @@index([reciter_name])
+  @@index([competition_id])
+  @@index([is_live])
+  @@index([is_competition])
+  @@index([created_date])
 }
+
+/// ============================================================================
+/// COMPETITIONS (مسابقات قرآنی)
+/// ============================================================================
+
+model Competition {
+  id                String   @id @default(uuid())
+  title             String
+  title_arabic      String?
+  description       String?
+  type              String   @default("recitation") // recitation, memorization, tafsir, qirat
+  prize_title       String?
+  prize_description String?
+  prize_value       String?
+  rules             String?  // JSON string array
+  start_date        DateTime?
+  end_date          DateTime?
+  registration_deadline DateTime?
+  status            String   @default("active") // active | completed | cancelled | draft
+  entries_count     Int      @default(0)
+  views_count       Int      @default(0)
+  organizer_id      String?
+  organizer_name    String?
+  venue             String?
+  venue_city        String?
+  venue_country     String?
+  year              String?
+  season            String?
+  theme_color       String?  // hex color for branding
+  featured          Boolean  @default(false)
+  is_international  Boolean  @default(false)
+  age_category      String?  // children, youth, adult, senior
+  gender_category   String?  // male, female, mixed
+  judging_criteria  String?  // JSON
+  prizes            String?  // JSON: [{ place, title, value, description }]
+  created_date      DateTime @default(now())
+  updated_date      DateTime @updatedAt
+
+  organizer         User?      @relation("CompetitionOrganizer", fields: [organizer_id], references: [id])
+  entries           CompetitionEntry[]
+  votes             Vote[]     @relation("CompetitionVotes")
+
+  @@index([status])
+  @@index([type])
+  @@index([year])
+  @@index([featured])
+  @@index([created_date])
+}
+
+/// ============================================================================
+/// COMPETITION ENTRIES — Submissions with approval workflow
+/// ============================================================================
+
+model CompetitionEntry {
+  id             String   @id @default(uuid())
+  competition_id String
+  author_id      String
+  author_name    String
+  title          String?
+  content        String?
+  media_url      String?
+  media_type     String   @default("audio") // audio | video
+  thumbnail_url  String?
+  verse_key      String?
+  verse_arabic   String?
+  duration       String?
+  votes_count    Int      @default(0)
+  rank_position  Int?     // 1st, 2nd, 3rd assigned after judging
+  // Approval workflow
+  status         String   @default("pending_review") // pending_review | verified | published | rejected | disqualified
+  rejection_reason String?
+  reviewed_by    String?
+  reviewed_at    DateTime?
+  // Judging scores
+  score_tajweed  Float?   @default(0)
+  score_voice    Float?   @default(0)
+  score_accuracy Float?   @default(0)
+  score_total    Float?   @default(0)
+  judged_by      String?
+  judged_at      DateTime?
+  // Engagement
+  views_count    Int      @default(0)
+  likes_count    Int      @default(0)
+  created_date   DateTime @default(now())
+
+  competition   Competition @relation(fields: [competition_id], references: [id], onDelete: Cascade)
+  author        User?       @relation("CompetitionEntryAuthor", fields: [author_id], references: [id])
+  votes         Vote[]      @relation("CompetitionEntryVotes")
+  comments      Comment[]   @relation("CommentEntry")
+  likes         Like[]      @relation("LikeEntry")
+  bookmarks     Bookmark[]  @relation("BookmarkEntry")
+
+  @@index([competition_id])
+  @@index([status])
+  @@index([rank_position])
+  @@index([created_date])
+}
+
+/// ============================================================================
+/// VOTES — Competition voting with RBAC
+/// ============================================================================
+
+model Vote {
+  id              String   @id @default(uuid())
+  user_id         String
+  entry_id        String
+  competition_id  String
+  vote_type       String   @default("upvote") // upvote | downvote
+  created_date    DateTime @default(now())
+
+  user            User?      @relation("VoteAuthor", fields: [user_id], references: [id])
+  entry           CompetitionEntry @relation("CompetitionEntryVotes", fields: [entry_id], references: [id], onDelete: Cascade)
+  competition     Competition @relation("CompetitionVotes", fields: [competition_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, entry_id]) // one vote per user per entry
+  @@index([entry_id])
+  @@index([user_id])
+}
+
+/// ============================================================================
+/// COMMENTS — Threaded discussion with moderation
+/// ============================================================================
+
+model Comment {
+  id           String   @id @default(uuid())
+  post_id      String?
+  video_id     String?
+  entry_id     String?  // competition entry comment
+  parent_id    String?  // for threaded replies
+  author_id    String
+  author_name  String
+  author_avatar String?
+  content      String
+  likes_count  Int      @default(0)
+  dislikes_count Int    @default(0)
+  // Moderation
+  status       String   @default("published") // published | pending_review | hidden | removed
+  moderated_by String?
+  moderated_at DateTime?
+  moderation_reason String?
+  is_spam      Boolean  @default(false)
+  is_flagged   Boolean  @default(false)
+
+  post         Post?    @relation("CommentPost", fields: [post_id], references: [id])
+  video        Video?   @relation("CommentVideo", fields: [video_id], references: [id])
+  entry        CompetitionEntry? @relation("CommentEntry", fields: [entry_id], references: [id])
+  parent       Comment? @relation("CommentReplies", fields: [parent_id], references: [id])
+  replies      Comment[] @relation("CommentReplies")
+  author       User?    @relation("CommentAuthor", fields: [author_id], references: [id])
+  likes        Like[]     @relation("LikeComment")
+  created_date DateTime @default(now())
+
+  @@index([post_id])
+  @@index([video_id])
+  @@index([entry_id])
+  @@index([parent_id])
+  @@index([author_id])
+  @@index([status])
+  @@index([created_date])
+}
+
+/// ============================================================================
+/// LIKES & BOOKMARKS
+/// ============================================================================
+
+model Like {
+  id        String   @id @default(uuid())
+  user_id   String
+  video_id  String?
+  comment_id String?
+  post_id   String?
+  entry_id  String?  // competition entry like
+  type      String   @default("like") // like | dislike | love | save
+  created_date DateTime @default(now())
+
+  user      User?    @relation("LikeAuthor", fields: [user_id], references: [id])
+  video     Video?   @relation("LikeVideo", fields: [video_id], references: [id])
+  comment   Comment? @relation("LikeComment", fields: [comment_id], references: [id])
+  post      Post?    @relation("LikePost", fields: [post_id], references: [id])
+  entry     CompetitionEntry? @relation("LikeEntry", fields: [entry_id], references: [id])
+
+  @@unique([user_id, video_id])
+  @@unique([user_id, comment_id])
+  @@unique([user_id, post_id])
+  @@unique([user_id, entry_id])
+  @@index([video_id])
+  @@index([comment_id])
+  @@index([entry_id])
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  user_id   String
+  video_id  String?
+  entry_id  String?
+  collection_id String? // user's watch-later playlist
+  note      String?  // user's personal note
+  created_date DateTime @default(now())
+
+  user          User?    @relation("BookmarkAuthor", fields: [user_id], references: [id])
+  video         Video?   @relation("BookmarkVideo", fields: [video_id], references: [id])
+  entry         CompetitionEntry? @relation("BookmarkEntry", fields: [entry_id], references: [id])
+  collection    Collection? @relation("BookmarkCollection", fields: [collection_id], references: [id])
+
+  @@unique([user_id, video_id])
+  @@unique([user_id, entry_id])
+  @@index([user_id])
+}
+
+/// ============================================================================
+/// FOLLOWS — Follow reciters/channels
+/// ============================================================================
+
+model Follow {
+  id            String   @id @default(uuid())
+  follower_id   String
+  followed_id   String  // the reciter/channel being followed
+  followed_name String?
+  created_date  DateTime @default(now())
+
+  follower      User?    @relation("FollowRelations", fields: [follower_id], references: [id])
+  followed      User?    @relation("FollowedUser", fields: [followed_id], references: [id])
+
+  @@unique([follower_id, followed_id])
+  @@index([follower_id])
+  @@index([followed_id])
+}
+
+/// ============================================================================
+/// REPORTS — Moderation queue for content/comments/users
+/// ============================================================================
+
+model Report {
+  id              String   @id @default(uuid())
+  reporter_id     String
+  reporter_name   String?
+  target_type     String   // video | comment | entry | user | post
+  target_id       String
+  reason          String   // spam, inaccurate_quran, inappropriate, copyright, other
+  reason_detail   String?
+  // Moderation workflow
+  status          String   @default("pending") // pending | reviewed | dismissed | action_taken
+  reviewed_by     String?  // moderator id
+  reviewed_at     DateTime?
+  moderation_note String?
+  action_taken    String?  // removed | hidden | warned | banned | no_action
+  created_date    DateTime @default(now())
+
+  reporter        User?    @relation("ReportAuthor", fields: [reporter_id], references: [id])
+  reviewer        User?    @relation("ReportReviewer", fields: [reviewed_by], references: [id])
+
+  @@index([target_type, target_id])
+  @@index([status])
+  @@index([reporter_id])
+  @@index([created_date])
+}
+
+/// ============================================================================
+/// MODERATION ACTIONS — Audit trail for moderator/admin actions
+/// ============================================================================
+
+model ModerationAction {
+  id           String   @id @default(uuid())
+  actor_id     String   // moderator/admin who performed action
+  actor_name   String?
+  target_type  String   // video | comment | entry | user | post | report
+  target_id    String
+  action       String   // approve | reject | hide | remove | ban | warn | feature | unfeature
+  reason       String?
+  details      String?  // JSON
+  created_date DateTime @default(now())
+
+  actor        User?    @relation("ModerationActionAuthor", fields: [actor_id], references: [id])
+
+  @@index([actor_id])
+  @@index([target_type, target_id])
+  @@index([action])
+  @@index([created_date])
+}
+
+/// ============================================================================
+/// NOTIFICATIONS
+/// ============================================================================
+
+model Notification {
+  id              String   @id @default(uuid())
+  recipient_id    String
+  actor_id        String
+  actor_name      String?
+  type            String   @default("like") // like | comment | follow | mention | report_reviewed | video_approved | video_rejected | competition_result
+  title           String?
+  message         String?
+  post_id         String?
+  video_id        String?
+  comment_id      String?
+  entry_id        String?
+  live_session_id String?
+  read            Boolean  @default(false)
+  read_at         DateTime?
+  created_date    DateTime @default(now())
+
+  recipient       User?    @relation("NotificationRecipient", fields: [recipient_id], references: [id])
+  actor           User?    @relation("NotificationActor", fields: [actor_id], references: [id])
+
+  @@index([recipient_id])
+  @@index([read])
+  @@index([created_date])
+}
+
+/// ============================================================================
+/// COLLECTIONS — Watch-later playlists & curated collections
+/// ============================================================================
+
+model Collection {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  theme_color   String?
+  icon          String?
+  cover_pattern String   @default("stars")
+  is_public     Boolean  @default(true)
+  is_watch_later Boolean  @default(false) // system watch-later playlist
+  verse_keys    String?  // JSON string array
+  verse_count   Int      @default(0)
+  user_id       String?
+  created_date  DateTime @default(now())
+
+  user          User?    @relation("CollectionOwner", fields: [user_id], references: [id])
+  bookmarks     Bookmark[] @relation("BookmarkCollection")
+
+  @@index([user_id])
+  @@index([is_watch_later])
+}
+
+/// ============================================================================
+/// EXISTING MODELS (preserved from original)
+/// ============================================================================
 
 model Post {
   id                String   @id @default(uuid())
   author_id         String
   author_name       String
   author_avatar     String?
+  author            User?    @relation("PostAuthor", fields: [author_id], references: [id])
   content           String
-  type              String   @default("reflection") // reflection, verse_share, image, video, question
+  type              String   @default("reflection")
   verse_key         String?
   verse_text        String?
   verse_arabic      String?
   verse_translation String?
   media_url         String?
-  media_type        String?  // image, audio, video
+  media_type        String?
   image_url         String?
   video_url         String?
   video_title       String?
   likes_count       Int      @default(0)
-  liked_by          String?  // JSON string array
+  liked_by          String?
   comments_count    Int      @default(0)
-  tags              String?  // JSON string array
+  tags              String?
+  comments          Comment[]  @relation("CommentPost")
+  likes             Like[]     @relation("LikePost")
   created_date      DateTime @default(now())
   updated_date      DateTime @updatedAt
-}
-
-model Comment {
-  id           String   @id @default(uuid())
-  post_id      String
-  author_id    String
-  author_name  String
-  content      String
-  likes_count  Int      @default(0)
-  created_date DateTime @default(now())
 }
 
 model Scholar {
@@ -102,8 +515,8 @@ model Scholar {
   death_year   String?
   avatar_url   String?
   verified     Boolean  @default(false)
-  books        String?  // JSON string array
-  sources      String?  // JSON string array
+  books        String?
+  sources      String?
   created_date DateTime @default(now())
 }
 
@@ -116,51 +529,9 @@ model Topic {
   category     String   @default("ethics")
   icon         String?
   theme_color  String?
-  verse_keys   String?  // JSON string array
+  verse_keys   String?
   verse_count  Int      @default(0)
   created_date DateTime @default(now())
-}
-
-model Collection {
-  id            String   @id @default(uuid())
-  name          String
-  description   String?
-  theme_color   String?
-  icon          String?
-  cover_pattern String   @default("stars")
-  verse_keys    String?  // JSON string array
-  verse_count   Int      @default(0)
-  user_id       String?
-  created_date  DateTime @default(now())
-}
-
-model Competition {
-  id                String   @id @default(uuid())
-  title             String
-  description       String?
-  type              String   @default("recitation")
-  prize_title       String?
-  prize_description String?
-  prize_value       String?
-  rules             String?  // JSON string array
-  deadline          String?
-  status            String   @default("active")
-  entries_count     Int      @default(0)
-  created_date      DateTime @default(now())
-}
-
-model CompetitionEntry {
-  id             String   @id @default(uuid())
-  competition_id String
-  author_id      String
-  author_name    String
-  title          String?
-  content        String?
-  media_url      String?
-  verse_key      String?
-  votes_count    Int      @default(0)
-  voted_by       String?  // JSON string array
-  created_date   DateTime @default(now())
 }
 
 model Story {
@@ -175,7 +546,7 @@ model Story {
   verse_text       String?
   background_color String?
   views_count      Int       @default(0)
-  viewed_by        String?   // JSON string array
+  viewed_by        String?
   expires_at       DateTime?
   created_date     DateTime  @default(now())
 }
@@ -194,59 +565,19 @@ model LiveSession {
   created_date   DateTime @default(now())
 }
 
-model Notification {
-  id              String   @id @default(uuid())
-  recipient_id    String
-  actor_id        String
-  actor_name      String?
-  type            String   @default("like")
-  post_id         String?
-  post_excerpt    String?
-  live_session_id String?
-  read            Boolean  @default(false)
-  created_date    DateTime @default(now())
-}
-
-model Follow {
-  id            String   @id @default(uuid())
-  follower_id   String
-  follower_name String?
-  scholar_id    String
-  scholar_name  String?
-  created_date  DateTime @default(now())
-}
-
-model Podcast {
-  id             String   @id @default(uuid())
-  title          String
-  scholar_id     String?
-  scholar_name   String?
-  scholar_avatar String?
-  audio_url      String
-  cover_image    String?
-  duration       String?
-  description    String?
-  chapters       String?  // JSON string: [{ title, timestamp, seconds }]
-  verse_keys     String?  // JSON string array: ["7:31"]
-  views_count    Int      @default(0)
-  likes_count    Int      @default(0)
-  created_date   DateTime @default(now())
-  updated_date   DateTime @updatedAt
-}
-
 model KhatmSession {
   id             String      @id @default(uuid())
   title          String
   description    String?
-  intention      String?     // نیت ختم (صلواتی، هدیه به اموات، شفا و ...)
-  target_type    String      @default("juz") // "juz" (30) or "hezb" (60)
+  intention      String?
+  target_type    String      @default("juz")
   total_parts    Int         @default(30)
   is_private     Boolean     @default(false)
   invite_code    String?
   creator_id     String
   creator_name   String?
   creator_avatar String?
-  status         String      @default("active") // "active" | "completed"
+  status         String      @default("active")
   salawat_count  Int         @default(0)
   deadline       String?
   created_date   DateTime    @default(now())
@@ -256,11 +587,11 @@ model KhatmSession {
 model KhatmPart {
   id           String      @id @default(uuid())
   session_id   String
-  part_number  Int         // 1 to 30 or 1 to 60
+  part_number  Int
   user_id      String?
   user_name    String?
   user_avatar  String?
-  status       String      @default("available") // "available" | "reserved" | "completed"
+  status       String      @default("available")
   reserved_at  DateTime?
   completed_at DateTime?
   created_date DateTime    @default(now())
@@ -280,20 +611,21 @@ model KhatmDua {
 model UserBadge {
   id           String   @id @default(uuid())
   user_id      String
-  badge_id     String   // e.g. "streak_7", "first_khatm", "quiz_master"
+  badge_id     String
   badge_name   String
-  badge_icon   String   // Lucide icon name or emoji
+  badge_icon   String
   description  String
-  tier         String   @default("bronze") // "bronze" | "silver" | "gold" | "diamond"
+  tier         String   @default("bronze")
   unlocked_at  DateTime @default(now())
   created_date DateTime @default(now())
+  user         User?    @relation("UserBadgeOwner", fields: [user_id], references: [id])
 }
 
 model DailyQuestProgress {
   id             String   @id @default(uuid())
   user_id        String
-  date           String   // "YYYY-MM-DD" date string
-  quest_type     String   // "reading" | "quiz" | "social"
+  date           String
+  quest_type     String
   title          String
   description    String?
   is_completed   Boolean  @default(false)
@@ -302,10 +634,9 @@ model DailyQuestProgress {
   xp_rewarded    Int      @default(0)
   created_date   DateTime @default(now())
   updated_date   DateTime @updatedAt
+  user           User?    @relation("QuestProgressOwner", fields: [user_id], references: [id])
 }
 
-// Database-backed OTP / captcha store (replaces in-memory Maps so data
-// survives server restarts and works across multiple instances).
 model AuthOtp {
   id          String   @id @default(uuid())
   email       String?  @unique
@@ -313,6 +644,7 @@ model AuthOtp {
   code        String
   expires_at  DateTime
   created_date DateTime @default(now())
+  user        User?    @relation("AuthOtpOwner", fields: [email], references: [email])
   @@index([email])
   @@index([phone])
 }
@@ -325,4 +657,3 @@ model AuthCaptcha {
   created_date DateTime @default(now())
   @@index([captcha_id])
 }
-

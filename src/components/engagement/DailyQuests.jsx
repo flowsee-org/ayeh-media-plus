@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Flame, Star, BookOpen, Headphones, Bookmark, MessageCircle, PenLine, Gift, CheckCircle2, Sparkles } from "lucide-react";
+import { Flame, BookOpen, Headphones, Bookmark, MessageCircle, PenLine, Gift, CheckCircle2, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 import { getEngagementSnapshot, claimDailyBonus, ENGAGEMENT_EVENT } from "@/lib/engagement";
 
@@ -50,7 +50,7 @@ export default function DailyQuests() {
             <span className="text-xs text-accent/70">روز پیاپی</span>
           </div>
           <div className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-primary/15 bg-primary/8 text-primary">
-            <Star className="h-4 w-4" />
+            <Bookmark className="h-4 w-4" />
             <span className="text-sm font-bold">{fa(snap.xp)}</span>
             <span className="text-xs text-primary/70">امتیاز · {snap.level.name}</span>
           </div>

@@ -4,8 +4,8 @@ import Scholars from '@/views/Scholars';
 export const revalidate = 3600; // ISR: Revalidate every hour
 
 export const metadata = {
-  title: 'اساتید و مفسران قرآنی — آیه مدیا پلاس',
-  description: 'آشنایی با اساتید برجسته، مفسران معاصر قرآن، درس‌گفتارها و جلسات تخصصی تدبر',
+  title: 'اساتید و مفسران — آیه مدیا پلاس',
+  description: 'آشنایی با اساتید، مفسران، درس‌گفتارها و جلسات تدبّر قرآن',
 };
 
 export default function ScholarsPage() {

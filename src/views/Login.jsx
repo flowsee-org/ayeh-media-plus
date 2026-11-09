@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ export default function Login() {
             <LogIn className="w-8 h-8 text-amber-300" />
           </div>
           <h1 className="text-3xl font-display font-bold text-white tracking-tight">خوش آمدید</h1>
-          <p className="text-blue-200/70 mt-2 text-sm">وارد حساب کاربری خود شوید</p>
+          <p className="text-blue-200/70 mt-2 text-sm">به آیه پلاس بپیوندید، تدبّر را تجربه کنید</p>
         </div>
 
         {/* Card */}
@@ -66,12 +66,12 @@ export default function Login() {
             className="w-full mb-5 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2 active:scale-95 shadow-sm"
           >
             <Phone className="w-4 h-4 text-orange-400" />
-            <span>ورود سریع با شماره همراه (پیامک و کپچا)</span>
+            <span>ورود سریع با شماره همراه</span>
           </button>
 
           <div className="flex items-center gap-2 mb-5">
             <div className="h-px flex-1 bg-white/15" />
-            <span className="text-[11px] text-blue-200/50">یا ورود با ایمیل و رمز عبور</span>
+            <span className="text-[11px] text-blue-200/50">یا با ایمیل و رمز عبور</span>
             <div className="h-px flex-1 bg-white/15" />
           </div>
 
@@ -135,15 +135,15 @@ export default function Login() {
                   در حال ورود...
                 </>
               ) : (
-                "ورود به آیه مدیا پلاس"
+                "ورود به آیه پلاس"
               )}
             </Button>
           </form>
 
           <p className="text-center text-sm text-blue-200/60 mt-6">
-            حساب کاربری ندارید؟{" "}
+            حساب ندارید؟{" "}
             <Link to="/register" className="text-orange-300 font-semibold hover:text-orange-200 transition-colors">
-              ثبت‌نام کنید
+              همین الان بسازید
             </Link>
           </p>
         </div>

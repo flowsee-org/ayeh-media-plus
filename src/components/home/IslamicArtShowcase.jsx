@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Palette, Sparkles, ArrowRight, Eye, Camera } from "lucide-react";
 import { PERSIAN_ART_IMAGES } from "@/lib/persianArtSystem";
 
@@ -64,21 +64,21 @@ export default function IslamicArtShowcase() {
             <span className="p-1.5 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-sm">
               <Camera className="w-4 h-4" />
             </span>
-            <span className="text-xs font-bold font-kalameh text-amber-600 dark:text-amber-400">
+            <span className="text-xs font-bold font-rokh-bold text-amber-600 dark:text-amber-400">
               نگارخانه معماری قدسی و هنر ایرانی-اسلامی
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold font-kalameh text-foreground">
+          <h2 className="text-2xl sm:text-3xl font-bold font-rokh-bold text-foreground">
             تجلی نور کلام وحی در شاهکارهای معماری ایران
           </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-yekan max-w-2xl">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-doran max-w-2xl">
             پیوند ناگسستنی آیات قرآن کریم با هنر تذهیب، شیشه‌های رنگی ارسی، مقرنس‌های اسلیمی و کاشی‌های هفت‌رنگ.
           </p>
         </div>
 
         <Link
           to="/studio"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground text-xs font-bold font-kalameh shadow-md hover:shadow-lg transition-transform active:scale-95 shrink-0 self-start md:self-auto"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground text-xs font-bold font-rokh-bold shadow-md hover:shadow-lg transition-transform active:scale-95 shrink-0 self-start md:self-auto"
         >
           <Palette className="w-4 h-4 text-amber-300" />
           <span>ورود به استودیوی طراحی کارت</span>
@@ -99,7 +99,7 @@ export default function IslamicArtShowcase() {
           {/* Artistic Gradient Vignette */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
           <div className="absolute top-4 right-4">
-            <span className="px-3 py-1 rounded-full bg-black/60 border border-amber-400/40 text-amber-300 text-xs font-bold font-kalameh backdrop-blur-md shadow-md">
+            <span className="px-3 py-1 rounded-full bg-black/60 border border-amber-400/40 text-amber-300 text-xs font-bold font-rokh-bold backdrop-blur-md shadow-md">
               {current.tag}
             </span>
           </div>
@@ -110,10 +110,10 @@ export default function IslamicArtShowcase() {
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>{current.location}</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold font-kalameh text-white mb-2 drop-shadow">
+            <h3 className="text-xl sm:text-2xl font-bold font-rokh-bold text-white mb-2 drop-shadow">
               {current.title}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-200/90 font-yekan leading-relaxed mb-4 max-w-xl">
+            <p className="text-xs sm:text-sm text-stone-200/90 font-doran leading-relaxed mb-4 max-w-xl">
               {current.desc}
             </p>
 
@@ -124,7 +124,7 @@ export default function IslamicArtShowcase() {
 
               <Link
                 to={`/studio?bg=${current.id}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs font-kalameh transition-transform active:scale-95 shadow-md"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs font-rokh-bold transition-transform active:scale-95 shadow-md"
               >
                 <Palette className="w-3.5 h-3.5" />
                 <span>طراحی کارت با این معماری</span>
@@ -161,10 +161,10 @@ export default function IslamicArtShowcase() {
                     <span>{item.location}</span>
                     <span className="font-mono text-primary font-bold">۰{idx + 1}</span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-bold font-kalameh text-foreground truncate">
+                  <h4 className="text-xs sm:text-sm font-bold font-rokh-bold text-foreground truncate">
                     {item.title}
                   </h4>
-                  <p className="text-[11px] text-muted-foreground line-clamp-1 font-yekan mt-0.5">
+                  <p className="text-[11px] text-muted-foreground line-clamp-1 font-doran mt-0.5">
                     {item.desc}
                   </p>
                 </div>

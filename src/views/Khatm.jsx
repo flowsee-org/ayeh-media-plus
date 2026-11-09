@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@/lib/router-compat";
 import {
   Sparkles,
   Plus,
@@ -218,7 +218,7 @@ export default function Khatm() {
               <Sparkles className="w-3.5 h-3.5" />
               <span>محفل تلاوت و ختم‌های دسته‌جمعی آیه پلاس</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-bold font-kalameh tracking-tight text-foreground">
+            <h1 className="text-2xl sm:text-4xl font-bold font-rokh-bold tracking-tight text-foreground">
               ختم قرآن دسته‌جمعی و گروه‌های تلاوت
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
@@ -590,7 +590,7 @@ function KhatmCard({ session }) {
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-bold font-kalameh text-foreground group-hover:text-accent transition-colors line-clamp-1 mb-1.5">
+        <h3 className="text-lg font-bold font-rokh-bold text-foreground group-hover:text-accent transition-colors line-clamp-1 mb-1.5">
           {session.title}
         </h3>
 

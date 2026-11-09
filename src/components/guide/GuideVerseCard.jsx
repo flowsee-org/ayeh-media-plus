@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { BookOpen, Film, Lightbulb, Loader2, Plus, ArrowLeft, Copy, Check } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
@@ -62,7 +62,7 @@ export default function GuideVerseCard({ match, user, verse }) {
             >
               {verse.arabic}
             </p>
-            <p className="font-yekan text-center text-sm sm:text-base leading-relaxed text-muted-foreground max-w-2xl mx-auto">
+            <p className="font-doran text-center text-sm sm:text-base leading-relaxed text-muted-foreground max-w-2xl mx-auto">
               «{verse.translation}»
             </p>
           </Link>
@@ -81,7 +81,7 @@ export default function GuideVerseCard({ match, user, verse }) {
             <BookOpen className="h-4 w-4" />
             <span>چرا این آیه گره‌گشای این دغدغه است؟</span>
           </div>
-          <p className="font-yekan text-sm leading-relaxed text-foreground/85">{match.why}</p>
+          <p className="font-doran text-sm leading-relaxed text-foreground/85">{match.why}</p>
         </div>
 
         {match.action && (
@@ -90,7 +90,7 @@ export default function GuideVerseCard({ match, user, verse }) {
               <Lightbulb className="h-4 w-4" />
               <span>یک گام عملی برای امروز:</span>
             </div>
-            <p className="font-yekan text-sm leading-relaxed text-foreground/85">{match.action}</p>
+            <p className="font-doran text-sm leading-relaxed text-foreground/85">{match.action}</p>
           </div>
         )}
 
@@ -100,7 +100,7 @@ export default function GuideVerseCard({ match, user, verse }) {
               <Film className="h-4 w-4" />
               <span>ایده تدبّر بصری و تصویرسازی:</span>
             </div>
-            <p className="font-yekan text-xs leading-relaxed text-muted-foreground">{match.visual}</p>
+            <p className="font-doran text-xs leading-relaxed text-muted-foreground">{match.visual}</p>
           </div>
         )}
       </div>

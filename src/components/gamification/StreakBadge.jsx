@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Flame, Sparkles } from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
@@ -38,8 +38,8 @@ export default function StreakBadge({ compact = false }) {
   if (compact) {
     return (
       <Link
-        to="/achievements"
-        className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/10 via-orange-500/15 to-emerald-500/10 hover:from-amber-500/20 hover:to-emerald-500/20 border border-amber-500/30 transition-all duration-300 text-xs font-kalameh shadow-sm"
+        href="/achievements"
+        className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/10 via-orange-500/15 to-emerald-500/10 hover:from-amber-500/20 hover:to-emerald-500/20 border border-amber-500/30 transition-all duration-300 text-xs font-rokh-bold shadow-sm"
         title="استریک روزانه و دستاوردهای معنوی"
       >
         <span className="relative flex h-2.5 w-2.5">
@@ -68,7 +68,7 @@ export default function StreakBadge({ compact = false }) {
 
       <div className="flex flex-col text-right">
         <div className="flex items-center gap-1.5">
-          <span className="text-xs font-bold font-kalameh text-foreground">
+          <span className="text-xs font-bold font-rokh-bold text-foreground">
             {data.streak_days} روز استریک
           </span>
           <span className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.2 rounded-full bg-primary/10 text-primary border border-primary/20">

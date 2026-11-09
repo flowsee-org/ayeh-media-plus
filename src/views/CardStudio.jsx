@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link } from "@/lib/router-compat";
 import {
   Download,
   Share2,
@@ -92,7 +92,7 @@ export default function CardStudio() {
   const [backgroundUrl, setBackgroundUrl] = useState(null);
   const [backgroundDim, setBackgroundDim] = useState(0.55);
   const [arabicFontId, setArabicFontId] = useState("amiri");
-  const [persianFontId, setPersianFontId] = useState("peyda");
+  const [persianFontId, setPersianFontId] = useState("doran");
   const [fontSizeMultiplier, setFontSizeMultiplier] = useState(1);
   const [showAvatar, setShowAvatar] = useState(true);
   const [showBismillah, setShowBismillah] = useState(true);
@@ -383,7 +383,7 @@ export default function CardStudio() {
         <div className="flex items-center justify-between mb-5">
           <Link
             to="/quran"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-kalameh transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-rokh-bold transition-colors"
           >
             <ArrowRight className="w-3.5 h-3.5" />
             بازگشت به مصحف شریف
@@ -393,7 +393,7 @@ export default function CardStudio() {
             <span className="p-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <Sparkles className="w-4 h-4 text-primary" />
             </span>
-            <span className="text-xs font-bold font-kalameh text-foreground">
+            <span className="text-xs font-bold font-rokh-bold text-foreground">
               استودیوی طراحی استوری و کارت قرآنی
             </span>
           </div>
@@ -414,7 +414,7 @@ export default function CardStudio() {
                   <button
                     key={f.id}
                     onClick={() => setFormatId(f.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold font-kalameh transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold font-rokh-bold transition-all ${
                       isSelected
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -452,7 +452,7 @@ export default function CardStudio() {
               <button
                 onClick={handleDownload}
                 disabled={busyAction !== null}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-kalameh shadow-md transition-transform active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-rokh-bold shadow-md transition-transform active:scale-95 disabled:opacity-50"
                 title="دانلود فایل PNG"
               >
                 {busyAction === "download" ? (
@@ -466,7 +466,7 @@ export default function CardStudio() {
               <button
                 onClick={handlePublishStory}
                 disabled={busyAction !== null}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold font-kalameh shadow-md transition-transform active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold font-rokh-bold shadow-md transition-transform active:scale-95 disabled:opacity-50"
                 title="انتشار مستقیم در استوری‌های آیه"
               >
                 {busyAction === "story" ? (
@@ -480,7 +480,7 @@ export default function CardStudio() {
               <button
                 onClick={handlePublishPost}
                 disabled={busyAction !== null}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold font-kalameh shadow-md transition-transform active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold font-rokh-bold shadow-md transition-transform active:scale-95 disabled:opacity-50"
                 title="انتشار به عنوان پست در جامعه"
               >
                 {busyAction === "post" ? (
@@ -494,7 +494,7 @@ export default function CardStudio() {
               <button
                 onClick={handleNativeShare}
                 disabled={busyAction !== null}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-muted hover:bg-muted/80 text-foreground text-xs font-bold font-kalameh border border-border shadow-sm transition-transform active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-muted hover:bg-muted/80 text-foreground text-xs font-bold font-rokh-bold border border-border shadow-sm transition-transform active:scale-95 disabled:opacity-50"
                 title="اشتراک بومی در پیام‌رسان‌ها"
               >
                 {busyAction === "share" ? (
@@ -510,7 +510,7 @@ export default function CardStudio() {
               <button
                 onClick={handleCopyClipboard}
                 disabled={busyAction !== null}
-                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-kalameh transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-rokh-bold transition-colors"
               >
                 <Copy className="w-3.5 h-3.5" />
                 کپی مستقیم تصویر در کلیپ‌بورد
@@ -524,7 +524,7 @@ export default function CardStudio() {
             <div className="flex items-center gap-2 border-b border-border/70 pb-3 mb-6 overflow-x-auto">
               <button
                 onClick={() => setActiveTab("content")}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-kalameh transition-all shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-rokh-bold transition-all shrink-0 ${
                   activeTab === "content"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -536,7 +536,7 @@ export default function CardStudio() {
 
               <button
                 onClick={() => setActiveTab("theme")}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-kalameh transition-all shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-rokh-bold transition-all shrink-0 ${
                   activeTab === "theme"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -548,7 +548,7 @@ export default function CardStudio() {
 
               <button
                 onClick={() => setActiveTab("typography")}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-kalameh transition-all shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-rokh-bold transition-all shrink-0 ${
                   activeTab === "typography"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -560,7 +560,7 @@ export default function CardStudio() {
 
               <button
                 onClick={() => setActiveTab("avatar")}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-kalameh transition-all shrink-0 ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold font-rokh-bold transition-all shrink-0 ${
                   activeTab === "avatar"
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -576,7 +576,7 @@ export default function CardStudio() {
               <div className="space-y-5 animate-in fade-in duration-200">
                 {/* Curated Verses Selector */}
                 <div>
-                  <label className="text-xs font-bold font-kalameh text-foreground block mb-2">
+                  <label className="text-xs font-bold font-rokh-bold text-foreground block mb-2">
                     انتخاب سریع از بین آیات منتخب و آرامش‌بخش قرآن:
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -590,7 +590,7 @@ export default function CardStudio() {
                             : "bg-muted/40 border-border hover:bg-muted text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        <div className="font-kalameh font-bold text-foreground">
+                        <div className="font-rokh-bold font-bold text-foreground">
                           {item.surahName}
                         </div>
                         <div className="text-[10px] text-primary font-mono mt-0.5">
@@ -604,7 +604,7 @@ export default function CardStudio() {
                 {/* Verse Key & Surah Name */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-kalameh">
+                    <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-rokh-bold">
                       شماره آیه (مثال: 24:35)
                     </label>
                     <input
@@ -616,21 +616,21 @@ export default function CardStudio() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-kalameh">
+                    <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-rokh-bold">
                       نام سوره مبارکه
                     </label>
                     <input
                       type="text"
                       value={surahName}
                       onChange={(e) => setSurahName(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-xs font-kalameh focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-xs font-rokh-bold focus:outline-none focus:ring-2 focus:ring-primary/40"
                     />
                   </div>
                 </div>
 
                 {/* Arabic Text */}
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-kalameh">
+                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-rokh-bold">
                     متن عربی آیه با اعراب
                   </label>
                   <textarea
@@ -644,28 +644,28 @@ export default function CardStudio() {
 
                 {/* Translation Text */}
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-kalameh">
+                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-rokh-bold">
                     ترجمه روان فارسی
                   </label>
                   <textarea
                     rows={3}
                     value={translation}
                     onChange={(e) => setTranslation(e.target.value)}
-                    className="w-full p-3 rounded-xl border border-border bg-background text-foreground text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/40 text-right font-peyda"
+                    className="w-full p-3 rounded-xl border border-border bg-background text-foreground text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/40 text-right font-doran"
                     dir="rtl"
                   />
                 </div>
 
                 {/* Translator Name */}
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-kalameh">
+                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-rokh-bold">
                     نام مترجم یا مفسر
                   </label>
                   <input
                     type="text"
                     value={translatorName}
                     onChange={(e) => setTranslatorName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-xs font-kalameh focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-xs font-rokh-bold focus:outline-none focus:ring-2 focus:ring-primary/40"
                   />
                 </div>
               </div>
@@ -676,7 +676,7 @@ export default function CardStudio() {
               <div className="space-y-6 animate-in fade-in duration-200">
                 {/* Royal Themes Palette */}
                 <div>
-                  <label className="text-xs font-bold font-kalameh text-foreground block mb-2.5">
+                  <label className="text-xs font-bold font-rokh-bold text-foreground block mb-2.5">
                     پالت و سبک تذهیب اسلامی:
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -693,7 +693,7 @@ export default function CardStudio() {
                           background: `linear-gradient(135deg, ${t.from}, ${t.to})`,
                         }}
                       >
-                        <span className="text-xs font-bold font-kalameh" style={{ color: t.text }}>
+                        <span className="text-xs font-bold font-rokh-bold" style={{ color: t.text }}>
                           {t.label}
                         </span>
                         <span
@@ -707,7 +707,7 @@ export default function CardStudio() {
 
                 {/* Mosque Photography Backgrounds */}
                 <div>
-                  <label className="text-xs font-bold font-kalameh text-foreground block mb-2.5">
+                  <label className="text-xs font-bold font-rokh-bold text-foreground block mb-2.5">
                     تصویر پس‌زمینه (عکاسی مساجد تاریخی):
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -726,11 +726,11 @@ export default function CardStudio() {
                             <img src={bg.url} alt="" className="w-full h-full object-cover" />
                           </div>
                         ) : (
-                          <div className="h-16 w-full rounded-xl mb-1.5 bg-muted/60 flex items-center justify-center text-muted-foreground text-xs font-kalameh">
+                          <div className="h-16 w-full rounded-xl mb-1.5 bg-muted/60 flex items-center justify-center text-muted-foreground text-xs font-rokh-bold">
                             الگوی وکتوری
                           </div>
                         )}
-                        <span className="text-[11px] font-kalameh font-semibold text-foreground truncate block">
+                        <span className="text-[11px] font-rokh-bold font-semibold text-foreground truncate block">
                           {bg.label}
                         </span>
                       </button>
@@ -742,7 +742,7 @@ export default function CardStudio() {
                 <div className="pt-2 border-t border-border/60 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xs font-bold font-kalameh text-foreground">
+                      <div className="text-xs font-bold font-rokh-bold text-foreground">
                         آپلود تصویر دلخواه از دستگاه
                       </div>
                       <div className="text-[11px] text-muted-foreground">
@@ -751,7 +751,7 @@ export default function CardStudio() {
                     </div>
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="px-3.5 py-1.5 rounded-xl bg-muted hover:bg-muted/80 border border-border text-xs font-bold font-kalameh flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 rounded-xl bg-muted hover:bg-muted/80 border border-border text-xs font-bold font-rokh-bold flex items-center gap-1.5"
                     >
                       <Upload className="w-3.5 h-3.5" />
                       انتخاب عکس
@@ -767,7 +767,7 @@ export default function CardStudio() {
 
                   {backgroundUrl && (
                     <div>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1 font-kalameh">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1 font-rokh-bold">
                         <span>میزان تیرگی پس‌زمینه جهت خوانایی بهتر متن:</span>
                         <span className="font-mono">{Math.round(backgroundDim * 100)}%</span>
                       </div>
@@ -791,7 +791,7 @@ export default function CardStudio() {
               <div className="space-y-6 animate-in fade-in duration-200">
                 {/* Arabic Font Selector */}
                 <div>
-                  <label className="text-xs font-bold font-kalameh text-foreground block mb-2">
+                  <label className="text-xs font-bold font-rokh-bold text-foreground block mb-2">
                     قلم متن قرآن (عربی):
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -805,7 +805,7 @@ export default function CardStudio() {
                             : "bg-muted/30 border-border text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        <span className="text-xs font-bold font-kalameh block">{f.label}</span>
+                        <span className="text-xs font-bold font-rokh-bold block">{f.label}</span>
                         <span className="text-sm font-arabic text-primary mt-1 block">
                           بِسْمِ اللَّهِ
                         </span>
@@ -816,7 +816,7 @@ export default function CardStudio() {
 
                 {/* Persian Font Selector */}
                 <div>
-                  <label className="text-xs font-bold font-kalameh text-foreground block mb-2">
+                  <label className="text-xs font-bold font-rokh-bold text-foreground block mb-2">
                     قلم ترجمه فارسی:
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -830,8 +830,8 @@ export default function CardStudio() {
                             : "bg-muted/30 border-border text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        <span className="text-xs font-bold font-kalameh block">{f.label}</span>
-                        <span className="text-xs text-muted-foreground mt-1 block font-peyda">
+                        <span className="text-xs font-bold font-rokh-bold block">{f.label}</span>
+                        <span className="text-xs text-muted-foreground mt-1 block font-doran">
                           به نام خداوند بخشنده
                         </span>
                       </button>
@@ -841,7 +841,7 @@ export default function CardStudio() {
 
                 {/* Font Size Multiplier Slider */}
                 <div className="pt-2 border-t border-border/60">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5 font-kalameh">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5 font-rokh-bold">
                     <span>مقیاس اندازه متن آیات و ترجمه:</span>
                     <span className="font-mono">{(fontSizeMultiplier * 100).toFixed(0)}%</span>
                   </div>
@@ -864,7 +864,7 @@ export default function CardStudio() {
                 {/* Toggles */}
                 <div className="space-y-3">
                   <label className="flex items-center justify-between p-3 rounded-2xl bg-muted/40 border border-border cursor-pointer">
-                    <span className="text-xs font-bold font-kalameh text-foreground">
+                    <span className="text-xs font-bold font-rokh-bold text-foreground">
                       نمایش کتیبه نورانی بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ در بالای کارت
                     </span>
                     <input
@@ -876,7 +876,7 @@ export default function CardStudio() {
                   </label>
 
                   <label className="flex items-center justify-between p-3 rounded-2xl bg-muted/40 border border-border cursor-pointer">
-                    <span className="text-xs font-bold font-kalameh text-foreground">
+                    <span className="text-xs font-bold font-rokh-bold text-foreground">
                       نمایش شمسه تذهیب و پرتره اسلامی کاربر در مرکز کارت
                     </span>
                     <input
@@ -891,7 +891,7 @@ export default function CardStudio() {
                 {/* Character Avatar Picker */}
                 {showAvatar && (
                   <div>
-                    <label className="text-xs font-bold font-kalameh text-foreground block mb-2">
+                    <label className="text-xs font-bold font-rokh-bold text-foreground block mb-2">
                       انتخاب پرتره معنوی شمسه:
                     </label>
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -905,7 +905,7 @@ export default function CardStudio() {
                               : "border-border hover:bg-muted/40"
                           }`}
                         >
-                          <div className="text-xs font-kalameh font-bold text-foreground">
+                          <div className="text-xs font-rokh-bold font-bold text-foreground">
                             {p.label}
                           </div>
                         </button>
@@ -916,14 +916,14 @@ export default function CardStudio() {
 
                 {/* Author Name / Watermark */}
                 <div className="pt-2 border-t border-border/60">
-                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-kalameh">
+                  <label className="text-xs font-semibold text-muted-foreground block mb-1.5 font-rokh-bold">
                     نام امضاکننده یا طراح در پای کارت
                   </label>
                   <input
                     type="text"
                     value={authorName}
                     onChange={(e) => setAuthorName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-xs font-kalameh focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    className="w-full px-3 py-2 rounded-xl border border-border bg-background text-foreground text-xs font-rokh-bold focus:outline-none focus:ring-2 focus:ring-primary/40"
                     placeholder="مثال: آیه پلاس یا نام شما"
                   />
                 </div>

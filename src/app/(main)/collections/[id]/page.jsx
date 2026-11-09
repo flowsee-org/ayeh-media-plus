@@ -6,7 +6,7 @@ export const revalidate = 1800; // ISR: 30 minutes
 export async function generateMetadata({ params }) {
   const { id } = await params;
   return {
-    title: `مجموعه مطالعاتی آیات — آیه پلاس`,
+    title: `مجموعه مطالعاتی آیات — آیه مدیا پلاس`,
     description: `مطالعه و تدبر در آیات این مجموعه به همراه ترجمه و تفاسیر`,
   };
 }

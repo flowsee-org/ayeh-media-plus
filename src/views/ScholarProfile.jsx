@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "@/lib/router-compat";
 import api from "@/lib/api";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import FollowButton from "@/components/live/FollowButton";

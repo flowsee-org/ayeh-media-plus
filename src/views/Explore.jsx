@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { togglePostLike } from "@/lib/social";
 import { toast } from "react-hot-toast";
@@ -19,13 +19,13 @@ const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
 const CHIPS = [
   { id: "all", label: "همه", match: () => true },
-  { id: "recitation", label: "تلاوت", match: (p) => (p.tags || []).includes("تلاوت") },
-  { id: "tafsir", label: "تفسیر", match: (p) => (p.tags || []).includes("تفسیر") },
-  { id: "tadabbur", label: "تدبّر", match: (p) => (p.tags || []).includes("تدبّر") || p.type === "reflection" },
-  { id: "verses", label: "آیات", match: (p) => p.type === "verse_share" || !!p.verse_key },
-  { id: "art", label: "خوشنویسی", match: (p) => (p.tags || []).includes("خوشنویسی") },
+  { id: "tadabbur", label: "تدبّرها", match: (p) => (p.tags || []).includes("تدبّر") || p.type === "reflection" },
+  { id: "recitation", label: "تلاوت‌ها", match: (p) => (p.tags || []).includes("تلاوت") || p.type === "video" },
+  { id: "tafsir", label: "تفسیر و نکات", match: (p) => (p.tags || []).includes("تفسیر") },
+  { id: "verses", label: "آیات در زندگی", match: (p) => p.type === "verse_share" || !!p.verse_key },
+  { id: "art", label: "هنر و خوشنویسی", match: (p) => (p.tags || []).includes("خوشنویسی") },
   { id: "video", label: "ویدیو", match: (p) => p.type === "video" },
-  { id: "ask", label: "گفتگو", match: (p) => p.type === "question" },
+  { id: "ask", label: "پرسش و پاسخ", match: (p) => p.type === "question" },
 ];
 
 const ASPECTS = ["aspect-square", "aspect-[3/4]", "aspect-[4/5]"];
@@ -151,7 +151,7 @@ export default function Explore() {
                     trackSearch(e.target.value.trim());
                   }
                 }}
-                placeholder="جستجو در کاوش — تلاوت، تفسیر، خوشنویسی، آیه…"
+                placeholder="در کاوش جستجو کنید — تدبّر، تلاوت، هنر، آیه..."
                 className="w-full rounded-2xl border border-border bg-card text-foreground font-ui py-2.5 pr-11 pl-11 text-sm placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/15 focus:outline-none transition-all shadow-soft"
               />
               {query && (
@@ -200,7 +200,7 @@ export default function Explore() {
           </div>
           {topInterests.length > 0 && (
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-              <span className="text-xs text-muted-foreground shrink-0 ml-1">علاقه‌مندی‌ها:</span>
+              <span className="text-xs text-muted-foreground shrink-0 ml-1">علاقه‌مندی‌های شما:</span>
               {topInterests.map((interest) => (
                 <button
                   key={interest.topic}
@@ -247,7 +247,7 @@ export default function Explore() {
         {filtered.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border/60 p-16 text-center">
             <Search className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">چیزی پیدا نشد — عبارت دیگری را جستجو کنید</p>
+            <p className="text-sm text-muted-foreground">نتیجه‌ای نیافت — عبارت دیگری امتحان کنید</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 sm:gap-2">

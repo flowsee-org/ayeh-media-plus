@@ -121,9 +121,16 @@ export const ARABIC_FONTS = [
 ];
 
 export const PERSIAN_FONTS = [
-  { id: "kalameh", label: "قلم کلمه", family: "Kalameh, Peyda, sans-serif" },
-  { id: "peyda", label: "قلم پیدا", family: "Peyda, YekanBakh, sans-serif" },
-  { id: "yekan", label: "قلم یکان", family: "YekanBakh, sans-serif" },
+  { id: "doran", label: "قلم دوران", family: "'Doran', sans-serif" },
+  { id: "doran-bold", label: "قلم دوران Bold", family: "'Doran', sans-serif; font-weight: 700" },
+  { id: "doran-extrabold", label: "قلم دوران ExtraBold", family: "'Doran', sans-serif; font-weight: 800" },
+  { id: "rokh", label: "قلم رخ", family: "'Rokh', sans-serif" },
+  { id: "rokh-bold", label: "قلم رخ Bold", family: "'Rokh', sans-serif; font-weight: 700" },
+  { id: "rokh-extrabold", label: "قلم رخ ExtraBold", family: "'Rokh', sans-serif; font-weight: 800" },
+  { id: "tajrid", label: "قلم تجريد (عربی)", family: "'Tajrid', serif" },
+  { id: "tajrid-bold", label: "قلم تجريد Bold (عربی)", family: "'Tajrid', serif; font-weight: 700" },
+  { id: "falsafeh", label: "قلم Delfi", family: "'Falsafeh', sans-serif" },
+  { id: "falsafeh-bold", label: "قلم Delfi Bold", family: "'Falsafeh', sans-serif; font-weight: 700" },
 ];
 
 const esc = (value) =>
@@ -212,7 +219,7 @@ export function buildVerseCardSvg({
   showAvatar = true,
   showBismillah = true,
   arabicFontId = "amiri",
-  persianFontId = "peyda",
+  persianFontId = "doran",
   fontSizeMultiplier = 1,
 }) {
   const theme = CARD_THEMES.find((t) => t.id === themeId) || CARD_THEMES[0];

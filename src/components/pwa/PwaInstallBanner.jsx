@@ -52,7 +52,7 @@ export default function PwaInstallBanner() {
               <Sparkles className="w-5 h-5 text-amber-300" />
             </div>
             <div>
-              <div className="text-xs font-bold font-kalameh text-foreground">
+              <div className="text-xs font-bold font-rokh-bold text-foreground">
                 نصب اپلیکیشن آیه پلاس
               </div>
               <div className="text-[11px] text-muted-foreground mt-0.5">

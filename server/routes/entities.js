@@ -231,8 +231,8 @@ function deny(res, status, message) {
 
 function ensureReadable(req, res, entityName) {
   if (HIDDEN_ENTITIES.has(entityName)) return deny(res, 403, 'Forbidden');
-  // Account rows are only exposed through /api/auth/me.
-  if (ADMIN_ONLY_ENTITIES.has(entityName) && !isAdmin(req)) {
+  // User profiles are publicly readable (for profile pages); writes remain admin-only.
+  if (ADMIN_ONLY_ENTITIES.has(entityName) && !isAdmin(req) && req.method !== 'GET') {
     return deny(res, 403, 'Admin access required');
   }
   return true;
@@ -270,6 +270,35 @@ function applyCreatePolicy(req, entityName, payload) {
   if (fields?.has('follower_name')) payload.follower_name = req.user.full_name || 'کاربر آیه';
   if (fields?.has('user_name')) payload.user_name = req.user.full_name || 'کاربر آیه';
   return payload;
+}
+
+/* ── Public User Profile Projection ──
+ * Only explicitly approved fields are exposed publicly.
+ * Sensitive fields (email, phone, password, role, banned status, etc.)
+ * are NEVER included. Filtering happens server-side only.
+ */
+const PUBLIC_USER_FIELDS = new Set([
+  'id',
+  'full_name',
+  'avatar_url',
+  'bio',
+  'is_scholar',
+  'streak_days',
+  'max_streak',
+  'spiritual_level',
+  'total_xp',
+  // Intentionally excluded: email, phone, password, role, is_banned,
+  // banned_reason, banned_until, preferences, avatar_config, last_active_date,
+  // created_date, updated_date — internal metadata not for public exposure.
+]);
+
+function projectPublicUser(record) {
+  if (!record) return null;
+  const projected = {};
+  for (const field of PUBLIC_USER_FIELDS) {
+    if (record[field] !== undefined) projected[field] = record[field];
+  }
+  return projected;
 }
 
 // Prevent a non-admin from re-assigning ownership on update.
@@ -338,9 +367,14 @@ router.get('/:entity', async (req, res) => {
 
     const parsedItems = items.map(deserializeRecord);
 
+    // Public User profiles only expose approved fields (API3:2023)
+    const publicItems = entityName === 'User'
+      ? parsedItems.map(projectPublicUser)
+      : parsedItems;
+
     // Provide both array behavior and pagination metadata
     res.json({
-      items: parsedItems,
+      items: publicItems,
       has_more: items.length === take && total > items.length,
       next_cursor: items.length > 0 ? items[items.length - 1].id : null,
       total,
@@ -374,8 +408,14 @@ router.post('/:entity/filter', async (req, res) => {
     ]);
 
     const parsedItems = items.map(deserializeRecord);
+
+    // Public User profiles only expose approved fields (API3:2023)
+    const publicItems = entityName === 'User'
+      ? parsedItems.map(projectPublicUser)
+      : parsedItems;
+
     res.json({
-      items: parsedItems,
+      items: publicItems,
       has_more: offset + items.length < total,
       total,
     });
@@ -397,8 +437,96 @@ router.get('/:entity/:id', async (req, res) => {
     const item = await model.findUnique({ where: { id: req.params.id } });
     if (!item) return res.status(404).json({ message: 'Record not found' });
 
+    // Public User profiles only expose approved fields (API3:2023)
+    if (entityName === 'User') {
+      return res.json(projectPublicUser(item));
+    }
+
     res.json(deserializeRecord(item));
   } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/entities/follow - Create a follow relationship (secure)
+// follower_id is derived from the authenticated session only.
+router.post('/follow', async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'Authentication required' });
+
+    const { followed_id } = req.body;
+    if (!followed_id || typeof followed_id !== 'string') {
+      return res.status(400).json({ message: 'Target user ID is required' });
+    }
+
+    // Cannot follow yourself
+    if (followed_id === req.user.id) {
+      return res.status(400).json({ message: 'Cannot follow yourself' });
+    }
+
+    // Validate target user exists
+    const targetUser = await prisma.user.findUnique({ where: { id: followed_id } });
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Target user not found' });
+    }
+
+    // Prevent duplicate follows
+    const existing = await prisma.follow.findFirst({
+      where: { follower_id: req.user.id, followed_id },
+    });
+    if (existing) {
+      return res.status(409).json({ message: 'Already following this user' });
+    }
+
+    const follow = await prisma.follow.create({
+      data: {
+        follower_id: req.user.id,
+        followed_id,
+        followed_name: targetUser.full_name || 'کاربر آیه',
+      },
+    });
+
+    if (io) {
+      io.emit('entity:change', {
+        entity: 'Follow',
+        action: 'create',
+        data: follow,
+      });
+    }
+
+    res.status(201).json(follow);
+  } catch (err) {
+    console.error('Follow create error:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE /api/entities/follow/:id - Unfollow (only owner or admin)
+router.delete('/follow/:id', async (req, res) => {
+  try {
+    if (!req.user) return res.status(401).json({ message: 'Authentication required' });
+
+    const follow = await prisma.follow.findUnique({ where: { id: req.params.id } });
+    if (!follow) return res.status(404).json({ message: 'Follow record not found' });
+
+    // Only the follower or an admin can unfollow
+    if (follow.follower_id !== req.user.id && !isAdmin(req)) {
+      return res.status(403).json({ message: 'You can only unfollow your own follows' });
+    }
+
+    await prisma.follow.delete({ where: { id: req.params.id } });
+
+    if (io) {
+      io.emit('entity:change', {
+        entity: 'Follow',
+        action: 'delete',
+        data: { id: req.params.id },
+      });
+    }
+
+    res.json({ success: true, id: req.params.id });
+  } catch (err) {
+    console.error('Follow delete error:', err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -417,6 +545,23 @@ router.post('/:entity', async (req, res) => {
       entityName,
       filterModelFields(entityName, serializePayload(req.body))
     );
+    // Follow-specific security: prevent self-follow and duplicates via generic route too
+    if (entityName === 'Follow') {
+      if (payload.follower_id === payload.followed_id) {
+        return res.status(400).json({ message: 'Cannot follow yourself' });
+      }
+      const targetUser = await prisma.user.findUnique({ where: { id: payload.followed_id } });
+      if (!targetUser) {
+        return res.status(404).json({ message: 'Target user not found' });
+      }
+      const existing = await prisma.follow.findFirst({
+        where: { follower_id: payload.follower_id, followed_id: payload.followed_id },
+      });
+      if (existing) {
+        return res.status(409).json({ message: 'Already following this user' });
+      }
+    }
+
     const created = await model.create({ data: payload });
     const result = deserializeRecord(created);
 

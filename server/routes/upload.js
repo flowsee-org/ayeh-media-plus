@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { authenticate } from '../middleware/auth.js';
+import { transcodeVideo, cleanupVideo } from '../lib/transcode.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,8 @@ const ALLOWED_EXTENSIONS = new Set([
 
 const ALLOWED_MIME =
   /^(image\/(jpeg|png|webp|gif|avif)|audio\/[a-z0-9.+-]+|video\/[a-z0-9.+-]+|application\/pdf|text\/plain)$/i;
+
+const VIDEO_EXTENSIONS = new Set(['.mp4', '.webm', '.mov', '.m4v']);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -63,19 +66,54 @@ router.post('/upload', authenticate({ required: true }), (req, res, next) => {
     }
     next();
   });
-}, (req, res) => {
+}, async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
   const fileUrl = `/uploads/${req.file.filename}`;
-  res.json({
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  const isVideo = VIDEO_EXTENSIONS.has(ext);
+
+  let transcodeResult = null;
+
+  // Transcode video files into adaptive HLS renditions
+  if (isVideo) {
+    try {
+      transcodeResult = transcodeVideo(req.file.path, req.file.filename);
+    } catch (err) {
+      console.error('Transcoding error:', err);
+      // Transcoding failure is not fatal — we still return the raw file URL
+      transcodeResult = { error: err.message };
+    }
+  }
+
+  const response = {
     file_url: fileUrl,
     filename: req.file.filename,
     original_name: req.file.originalname,
     mimetype: req.file.mimetype,
     size: req.file.size,
-  });
+    is_video: isVideo,
+  };
+
+  if (transcodeResult) {
+    response.transcoding = {
+      hls_url: transcodeResult.hlsUrl,
+      qualities: transcodeResult.qualities,
+      thumbnail_url: transcodeResult.thumbnailUrl,
+      duration: transcodeResult.duration,
+      width: transcodeResult.width,
+      height: transcodeResult.height,
+      has_video: transcodeResult.hasVideo,
+      has_audio: transcodeResult.hasAudio,
+    };
+    if (transcodeResult.error) {
+      response.transcoding.error = transcodeResult.error;
+    }
+  }
+
+  res.json(response);
 });
 
 export default router;

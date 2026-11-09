@@ -2,7 +2,12 @@
 
 ## Project Context
 
-This is the **Ayeh Media Plus (آیه پلاس)** web application repository. It operates completely independently with **pnpm**, **Next.js 15 App Router** (with SSG, ISR, SSR, and CSR rendering patterns), **React 19**, an integrated Node.js + Express backend, SQLite (via Prisma ORM), and Socket.io for real-time live streaming and messaging.
+This is the **Ayeh Media Plus (آیه پلاس)** web application repository. It operates completely independently with **pnpm**, **Next.js 15 App Router** (with SSG, ISR, SSR, and CSR rendering patterns), **React 19**, an integrated Node.js + Express backend, **SQLite (development) or PostgreSQL (production)** via Prisma ORM, and Socket.io for real-time live streaming and messaging.
+
+### Database Support
+- **Development**: SQLite (`file:./dev.db`) — zero-config, file-based
+- **Production**: PostgreSQL — scalable, multi-instance ready
+- Switch providers via `DATABASE_PROVIDER` env var in `.env`
 
 ## Key Files & Structure
 
@@ -35,6 +40,11 @@ This is the **Ayeh Media Plus (آیه پلاس)** web application repository. It
 - `pnpm server`: Runs only the backend.
 - `pnpm client`: Runs only the Next.js frontend dev server (`next dev -p 5173`).
 - `pnpm seed`: Seeds the SQLite database with initial users, scholars, curated verses, topics, and posts.
+- `pnpm db:init`: Initializes the database (detects provider from .env, runs seed).
+- `pnpm db:generate`: Generates Prisma Client for the configured provider.
+- `pnpm db:push`: Pushes schema to database (development).
+- `pnpm db:migrate`: Deploys Prisma migrations (production).
+- `pnpm db:studio`: Opens Prisma Studio database GUI.
 - `pnpm build`: Compiles the Next.js application for production (generating SSG, ISR, and SSR routes).
 - `pnpm start`: Starts the Next.js production server on port 5173.
 - `pnpm lint`: Runs ESLint checks.

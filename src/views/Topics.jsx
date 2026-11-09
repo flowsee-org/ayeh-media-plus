@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "@/lib/router-compat";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { TOPIC_CATEGORIES } from "@/lib/topicData";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
@@ -144,10 +144,10 @@ export default function Topics() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
             <Compass className="h-3.5 w-3.5" /> کاوش موضوعی و معنایی آیات
           </div>
-          <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
             موضوعات و مفاهیم قرآنی
           </h1>
-          <p className="font-yekan text-muted-foreground text-sm max-w-lg mx-auto">
+          <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
             کاوش و تدبّر در معارف وحیانی قرآن کریم بر اساس دسته‌بندی‌های موضوعی کاربردی
           </p>
 

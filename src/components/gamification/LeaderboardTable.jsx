@@ -64,7 +64,7 @@ export default function LeaderboardTable() {
             <span className="p-1.5 rounded-xl bg-gradient-to-br from-amber-600 to-yellow-500 text-white shadow-sm">
               <Trophy className="w-4 h-4" />
             </span>
-            <h3 className="text-lg font-bold font-kalameh text-foreground">
+            <h3 className="text-lg font-bold font-rokh-bold text-foreground">
               تابلوی مسابقه در خیرات (رده‌بندی معنوی)
             </h3>
           </div>
@@ -77,7 +77,7 @@ export default function LeaderboardTable() {
         <div className="flex items-center gap-1 bg-muted p-1 rounded-2xl border border-border shrink-0 self-start sm:self-auto">
           <button
             onClick={() => setFilterType("xp")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-kalameh transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-rokh-bold transition-all ${
               filterType === "xp"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -87,7 +87,7 @@ export default function LeaderboardTable() {
           </button>
           <button
             onClick={() => setFilterType("streak")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-kalameh transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-rokh-bold transition-all ${
               filterType === "streak"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -124,7 +124,7 @@ export default function LeaderboardTable() {
                       <User className="w-6 h-6 text-slate-500" />
                     )}
                   </div>
-                  <span className="text-xs font-bold font-kalameh text-foreground truncate max-w-full">
+                  <span className="text-xs font-bold font-rokh-bold text-foreground truncate max-w-full">
                     {top3[1].name}
                   </span>
                   <span className="text-[10px] text-muted-foreground font-mono mt-0.5">
@@ -146,7 +146,7 @@ export default function LeaderboardTable() {
                       <User className="w-7 h-7 text-yellow-600" />
                     )}
                   </div>
-                  <span className="text-xs sm:text-sm font-bold font-kalameh text-foreground truncate max-w-full">
+                  <span className="text-xs sm:text-sm font-bold font-rokh-bold text-foreground truncate max-w-full">
                     {top3[0].name}
                   </span>
                   <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 font-mono mt-0.5">
@@ -168,7 +168,7 @@ export default function LeaderboardTable() {
                       <User className="w-6 h-6 text-amber-700" />
                     )}
                   </div>
-                  <span className="text-xs font-bold font-kalameh text-foreground truncate max-w-full">
+                  <span className="text-xs font-bold font-rokh-bold text-foreground truncate max-w-full">
                     {top3[2].name}
                   </span>
                   <span className="text-[10px] text-muted-foreground font-mono mt-0.5">
@@ -201,11 +201,11 @@ export default function LeaderboardTable() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold font-kalameh text-foreground">
+                        <span className="text-xs font-bold font-rokh-bold text-foreground">
                           {item.name}
                         </span>
                         <span
-                          className={`text-[9px] px-1.5 py-0.2 rounded-full font-kalameh font-bold border ${league.bg} ${league.text} ${league.border}`}
+                          className={`text-[9px] px-1.5 py-0.2 rounded-full font-rokh-bold font-bold border ${league.bg} ${league.text} ${league.border}`}
                         >
                           لیگ {item.league}
                         </span>

@@ -4,11 +4,11 @@ import Home from '@/views/Home';
 export const dynamic = 'force-dynamic'; // SSR: Dynamic Server Rendering per request
 
 export const metadata = {
-  title: 'آیه مدیا پلاس — سامانه چندرسانه‌ای تدبر در قرآن کریم',
-  description: 'مطالعه مصحف شریف، ترجمه و تفسیر، درس‌گفتارهای اساتید، شبکه اجتماعی تدبر و پخش زنده قرآنی',
+  title: 'آیه مدیا پلاس — تدبّر در قرآن کریم',
+  description: 'مطالعه مصحف، ترجمه، تفسیر، تدبّر، تلاوت، هنر و جامعه قرآنی — همه در یک تجربه یکپارچه',
   openGraph: {
     title: 'آیه مدیا پلاس',
-    description: 'جامعه و رسانه قرآنی — تلاوت، تفسیر و تدبر در آیات وحی',
+    description: 'مجتمع قرآنی: تلاوت، تفسیر، تدبّر، هنر و جامعه',
   },
 };
 

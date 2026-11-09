@@ -1,3 +1,5 @@
+'use client';
+
 import { useLocation } from 'react-router-dom';
 import api from "@/lib/api";
 import { useQuery } from '@tanstack/react-query';
@@ -5,8 +7,13 @@ import { IslamicStar } from '@/components/IslamicOrnaments';
 import { Home as HomeIcon } from 'lucide-react';
 
 export default function PageNotFound({}) {
-    const location = useLocation();
-    const pageName = location.pathname.substring(1);
+    let pageName = '';
+    try {
+      const location = useLocation();
+      pageName = location.pathname.substring(1);
+    } catch {
+      pageName = '';
+    }
 
     const { data: authData, isFetched } = useQuery({
         queryKey: ['user'],

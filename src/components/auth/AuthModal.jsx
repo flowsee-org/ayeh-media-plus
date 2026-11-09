@@ -229,7 +229,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           <div className="w-12 h-12 mx-auto rounded-2xl bg-accent/10 text-accent flex items-center justify-center font-bold shadow-inner">
             <Sparkles className="w-6 h-6" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold font-kalameh text-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold font-rokh-bold text-foreground">
             {step === "phone"
               ? "ورود به آیه پلاس"
               : step === "otp"

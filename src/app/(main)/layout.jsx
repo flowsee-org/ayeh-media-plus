@@ -1,7 +1,7 @@
 'use client';
 
-import Layout from '@/components/Layout';
+import MainLayout from '@/components/layout/MainLayout';
 
-export default function MainLayout({ children }) {
-  return <Layout>{children}</Layout>;
+export default function AppLayout({ children }) {
+  return <MainLayout>{children}</MainLayout>;
 }

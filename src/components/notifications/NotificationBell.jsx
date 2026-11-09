@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { timeAgo } from "@/components/community/shared";
 import { Bell, Heart, MessageCircle, CheckCheck, Loader2, Radio } from "lucide-react";
@@ -12,7 +12,7 @@ export default function NotificationBell() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const ref = useRef(null);
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const load = async (uid) => {
     setLoading(true);
@@ -53,8 +53,8 @@ export default function NotificationBell() {
       setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
       try { await api.entities.Notification.update(n.id, { read: true }); } catch {}
     }
-    if (n.type === "live" && n.live_session_id) navigate(`/live/${n.live_session_id}`);
-    else if (n.post_id) navigate(`/community/${n.post_id}`);
+    if (n.type === "live" && n.live_session_id) router.push(`/live/${n.live_session_id}`);
+    else if (n.post_id) router.push(`/community/${n.post_id}`);
   };
 
   const markAll = async () => {

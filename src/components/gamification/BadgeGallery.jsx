@@ -67,7 +67,7 @@ export default function BadgeGallery({ badges = [] }) {
             <span className="p-1.5 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-700 text-white shadow-sm">
               <Award className="w-4 h-4" />
             </span>
-            <h3 className="text-lg font-bold font-kalameh text-foreground">
+            <h3 className="text-lg font-bold font-rokh-bold text-foreground">
               گالری نشان‌ها و افتخارات معنوی
             </h3>
           </div>
@@ -76,7 +76,7 @@ export default function BadgeGallery({ badges = [] }) {
           </p>
         </div>
 
-        <div className="text-xs font-bold font-kalameh text-primary bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20 shrink-0 self-start sm:self-auto">
+        <div className="text-xs font-bold font-rokh-bold text-primary bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20 shrink-0 self-start sm:self-auto">
           {unlockedCount} از {badges.length} نشان آزاد شده
         </div>
       </div>
@@ -100,13 +100,13 @@ export default function BadgeGallery({ badges = [] }) {
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-kalameh font-bold border ${tier.textColor} ${tier.border} bg-background/60`}
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-rokh-bold font-bold border ${tier.textColor} ${tier.border} bg-background/60`}
                   >
                     سطح {tier.label}
                   </span>
 
                   {isUnlocked ? (
-                    <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold font-kalameh">
+                    <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold font-rokh-bold">
                       <Check className="w-3.5 h-3.5" />
                       آزاد شده
                     </span>
@@ -132,7 +132,7 @@ export default function BadgeGallery({ badges = [] }) {
                 </div>
 
                 <div className="text-center mt-3">
-                  <h4 className="text-sm font-bold font-kalameh text-foreground">
+                  <h4 className="text-sm font-bold font-rokh-bold text-foreground">
                     {badge.badge_name}
                   </h4>
                   <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">

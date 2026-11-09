@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { Image } from "@/components/ui/image";
 import {
@@ -174,7 +174,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
           <Avatar name={post.author_name} size={40} avatar={post.author_avatar} className="ring-2 ring-border/50 ring-offset-1" />
           <div className="min-w-0 flex-1 leading-snug">
             <div className="flex items-center gap-2">
-              <span className="truncate text-sm font-bold text-foreground font-kalameh tracking-wide">
+              <span className="truncate text-sm font-bold text-foreground font-rokh-bold tracking-wide">
                 {post.author_name}
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-secondary/80 px-2 py-0.5 text-xs font-medium text-accent border border-border/40">
@@ -182,7 +182,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
                 {POST_TYPE_LABELS[post.type] || "پست"}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5 font-yekan">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5 font-doran">
               <span>{timeAgo(post.created_date)}</span>
             </div>
           </div>
@@ -282,7 +282,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
               <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-3">
                 <Link
                   to={`/verse/${post.verse_key.replace(":", "/")}`}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 font-kalameh text-xs font-bold text-foreground border border-border shadow-xs hover:border-accent transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border shadow-xs hover:border-accent transition-colors"
                 >
                   <BookOpen className="h-3.5 w-3.5 text-accent" />
                   <span>
@@ -329,7 +329,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
 
               {/* Persian Translation */}
               {post.verse_text && (
-                <p className="font-yekan text-xs sm:text-sm leading-relaxed text-muted-foreground/90 text-center font-medium mt-1">
+                <p className="font-doran text-xs sm:text-sm leading-relaxed text-muted-foreground/90 text-center font-medium mt-1">
                   «{post.verse_text}»
                 </p>
               )}
@@ -400,14 +400,14 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
       </div>
 
       {/* Likes Count */}
-      <div className="px-4 pb-1 text-xs sm:text-[13px] font-bold text-foreground font-yekan">
+      <div className="px-4 pb-1 text-xs sm:text-[13px] font-bold text-foreground font-doran">
         {post.likes_count > 0 ? `${fa(post.likes_count)} پسند` : "اولین نفری باشید که می‌پسندید"}
       </div>
 
       {/* Caption Content */}
       {post.content && (
-        <div className="px-4 pb-2 text-xs sm:text-sm leading-[2] text-foreground/95 font-yekan">
-          <Link to={`/community/${post.id}`} className="ml-1.5 font-bold font-kalameh text-foreground hover:underline">
+        <div className="px-4 pb-2 text-xs sm:text-sm leading-[2] text-foreground/95 font-doran">
+          <Link to={`/community/${post.id}`} className="ml-1.5 font-bold font-rokh-bold text-foreground hover:underline">
             {post.author_name}
           </Link>
           <span className="whitespace-pre-line">{displayContent}</span>
@@ -440,7 +440,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
       <div className="px-4 pb-3 pt-0.5">
         <button
           onClick={toggleComments}
-          className="text-xs sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors font-yekan"
+          className="text-xs sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors font-doran"
         >
           {showComments ? "بستن نظرات" : commentCount > 0 ? `مشاهده هر ${fa(commentCount)} نظر` : "ثبت اولین نظر..."}
         </button>

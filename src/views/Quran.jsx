@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "@/lib/router-compat";
 import { getSurahList, getSurah, getJuz, RECITERS, getAudioUrl } from "@/lib/quranApi";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { VerseMarker } from "@/components/IslamicDecorations";
@@ -154,16 +154,16 @@ function SurahList({ onPick, onPickJuz }) {
 
   return (
     <PullToRefresh onRefresh={loadSurahs}>
-      <div className="animate-fade-in font-yekan">
+      <div className="animate-fade-in font-doran">
         {/* Header section */}
         <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
             <BookOpen className="h-3.5 w-3.5 text-primary" /> ۱۱۴ سوره مبارکه · ۳۰ جزء مصحف شریف
           </div>
-          <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
             مصحف شریف قرآن کریم
           </h1>
-          <p className="font-yekan text-sm text-muted-foreground max-w-xl mx-auto mb-6">
+          <p className="font-doran text-sm text-muted-foreground max-w-xl mx-auto mb-6">
             مطالعه متن، ترجمه روان، تلاوت ترتیل با صدای برترین قاریان جهان اسلام و ورود به تدبّر تخصصی آیات
           </p>
 
@@ -223,7 +223,7 @@ function SurahList({ onPick, onPickJuz }) {
                     {s.number}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-kalameh font-bold text-base text-foreground truncate">
+                    <div className="font-rokh-bold font-bold text-base text-foreground truncate">
                       سوره {s.persianName}
                     </div>
                     <div className="text-xs text-muted-foreground mt-0.5 font-ui">
@@ -256,10 +256,10 @@ function SurahList({ onPick, onPickJuz }) {
                     {juz.arabicName}
                   </div>
                 </div>
-                <div className="font-kalameh font-bold text-base mb-1 text-foreground">
+                <div className="font-rokh-bold font-bold text-base mb-1 text-foreground">
                   جزء {juz.number} — {juz.persianName}
                 </div>
-                <p className="font-yekan text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-2">
+                <p className="font-doran text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-2">
                   {juz.description}
                 </p>
                 <div className="font-ui text-xs font-medium text-primary" dir="rtl">
@@ -419,7 +419,7 @@ function SurahView({ n, onBack }) {
   if (!data) return null;
 
   return (
-    <div className="max-w-5xl mx-auto animate-fade-in font-yekan pb-28">
+    <div className="max-w-5xl mx-auto animate-fade-in font-doran pb-28">
       {/* Top Navigation */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <BackButton onClick={onBack} label="همه سوره‌ها" className="mb-0" />
@@ -578,7 +578,7 @@ function SurahView({ n, onBack }) {
 
                   {prefs.showTranslation && (
                     <p
-                      className="font-yekan text-muted-foreground mt-4 leading-[2.2] transition-all"
+                      className="font-doran text-muted-foreground mt-4 leading-[2.2] transition-all"
                       style={{
                         fontSize: `${Math.round(14 * (prefs.translationScale || 1.0))}px`,
                       }}
@@ -601,7 +601,7 @@ function SurahView({ n, onBack }) {
                           e.stopPropagation();
                           navigate(`/studio?surah=${data.number}&ayah=${a.numberInSurah}`);
                         }}
-                        className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-kalameh"
+                        className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1 font-rokh-bold"
                         title="طراحی کارت و استوری این آیه"
                       >
                         <Palette className="h-3.5 w-3.5" />
@@ -800,7 +800,7 @@ function JuzView({ n, onBack }) {
     );
 
   return (
-    <div className="max-w-5xl mx-auto animate-fade-in font-yekan">
+    <div className="max-w-5xl mx-auto animate-fade-in font-doran">
       <BackButton onClick={onBack} label="همه اجزاء" className="mb-6 sm:mb-8" />
 
       <div className="text-center mb-10">

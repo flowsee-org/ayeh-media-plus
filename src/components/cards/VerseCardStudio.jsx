@@ -99,8 +99,8 @@ export default function VerseCardStudio({ user, onClose, onPosted }) {
               <Sparkles className="h-4.5 w-4.5" />
             </div>
             <div>
-              <h3 className="font-kalameh text-lg font-bold text-foreground">کارگاه هنری کارت آیه</h3>
-              <p className="font-yekan text-xs text-muted-foreground mt-0.5">طراحی کارت‌های قرآنی با تذهیب سنتی و ابعاد استاندارد شبکه‌های اجتماعی</p>
+              <h3 className="font-rokh-bold text-lg font-bold text-foreground">کارگاه هنری کارت آیه</h3>
+              <p className="font-doran text-xs text-muted-foreground mt-0.5">طراحی کارت‌های قرآنی با تذهیب سنتی و ابعاد استاندارد شبکه‌های اجتماعی</p>
             </div>
           </div>
           <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-secondary transition-colors text-muted-foreground">
@@ -118,7 +118,7 @@ export default function VerseCardStudio({ user, onClose, onPosted }) {
                 className="max-h-full max-w-full rounded-xl object-contain"
               />
             </div>
-            <span className="font-yekan text-[11px] text-muted-foreground mt-2">
+            <span className="font-doran text-[11px] text-muted-foreground mt-2">
               خروجی باکیفیت {format.width}×{format.height} پیکسل
             </span>
           </div>
@@ -168,7 +168,7 @@ export default function VerseCardStudio({ user, onClose, onPosted }) {
                 rows={2}
                 dir="rtl"
                 placeholder="ترجمه پیام یا برداشت تدبّری کوتاه…"
-                className="font-yekan w-full resize-none rounded-xl border border-border bg-secondary/40 px-3.5 py-2.5 text-xs focus:border-primary focus:outline-none"
+                className="font-doran w-full resize-none rounded-xl border border-border bg-secondary/40 px-3.5 py-2.5 text-xs focus:border-primary focus:outline-none"
               />
             </div>
 

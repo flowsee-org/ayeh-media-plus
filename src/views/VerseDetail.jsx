@@ -1,42 +1,48 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "@/lib/router-compat";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
 import { getAyah, RECITERS, getAudioUrl } from "@/lib/quranApi";
 import { SURAH_DATA } from "@/lib/surahData";
 import { markVerseRead } from "@/lib/readingTracker";
 import { scopedKey } from "@/lib/storageScope";
-import ReflectionCard from "@/components/ReflectionCard";
 import IslamicPattern from "@/components/IslamicPattern";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
-import { PersianKatibeh, PersianShamseh } from "@/components/PersianIslamicArt";
 import { Image } from "@/components/ui/image";
 import {
   Clock, Play, Pause, BookOpen, Sparkles, History,
   Languages, HelpCircle, Lightbulb, Compass, Link2, Video, Mic,
   Bookmark, Share2, FileText, MessageSquare, Loader2, Quote, BookMarked, RotateCw,
   ChevronRight, ChevronLeft, ChevronDown, Bot, Palette,
+  Volume2, Download, Heart, Flag, Check,
 } from "lucide-react";
 import TextSettings from "@/components/verse/TextSettings";
 import BackButton from "@/components/BackButton";
 import { useReadingPrefs, renderQuranWaqf, DIACRITIC_THEMES } from "@/lib/readingPrefs";
 import { trackEngagement } from "@/lib/engagement";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 const MIHRAB_IMG = "/images/art/nasir_light_columns.jpg";
 
 const TABS = [
-  { id: "overview", label: "نمای کلی", icon: BookOpen },
-  { id: "linguistic", label: "زبان‌شناسی", icon: Languages },
-  { id: "context", label: "زمینه", icon: History },
+  { id: "overview", label: "آیه و ترجمه", icon: BookOpen },
   { id: "tafsir", label: "تفسیر", icon: Compass },
-  { id: "reflections", label: "تدبّر", icon: Sparkles },
-  { id: "lessons", label: "درس‌ها", icon: Lightbulb },
-  { id: "media", label: "رسانه", icon: Video },
-  { id: "related", label: "مرتبط", icon: Link2 },
-  { id: "notes", label: "یادداشت", icon: FileText },
+  { id: "linguistic", label: "واژه‌شناسی", icon: Languages },
+  { id: "context", label: "زمینه و اسباب نزول", icon: History },
+  { id: "reflections", label: "تدبّرها", icon: Sparkles },
+  { id: "lessons", label: "درس‌ها و کاربرد", icon: Lightbulb },
+  { id: "media", label: "صوت و تصویر", icon: Video },
+  { id: "related", label: "مربوط", icon: Link2 },
+  { id: "notes", label: "یادداشت‌ها", icon: FileText },
 ];
 
 export default function VerseDetail() {
@@ -49,9 +55,11 @@ export default function VerseDetail() {
   const [bookmarked, setBookmarked] = useState(false);
   const [selectedReciter, setSelectedReciter] = useState("ar.alafasy");
   const [prefs, handlePrefsChange] = useReadingPrefs();
+  const [showReciterMenu, setShowReciterMenu] = useState(false);
+  const [chapters, setChapters] = useState([]);
 
   const navigate = useNavigate();
-  const { playTrack, track: currentTrack, isPlaying, togglePlay } = useAudioPlayer();
+  const { playTrack, track: currentTrack, isPlaying, togglePlay, seek } = useAudioPlayer();
 
   const surahNum = Number(surah);
   const ayahNum = Number(ayah);
@@ -72,6 +80,15 @@ export default function VerseDetail() {
 
   const isThisVersePlaying = isPlaying && currentTrack?.id === `verse-${surah}-${ayah}`;
 
+  // Build chapters from reflection data
+  useEffect(() => {
+    if (reflection?.chapters?.length) {
+      setChapters(reflection.chapters);
+    } else if (reflection?.tafsir_sections?.length) {
+      setChapters(reflection.tafsir_sections.map((s, i) => ({ title: s.title, timestamp: i * 60 })));
+    }
+  }, [reflection]);
+
   const toggleAudio = (reciterId = selectedReciter) => {
     trackEngagement("audio_play");
     const targetRec = RECITERS.find((r) => r.id === reciterId) || activeReciter;
@@ -88,12 +105,14 @@ export default function VerseDetail() {
         verseKey: `${surah}:${ayah}`,
         reciter: targetRec.name,
         reciterId: targetRec.id,
+        chapters: chapters.map(c => ({ title: c.title, time: c.timestamp })),
       });
     }
   };
 
   const handleReciterChange = (newReciterId) => {
     setSelectedReciter(newReciterId);
+    setShowReciterMenu(false);
     if (isThisVersePlaying) {
       toggleAudio(newReciterId);
     }
@@ -194,7 +213,14 @@ export default function VerseDetail() {
   }, [surah, ayah]);
 
   if (loading) {
-    return <div className="flex justify-center py-32"><Loader2 className="h-10 w-10 animate-spin text-accent" /></div>;
+    return (
+      <div className="flex justify-center py-32">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-accent" />
+          <p className="text-sm text-muted-foreground font-doran">در حال بارگذاری آیه...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!ayahData && !reflection) {
@@ -202,318 +228,534 @@ export default function VerseDetail() {
       <div className="mx-auto max-w-md py-24 text-center">
         <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
         <p className="text-sm text-muted-foreground mb-4">بارگذاری این آیه ناموفق بود. لطفاً دوباره تلاش کنید.</p>
-        <button onClick={() => window.location.reload()} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all">
+        <Button variant="accent" onClick={() => window.location.reload()} className="gap-2">
           <RotateCw className="h-4 w-4" /> تلاش مجدد
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="animate-fade-in">
-      {/* ═══════════════ VERSE HERO ═══════════════ */}
-      <section className="relative overflow-hidden border-b border-accent/10">
+    <div className="animate-fade-in min-h-screen">
+      {/* ═══════════════ VERSE HERO — TED Style ═══════════════ */}
+      <section className="relative overflow-hidden border-b border-accent/10 bg-gradient-to-b from-background to-background">
         <div className="absolute inset-0 opacity-[0.15] dark:opacity-[0.1] pointer-events-none">
           <img src={MIHRAB_IMG} className="w-full h-full object-cover" alt="" />
         </div>
         <IslamicPattern className="text-foreground" opacity={0.03} />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-accent/8 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-          <div className="flex items-center justify-between gap-2 sm:gap-4 mb-6 sm:mb-10">
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
+          {/* Navigation & Surah Info */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <BackButton to={`/quran?surah=${surah}`} label={surahName} />
-
-            {/* Stepper: Previous / Next Ayah navigation */}
-            <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full border border-accent/20 bg-card/85 backdrop-blur-md shadow-soft">
-              <button
-                type="button"
+            
+            {/* Ayah Stepper */}
+            <div className="flex items-center gap-2 sm:gap-3 px-3 py-1.5 rounded-full border border-accent/20 bg-card/85 backdrop-blur-md shadow-soft">
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={goToPrev}
                 disabled={!hasPrev}
                 title="آیه قبلی"
-                className={`p-1 rounded-full transition-all flex items-center justify-center ${
-                  hasPrev
-                    ? "text-foreground hover:bg-accent/20 hover:text-accent active:scale-95 cursor-pointer"
-                    : "text-muted-foreground/30 cursor-not-allowed"
-                }`}
+                className={`p-1 rounded-full transition-all ${hasPrev ? "text-foreground hover:bg-accent/20 hover:text-accent" : "text-muted-foreground/30 cursor-not-allowed opacity-50"}`}
               >
                 <ChevronRight className="h-4 w-4" />
-              </button>
-
-              <span className="text-[11px] sm:text-xs font-bold font-ui text-foreground px-2 py-0.5 rounded-full bg-muted/60 whitespace-nowrap">
+              </Button>
+              <span className="text-xs sm:text-sm font-bold font-ui text-foreground px-3 py-1 rounded-full bg-muted/60 whitespace-nowrap">
                 آیه {fa(ayahNum)} از {fa(totalAyahs)}
               </span>
-
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={goToNext}
                 disabled={!hasNext}
                 title="آیه بعدی"
-                className={`p-1 rounded-full transition-all flex items-center justify-center ${
-                  hasNext
-                    ? "text-foreground hover:bg-accent/20 hover:text-accent active:scale-95 cursor-pointer"
-                    : "text-muted-foreground/30 cursor-not-allowed"
-                }`}
+                className={`p-1 rounded-full transition-all ${hasNext ? "text-foreground hover:bg-accent/20 hover:text-accent" : "text-muted-foreground/30 cursor-not-allowed opacity-50"}`}
               >
                 <ChevronLeft className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
-
-            <TextSettings prefs={prefs} onChange={handlePrefsChange} />
           </div>
 
-          <PersianKatibeh className={`text-center my-6 ${currentTheme.className}`}>
-            <div className="flex items-center justify-center gap-2 text-xs tracking-[0.25em] text-accent mb-6 font-semibold">
-              <PersianShamseh size={20} className="text-accent" />
+          {/* Surah Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center gap-2 text-xs tracking-[0.25em] text-accent mb-4 font-semibold">
+              <span className="text-accent">۞</span>
               <span>{surahName} · آیه {ayah} ({surah}:{ayah})</span>
-              <PersianShamseh size={20} className="text-accent" />
+              <span className="text-accent">۞</span>
             </div>
-
-            {/* Large Arabic verse with Quran typography */}
-            <div
-              className="text-foreground/95 will-animate my-6 font-bold"
-              dir="rtl"
-              lang="ar"
-              style={{
-                fontFamily: prefs.arabicFont,
-                fontSize: `calc(clamp(1.875rem, 5vw, 3rem) * ${prefs.arabicScale || prefs.textScale || 1.15})`,
-                lineHeight: prefs.lineHeight || 2.5,
-              }}
-            >
-              {renderQuranWaqf(arabic, prefs.highlightWaqf !== false)}
+            
+            {/* Meta Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
+              {ayahData?.revelationType && <Badge variant="sonnat">{ayahData.revelationType === "Meccan" ? "مکی" : "مدنی"}</Badge>}
+              {difficultyLabel && <Badge variant="secondary">{difficultyLabel}</Badge>}
+              {reflection?.estimated_reading_time && <Badge variant="secondary"><Clock className="h-3 w-3 ml-1" /> {reflection.estimated_reading_time} دقیقه</Badge>}
+              {ayahData?.juz && <Badge variant="secondary">جزء {ayahData.juz}</Badge>}
+              {(reflection?.tags || []).slice(0, 4).map((t) => <Badge key={t} variant="outline">{t}</Badge>)}
             </div>
+          </div>
 
-            {transliteration && (
-              <p className="text-sm text-muted-foreground/60 mt-4 tracking-wide font-light" dir="ltr">
-                {transliteration}
-              </p>
-            )}
-
-            <OrnamentalDivider className="my-6 sm:my-8" />
-
-            {prefs.showTranslation && (
-              <p
-                className="max-w-2xl mx-auto text-foreground/85 font-medium leading-[2.3]"
+          {/* Main Verse Display — Large Arabic Typography */}
+          <div className="relative my-10">
+            <div className="relative z-10 text-center">
+              <div
+                className={`text-foreground/95 will-animate my-6 font-bold ${currentTheme.className}`}
+                dir="rtl"
+                lang="ar"
                 style={{
-                  fontSize: `calc(clamp(1.125rem, 2vw, 1.3rem) * ${prefs.translationScale || 1.0})`,
+                  fontFamily: prefs.arabicFont,
+                  fontSize: `calc(clamp(2.5rem, 6vw, 4rem) * ${prefs.arabicScale || prefs.textScale || 1.15})`,
+                  lineHeight: prefs.lineHeight || 2.6,
                 }}
               >
-                «{translation}»
-              </p>
-            )}
-          </PersianKatibeh>
+                {renderQuranWaqf(arabic, prefs.highlightWaqf !== false)}
+              </div>
 
-          {/* Verse Visual Content */}
-          {(reflection?.videos?.length > 0 || reflection?.images?.length > 0) && (
-            <div className="mt-8 mx-auto max-w-2xl">
-              {reflection?.videos?.[0]?.url ? (
-                <div className="rounded-2xl overflow-hidden border border-accent/15 shadow-premium">
-                  <video src={reflection.videos[0].url} controls className="w-full" poster={reflection?.images?.[0]} />
-                  {reflection.videos[0].title && (
-                    <div className="px-4 py-3 bg-card/60 text-center text-sm text-muted-foreground">
-                      {reflection.videos[0].title}
-                    </div>
-                  )}
-                </div>
-              ) : reflection?.images?.[0] ? (
-                <Image
-                  src={reflection.images[0]}
-                  fittingType="fill"
-                  className="w-full rounded-2xl border border-accent/15 shadow-premium"
-                  originWidth={1200}
-                  originHeight={675}
-                />
-              ) : null}
-            </div>
-          )}
+              {transliteration && (
+                <p className="text-sm text-muted-foreground/60 mt-4 tracking-wide font-light" dir="ltr">
+                  {transliteration}
+                </p>
+              )}
 
-          {/* Badges */}
-          <div className="mt-8 flex items-center justify-center gap-2 flex-wrap text-xs">
-            {ayahData?.revelationType && <Badge>{ayahData.revelationType === "Meccan" ? "مکی" : "مدنی"}</Badge>}
-            {difficultyLabel && <Badge>{difficultyLabel}</Badge>}
-            {reflection?.estimated_reading_time && <Badge><Clock className="h-3 w-3 ml-1" /> {reflection.estimated_reading_time} دقیقه</Badge>}
-            {ayahData?.juz && <Badge>جزء {ayahData.juz}</Badge>}
-            {(reflection?.tags || []).slice(0, 4).map((t) => <Badge key={t}>{t}</Badge>)}
-          </div>
+              <OrnamentalDivider className="my-8" />
 
-          {/* Actions */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-            <ActionBtn onClick={() => navigate(`/studio?surah=${surah}&ayah=${ayah}`)} icon={Palette} label="طراحی کارت و استوری" />
-            <ActionBtn onClick={toggleBookmark} active={bookmarked} icon={Bookmark} label={bookmarked ? "نشان شده" : "نشان کردن"} />
-            <ActionBtn onClick={handleShare} icon={Share2} label="اشتراک‌گذاری" />
-            <ActionBtn onClick={() => navigate(`/community?verse=${surah}:${ayah}`)} icon={MessageSquare} label="گفتگو پیرامون آیه" />
-            <ActionBtn onClick={() => setTab("notes")} active={tab === "notes"} icon={FileText} label="یادداشت شخصی" />
-          </div>
-
-          {/* Global Audio Player Bar */}
-          {computedAudio && (
-            <div className="mt-8 mx-auto max-w-xl rounded-2xl border border-accent/30 bg-card/90 backdrop-blur-md p-4 sm:p-5 shadow-premium">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <button
-                  type="button"
-                  onClick={() => toggleAudio()}
-                  className="h-12 w-12 rounded-full bg-gradient-to-r from-accent to-yellow-500 text-stone-950 flex items-center justify-center hover:shadow-gold-glow transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer"
-                  title={isThisVersePlaying ? "توقف تلاوت" : "پخش در پلیر سراسری"}
+              {prefs.showTranslation && (
+                <p
+                  className="max-w-3xl mx-auto text-foreground/90 font-medium leading-[2.4] text-lg sm:text-xl"
+                  style={{
+                    fontSize: `calc(clamp(1.125rem, 2.5vw, 1.5rem) * ${prefs.translationScale || 1.0})`,
+                  }}
                 >
-                  {isThisVersePlaying ? (
-                    <Pause className="h-5 w-5 fill-current" />
-                  ) : (
-                    <Play className="h-5 w-5 fill-current mr-0.5" />
-                  )}
-                </button>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-foreground truncate">تلاوت ترتیل آیه مبارکه</div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs text-muted-foreground truncate">{activeReciter.name}</span>
-                    <span className="text-muted-foreground/30">•</span>
-                    <span className="text-xs text-accent font-semibold">{isThisVersePlaying ? "در حال پخش" : activeReciter.style}</span>
-                  </div>
-                </div>
+                  «{translation}»
+                </p>
+              )}
+            </div>
+          </div>
 
-                {/* Reciter selector */}
-                <div className="relative shrink-0">
-                  <select
-                    value={selectedReciter}
-                    onChange={(e) => handleReciterChange(e.target.value)}
-                    className="appearance-none bg-accent/10 border border-accent/25 hover:border-accent/50 text-accent font-ui text-xs font-bold rounded-xl py-2 pl-7 pr-3 cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent transition-all"
-                    title="انتخاب قاری"
+          {/* Audio Player Bar — Prominent TED Style */}
+          {computedAudio && (
+            <div className="mt-10 mx-auto max-w-3xl relative">
+              <div className="rounded-2xl border border-accent/30 bg-gradient-to-r from-accent/5 via-card/95 to-accent/5 backdrop-blur-md p-5 sm:p-6 shadow-premium relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent/10 via-transparent to-accent/10" />
+                
+                <div className="relative flex items-center gap-4 sm:gap-6">
+                  {/* Main Play Button */}
+                  <Button
+                    variant="sonnat"
+                    size="xl"
+                    onClick={() => toggleAudio()}
+                    className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 shadow-sonnat-glow hover:shadow-lg transition-all"
+                    title={isThisVersePlaying ? "توقف تلاوت" : "پخش تلاوت"}
                   >
-                    {RECITERS.map((r) => (
-                      <option key={r.id} value={r.id} className="bg-card text-foreground">
-                        {r.name} ({r.style})
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="h-3.5 w-3.5 text-accent pointer-events-none absolute left-2 top-1/2 -translate-y-1/2" />
+                    {isThisVersePlaying ? (
+                      <Pause className="h-7 w-7 sm:h-8 sm:w-8 fill-current" />
+                    ) : (
+                      <Play className="h-7 w-7 sm:h-8 sm:w-8 fill-current mr-0.5" />
+                    )}
+                  </Button>
+
+                  {/* Track Info */}
+                  <div className="flex-1 min-w-0 text-right">
+                    <div className="text-sm font-bold text-foreground truncate">تلاوت ترتیل آیه مبارکه</div>
+                    <div className="flex items-center justify-end gap-3 mt-1 flex-wrap">
+                      <span className="text-xs text-muted-foreground truncate max-w-[200px]">{activeReciter.name}</span>
+                      <span className="text-muted-foreground/30">•</span>
+                      <span className="text-xs text-accent font-semibold">{isThisVersePlaying ? "در حال پخش" : activeReciter.style}</span>
+                    </div>
+                    
+                    {/* Progress Bar when playing */}
+                    {isThisVersePlaying && currentTrack?.duration && (
+                      <div className="mt-3 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground font-mono w-16 text-left">
+                          {formatTime(currentTrack.currentTime || 0)}
+                        </span>
+                        <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-accent rounded-full transition-all duration-100"
+                            style={{ width: `${((currentTrack.currentTime || 0) / currentTrack.duration) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-muted-foreground font-mono w-16 text-right">
+                          {formatTime(currentTrack.duration)}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reciter Selector */}
+                  <div className="relative shrink-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowReciterMenu(!showReciterMenu)}
+                      className="gap-1.5 px-3 py-2"
+                    >
+                      <Volume2 className="h-4 w-4" />
+                      <span className="hidden sm:inline max-w-[120px] truncate">{activeReciter.name}</span>
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </Button>
+                    
+                    {showReciterMenu && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setShowReciterMenu(false)} />
+                        <div className="absolute bottom-full left-0 right-0 z-50 mb-2 w-full max-w-xs">
+                          <div className="rounded-2xl border border-border bg-popover p-1.5 shadow-2xl backdrop-blur-md animate-scale-in font-ui text-xs">
+                            <div className="px-3 py-2 text-[11px] font-bold text-muted-foreground border-b border-border/50">
+                              انتخاب قاری ترتیل:
+                            </div>
+                            {RECITERS.map((r) => {
+                              const isChosen = r.id === selectedReciter;
+                              return (
+                                <button
+                                  key={r.id}
+                                  onClick={() => handleReciterChange(r.id)}
+                                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-right transition-colors ${
+                                    isChosen
+                                      ? "bg-accent/15 text-accent font-bold"
+                                      : "text-foreground hover:bg-secondary"
+                                  }`}
+                                >
+                                  <div>
+                                    <div>{r.name}</div>
+                                    <span className="text-[10px] text-muted-foreground">{r.style}</span>
+                                  </div>
+                                  {isChosen && <Check className="h-3.5 w-3.5 text-accent" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           )}
+
+          {/* Action Buttons Row */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate(`/studio?surah=${surah}&ayah=${ayah}`)}
+              className="gap-1.5"
+            >
+              <Palette className="h-3.5 w-3.5" />
+              <span>سازماندهی بصری</span>
+            </Button>
+            <Button
+              variant={bookmarked ? "accent" : "outline"}
+              size="sm"
+              onClick={toggleBookmark}
+              className="gap-1.5"
+            >
+              <Bookmark className="h-3.5 w-3.5" />
+              <span>{bookmarked ? "نشان شده" : "نشان کردن"}</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="gap-1.5"
+            >
+              <Share2 className="h-3.5 w-3.5" />
+              <span>اشتراک‌گذاری</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/community?verse=${surah}:${ayah}`)}
+              className="gap-1.5"
+            >
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span>گفتگوی جامعه</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTab("notes")}
+              className="gap-1.5"
+            >
+              <FileText className="h-3.5 w-3.5" />
+              <span>یادداشت من</span>
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* ═══════════════ TAB BAR ═══════════════ */}
+      {/* ═══════════════ TAB BAR — TED Style ═══════════════ */}
       <div className="sticky top-16 z-30 border-b border-accent/10 glass-strong">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 overflow-x-auto py-2.5 no-scrollbar">
-            {TABS.map(({ id: tid, label, icon: Icon }) => (
-              <button
-                key={tid}
-                onClick={() => setTab(tid)}
-                className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  tab === tid ? "bg-primary text-primary-foreground shadow-soft" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </button>
-            ))}
-          </div>
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Tabs value={tab} onValueChange={setTab} className="w-full">
+            <TabsList className="grid w-full gap-1 p-1 bg-muted/50 rounded-xl" aria-label="بخش‌های آیه">
+              {TABS.map(({ id: tid, label, icon: Icon }) => (
+                <TabsTrigger
+                  key={tid}
+                  value={tid}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium font-ui transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground"
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
       {/* ═══════════════ CONTENT ═══════════════ */}
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {tab === "overview" && <Overview reflection={reflection} translation={translation} />}
-        {tab === "linguistic" && <Linguistic reflection={reflection} />}
-        {tab === "context" && <Context reflection={reflection} />}
-        {tab === "tafsir" && (
-          <Tafsir
-            reflection={reflection}
-            surah={surah}
-            ayah={ayah}
-            surahName={surahName}
-            translation={translation}
-            navigate={navigate}
-          />
-        )}
-        {tab === "reflections" && (
-          <Reflections reflection={reflection} scholars={scholars} />
-        )}
-        {tab === "lessons" && <Lessons reflection={reflection} />}
-        {tab === "media" && (
-          <Media
-            reflection={reflection}
-            audio={computedAudio}
-            reciter={activeReciter.name}
-          />
-        )}
-        {tab === "related" && <Related reflection={reflection} />}
-        {tab === "notes" && <Notes verseKey={`${surah}:${ayah}`} />}
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <div className="grid lg:grid-cols-[1fr_320px] gap-8 lg:gap-12">
+          {/* Main Content */}
+          <div className="lg:col-span-1">
+            {tab === "overview" && <Overview reflection={reflection} translation={translation} />}
+            {tab === "tafsir" && (
+              <Tafsir
+                reflection={reflection}
+                surah={surah}
+                ayah={ayah}
+                surahName={surahName}
+                translation={translation}
+                navigate={navigate}
+              />
+            )}
+            {tab === "linguistic" && <Linguistic reflection={reflection} />}
+            {tab === "context" && <Context reflection={reflection} />}
+            {tab === "reflections" && <Reflections reflection={reflection} scholars={scholars} />}
+            {tab === "lessons" && <Lessons reflection={reflection} />}
+            {tab === "media" && (
+              <Media
+                reflection={reflection}
+                audio={computedAudio}
+                reciter={activeReciter.name}
+              />
+            )}
+            {tab === "related" && <Related reflection={reflection} />}
+            {tab === "notes" && <Notes verseKey={`${surah}:${ayah}`} />}
+          </div>
+
+          {/* Sidebar — TED Style: Speaker, Chapters, Related */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-24 space-y-6">
+              {/* Speaker / Scholar Card */}
+              {reflection?.scholar_id && scholars[reflection.scholar_id] && (
+                <ScholarCard
+                  scholar={scholars[reflection.scholar_id]}
+                  onNavigate={navigate}
+                />
+              )}
+
+              {/* Chapters / Timestamps */}
+              {chapters.length > 0 && (
+                <ChapterList
+                  chapters={chapters}
+                  currentTrack={currentTrack}
+                  isPlaying={isThisVersePlaying}
+                  onSeek={(time) => seek(time)}
+                />
+              )}
+
+              {/* Related Verses — Quick Links */}
+              {(reflection?.related_verses?.length || reflection?.related_hadith?.length) && (
+                <RelatedSidebar
+                  relatedVerses={reflection.related_verses || []}
+                  relatedHadith={reflection.related_hadith || []}
+                  onNavigate={navigate}
+                />
+              )}
+
+              {/* Share / Download / Report */}
+              <ActionSidebar
+                verseKey={`${surah}:${ayah}`}
+                arabic={arabic}
+                translation={translation}
+                url={typeof window !== 'undefined' ? window.location.href : ''}
+                onShare={handleShare}
+                bookmarked={bookmarked}
+                onBookmark={toggleBookmark}
+              />
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );
 }
 
-/* ── UI Primitives ── */
-function Badge({ children }) {
-  return <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-secondary text-foreground font-ui text-xs font-medium border border-border">{children}</span>;
+/* ── Helper Components ── */
+
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
-/**
- * @param {{ icon: any; label: string; onClick: () => void; active?: boolean }} props
- */
-function ActionBtn({ icon: Icon, label, onClick, active = false }) {
+
+function ScholarCard({ scholar, onNavigate }) {
   return (
-    <button
-      onClick={onClick}
-      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-ui font-bold border transition-all ${
-        active ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
-      }`}
-    >
-      <Icon className="h-3.5 w-3.5" />
-      {label}
-    </button>
-  );
-}
-function Section({ icon: Icon, title, children }) {
-  return (
-    <section className="mb-8 sm:mb-12 animate-fade-in">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-          <Icon className="h-4.5 w-4.5" />
-        </div>
-        <div>
-          <h3 className="font-kalameh font-bold text-lg sm:text-xl text-foreground">{title}</h3>
+    <Card variant="sonnat" className="p-5">
+      <div className="flex items-center gap-4">
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={scholar.avatar_url || scholar.avatar} alt={scholar.name} />
+          <AvatarFallback className="text-xl font-bold text-accent bg-accent/10">
+            {scholar.name?.[0]}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-rokh-bold font-bold text-base text-foreground truncate">{scholar.name}</h4>
+          <p className="text-xs text-muted-foreground mt-0.5">{scholar.title || "مفسر و محقق قرآن"}</p>
         </div>
       </div>
-      {children}
-    </section>
-  );
-}
-function Prose({ children }) {
-  return <div className="text-foreground/70 leading-[2.1] whitespace-pre-line max-w-none text-[15px] sm:text-base">{children}</div>;
-}
-function Empty({ text = "محتوایی برای این بخش ثبت نشده است." }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-      <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-      {text}
-    </div>
+      <Button
+        variant="outline"
+        size="sm"
+        className="mt-3 w-full gap-1.5"
+        onClick={() => onNavigate(`/scholars/${scholar.id}`)}
+      >
+        <ChevronLeft className="h-3.5 w-3.5" />
+        <span>مشاهده پروفایل کامل</span>
+      </Button>
+    </Card>
   );
 }
 
-/* ── Tab Content Components ── */
+function ChapterList({ chapters, currentTrack, isPlaying, onSeek }) {
+  return (
+    <Card variant="default" className="p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="font-rokh-bold font-bold text-sm text-foreground">فصول و مباحث</h4>
+        {isPlaying && (
+          <Badge variant="accent" className="text-[10px]">
+            <Play className="h-2.5 w-2.5 ml-0.5" />
+            در حال پخش
+          </Badge>
+        )}
+      </div>
+      <ScrollArea className="h-64">
+        <div className="space-y-2">
+          {chapters.map((c, i) => (
+            <button
+              key={i}
+              onClick={() => onSeek(c.timestamp || i * 60)}
+              className="w-full text-right p-2 rounded-xl hover:bg-accent/10 transition-colors group"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm text-foreground font-medium truncate">{c.title}</span>
+                <span className="text-xs text-muted-foreground font-mono shrink-0">
+                  {formatTime(c.timestamp || i * 60)}
+                </span>
+              </div>
+              <div className="h-0.5 bg-muted/50 mt-1 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-accent/20 rounded-full transition-all duration-300"
+                  style={{ width: isPlaying && currentTrack?.duration && c.timestamp 
+                    ? `${Math.min(100, (c.timestamp / currentTrack.duration) * 100)}%` 
+                    : '0%' }}
+                />
+              </div>
+            </button>
+          ))}
+        </div>
+      </ScrollArea>
+    </Card>
+  );
+}
+
+function RelatedSidebar({ relatedVerses, relatedHadith, onNavigate }) {
+  return (
+    <Card variant="default" className="p-4">
+      <h4 className="font-rokh-bold font-bold text-sm text-foreground mb-4">مربوط</h4>
+      <div className="space-y-3">
+        {relatedVerses?.slice(0, 5).map((v, i) => (
+          <button
+            key={i}
+            onClick={() => {
+              const [s, a] = v.split(':').map(Number);
+              if (s && a) onNavigate(`/verse/${s}/${a}`);
+            }}
+            className="w-full text-right p-2 rounded-xl hover:bg-accent/10 transition-colors"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-foreground font-medium">{v}</span>
+              <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+          </button>
+        ))}
+        {relatedHadith?.slice(0, 3).map((h, i) => (
+          <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border/50">
+            <p className="text-xs italic text-muted-foreground leading-relaxed">«{h.text}»</p>
+            <div className="text-[10px] text-muted-foreground/70 mt-1 flex items-center gap-1">
+              <span className="h-1 w-1 rounded-full bg-accent/40" />
+              {h.narrator} · {h.source}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function ActionSidebar({ verseKey, arabic, translation, url, onShare, bookmarked, onBookmark }) {
+  return (
+    <Card variant="sonnat" className="p-4">
+      <h4 className="font-rokh-bold font-bold text-sm text-foreground mb-4">اکشن‌ها</h4>
+      <div className="space-y-2">
+        <Button variant="outline" className="w-full gap-2 justify-start" onClick={onShare}>
+          <Share2 className="h-4 w-4" />
+          <span>اشتراک‌گذاری آیه</span>
+        </Button>
+        <Button 
+          variant={bookmarked ? "accent" : "outline"} 
+          className="w-full gap-2 justify-start"
+          onClick={onBookmark}
+        >
+          <Bookmark className="h-4 w-4" />
+          <span>{bookmarked ? "حذف از نشان‌ها" : "نشان کردن آیه"}</span>
+        </Button>
+        <Button variant="outline" className="w-full gap-2 justify-start" onClick={() => {
+          const text = `${arabic || ""}\n«${translation || ""}»\n${url}`;
+          navigator.clipboard?.writeText(text);
+          toast.success("متن کپی شد");
+        }}>
+          <Download className="h-4 w-4" />
+          <span>دانلود متن آیه</span>
+        </Button>
+        <Button variant="ghost" className="w-full gap-2 justify-start text-destructive hover:bg-destructive/10">
+          <Flag className="h-4 w-4" />
+          <span>گزارش مشکل</span>
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
+/* ── Content Components (Updated with Sonnat UI) ── */
+
 function Overview({ reflection, translation }) {
   return (
-    <div>
+    <div className="space-y-8">
       <Section icon={Compass} title="ترجمه و معنا">
-        <div className="rounded-2xl border border-border/40 bg-card/40 p-6">
+        <Card variant="default" className="p-6">
           <Quote className="h-5 w-5 text-accent/40 mb-3" />
           <Prose>{translation}</Prose>
-        </div>
+        </Card>
       </Section>
       <Section icon={Sparkles} title="تدبّر">
         {reflection?.tadabbur ? (
-          <div className="rounded-2xl border border-border/40 bg-card/40 p-6"><Prose>{reflection.tadabbur}</Prose></div>
-        ) : <Empty />}
+          <Card variant="default" className="p-6"><Prose>{reflection.tadabbur}</Prose></Card>
+        ) : <Empty /> }
       </Section>
       {reflection?.questions_to_reflect?.length > 0 && (
-        <Section icon={HelpCircle} title="پرسش‌های تدبّر">
+        <Section icon={HelpCircle} title="پرسش‌ها برای تدبّر">
           <div className="space-y-3">
             {reflection.questions_to_reflect.map((q, i) => (
-              <div key={i} className="flex gap-3 rounded-xl border border-border/40 bg-card/30 p-4">
-                <span className="shrink-0 h-6 w-6 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">؟</span>
-                <span className="text-sm text-muted-foreground leading-relaxed">{q}</span>
-              </div>
+              <Card key={i} variant="default" className="p-4">
+                <div className="flex gap-3">
+                  <span className="shrink-0 h-6 w-6 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">؟</span>
+                  <span className="text-sm text-muted-foreground leading-relaxed">{q}</span>
+                </div>
+              </Card>
             ))}
           </div>
         </Section>
@@ -525,16 +767,16 @@ function Overview({ reflection, translation }) {
 function Linguistic({ reflection }) {
   if (!reflection) return <Empty />;
   return (
-    <div>
+    <div className="space-y-8">
       {reflection.word_analysis?.length > 0 && (
         <Section icon={Languages} title="معنای کلمه‌به‌کلمه">
           <div className="grid sm:grid-cols-2 gap-3">
             {reflection.word_analysis.map((w, i) => (
-              <div key={i} className="rounded-2xl border border-border/40 bg-card/40 p-4 hover:border-accent/20 transition-colors">
+              <Card key={i} variant="default" className="p-4 hover:border-accent/20 transition-colors">
                 <div className="text-right text-2xl font-arabic text-foreground/80 mb-1" dir="rtl">{w.word}</div>
                 <div className="text-xs text-muted-foreground italic">{w.transliteration}</div>
                 <div className="text-sm mt-1.5 font-medium">{w.meaning}</div>
-              </div>
+              </Card>
             ))}
           </div>
         </Section>
@@ -543,20 +785,20 @@ function Linguistic({ reflection }) {
         <Section icon={BookOpen} title="ریشه واژه‌ها">
           <div className="grid sm:grid-cols-2 gap-3">
             {reflection.root_words.map((r, i) => (
-              <div key={i} className="rounded-2xl border border-border/40 bg-card/40 p-4 flex items-center justify-between">
+              <Card key={i} variant="default" className="p-4 flex items-center justify-between">
                 <div>
                   <div className="font-arabic text-2xl text-foreground/80" dir="rtl">{r.root}</div>
                   <div className="text-sm text-muted-foreground mt-0.5">{r.meaning}</div>
                 </div>
                 <span className="text-xs text-accent font-medium shrink-0">{r.occurrences}× در قرآن</span>
-              </div>
+              </Card>
             ))}
           </div>
         </Section>
       )}
       {reflection.grammar_breakdown && (
         <Section icon={FileText} title="تجزیه گرامری">
-          <div className="rounded-2xl border border-border/40 bg-card/40 p-6"><Prose>{reflection.grammar_breakdown}</Prose></div>
+          <Card variant="default" className="p-6"><Prose>{reflection.grammar_breakdown}</Prose></Card>
         </Section>
       )}
       {!reflection.word_analysis?.length && !reflection.root_words?.length && !reflection.grammar_breakdown && <Empty />}
@@ -570,8 +812,7 @@ function Context({ reflection }) {
   if (!hasContent) return <Empty />;
 
   return (
-    <div>
-      {/* Timeline style */}
+    <div className="space-y-8">
       <div className="relative pr-6">
         <div className="absolute right-[11px] top-2 bottom-2 w-px bg-gradient-to-b from-accent/30 via-border to-transparent" />
         {reflection.historical_context && (
@@ -597,7 +838,7 @@ function TimelineItem({ icon: Icon, title, children }) {
       </div>
       <div className="mr-8">
         <h3 className="font-display font-bold text-lg mb-3">{title}</h3>
-        <div className="rounded-2xl border border-border/40 bg-card/40 p-5">{children}</div>
+        <Card variant="default" className="p-5">{children}</Card>
       </div>
     </div>
   );
@@ -606,15 +847,15 @@ function TimelineItem({ icon: Icon, title, children }) {
 function Tafsir({ reflection, surah, ayah, surahName, translation, navigate }) {
   if (reflection?.classical_tafsir || reflection?.modern_tafsir) {
     return (
-      <div>
+      <div className="space-y-8">
         {reflection.classical_tafsir && (
           <Section icon={BookOpen} title="تفسیر کلاسیک">
-            <div className="rounded-2xl border border-border/40 bg-card/40 p-6"><Prose>{reflection.classical_tafsir}</Prose></div>
+            <Card variant="default" className="p-6"><Prose>{reflection.classical_tafsir}</Prose></Card>
           </Section>
         )}
         {reflection.modern_tafsir && (
           <Section icon={Sparkles} title="تفسیر نوین">
-            <div className="rounded-2xl border border-border/40 bg-card/40 p-6"><Prose>{reflection.modern_tafsir}</Prose></div>
+            <Card variant="default" className="p-6"><Prose>{reflection.modern_tafsir}</Prose></Card>
           </Section>
         )}
       </div>
@@ -622,19 +863,20 @@ function Tafsir({ reflection, surah, ayah, surahName, translation, navigate }) {
   }
 
   return (
-    <div className="rounded-2xl border border-accent/25 bg-card/60 backdrop-blur-sm p-6 sm:p-10 text-center shadow-soft">
+    <Card variant="sonnat" className="p-6 sm:p-10 text-center">
       <div className="h-12 w-12 rounded-2xl bg-accent/15 text-accent flex items-center justify-center mx-auto mb-4 border border-accent/20 shadow-xs">
         <Compass className="h-6 w-6" />
       </div>
-      <h3 className="font-kalameh font-bold text-lg sm:text-xl mb-2 text-foreground">
-        تفسیر و شأن نزول {surahName}، آیه {fa(ayah)}
+      <h3 className="font-rokh-bold font-bold text-lg sm:text-xl mb-2 text-foreground">
+        تفسیر {surahName}، آیه {fa(ayah)}
       </h3>
       <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-6 leading-relaxed">
-        تفسیر سنتی این آیه در دیتابیس محلی ثبت نشده است. می‌توانید تفسیر تحلیلی، شأن نزول، اسباب نزول و تدبّر عمیق این آیه را مستقیماً از دستیار هوشمند قرآنی دریافت نمایید یا با اعضای انجمن تدبّر به اشتراک بگذارید.
+        تفسیر سنتی این آیه در دیتابیس محلی موجود نیست. می‌توانید تفسیر، شأن نزول و تدبّر را از دستیار قرآنی بپرسید یا در جامعه تدبّر طرح کنید.
       </p>
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <button
-          type="button"
+        <Button
+          variant="accent"
+          size="sm"
           onClick={() =>
             navigate(
               `/assistant?q=${encodeURIComponent(
@@ -642,26 +884,27 @@ function Tafsir({ reflection, surah, ayah, surahName, translation, navigate }) {
               )}`
             )
           }
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground font-ui text-xs font-bold shadow-soft hover:shadow-glow transition-all cursor-pointer"
+          className="gap-1.5"
         >
           <Bot className="h-4 w-4" />
-          تفسیر تحلیلی با دستیار قرآنی
-        </button>
-        <button
-          type="button"
+          پرسش از دستیار قرآنی
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => navigate(`/community?verse=${surah}:${ayah}`)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-muted text-foreground font-ui text-xs font-medium hover:bg-muted/80 transition-all border border-border/40 cursor-pointer"
+          className="gap-1.5"
         >
           <MessageSquare className="h-4 w-4" />
-          طرح پرسش در انجمن تدبّر
-        </button>
+          گفتگو در جامعه تدبّر
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }
 
 function Reflections({ reflection, scholars }) {
-  if (!reflection?.reflections?.length) return <Empty text="بازتاب تدبّری برای این آیه ثبت نشده است." />;
+  if (!reflection?.reflections?.length) return <Empty text="تدبّری برای این آیه ثبت نشده است." />;
   return (
     <div className="grid gap-3">
       {reflection.reflections.map((r, i) => (
@@ -674,15 +917,17 @@ function Reflections({ reflection, scholars }) {
 function Lessons({ reflection }) {
   if (!reflection) return <Empty />;
   return (
-    <div>
+    <div className="space-y-8">
       {reflection.life_lessons?.length > 0 && (
         <Section icon={Lightbulb} title="درس‌های زندگی">
           <div className="space-y-3">
             {reflection.life_lessons.map((l, i) => (
-              <div key={i} className="flex gap-3 rounded-2xl border border-border/40 bg-card/40 p-4">
-                <span className="shrink-0 h-7 w-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                <span className="text-sm text-muted-foreground leading-relaxed">{l}</span>
-              </div>
+              <Card key={i} variant="default" className="p-4">
+                <div className="flex gap-3">
+                  <span className="shrink-0 h-7 w-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                  <span className="text-sm text-muted-foreground leading-relaxed">{l}</span>
+                </div>
+              </Card>
             ))}
           </div>
         </Section>
@@ -691,10 +936,12 @@ function Lessons({ reflection }) {
         <Section icon={Compass} title="کاربردهای عملی">
           <div className="space-y-3">
             {reflection.practical_applications.map((a, i) => (
-              <div key={i} className="flex gap-3 rounded-2xl border border-border/40 bg-card/40 p-4">
-                <Compass className="shrink-0 h-5 w-5 text-accent mt-0.5" />
-                <span className="text-sm text-muted-foreground leading-relaxed">{a}</span>
-              </div>
+              <Card key={i} variant="default" className="p-4">
+                <div className="flex gap-3">
+                  <Compass className="shrink-0 h-5 w-5 text-accent mt-0.5" />
+                  <span className="text-sm text-muted-foreground leading-relaxed">{a}</span>
+                </div>
+              </Card>
             ))}
           </div>
         </Section>
@@ -719,37 +966,38 @@ function Media({ reflection, audio, reciter }) {
   };
 
   return (
-    <div>
+    <div className="space-y-8">
       {reflection?.videos?.length > 0 ? (
         <Section icon={Video} title="ویدیوها">
           <div className="grid sm:grid-cols-2 gap-4">
             {reflection.videos.map((v, i) => (
-              <div key={i} className="rounded-2xl border border-border/40 bg-card/40 overflow-hidden hover:shadow-soft transition-all duration-300">
+              <Card key={i} variant="interactive" className="overflow-hidden">
                 <div className="aspect-video bg-muted/50 flex items-center justify-center relative">
                   <Video className="h-8 w-8 text-muted-foreground/30" />
                   <div className="absolute inset-0 bg-gradient-to-t from-card/60 to-transparent" />
                 </div>
-                <div className="p-4">
+                <CardContent className="p-4">
                   <div className="font-medium text-sm">{v.title}</div>
                   <div className="text-xs text-muted-foreground mt-1">{v.scholar}{v.duration ? ` · ${v.duration}` : ""}</div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </Section>
       ) : <Empty text="ویدیویی برای این آیه موجود نیست." />}
       {audio && (
-        <Section icon={Mic} title="صوت">
-          <div className="rounded-2xl border border-border/40 bg-card/40 p-5">
+        <Section icon={Mic} title="تلاوت">
+          <Card variant="default" className="p-5">
             <div className="flex items-center gap-4 mb-3">
-              <button
-                type="button"
+              <Button
+                variant="accent"
+                size="icon"
                 onClick={toggleMediaPlay}
-                className="h-10 w-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center shrink-0 hover:shadow-glow transition-all"
+                className="h-10 w-10 shrink-0 hover:shadow-glow transition-all"
                 title={isPlaying ? "توقف تلاوت" : "پخش تلاوت"}
               >
                 {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 mr-0.5" />}
-              </button>
+              </Button>
               <div>
                 <div className="text-sm font-medium">تلاوت آیه</div>
                 <div className="text-xs text-muted-foreground">{reciter}</div>
@@ -764,7 +1012,7 @@ function Media({ reflection, audio, reciter }) {
               controls
               className="w-full"
             />
-          </div>
+          </Card>
         </Section>
       )}
     </div>
@@ -774,15 +1022,17 @@ function Media({ reflection, audio, reciter }) {
 function Related({ reflection }) {
   if (!reflection) return <Empty />;
   return (
-    <div>
+    <div className="space-y-8">
       {reflection.related_verses?.length > 0 && (
         <Section icon={Link2} title="آیات مرتبط">
           <div className="space-y-3">
             {reflection.related_verses.map((r, i) => (
-              <div key={i} className="rounded-2xl border border-border/40 bg-card/40 p-4 flex items-start gap-3">
-                <BookMarked className="h-4 w-4 text-accent/50 shrink-0 mt-0.5" />
-                <span className="text-sm text-muted-foreground leading-relaxed">{r}</span>
-              </div>
+              <Card key={i} variant="default" className="p-4">
+                <div className="flex items-start gap-3">
+                  <BookMarked className="h-4 w-4 text-accent/50 shrink-0 mt-0.5" />
+                  <span className="text-sm text-muted-foreground leading-relaxed">{r}</span>
+                </div>
+              </Card>
             ))}
           </div>
         </Section>
@@ -791,31 +1041,31 @@ function Related({ reflection }) {
         <Section icon={BookOpen} title="احادیث مرتبط">
           <div className="space-y-3">
             {reflection.related_hadith.map((h, i) => (
-              <div key={i} className="rounded-2xl border border-border/40 bg-card/40 p-5">
+              <Card key={i} variant="default" className="p-5">
                 <Quote className="h-4 w-4 text-accent/40 mb-2" />
                 <p className="text-sm italic text-muted-foreground leading-relaxed">«{h.text}»</p>
                 <div className="text-xs text-muted-foreground/80 mt-3 flex items-center gap-1.5">
                   <span className="h-1 w-1 rounded-full bg-accent/40" />
                   {h.narrator} · {h.source}
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         </Section>
       )}
       {reflection.references?.length > 0 && (
         <Section icon={FileText} title="منابع">
-          <div className="rounded-2xl border border-border/40 bg-card/40 p-5 space-y-2">
+          <Card variant="default" className="p-5 space-y-2">
             {reflection.references.map((r, i) => (
               <div key={i} className="flex gap-3 text-sm text-muted-foreground">
                 <span className="text-accent font-mono text-xs shrink-0 mt-0.5">[{i + 1}]</span>
                 <span className="leading-relaxed">{r}</span>
               </div>
             ))}
-          </div>
+          </Card>
         </Section>
       )}
-      {!reflection.related_verses?.length && !reflection.related_hadith?.length && !reflection.references?.length && <Empty />}
+      {!reflection.related_verses?.length && !reflection.related_hadith?.length && !reflection.references?.length && <Empty text="محتوای مرتبطی برای این آیه یافت نشد." />}
     </div>
   );
 }
@@ -823,8 +1073,6 @@ function Related({ reflection }) {
 function Notes({ verseKey }) {
   const [notes, setNotes] = useState("");
   const [savedStatus, setSavedStatus] = useState(false);
-  // Notes are namespaced per account so two users on the same browser don't
-  // read each other's tadabbur notes (and the profile note count matches).
   const storageKey = scopedKey(`tadabbur-notes-${verseKey}`);
 
   useEffect(() => {
@@ -848,28 +1096,96 @@ function Notes({ verseKey }) {
   return (
     <div>
       <Section icon={FileText} title="یادداشت شخصی">
-        <div className="rounded-2xl border border-border/40 bg-card/40 p-5">
+        <Card variant="default" className="p-5">
           <textarea
             value={notes}
             onChange={(e) => save(e.target.value)}
             onBlur={() => { if (notes.trim()) trackEngagement("note"); }}
-            placeholder="یادداشت‌های خود را درباره این آیه اینجا بنویسید…"
+            placeholder="یادداشت‌تان درباره این آیه..."
             className="w-full min-h-[220px] bg-transparent text-sm leading-relaxed focus:outline-none resize-y placeholder:text-muted-foreground/50"
             dir="rtl"
           />
           <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
-              {savedStatus ? "✓ تغییرات ذخیره شد" : "یادداشت‌ها خودکار در این مرورگر ذخیره می‌شوند."}
+              {savedStatus ? "✓ ذخیره شد" : "یادداشت‌ها خودکار ذخیره می‌شوند."}
             </span>
-            <button
+            <Button
               onClick={handleManualSave}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground font-ui text-xs font-bold shadow-soft hover:opacity-90 transition-opacity"
+              variant="primary"
+              size="sm"
+              className="gap-1.5"
             >
-              ذخیره یادداشت
-            </button>
+              ذخیره
+            </Button>
           </div>
-        </div>
+        </Card>
       </Section>
     </div>
+  );
+}
+
+/* ── UI Primitives ── */
+function ActionBtn({ icon: Icon, label, onClick, active = false, variant = "outline" }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-ui font-bold border transition-all ${
+        active ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
+      }`}
+    >
+      <Icon className="h-3.5 w-3.5" />
+      {label}
+    </button>
+  );
+}
+
+function Section({ icon: Icon, title, children }) {
+  return (
+    <section className="mb-8 sm:mb-12 animate-fade-in">
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+          <Icon className="h-4.5 w-4.5" />
+        </div>
+        <div>
+          <h3 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground">{title}</h3>
+        </div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Prose({ children }) {
+  return <div className="text-foreground/70 leading-[2.1] whitespace-pre-line max-w-none text-[15px] sm:text-base">{children}</div>;
+}
+
+function Empty({ text = "محتوایی برای این بخش وجود ندارد." }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
+      <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+      {text}
+    </div>
+  );
+}
+
+function ReflectionCard({ reflection, scholarName }) {
+  return (
+    <Card variant="default" className="p-4">
+      {scholarName && (
+        <div className="flex items-center gap-2 mb-2">
+          <div className="h-5 w-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">
+            {scholarName[0]}
+          </div>
+          <span className="text-xs font-medium text-accent">{scholarName}</span>
+        </div>
+      )}
+      <p className="text-sm text-muted-foreground leading-relaxed">{reflection.text || reflection.content || reflection}</p>
+      {reflection.source && (
+        <div className="text-xs text-muted-foreground/70 mt-2 flex items-center gap-1">
+          <span className="h-1 w-1 rounded-full bg-accent/40" />
+          منبع: {reflection.source}
+        </div>
+      )}
+    </Card>
   );
 }

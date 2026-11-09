@@ -6,7 +6,7 @@ export const revalidate = 3600; // ISR: Revalidate every 1 hour
 export async function generateMetadata({ params }) {
   const { id } = await params;
   return {
-    title: `پروفایل و درس‌گفتارهای استاد — آیه پلاس`,
+    title: `پروفایل و درس‌گفتارهای استاد — آیه مدیا پلاس`,
     description: `مشاهده جلسات، درس‌گفتارهای تفسیری و ارتباط با استاد در سامانه آیه مدیا پلاس`,
     openGraph: {
       title: `درس‌گفتارها و آثار استاد`,

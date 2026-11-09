@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@/lib/router-compat";
 import {
   Search,
   BookOpen,
@@ -16,7 +16,7 @@ const quickCards = [
   {
     to: "/quran",
     title: "مصحف شریف",
-    desc: "متن کامل ۱۱۴ سوره و ۳۰ جزء به همراه تلاوت ترتیل اساتید",
+    desc: "۱۱۴ سوره، ۳۰ جزء، تلاوت‌های فاخر — همه قرآن در یکجا",
     icon: BookOpen,
     badge: "مصحف و تلاوت",
     tagColor: "text-emerald-700 bg-emerald-50 dark:text-emerald-300 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-900/60",
@@ -24,7 +24,7 @@ const quickCards = [
   {
     to: "/studio",
     title: "استودیوی کارت آیه",
-    desc: "طراحی کارت‌های هنری و استوری‌های تذهیب با شاهکارهای معماری ایرانی",
+    desc: "آیات خود را به شاهکارهای بصری تبدیل کنید — با هنر معماری ایران",
     icon: Palette,
     badge: "هنر و رسانه",
     tagColor: "text-amber-700 bg-amber-50 dark:text-amber-300 dark:bg-amber-950/60 border-amber-200 dark:border-amber-900/60",
@@ -32,7 +32,7 @@ const quickCards = [
   {
     to: "/guide",
     title: "آیه‌ی راه",
-    desc: "جستجوی هوشمند آیه متناسب با دغدغه، احساس و حال روحی شما",
+    desc: "حال دل‌تان را بنویسید، آیه‌ای که به درد شما می‌خورد را بیابید",
     icon: Sparkles,
     badge: "دستیار تدبّر",
     tagColor: "text-teal-700 bg-teal-50 dark:text-teal-300 dark:bg-teal-950/60 border-teal-200 dark:border-teal-900/60",
@@ -40,7 +40,7 @@ const quickCards = [
   {
     to: "/talks",
     title: "گفتارهای اساتید",
-    desc: "درس‌گفتارها و تحلیل‌های تفسیری علامه طباطبایی، دکتر شمالی و دیگر مفسران",
+    desc: "درس‌های عرفان، تفسیر و حکمت از زبان بزرگان علم قرآن",
     icon: Video,
     badge: "چندرسانه‌ای",
     tagColor: "text-yellow-700 bg-yellow-50 dark:text-yellow-300 dark:bg-yellow-950/60 border-yellow-200 dark:border-yellow-900/60",
@@ -100,34 +100,34 @@ export default function Hero({ dailyVerse }) {
         {/* Platform badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/30 bg-black/40 backdrop-blur-md text-amber-200 text-xs font-ui font-medium mb-5 shadow-lg shadow-black/20">
           <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>سامانه چندرسانه‌ای و شبکه تدبّر در قرآن کریم</span>
+          <span>پلتفرم چندرسانه‌ای تدبّر در قرآن کریم</span>
         </div>
 
-        {/* Main Display Headline (Kalameh) */}
-        <h1 className="font-kalameh font-black tracking-tight text-3xl sm:text-5xl lg:text-6xl leading-[1.25] text-white drop-shadow-lg mb-4">
-          روشنای حکمت و تدبّر در <span className="text-amber-400 drop-shadow-md">کتاب مبین</span>
+        {/* Main Display Headline (Doran ExtraBold) */}
+        <h1 className="font-rokh-extrabold font-black tracking-tight text-3xl sm:text-5xl lg:text-6xl leading-[1.25] text-white drop-shadow-lg mb-4">
+          قرآنی باشید، <span className="text-amber-400 drop-shadow-md">حیاتان روشن شود</span>
         </h1>
 
-        {/* Subtitle (Yekan Bakh) */}
-        <p className="font-yekan max-w-2xl mx-auto text-base sm:text-lg text-emerald-100/90 drop-shadow leading-relaxed mb-8">
-          مرجع جامع تلاوت‌های فاخر، تفاسیر متقن اساتید و تأملات قرآنی در محیطی هنری، آراسته به معماری اصیل ایرانی-اسلامی.
+        {/* Subtitle (Doran) */}
+        <p className="font-doran max-w-2xl mx-auto text-base sm:text-lg text-emerald-100/90 drop-shadow leading-relaxed mb-8">
+          مرجع جامع تلاوت، تفسیر، تدبّر و هنر قرآنی — در فضایی الهام‌بخش از معماری ایرانی-اسلامی.
         </p>
 
-        {/* Professional Search Box (Peyda UI) */}
+        {/* Professional Search Box (Doran UI) */}
         <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-5">
           <div className="relative flex items-center rounded-2xl border border-amber-400/30 bg-card/90 dark:bg-black/60 shadow-2xl backdrop-blur-xl hover:border-amber-400/60 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/30 transition-all p-1.5 sm:p-2">
             <Search className="h-5 w-5 text-amber-400 mr-3 shrink-0" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="جستجو در متن آیات، ترجمه، موضوعات (مثل صبر، توکل، احسان)..."
+              placeholder="چه می‌گردید؟ آیه، موضوع، ترجمه، اساتید..."
               className="flex-1 bg-transparent text-sm sm:text-base font-ui text-foreground placeholder:text-muted-foreground/70 focus:outline-none px-1"
             />
             <button
               type="submit"
               className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-800 hover:from-emerald-500 hover:to-teal-700 text-white font-ui font-bold text-xs sm:text-sm shadow-md transition-all whitespace-nowrap active:scale-95"
             >
-              جستجو در قرآن
+              کاوش در قرآن
             </button>
           </div>
         </form>
@@ -135,7 +135,7 @@ export default function Hero({ dailyVerse }) {
         {/* Trending Quick Topic Pills */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
           <span className="inline-flex items-center gap-1 text-xs font-ui text-amber-200/90 ml-1">
-            <Flame className="h-3.5 w-3.5 text-amber-400 fill-amber-400" /> موضوعات پرکاربرد:
+            <Flame className="h-3.5 w-3.5 text-amber-400 fill-amber-400" /> پرجستجو‌ترین‌ها:
           </span>
           {trendingTopics.map((t) => (
             <button
@@ -168,16 +168,16 @@ export default function Hero({ dailyVerse }) {
                     </div>
                   </div>
 
-                  <h3 className="font-kalameh font-bold text-lg text-foreground mb-1.5 group-hover:text-primary transition-colors">
+                  <h3 className="font-rokh-bold font-bold text-lg text-foreground mb-1.5 group-hover:text-primary transition-colors">
                     {card.title}
                   </h3>
-                  <p className="font-yekan text-xs text-muted-foreground leading-relaxed">
+                  <p className="font-doran text-xs text-muted-foreground leading-relaxed">
                     {card.desc}
                   </p>
                 </div>
 
                 <div className="pt-4 mt-4 border-t border-border/60 flex items-center justify-between text-xs font-ui font-semibold text-primary">
-                  <span>ورود به بخش</span>
+                  <span>شروع کنید</span>
                   <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-1.5 transition-transform" />
                 </div>
               </Link>
@@ -194,8 +194,8 @@ export default function Hero({ dailyVerse }) {
             <div className="flex items-center justify-between gap-3 mb-4 border-b border-border/70 pb-3">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-                <span className="font-kalameh text-xs font-bold text-foreground">
-                  آیه برگزیده و تدبّر امروز
+                <span className="font-rokh-bold text-xs font-bold text-foreground">
+                  آیه امروز برای تدبّر شما
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -204,13 +204,13 @@ export default function Hero({ dailyVerse }) {
                   className="inline-flex items-center gap-1 font-ui text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline"
                 >
                   <Palette className="h-3.5 w-3.5" />
-                  <span>طراحی کارت</span>
+                  <span>سازماندهی بصری</span>
                 </Link>
                 <Link
                   to={dailyVerse.verse_key ? `/verse/${dailyVerse.verse_key.replace(":", "/")}` : "/quran"}
                   className="inline-flex items-center gap-1 font-ui text-xs font-medium text-primary hover:underline"
                 >
-                  <span>مشاهده تفسیر</span>
+                  <span>مطالعه عمیق</span>
                   <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -225,7 +225,7 @@ export default function Hero({ dailyVerse }) {
             </p>
 
             {dailyVerse.translation && (
-              <p className="font-yekan text-sm sm:text-base text-muted-foreground leading-loose">
+              <p className="font-doran text-sm sm:text-base text-muted-foreground leading-loose">
                 «{dailyVerse.translation}»
               </p>
             )}

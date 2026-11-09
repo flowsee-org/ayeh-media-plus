@@ -97,7 +97,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
 
             {prefs.showTranslation && (
               <p
-                className="font-yekan text-center text-muted-foreground mt-2 transition-all leading-relaxed"
+                className="font-doran text-center text-muted-foreground mt-2 transition-all leading-relaxed"
                 style={{
                   fontSize: `${Math.round(13 * (prefs.translationScale || 1.0))}px`,
                 }}

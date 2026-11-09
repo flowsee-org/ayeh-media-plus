@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import {
   getReadCount, getProgressPercent, getRecentVerses, getUniqueSurahsRead,
@@ -88,11 +88,11 @@ export default function Profile() {
       {!user && (
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 mb-6 flex items-center justify-between gap-3 text-right">
           <div>
-            <div className="font-ui font-bold text-sm text-foreground">شما به عنوان کاربر مهمان مشاهده می‌کنید</div>
-            <div className="font-ui text-xs text-muted-foreground mt-0.5">برای ذخیره دائمی پیشرفت و همگام‌سازی یادداشت‌ها وارد شوید.</div>
+            <div className="font-ui font-bold text-sm text-foreground">شما به عنوان مهمان اینجا هستید</div>
+            <div className="font-ui text-xs text-muted-foreground mt-0.5">برای ذخیره پیشرفت و یادداشت‌ها، وارد حساب شوید.</div>
           </div>
           <Link to="/login" className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 shrink-0">
-            ورود به حساب
+            ورود
           </Link>
         </div>
       )}
@@ -117,11 +117,11 @@ export default function Profile() {
             <Pencil className="h-3.5 w-3.5" />
           </button>
         </div>
-        <h1 className="font-kalameh font-black text-2xl sm:text-3xl text-foreground tracking-tight">
+        <h1 className="font-rokh-bold font-black text-2xl sm:text-3xl text-foreground tracking-tight">
           {user?.full_name || "کاربر گرامی"}
         </h1>
         {characterInfo(user?.avatar_config) ? (
-          <p className="font-yekan text-muted-foreground text-sm mt-1">
+          <p className="font-doran text-muted-foreground text-sm mt-1">
             شخصیت: {characterInfo(user.avatar_config).name}
             <span className="text-muted-foreground/60"> · {characterInfo(user.avatar_config).epithet}</span>
           </p>
@@ -130,7 +130,7 @@ export default function Profile() {
             onClick={() => setPickerOpen(true)}
             className="font-ui text-primary text-xs mt-1.5 hover:underline"
           >
-            یک شخصیت قرآنی برای نمایه خود انتخاب کنید
+            شخصیت قرآنی برای نمایه خود برگزینید
           </button>
         )}
 
@@ -268,7 +268,7 @@ export default function Profile() {
             to="/quran"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
           >
-            <BookOpen className="h-4 w-4" /> شروع خواندن
+            <BookOpen className="h-4 w-4" /> آغاز تلاوت
           </Link>
         </div>
       )}
@@ -306,29 +306,29 @@ function SettingsSection({ user }) {
   return (
     <div className="rounded-xl border border-destructive/20 bg-destructive/[0.03] p-6 mt-10">
       <h2 className="font-display font-bold text-lg mb-2 flex items-center gap-2">
-        <SettingsIcon className="h-5 w-5 text-destructive" /> تنظیمات حساب کاربری
+        <SettingsIcon className="h-5 w-5 text-destructive" /> تنظیمات حساب
       </h2>
       <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-        حذف حساب، تمام اطلاعات شما — پیشرفت مطالعه، نشان‌ها، یادداشت‌ها و فعالیت‌های اجتماعی — را برای همیشه از بین می‌برد.
+        حذف حساب، همه اطلاعات شما — پیشرفت تلاوت، نشان‌ها، یادداشت‌ها و فعالیت‌ها — را برای همیشه پاک می‌کند.
       </p>
       {user ? (
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-destructive/40 text-destructive text-sm font-medium hover:bg-destructive/10 transition-all">
-              <Trash2 className="h-4 w-4" /> حذف حساب کاربری
+              <Trash2 className="h-4 w-4" /> حذف حساب
             </button>
           </AlertDialogTrigger>
           <AlertDialogContent className="max-w-md">
             <AlertDialogHeader>
               <AlertDialogTitle className="font-display">حذف حساب کاربری</AlertDialogTitle>
               <AlertDialogDescription className="leading-relaxed">
-                با حذف حساب، همه داده‌های شما — پیشرفت خواندن قرآن، نشان‌ها، یادداشت‌ها، پست‌ها و فعالیت‌های اجتماعی — برای همیشه پاک می‌شود و امکان بازگشت وجود ندارد.
+                با حذف حساب، تمام داده‌های شما — پیشرفت تلاوت، نشان‌ها، یادداشت‌ها، پست‌ها و فعالیت‌ها — برای همیشه از بین می‌رود و بازگشت ندارد.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-row-reverse gap-2">
               <AlertDialogCancel>انصراف</AlertDialogCancel>
               <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-white hover:bg-destructive/90">
-                بله، حذف کن
+                بله، حذف شود
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -370,7 +370,7 @@ function ProgressRing({ percent }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <div className="text-2xl font-bold font-kalameh text-foreground">{percent.toFixed(1)}%</div>
+        <div className="text-2xl font-bold font-rokh-bold text-foreground">{percent.toFixed(1)}%</div>
         <div className="text-[11px] text-muted-foreground mt-0.5">پیشرفت تلاوت</div>
       </div>
     </div>
@@ -383,7 +383,7 @@ function StatCard({ icon: Icon, label, value, total, color = "text-primary" }) {
       <div className={`inline-flex h-9 w-9 rounded-xl bg-secondary items-center justify-center mb-2.5 ${color}`}>
         <Icon className="h-4.5 w-4.5" />
       </div>
-      <div className="font-kalameh font-bold text-xl text-foreground">
+      <div className="font-rokh-bold font-bold text-xl text-foreground">
         {value.toLocaleString("fa-IR")}
         {total && <span className="text-xs text-muted-foreground font-ui"> / {total.toLocaleString("fa-IR")}</span>}
       </div>

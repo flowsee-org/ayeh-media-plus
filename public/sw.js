@@ -5,11 +5,9 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/fonts/antic/kalameh/Kalameh-Bold.woff2',
-  '/fonts/antic/kalameh/Kalameh-Regular.woff2',
-  '/fonts/antic/peyda/Peyda-Regular.woff2',
-  '/fonts/antic/peyda/Peyda-Bold.woff2',
-  '/fonts/antic/yekan-bakh/YekanBakh-Regular.woff2',
+  '/fonts/doran/Doran-Regular.woff2',
+  '/fonts/doran/Doran-Bold.woff2',
+  '/fonts/doran/Doran-ExtraBold.woff2',
 ];
 
 // Install Event: Pre-cache static shell

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Image } from "@/components/ui/image";
 import { Trophy, Users, Clock, Gift } from "lucide-react";
 import { COMPETITION_TYPE_LABELS, STATUS_LABELS, STATUS_COLORS } from "./shared";

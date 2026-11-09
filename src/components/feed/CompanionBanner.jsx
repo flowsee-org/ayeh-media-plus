@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Compass, ChevronLeft } from "lucide-react";
 
 /** دعوت به بخش «آیه‌ی راه» بالای فید. */

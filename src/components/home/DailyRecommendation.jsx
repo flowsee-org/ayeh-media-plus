@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { getRecommendations, getProfileSummary } from "@/lib/recommendationEngine";
 import { Loader2, Sparkles, ArrowLeft, BookOpen, Compass } from "lucide-react";
@@ -47,10 +47,10 @@ export default function DailyRecommendation() {
             <Compass className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-kalameh font-bold text-xl sm:text-2xl text-foreground">
+            <h2 className="font-rokh-bold font-bold text-xl sm:text-2xl text-foreground">
               پیشنهاد تدبّر اختصاصی برای شما
             </h2>
-            <p className="font-yekan text-xs sm:text-sm text-muted-foreground mt-0.5">{summary}</p>
+            <p className="font-doran text-xs sm:text-sm text-muted-foreground mt-0.5">{summary}</p>
           </div>
         </div>
       </div>
@@ -76,7 +76,7 @@ export default function DailyRecommendation() {
                 {p.verse.arabic}
               </div>
 
-              <p className="font-yekan text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-4">
+              <p className="font-doran text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-4">
                 «{p.verse.translation}»
               </p>
 
@@ -85,7 +85,7 @@ export default function DailyRecommendation() {
                   <div className="flex items-center gap-1.5 text-[11px] font-ui text-primary font-bold mb-1">
                     <BookOpen className="h-3 w-3" /> پیام تدبّری
                   </div>
-                  <p className="font-yekan text-xs text-muted-foreground leading-relaxed line-clamp-2">{p.reflection}</p>
+                  <p className="font-doran text-xs text-muted-foreground leading-relaxed line-clamp-2">{p.reflection}</p>
                 </div>
               )}
             </div>

@@ -28,8 +28,8 @@ export default function ProblemForm({ onSubmit, loading }) {
             <Compass className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="font-kalameh font-bold text-base sm:text-lg text-foreground">امروز چه دغدغه‌ای در دل دارید؟</h2>
-            <p className="font-yekan text-xs text-muted-foreground">هر چه در دلت است بنویس؛ کلام وحی برای همان احوال، راهگشا و آرامش‌بخش است.</p>
+            <h2 className="font-rokh-bold font-bold text-base sm:text-lg text-foreground">امروز چه دغدغه‌ای در دل دارید؟</h2>
+            <p className="font-doran text-xs text-muted-foreground">هر چه در دلت است بنویس؛ کلام وحی برای همان احوال، راهگشا و آرامش‌بخش است.</p>
           </div>
         </div>
 

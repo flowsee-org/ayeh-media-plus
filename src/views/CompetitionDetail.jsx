@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
@@ -82,7 +82,7 @@ export default function CompetitionDetail() {
 
   if (!comp)
     return (
-      <div className="mx-auto max-w-md py-24 text-center font-yekan">
+      <div className="mx-auto max-w-md py-24 text-center font-doran">
         <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
         <p className="text-sm text-muted-foreground mb-4">مسابقه یافت نشد.</p>
         <Link
@@ -98,7 +98,7 @@ export default function CompetitionDetail() {
   const canSubmit = status === "active" && user;
 
   return (
-    <div className="animate-fade-in font-yekan pb-20">
+    <div className="animate-fade-in font-doran pb-20">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {comp.image_url ? (
@@ -114,7 +114,7 @@ export default function CompetitionDetail() {
             <Trophy className="h-3.5 w-3.5 text-accent" />
             <span>{COMPETITION_TYPE_LABELS[comp.type] || "مسابقه قرآنی"}</span>
           </div>
-          <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-3">
+          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-3">
             {comp.title}
           </h1>
           <span
@@ -122,7 +122,7 @@ export default function CompetitionDetail() {
           >
             {STATUS_LABELS[status]}
           </span>
-          <p className="text-muted-foreground mt-4 leading-relaxed max-w-xl mx-auto text-xs sm:text-sm font-yekan">
+          <p className="text-muted-foreground mt-4 leading-relaxed max-w-xl mx-auto text-xs sm:text-sm font-doran">
             {comp.description}
           </p>
           <div className="mt-5 flex justify-center">
@@ -146,7 +146,7 @@ export default function CompetitionDetail() {
                   جایزه ارزشمند مسابقه:
                 </span>
               </div>
-              <div className="font-kalameh font-bold text-xl sm:text-2xl text-accent mb-1.5">
+              <div className="font-rokh-bold font-bold text-xl sm:text-2xl text-accent mb-1.5">
                 {comp.prize_title}
               </div>
               {comp.prize_description && (
@@ -173,7 +173,7 @@ export default function CompetitionDetail() {
         {/* Competition Rules */}
         {comp.rules?.length > 0 && (
           <div className="mb-8 rounded-2xl border border-border/80 bg-card p-5 shadow-xs">
-            <h3 className="font-kalameh font-bold text-base mb-3 flex items-center gap-2 text-foreground">
+            <h3 className="font-rokh-bold font-bold text-base mb-3 flex items-center gap-2 text-foreground">
               <BookOpen className="h-4 w-4 text-accent" />
               <span>قوانین و شرایط شرکت در مسابقه</span>
             </h3>
@@ -199,7 +199,7 @@ export default function CompetitionDetail() {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <Crown className="h-5 w-5 text-accent" />
-            <h3 className="font-kalameh font-bold text-lg sm:text-xl text-foreground">
+            <h3 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground">
               آثار ارسال‌شده ({fa(entries.length)})
             </h3>
           </div>
@@ -348,7 +348,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
           )}
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold font-kalameh text-foreground">
+              <span className="text-sm font-bold font-rokh-bold text-foreground">
                 {entry.author_name}
               </span>
               {entry.is_winner && (
@@ -369,7 +369,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
       </div>
 
       {entry.title && (
-        <h4 className="font-kalameh font-bold text-base text-foreground mb-2">
+        <h4 className="font-rokh-bold font-bold text-base text-foreground mb-2">
           {entry.title}
         </h4>
       )}
@@ -410,7 +410,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold font-kalameh text-foreground truncate">
+                    <span className="text-xs font-bold font-rokh-bold text-foreground truncate">
                       صوت تلاوت مسابقه
                     </span>
                     {isThisPlaying && (
@@ -442,7 +442,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
       )}
 
       {entry.content && (
-        <p className="text-xs sm:text-sm leading-relaxed text-foreground/90 whitespace-pre-line mb-3 font-yekan">
+        <p className="text-xs sm:text-sm leading-relaxed text-foreground/90 whitespace-pre-line mb-3 font-doran">
           {entry.content}
         </p>
       )}
@@ -626,7 +626,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-3xl border border-border/80 bg-card p-6 shadow-2xl overflow-hidden font-yekan max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-lg rounded-3xl border border-border/80 bg-card p-6 shadow-2xl overflow-hidden font-doran max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -636,7 +636,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               <Mic className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="font-kalameh font-bold text-base text-foreground">
+              <h3 className="font-rokh-bold font-bold text-base text-foreground">
                 ثبت اثر در مسابقه
               </h3>
               <p className="text-[11px] text-muted-foreground">{comp.title}</p>
@@ -713,7 +713,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                   </div>
 
                   <div>
-                    <div className="font-kalameh font-bold text-base text-foreground">
+                    <div className="font-rokh-bold font-bold text-base text-foreground">
                       {isRecording ? "در حال ضبط تلاوت شما..." : "آماده ضبط تلاوت"}
                     </div>
                     <div className="font-mono text-lg font-bold text-accent mt-1">
@@ -766,7 +766,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                 <div className="h-12 w-12 rounded-2xl bg-accent/15 text-accent flex items-center justify-center">
                   <FileAudio className="h-6 w-6" />
                 </div>
-                <div className="font-kalameh font-bold text-sm text-foreground">
+                <div className="font-rokh-bold font-bold text-sm text-foreground">
                   {fileToUpload ? fileToUpload.name : "انتخاب فایل صوتی یا ویدیویی"}
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -791,7 +791,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: تلاوت مجلسی سوره شمس"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-yekan"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-doran"
             />
           </div>
 
@@ -817,7 +817,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               onChange={(e) => setContent(e.target.value)}
               rows={3}
               placeholder="توضیح کوتاهی درباره حس‌وحال، مقام تلاوت یا پیام آیه بنویسید..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-yekan leading-relaxed"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-doran leading-relaxed"
             />
           </div>
         </div>

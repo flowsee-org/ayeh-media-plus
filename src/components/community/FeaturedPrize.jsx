@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Trophy, Gift, ArrowLeft, Clock } from "lucide-react";
 
 /** Big highlighted prize block for the leading active competition. */

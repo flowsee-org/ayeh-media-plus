@@ -42,10 +42,10 @@ export default function Competitions() {
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-secondary border border-border text-foreground text-xs font-bold mb-3">
           <Trophy className="h-3.5 w-3.5 text-accent" /> مسابقات و پویش‌های قرآنی
         </div>
-        <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+        <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
           مسابقات، تلاوت و جوایز نفیس
         </h1>
-        <p className="font-yekan text-muted-foreground text-sm max-w-lg mx-auto">
+        <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
           در پویش‌های تعاملی تلاوت، تدبّر، خوشنویسی و بازآفرینی هنری شرکت کنید و از جوایز معنوی و نفیس بهره‌مند شوید
         </p>
       </div>

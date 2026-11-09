@@ -48,11 +48,11 @@ export default function Admin() {
 
   if (!user || user.role !== "admin") {
     return (
-      <div className="mx-auto max-w-md py-24 px-4 text-center font-yekan" dir="rtl">
+      <div className="mx-auto max-w-md py-24 px-4 text-center font-doran" dir="rtl">
         <div className="h-16 w-16 mx-auto mb-4 rounded-3xl bg-amber-500/10 border border-amber-500/25 text-amber-500 flex items-center justify-center">
           <Lock className="h-8 w-8" />
         </div>
-        <h2 className="text-xl font-bold font-kalameh mb-2">دسترسی اختصاصی مدیریت</h2>
+        <h2 className="text-xl font-bold font-rokh-bold mb-2">دسترسی اختصاصی مدیریت</h2>
         <p className="text-xs sm:text-sm text-muted-foreground mb-6 leading-relaxed">
           برای مدیریت آیات، تفاسیر و دسترسی به پنل ادمین، لطفاً با حساب کاربری مدیر سامانه وارد شوید.
         </p>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Sparkles } from "lucide-react";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
@@ -21,7 +21,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
           <div className="relative rounded-2xl border border-amber-500/40 bg-black/80 backdrop-blur-md p-3.5 sm:p-4 text-white shadow-2xl animate-fade-in-up">
             {/* Header: Surah Name Badge + Minimize + External Link */}
             <div className="flex items-center justify-between gap-2 border-b border-white/15 pb-2">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-0.5 text-xs font-bold text-amber-400 font-kalameh border border-amber-500/30">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-0.5 text-xs font-bold text-amber-400 font-rokh-bold border border-amber-500/30">
                 <Sparkles className="h-3 w-3" />
                 <span>
                   محور تدبّر: {surahName ? `سوره ${surahName} • آیه ${fa(ayahNum || "")}` : `آیه ${verseKey}`}
@@ -65,7 +65,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
 
             {/* Translation */}
             {translation && (
-              <p className="font-yekan text-stone-200 text-xs sm:text-sm text-center leading-relaxed font-medium line-clamp-2 sm:line-clamp-3">
+              <p className="font-doran text-stone-200 text-xs sm:text-sm text-center leading-relaxed font-medium line-clamp-2 sm:line-clamp-3">
                 «{translation}»
               </p>
             )}
@@ -76,7 +76,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
             <button
               type="button"
               onClick={() => setMinimized(false)}
-              className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-black/85 backdrop-blur-md px-4 py-1.5 text-xs font-bold text-amber-400 shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95 font-kalameh"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-black/85 backdrop-blur-md px-4 py-1.5 text-xs font-bold text-amber-400 shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95 font-rokh-bold"
               title="نمایش متن آیه تدبّر"
             >
               <BookOpen className="h-3.5 w-3.5 text-amber-400" />

@@ -37,11 +37,11 @@ export default class ErrorBoundary extends React.Component {
               <AlertTriangle className="h-7 w-7" />
             </div>
 
-            <h3 className="font-kalameh font-bold text-lg text-foreground mb-1.5">
+            <h3 className="font-rokh-bold font-bold text-lg text-foreground mb-1.5">
               خطایی در نمایش این بخش رخ داده است
             </h3>
 
-            <p className="font-yekan text-xs text-muted-foreground mb-4 leading-relaxed">
+            <p className="font-doran text-xs text-muted-foreground mb-4 leading-relaxed">
               جزئیات این خطا به طور خودکار در مرکز پایش خطاهای سیستم ثبت شد تا توسط دستیار برطرف گردد.
             </p>
 

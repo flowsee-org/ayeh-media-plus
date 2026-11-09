@@ -1,216 +1,297 @@
-/* ── Persian & Arabic Typography ── */
-@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&display=swap');
+/* ── Aparat-Inspired Quranic Design System ──
+   Video-first platform dedicated to Quranic videos, recitations, and competitions
+   RTL Persian layout • Deep Emerald/Turquoise • Saffron/Amber accents
+   Cream light mode • Deep charcoal midnight dark mode
+   Doran typography • Islamic geometric patterns
+*/
 
-/* ── 3 Core Brand Typefaces from /fonts/antic/ ── */
+/* ── 4-Font System: Doran, Rokh, Tajrid, Falsafeh — All Weights ── */
 
-/* 1. KALAMEH (کلمه) — Headings, Grand Titles, Big Numbers & Calligraphic Displays */
+/* ── Doran Pro — UI / Body Persian Font ── */
 @font-face {
-  font-family: 'Kalameh';
+  font-family: 'Doran';
+  src: url('/fonts/doran/Doran-Light.woff2') format('woff2');
+  font-weight: 300;
   font-style: normal;
-  font-weight: 400;
   font-display: swap;
-  src: url('/fonts/antic/kalameh/Kalameh-Regular.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Kalameh';
+  font-family: 'Doran';
+  src: url('/fonts/doran/Doran-Regular.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Doran';
+  src: url('/fonts/doran/Doran-Medium.woff2') format('woff2');
   font-weight: 500;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/kalameh/Kalameh-Medium.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Kalameh';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/antic/kalameh/Kalameh-SemiBold.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Kalameh';
-  font-style: normal;
+  font-family: 'Doran';
+  src: url('/fonts/doran/Doran-Bold.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/kalameh/Kalameh-Bold.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Kalameh';
-  font-style: normal;
+  font-family: 'Doran';
+  src: url('/fonts/doran/Doran-ExtraBold.woff2') format('woff2');
   font-weight: 800;
-  font-display: swap;
-  src: url('/fonts/antic/kalameh/Kalameh-ExtraBold.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Kalameh';
   font-style: normal;
-  font-weight: 900;
   font-display: swap;
-  src: url('/fonts/antic/kalameh/Kalameh-Black.woff2') format('woff2');
 }
 
-/* 2. PEYDA (پیدا) — Modern UI Controls, Buttons, Tabs, Badges & Navigation */
+/* ── Rokh Pro — Heading / Display Persian Font ── */
 @font-face {
-  font-family: 'Peyda';
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-HairLine.woff2') format('woff2');
+  font-weight: 100;
   font-style: normal;
-  font-weight: 400;
   font-display: swap;
-  src: url('/fonts/antic/peyda/Peyda-Regular.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Peyda';
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Thin.woff2') format('woff2');
+  font-weight: 200;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-ExtraLight.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Light.woff2') format('woff2');
+  font-weight: 350;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Medium.woff2') format('woff2');
   font-weight: 500;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/peyda/Peyda-Medium.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Peyda';
-  font-style: normal;
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-SemiBold.woff2') format('woff2');
   font-weight: 600;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/peyda/Peyda-SemiBold.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Peyda';
-  font-style: normal;
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Bold.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/peyda/Peyda-Bold.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Peyda';
-  font-style: normal;
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-ExtraBold.woff2') format('woff2');
   font-weight: 800;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/peyda/Peyda-ExtraBold.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'Peyda';
-  font-style: normal;
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-UltraBold.woff2') format('woff2');
   font-weight: 900;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/peyda/Peyda-Black.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rokh';
+  src: url('/fonts/rokh/Rokh-Black.woff2') format('woff2');
+  font-weight: 950;
+  font-style: normal;
+  font-display: swap;
 }
 
-/* 3. YEKAN BAKH (یکان بخ) — Body text, Tafsir readings, Translations & Editorial */
+/* ── Tajrid — Arabic / Quranic Font ── */
 @font-face {
-  font-family: 'YekanBakh';
+  font-family: 'Tajrid';
+  src: url('/fonts/tajrid/Tajrid-UltraLight.woff2') format('woff2');
+  font-weight: 200;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajrid';
+  src: url('/fonts/tajrid/Tajrid-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajrid';
+  src: url('/fonts/tajrid/Tajrid-Regular.woff2') format('woff2');
   font-weight: 400;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/yekan-bakh/YekanBakh-Regular.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'YekanBakh';
+  font-family: 'Tajrid';
+  src: url('/fonts/tajrid/Tajrid-Medium.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajrid';
+  src: url('/fonts/tajrid/Tajrid-SemiBold.woff2') format('woff2');
   font-weight: 600;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/yekan-bakh/YekanBakh-SemiBold.woff2') format('woff2');
 }
 @font-face {
-  font-family: 'YekanBakh';
-  font-style: normal;
+  font-family: 'Tajrid';
+  src: url('/fonts/tajrid/Tajrid-Bold.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
   font-display: swap;
-  src: url('/fonts/antic/yekan-bakh/YekanBakh-Bold.woff2') format('woff2');
+}
+
+/* ── Falsafeh — Decorative / Accent Font ── */
+@font-face {
+  font-family: 'Falsafeh';
+  src: url('/fonts/falsafeh/Falsafeh-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Falsafeh';
+  src: url('/fonts/falsafeh/Falsafeh-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Design Tokens ── */
 @layer base {
   :root {
-    /* ── Human-Crafted Modern Persian Design System (Light Mode) ── */
-    --background: 210 20% 98%;       /* crisp porcelain #f8fafc */
-    --foreground: 222 47% 11%;       /* deep slate #0f172a */
+    /* ── Dark Mode by Default — Aparat Style ── */
+    --background: 25 15% 6%;             /* #0b0f19 deep obsidian */
+    --foreground: 45 15% 96%;            /* warm cream */
+    --card: 25 15% 9%;                   /* elevated dark */
+    --card-foreground: 45 15% 96%;
+    --popover: 25 15% 9%;
+    --popover-foreground: 45 15% 96%;
 
-    --card: 0 0% 100%;               /* pure white card */
-    --card-foreground: 222 47% 11%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-
-    /* Royal Court Green (سبز درباری اصیل ایرانی) */
-    --primary: 164 74% 28%;          /* #127457 Royal Court Emerald */
+    /* Primary — Quranic Emerald */
+    --primary: 166 63% 25%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 166 63% 35%;
+    --primary-muted: 166 40% 15%;
 
-    /* Warm Amber / Saffron Accent */
-    --accent: 38 92% 50%;            /* #f59e0b */
-    --accent-foreground: 222 47% 11%;
+    /* Secondary — Saffron/Amber */
+    --secondary: 45 70% 50%;
+    --secondary-foreground: 25 25% 12%;
 
-    --secondary: 160 20% 96%;        /* gentle court mist #f0f7f4 */
-    --secondary-foreground: 164 60% 15%;
+    /* Accent — Turquoise */
+    --accent: 174 72% 38%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 174 72% 48%;
+    --accent-muted: 174 50% 15%;
 
-    --muted: 160 15% 94%;
-    --muted-foreground: 215 16% 47%; /* #64748b */
-
-    --destructive: 0 84% 60%;
+    --muted: 25 15% 12%;
+    --muted-foreground: 45 10% 65%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 214 32% 91%;          /* clean slate border #e2e8f0 */
-    --input: 214 32% 91%;
-    --ring: 164 74% 28%;
-
+    --border: 25 15% 18%;
+    --input: 25 15% 18%;
+    --ring: 166 63% 25%;
     --radius: 0.75rem;
 
-    /* Semantic Typography Hierarchy */
-    --font-heading: 'Kalameh', sans-serif;
-    --font-display: 'Kalameh', sans-serif;
-    --font-ui: 'Peyda', 'Kalameh', system-ui, sans-serif;
-    --font-body: 'YekanBakh', 'Peyda', system-ui, sans-serif;
-    --font-arabic: 'Amiri Quran', 'Scheherazade New', 'Amiri', serif;
+    /* Quranic Color Variables */
+    --quranic-emerald: 166 63% 25%;
+    --quranic-emerald-light: 166 50% 40%;
+    --quranic-emerald-dark: 166 70% 18%;
+    --quranic-turquoise: 174 72% 38%;
+    --quranic-turquoise-light: 174 60% 50%;
+    --quranic-saffron: 45 70% 50%;
+    --quranic-saffron-light: 45 70% 62%;
+    --quranic-saffron-dark: 45 75% 35%;
+    --quranic-parchment: 25 15% 9%;
+    --quranic-ink: 45 15% 96%;
+    --quranic-sand: 25 15% 14%;
+    --quranic-clay: 25 35% 55%;
+    --quranic-midnight: 25 15% 6%;
+
+    /* Typography — 4 Font System */
+    --font-ui: 'Doran', system-ui, sans-serif;
+    --font-body: 'Doran', system-ui, sans-serif;
+    --font-heading: 'Rokh', 'Doran', sans-serif;
+    --font-display: 'Rokh', 'Doran', sans-serif;
+    --font-arabic: 'Tajrid', 'Noto Naskh Arabic', 'Amiri Quran', serif;
+    --font-falsafeh: 'Falsafeh', 'Doran', sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 164 74% 28%;
+    /* Sidebar */
+    --sidebar-background: 25 15% 6%;
+    --sidebar-foreground: 45 15% 96%;
+    --sidebar-primary: 166 63% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 38 92% 50%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 164 74% 28%;
+    --sidebar-accent: 45 70% 50%;
+    --sidebar-accent-foreground: 25 25% 12%;
+    --sidebar-border: 25 15% 18%;
+    --sidebar-ring: 166 63% 25%;
   }
 
-  .dark {
-    /* ── Elegant Midnight Obsidian (Dark Mode) ── */
-    --background: 224 45% 6%;        /* deep obsidian #090d16 */
-    --foreground: 210 40% 98%;       /* crisp light #f8fafc */
-
-    --card: 222 47% 10%;             /* elevated dark slate #0f172a */
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 98%;
-
-    /* Luminous Royal Court Emerald (سبز درباری شبانه درخشان) */
-    --primary: 160 84% 39%;          /* #10b981 Radiant Court Emerald */
-    --primary-foreground: 224 45% 6%;
-
-    /* Golden Amber */
-    --accent: 38 92% 52%;
-    --accent-foreground: 224 45% 6%;
-
-    --secondary: 165 30% 12%;        /* deep forest moss #0d1f1a */
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 20% 65%; /* #94a3b8 */
-
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 217 33% 18%;           /* subtle border #1e293b */
-    --input: 217 33% 18%;
-    --ring: 160 84% 39%;
-
-    --sidebar-background: 224 45% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 160 84% 39%;
-    --sidebar-primary-foreground: 224 45% 6%;
-    --sidebar-accent: 38 92% 52%;
-    --sidebar-accent-foreground: 224 45% 6%;
-    --sidebar-border: 217 33% 18%;
-    --sidebar-ring: 160 84% 39%;
+  .light {
+    /* ── Light Mode Override ── */
+    --background: 45 25% 97%;
+    --foreground: 25 25% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 25% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 25% 12%;
+    --primary: 166 63% 25%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 20% 92%;
+    --secondary-foreground: 25 30% 20%;
+    --accent: 174 72% 38%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 45 15% 88%;
+    --muted-foreground: 25 15% 45%;
+    --border: 45 15% 82%;
+    --input: 45 15% 82%;
+    --ring: 166 63% 25%;
+    --sidebar-background: 45 25% 97%;
+    --sidebar-foreground: 25 25% 12%;
+    --sidebar-primary: 166 63% 25%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 45 70% 50%;
+    --sidebar-accent-foreground: 25 25% 12%;
+    --sidebar-border: 45 15% 82%;
+    --sidebar-ring: 166 63% 25%;
   }
 }
 
@@ -236,182 +317,433 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
   }
 
-  button, input, select, textarea, nav, tab {
+  h1 { @apply text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight; }
+  h2 { @apply text-3xl sm:text-4xl font-bold tracking-tight; }
+  h3 { @apply text-2xl sm:text-3xl font-bold tracking-tight; }
+  h4 { @apply text-xl sm:text-2xl font-semibold; }
+  h5 { @apply text-lg sm:text-xl font-semibold; }
+  h6 { @apply text-base sm:text-lg font-medium; }
+
+  button, input, select, textarea, nav, [role="tab"] {
     font-family: var(--font-ui);
   }
 
   /* Quranic Arabic Script Enhancement */
   .font-arabic {
     font-family: var(--font-arabic) !important;
-    font-feature-settings: "calt", "liga", "mset";
-    line-height: 2.4;
-    word-spacing: 0.14em;
+    font-feature-settings: "calt", "liga", "mset", "medi", "init", "fina", "isol";
+    line-height: 2.6;
+    word-spacing: 0.18em;
     text-align: justify;
     text-justify: inter-word;
+    font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures contextual;
   }
 
-  .font-kalameh {
-    font-family: 'Kalameh', sans-serif !important;
+  .font-arabic-large {
+    @apply font-arabic;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 2.8;
   }
 
-  .font-peyda {
-    font-family: 'Peyda', sans-serif !important;
-  }
-
-  .font-yekan {
-    font-family: 'YekanBakh', sans-serif !important;
-  }
+  .font-doran { font-family: 'Doran', sans-serif !important; }
+  .font-doran-bold { font-family: 'Doran', sans-serif !important; font-weight: 700 !important; }
+  .font-doran-extrabold { font-family: 'Doran', sans-serif !important; font-weight: 800 !important; }
+  .font-rokh { font-family: 'Rokh', sans-serif !important; }
+  .font-rokh-bold { font-family: 'Rokh', sans-serif !important; font-weight: 700 !important; }
+  .font-rokh-extrabold { font-family: 'Rokh', sans-serif !important; font-weight: 800 !important; }
+  .font-tajrid { font-family: 'Tajrid', serif !important; }
+  .font-tajrid-bold { font-family: 'Tajrid', serif !important; font-weight: 700 !important; }
+  .font-falsafeh { font-family: 'Falsafeh', sans-serif !important; }
+  .font-falsafeh-bold { font-family: 'Falsafeh', sans-serif !important; font-weight: 700 !important; }
+  .font-arabic { font-family: var(--font-arabic) !important; }
 
   ::selection {
-    background-color: hsl(var(--primary) / 0.18);
-    color: hsl(var(--foreground));
+    background-color: hsl(var(--primary) / 0.25);
+    color: hsl(var(--primary-foreground));
   }
 
   /* Clean Scrollbars */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.25);
+    background: hsl(var(--muted-foreground) / 0.3);
     border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.4);
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }
 
+/* ── Components ── */
+@layer components {
+  /* Buttons — Aparat Style */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-ui font-semibold rounded-xl
+           transition-all duration-200 ease-out
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-primary-foreground hover:bg-primary-glow
+           shadow-sm hover:shadow-md
+           px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base;
+  }
+
+  .btn-accent {
+    @apply btn bg-accent text-accent-foreground hover:bg-accent-glow
+           shadow-sm hover:shadow-md
+           px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base;
+  }
+
+  .btn-saffron {
+    @apply btn bg-quranic-saffron text-quranic-ink hover:bg-quranic-saffron-light
+           shadow-saffron-glow hover:shadow-[0_0_25px_-4px_hsl(var(--quranic-saffron)_/0.5)]
+           px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-muted text-foreground
+           px-4 py-2 sm:px-5 sm:py-2.5 text-sm;
+  }
+
+  .btn-outline {
+    @apply btn border-2 border-primary text-primary hover:bg-primary/5
+           px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base;
+  }
+
+  .btn-icon {
+    @apply btn p-2.5 sm:p-3;
+  }
+
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+  .btn-lg { @apply px-7 py-3.5 text-base sm:text-lg; }
+
+  /* Cards — Video-First */
+  .card {
+    @apply bg-card/95 backdrop-blur-sm border border-border rounded-2xl
+           shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  .card-interactive {
+    @apply card cursor-pointer hover:-translate-y-1 hover:shadow-card-hover
+           hover:border-primary/30;
+  }
+
+  .card-glass {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-xl;
+  }
+
+  /* Video Card — Immersive */
+  .video-card {
+    @apply relative block rounded-2xl border border-border bg-card overflow-hidden
+           transition-all duration-300 hover:border-quranic-turquoise/50 hover:shadow-card-hover;
+  }
+
+  .video-card-live {
+    @apply video-card border-quranic-saffron/40 animate-[live-pulse_2s_infinite];
+  }
+
+  .video-card-content {
+    @apply p-4 flex-1 flex flex-col;
+  }
+
+  .video-card-title {
+    @apply font-rokh-bold font-bold text-base sm:text-lg leading-snug line-clamp-2 text-foreground
+           group-hover:text-primary transition-colors;
+  }
+
+  .video-card-meta {
+    @apply mt-3 pt-3 border-t border-border/60 flex items-center justify-between font-ui text-[11px] text-muted-foreground;
+  }
+
+  /* Inputs — Aparat Style */
+  .input {
+    @apply w-full bg-background border border-input text-foreground
+           rounded-xl px-4 py-3 text-sm sm:text-base
+           placeholder:text-muted-foreground/60
+           focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 focus:border-ring
+           transition-all duration-200
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-foreground mb-1.5;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1
+           text-xs font-semibold font-ui transition-all;
+  }
+
+  .badge-emerald { @apply badge bg-quranic-emerald/10 text-quranic-emerald border border-quranic-emerald/20; }
+  .badge-saffron { @apply badge bg-quranic-saffron/15 text-quranic-saffron-dark border border-quranic-saffron/25; }
+  .badge-turquoise { @apply badge bg-quranic-turquoise/10 text-quranic-turquoise border border-quranic-turquoise/20; }
+  .badge-live { @apply badge bg-quranic-saffron text-quranic-ink animate-[live-pulse_2s_infinite]; }
+  .badge-outline { @apply badge bg-transparent border-border text-muted-foreground; }
+  .badge-status-pending { @apply badge bg-amber-500/10 text-amber-600 border border-amber-500/20; }
+  .badge-status-verified { @apply badge bg-quranic-emerald/10 text-quranic-emerald border border-quranic-emerald/20; }
+  .badge-status-archived { @apply badge bg-muted/10 text-muted-foreground border border-border/30; }
+
+  /* Tabs */
+  .tabs-trigger {
+    @apply inline-flex items-center gap-2 rounded-xl px-4 py-2.5
+           text-sm font-semibold font-ui transition-all duration-200
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+           data-[state=inactive]:bg-transparent data-[state=inactive]:text-muted-foreground
+           data-[state=inactive]:hover:bg-muted data-[state=inactive]:hover:text-foreground;
+  }
+
+  /* Avatar */
+  .avatar {
+    @apply relative inline-flex shrink-0 overflow-hidden rounded-full
+           bg-muted border-2 border-border;
+  }
+
+  .avatar-image { @apply aspect-square h-full w-full object-cover; }
+  .avatar-fallback { @apply flex h-full w-full items-center justify-center rounded-full font-ui font-semibold; }
+
+  /* Divider — Islamic Ornamental */
+  .divider-ornamental {
+    @apply relative my-6;
+  }
+
+  .divider-ornamental::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-border to-transparent;
+  }
+
+  .divider-ornamental::after {
+    content: '۞';
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+           text-primary/60 text-xl font-arabic
+           bg-background px-3;
+  }
+
+  /* Skeleton Loaders */
+  .skeleton {
+    @apply animate-pulse bg-muted rounded;
+  }
+  .skeleton-text { @apply skeleton h-4 w-full rounded-lg; }
+  .skeleton-circle { @apply skeleton rounded-full; }
+  .skeleton-rect { @apply skeleton rounded-xl; }
+
+  /* Tags/Chips */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1
+           text-xs font-medium font-ui border border-border/50
+           bg-card hover:bg-muted transition-all duration-200;
+  }
+  .chip-active { @apply chip bg-primary text-primary-foreground border-primary shadow-sm; }
+  .chip-accent { @apply chip bg-accent/10 text-accent border-accent/30; }
+}
+
+/* ── Utilities ── */
 @layer utilities {
-  /* ── Subtle Geometric Patterns (Restrained & Elegant) ── */
-  .pattern-islamic {
-    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.12) 1px, transparent 1px);
+  /* Islamic Geometric Patterns */
+  .pattern-arabesque {
+    background-image:
+      linear-gradient(60deg, hsl(var(--quranic-emerald) / 0.08) 0%, transparent 50%),
+      linear-gradient(-60deg, hsl(var(--quranic-saffron) / 0.08) 0%, transparent 50%);
+    background-size: 60px 60px;
+  }
+
+  .pattern-girih {
+    background-image:
+      linear-gradient(45deg, hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(-45deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+  }
+
+  .pattern-girih-subtle {
+    background-image:
+      linear-gradient(45deg, hsl(var(--border) / 0.15) 1px, transparent 1px),
+      linear-gradient(-45deg, hsl(var(--border) / 0.15) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .pattern-dots {
+    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
-  .pattern-grid {
-    background-image: linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
-                      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
-    background-size: 32px 32px;
+  /* Gradients — Quranic */
+  .gradient-quranic {
+    background: linear-gradient(135deg, hsl(var(--quranic-emerald)), hsl(var(--quranic-turquoise)));
   }
 
-  /* ── Modern Standard Glass & Surfaces ── */
-  .glass-card {
-    background: hsl(var(--card) / 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid hsl(var(--border));
+  .gradient-quranic-hero {
+    background: linear-gradient(135deg, hsl(var(--quranic-emerald-dark)) 0%, hsl(var(--quranic-emerald)) 50%, hsl(var(--quranic-saffron-dark)) 100%);
   }
 
-  /* ── Persian Orsi & Haft-Rang Art System ── */
-  .orsi-glass-card {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(255, 255, 255, 0.03) 100%
-    );
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(245, 158, 11, 0.25);
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+  .gradient-quranic-mesh {
+    background:
+      radial-gradient(ellipse at 20% 20%, hsl(var(--quranic-emerald) / 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, hsl(var(--quranic-saffron) / 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, hsl(var(--quranic-turquoise) / 0.08) 0%, transparent 60%);
   }
 
-  .orsi-rainbow-sheen {
-    background: linear-gradient(
-      115deg,
-      rgba(244, 63, 94, 0.12) 0%,
-      rgba(245, 158, 11, 0.15) 25%,
-      rgba(16, 185, 129, 0.14) 50%,
-      rgba(14, 165, 233, 0.16) 75%,
-      rgba(168, 85, 247, 0.12) 100%
-    );
+  .gradient-saffron-shimmer {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      hsl(var(--quranic-saffron) / 0.15) 50%,
+      transparent 100%);
+    background-size: 200% 100%;
+    animation: saffron-shimmer 3s linear infinite;
   }
 
-  .muqarnas-glow {
-    box-shadow: 0 0 50px -10px rgba(245, 158, 11, 0.25);
+  /* Shadows — Quranic */
+  .shadow-quranic-glow {
+    box-shadow: 0 4px 20px -4px hsl(var(--quranic-emerald) / 0.3);
+  }
+  .shadow-saffron-glow {
+    box-shadow: 0 4px 20px -4px hsl(var(--quranic-saffron) / 0.35);
+  }
+  .shadow-live-glow {
+    box-shadow: 0 0 30px -4px hsl(var(--quranic-saffron) / 0.5);
   }
 
-  .gold-trim-border {
-    border-image: linear-gradient(to bottom right, #f59e0b, #10b981, #d97706) 1;
+  /* Text Gradients */
+  .text-gradient-quranic {
+    @apply bg-gradient-to-r from-quranic-emerald to-quranic-turquoise bg-clip-text text-transparent;
+  }
+  .text-gradient-saffron {
+    @apply bg-gradient-to-r from-quranic-saffron to-quranic-saffron-light bg-clip-text text-transparent;
   }
 
-  .glass-header {
-    background: hsl(var(--background) / 0.85);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid hsl(var(--border));
+  /* Quranic Typography */
+  .quran-text {
+    @apply font-arabic text-foreground/95 leading-[2.6] text-justify;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+  }
+  .quran-text-large {
+    @apply quran-text;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 2.8;
+  }
+  .quran-text-hero {
+    @apply quran-text;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 2.5;
+    font-weight: 600;
   }
 
-  /* ── Restrained Typography Gradients ── */
-  .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(38 92% 50%), hsl(28 95% 55%));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .translation-text {
+    @apply font-body text-muted-foreground leading-[2.2] italic;
+    font-size: clamp(1rem, 2vw, 1.125rem);
   }
 
-  .text-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 60%));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .transliteration-text {
+    @apply font-ui text-muted-foreground/70 leading-relaxed tracking-wide text-sm;
+    direction: ltr;
   }
 
-  .text-gradient-emerald {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 60%));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .waqf-mark {
+    @apply text-primary font-bold relative top-[-0.1em];
+    font-size: 0.7em;
+  }
+  .waqf-mark-gold { @apply waqf-mark text-quranic-saffron; }
+
+  /* Layout Utilities */
+  .container-quranic {
+    @apply mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-10;
+  }
+  .section-space { @apply py-12 sm:py-16 lg:py-20 xl:py-24; }
+  .section-space-sm { @apply py-8 sm:py-10 lg:py-12; }
+  .section-space-lg { @apply py-16 sm:py-20 lg:py-24 xl:py-28; }
+
+  /* Video Utilities — Aparat Style */
+  .video-thumbnail {
+    @apply relative h-48 md:h-56 lg:h-64 overflow-hidden
+           bg-gradient-to-br from-quranic-emerald-dark/30 to-quranic-emerald-dark/50
+           flex items-center justify-center;
   }
 
-  /* ── Crisp, Professional Shadows ── */
-  .shadow-soft {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+  .video-play-overlay {
+    @apply absolute inset-0 flex items-center justify-center opacity-0
+           group-hover:opacity-100 transition-opacity duration-300;
   }
 
-  .shadow-premium {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  .video-play-button {
+    @apply h-16 w-16 rounded-full bg-quranic-emerald/95 backdrop-blur-md
+           flex items-center justify-center text-white shadow-2xl shadow-quranic-glow
+           transform group-hover:scale-110 transition-transform duration-300;
   }
 
-  .shadow-card-hover {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  .video-play-button-saffron {
+    @apply h-16 w-16 rounded-full bg-quranic-saffron/95 backdrop-blur-md
+           flex items-center justify-center text-quranic-ink shadow-xl shadow-saffron-glow
+           transform group-hover:scale-110 transition-transform duration-300;
   }
 
-  .shadow-gold-glow {
-    box-shadow: 0 2px 10px -2px hsl(var(--accent) / 0.3);
+  .video-duration-badge {
+    @apply absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-1
+           rounded-full bg-black/80 text-white text-[11px] font-bold
+           backdrop-blur-sm border border-white/20;
   }
 
-  .shadow-emerald-glow, .shadow-blue-glow {
-    box-shadow: 0 2px 10px -2px hsl(var(--primary) / 0.3);
+  .video-verse-badge {
+    @apply absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-1
+           rounded-full bg-quranic-saffron/90 text-quranic-ink text-[11px] font-bold
+           backdrop-blur-sm border border-quranic-saffron/30;
   }
 
-  .ornament-divider {
-    position: relative;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, hsl(var(--border)) 50%, transparent 100%);
+  .video-badge-live {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+           bg-quranic-saffron text-quranic-ink text-xs font-bold
+           animate-[live-pulse_1.5s_infinite];
   }
 
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .video-grid-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+  .video-grid-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+  .video-grid-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-6;
+  }
 
-  /* ── Quranic Typography & Diacritic Themes ── */
-  .quran-theme-ruby .quran-waqf-mark {
-    color: #e11d48;
-    font-weight: 700;
+  /* Aspect Ratios */
+  .aspect-video { aspect-ratio: 16/9; }
+  .aspect-square { aspect-ratio: 1/1; }
+  .aspect-portrait { aspect-ratio: 3/4; }
+  .aspect-card { aspect-ratio: 4/5; }
+
+  /* Safe Areas */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
-  .quran-theme-gold .quran-waqf-mark {
-    color: #f59e0b;
-    font-weight: 700;
+}
+
+/* ── RTL-Specific Adjustments ── */
+[dir="rtl"] {
+  .video-duration-badge {
+    @apply left-auto right-3;
   }
-  .quran-theme-turquoise .quran-waqf-mark {
-    color: #0d9488;
-    font-weight: 700;
-  }
-  .quran-theme-classic .quran-waqf-mark {
-    color: hsl(var(--accent));
+  .video-verse-badge {
+    @apply right-auto left-3;
   }
 }

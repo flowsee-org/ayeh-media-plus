@@ -95,10 +95,10 @@ export default function VerseGuide() {
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
           <Compass className="h-3.5 w-3.5 text-primary" /> راهنمای تدبّر و تسکین قلوب
         </div>
-        <h1 className="font-kalameh font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+        <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
           آیه‌ی راه
         </h1>
-        <p className="font-yekan text-muted-foreground text-sm max-w-lg mx-auto">
+        <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
           کلام وحی برای تسکین اندوه‌ها، رفع تردیدها و یافتن هدایت در گذرگاه‌های سخت زندگی
         </p>
       </div>

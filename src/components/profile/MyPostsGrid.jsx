@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { Image } from "@/components/ui/image";
 import { Heart, MessageCircle, Loader2, NotebookPen, LogIn, RefreshCw } from "lucide-react";

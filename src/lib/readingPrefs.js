@@ -33,9 +33,9 @@ export const QURAN_FONTS = [
     description: "قلم احیا شده مکتب حروف‌نگاری سنتی",
   },
   {
-    id: "vazirmatn",
-    label: "وزیرمتن قرآنی",
-    family: "'Vazirmatn', sans-serif",
+    id: "doran",
+    label: "دوران قرآنی",
+    family: "'Doran', sans-serif",
     sample: "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
     description: "قلم مدرن دیجیتال برای خوانش ساده و یکدست",
   },

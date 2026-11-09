@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Flame, Trophy, ArrowRight, Brain, CheckCircle2 } from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
@@ -42,15 +42,15 @@ export default function GamificationHomeBanner() {
 
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-bold font-kalameh text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20">
+                <span className="text-xs font-bold font-rokh-bold text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20">
                   {streakDays} روز استریک متوالی
                 </span>
-                <span className="text-xs font-bold font-kalameh text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                <span className="text-xs font-bold font-rokh-bold text-emerald-300 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
                   سطح {levelName} ({totalXp.toLocaleString()} XP)
                 </span>
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold font-kalameh text-white mt-1.5">
+              <h3 className="text-lg sm:text-xl font-bold font-rokh-bold text-white mt-1.5">
                 مأموریت‌های سه‌گانه و مسابقه معنوی امروز
               </h3>
               <p className="text-xs text-emerald-100/70 mt-0.5 max-w-xl">
@@ -61,7 +61,7 @@ export default function GamificationHomeBanner() {
 
           <div className="flex items-center gap-3 shrink-0 self-start md:self-center">
             {/* Mini Progress */}
-            <div className="bg-black/30 border border-emerald-500/20 px-3.5 py-2 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-200 font-kalameh">
+            <div className="bg-black/30 border border-emerald-500/20 px-3.5 py-2 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-200 font-rokh-bold">
               {completedCount === 3 ? (
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               ) : (
@@ -72,7 +72,7 @@ export default function GamificationHomeBanner() {
 
             <Link
               to="/achievements"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-bold font-kalameh shadow-lg shadow-emerald-950/50 transition-all active:scale-95 border border-emerald-400/30"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-bold font-rokh-bold shadow-lg shadow-emerald-950/50 transition-all active:scale-95 border border-emerald-400/30"
             >
               <Trophy className="w-4 h-4 text-amber-300" />
               <span>ورود به چالش‌ها و رده‌بندی</span>

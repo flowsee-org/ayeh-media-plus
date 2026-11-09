@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate } from "@/lib/router-compat";
 import {
   ChevronRight,
   Sparkles,
@@ -337,7 +337,7 @@ export default function KhatmDetail() {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold font-kalameh text-foreground">
+              <h1 className="text-2xl sm:text-3xl font-bold font-rokh-bold text-foreground">
                 {session.title}
               </h1>
 
@@ -418,7 +418,7 @@ export default function KhatmDetail() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-accent" />
-              <h2 className="text-xl font-bold font-kalameh text-foreground">
+              <h2 className="text-xl font-bold font-rokh-bold text-foreground">
                 سهم‌های تلاوت ({session.target_type === "hezb" ? "۶۰ حزب" : "۳۰ جزء"})
               </h2>
             </div>
@@ -553,7 +553,7 @@ export default function KhatmDetail() {
           <div className="flex items-center justify-between border-b border-border/40 pb-4">
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-accent" />
-              <h2 className="text-xl font-bold font-kalameh text-foreground">
+              <h2 className="text-xl font-bold font-rokh-bold text-foreground">
                 دیوار دعای خیر و نیات همراهان
               </h2>
             </div>

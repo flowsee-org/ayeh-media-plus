@@ -9,7 +9,7 @@ import {
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import DailyQuestsCard from "@/components/gamification/DailyQuestsCard";
@@ -57,7 +57,7 @@ export default function Achievements() {
         <div className="mb-4">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-kalameh"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-rokh-bold"
           >
             <ArrowRight className="w-3.5 h-3.5" />
             بازگشت به صفحه اصلی
@@ -82,16 +82,16 @@ export default function Achievements() {
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/50 border border-emerald-400/30 text-emerald-200 text-xs font-kalameh">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-800/50 border border-emerald-400/30 text-emerald-200 text-xs font-rokh-bold">
                 <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
                 <span>سطح معنوی فعلی: {levelInfo.name} ({levelInfo.title})</span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold font-kalameh text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold font-rokh-bold text-white tracking-tight">
                 مسیر نورانی انس و تدبر در قرآن
               </h1>
 
-              <p className="text-xs sm:text-sm text-emerald-100/80 max-w-xl font-peyda leading-relaxed">
+              <p className="text-xs sm:text-sm text-emerald-100/80 max-w-xl font-doran leading-relaxed">
                 «خَیْرُ الْأَعْمَالِ مَا دَامَ عَلَیْهِ صَاحِبُهُ وَإِنْ قَلَّ» — بهترین و باارزش‌ترین اعمال، کاری است که تداوم و استمرار داشته باشد گرچه اندک باشد.
               </p>
             </div>
@@ -105,9 +105,9 @@ export default function Achievements() {
                 </div>
                 <div className="text-right">
                   <div className="text-xl font-bold font-mono text-white">
-                    {streakDays} <span className="text-xs font-kalameh text-orange-300">روز</span>
+                    {streakDays} <span className="text-xs font-rokh-bold text-orange-300">روز</span>
                   </div>
-                  <div className="text-[11px] text-orange-200/80 font-kalameh">
+                  <div className="text-[11px] text-orange-200/80 font-rokh-bold">
                     استریک پیوسته
                   </div>
                 </div>
@@ -122,7 +122,7 @@ export default function Achievements() {
                   <div className="text-xl font-bold font-mono text-white">
                     {totalXp.toLocaleString()}
                   </div>
-                  <div className="text-[11px] text-emerald-200/80 font-kalameh">
+                  <div className="text-[11px] text-emerald-200/80 font-rokh-bold">
                     امتیاز معنوی (XP)
                   </div>
                 </div>
@@ -132,7 +132,7 @@ export default function Achievements() {
 
           {/* Level Progress Bar */}
           <div className="relative z-10 mt-6 pt-5 border-t border-emerald-800/60">
-            <div className="flex items-center justify-between text-xs text-emerald-200/90 mb-2 font-kalameh">
+            <div className="flex items-center justify-between text-xs text-emerald-200/90 mb-2 font-rokh-bold">
               <span>پیشرفت تا سطح بعدی: {levelInfo.maxXp.toLocaleString()} XP</span>
               <span className="font-mono">{progressPercent}%</span>
             </div>
@@ -149,7 +149,7 @@ export default function Achievements() {
         <div className="flex items-center gap-2 mb-6 border-b border-border/80 pb-3 overflow-x-auto">
           <button
             onClick={() => setActiveTab("quests")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-kalameh text-sm font-bold transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-rokh-bold text-sm font-bold transition-all shrink-0 ${
               activeTab === "quests"
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                 : "bg-card/70 hover:bg-card text-muted-foreground hover:text-foreground border border-border"
@@ -166,7 +166,7 @@ export default function Achievements() {
 
           <button
             onClick={() => setActiveTab("badges")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-kalameh text-sm font-bold transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-rokh-bold text-sm font-bold transition-all shrink-0 ${
               activeTab === "badges"
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                 : "bg-card/70 hover:bg-card text-muted-foreground hover:text-foreground border border-border"
@@ -178,7 +178,7 @@ export default function Achievements() {
 
           <button
             onClick={() => setActiveTab("leaderboard")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-kalameh text-sm font-bold transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-rokh-bold text-sm font-bold transition-all shrink-0 ${
               activeTab === "leaderboard"
                 ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                 : "bg-card/70 hover:bg-card text-muted-foreground hover:text-foreground border border-border"

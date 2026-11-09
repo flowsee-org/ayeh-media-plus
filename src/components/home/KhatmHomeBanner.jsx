@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Sparkles, ArrowLeft, HeartHandshake } from "lucide-react";
 import api from "@/lib/api";
 
@@ -57,7 +57,7 @@ export default function KhatmHomeBanner() {
               )}
             </div>
 
-            <h3 className="text-xl sm:text-2xl font-bold font-kalameh text-foreground">
+            <h3 className="text-xl sm:text-2xl font-bold font-rokh-bold text-foreground">
               {featuredKhatm.title}
             </h3>
 

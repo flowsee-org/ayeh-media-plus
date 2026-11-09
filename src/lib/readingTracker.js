@@ -9,9 +9,39 @@ const SAVED_POSTS_KEY = "tadabbur-saved-posts";
 
 export const TOTAL_QURAN_VERSES = 6236;
 
+// Check if we're in browser environment
+const isBrowser = typeof window !== "undefined";
+
+function safeGetItem(key, fallback = "") {
+  if (!isBrowser) return fallback;
+  try { return localStorage.getItem(key) || fallback; } catch { return fallback; }
+}
+
+function safeSetItem(key, value) {
+  if (!isBrowser) return;
+  try { localStorage.setItem(key, value); } catch {}
+}
+
+function safeRemoveItem(key) {
+  if (!isBrowser) return;
+  try { localStorage.removeItem(key); } catch {}
+}
+
+function safeGetAllKeys() {
+  if (!isBrowser) return [];
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k) keys.push(k);
+    }
+    return keys;
+  } catch { return []; }
+}
+
 export function getReadVerses() {
   try {
-    return JSON.parse(localStorage.getItem(scopedKey(STORAGE_KEY)) || "{}");
+    return JSON.parse(safeGetItem(scopedKey(STORAGE_KEY), "{}"));
   } catch {
     return {};
   }
@@ -22,7 +52,7 @@ export function markVerseRead(verseKey, metadata = {}) {
     const data = getReadVerses();
     if (!data[verseKey]) {
       data[verseKey] = { ts: Date.now(), ...metadata };
-      localStorage.setItem(scopedKey(STORAGE_KEY), JSON.stringify(data));
+      safeSetItem(scopedKey(STORAGE_KEY), JSON.stringify(data));
     }
   } catch {}
 }
@@ -111,7 +141,7 @@ export function getBookmarksCount() {
 
 export function getBookmarks() {
   try {
-    return JSON.parse(localStorage.getItem(scopedKey(BOOKMARKS_KEY)) || "[]");
+    return JSON.parse(safeGetItem(scopedKey(BOOKMARKS_KEY), "[]"));
   } catch {
     return [];
   }
@@ -120,7 +150,7 @@ export function getBookmarks() {
 export function removeBookmark(verseKey) {
   try {
     const updated = getBookmarks().filter((b) => b !== verseKey);
-    localStorage.setItem(scopedKey(BOOKMARKS_KEY), JSON.stringify(updated));
+    safeSetItem(scopedKey(BOOKMARKS_KEY), JSON.stringify(updated));
     return updated;
   } catch {
     return getBookmarks();
@@ -129,10 +159,10 @@ export function removeBookmark(verseKey) {
 
 export function getNotesCount() {
   let count = 0;
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
+  const keys = safeGetAllKeys();
+  for (const key of keys) {
     if (key && key.startsWith(NOTES_PREFIX) && belongsToCurrentScope(key)) {
-      const val = localStorage.getItem(key);
+      const val = safeGetItem(key);
       if (val && val.trim().length > 0) count++;
     }
   }
@@ -141,7 +171,7 @@ export function getNotesCount() {
 
 export function getSavedPosts() {
   try {
-    return JSON.parse(localStorage.getItem(scopedKey(SAVED_POSTS_KEY)) || "[]");
+    return JSON.parse(safeGetItem(scopedKey(SAVED_POSTS_KEY), "[]"));
   } catch {
     return [];
   }
@@ -152,7 +182,7 @@ export function toggleSavedPost(postId) {
   const isSaved = saved.includes(postId);
   const updated = isSaved ? saved.filter((id) => id !== postId) : [...saved, postId];
   try {
-    localStorage.setItem(scopedKey(SAVED_POSTS_KEY), JSON.stringify(updated));
+    safeSetItem(scopedKey(SAVED_POSTS_KEY), JSON.stringify(updated));
   } catch {}
   return !isSaved;
 }

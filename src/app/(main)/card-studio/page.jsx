@@ -2,8 +2,8 @@ import { Suspense } from 'react';
 import CardStudio from '@/views/CardStudio';
 
 export const metadata = {
-  title: 'استودیو طراحی کارت آیه — آیه پلاس',
-  description: 'طراحی و اشتراک‌گذاری کارت‌های تدبر در قرآن کریم',
+  title: 'استودیوی آیه — آیه مدیا پلاس',
+  description: 'آیات را به شاهکارهای بصری تبدیل کنید — با هنر معماری ایران',
 };
 
 export default function CardStudioRoute() {

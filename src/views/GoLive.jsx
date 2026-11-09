@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
 import {
   Radio, Send, Users, VideoOff, Hand, Check, X, MicOff, Sparkles,
@@ -276,15 +276,15 @@ export default function GoLive() {
 
   if (phase === "setup") {
     return (
-      <div className="mx-auto max-w-lg px-4 py-8 animate-fade-in font-yekan">
+      <div className="mx-auto max-w-lg px-4 py-8 animate-fade-in font-doran">
         <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-soft">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-10 w-10 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
               <Radio className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="font-kalameh font-bold text-xl text-foreground">استودیوی پخش زنده</h1>
-              <p className="font-yekan text-xs text-muted-foreground mt-0.5">
+              <h1 className="font-rokh-bold font-bold text-xl text-foreground">استودیوی پخش زنده</h1>
+              <p className="font-doran text-xs text-muted-foreground mt-0.5">
                 برگزاری جلسه تفسیری و پاسخ زنده به پرسش‌های مخاطبان
               </p>
             </div>
@@ -299,7 +299,7 @@ export default function GoLive() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="مثلاً: تدبّر در آیات نورانی سوره کهف"
-                className="w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm focus:border-primary focus:outline-none font-yekan"
+                className="w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm focus:border-primary focus:outline-none font-doran"
               />
             </div>
             <div>
@@ -309,7 +309,7 @@ export default function GoLive() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="موضوعات، مفاهیم و محورهای تفسیری مورد گفتگو…"
                 rows={3}
-                className="w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm resize-none focus:border-primary focus:outline-none font-yekan leading-relaxed"
+                className="w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm resize-none focus:border-primary focus:outline-none font-doran leading-relaxed"
               />
             </div>
             <div>
@@ -343,7 +343,7 @@ export default function GoLive() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-4 animate-fade-in font-yekan">
+    <div className="mx-auto max-w-4xl px-4 py-4 animate-fade-in font-doran">
       <div className="rounded-3xl overflow-hidden border border-border shadow-soft bg-black">
         {/* Main Video Stream Container — Split Screen when Co-Host is active */}
         <div
@@ -406,11 +406,11 @@ export default function GoLive() {
         <div className="bg-card p-4 sm:p-6 border-t border-border">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="font-kalameh font-bold text-lg text-foreground">
+              <h2 className="font-rokh-bold font-bold text-lg text-foreground">
                 {title || "جلسه تفسیری زنده"}
               </h2>
               {description && (
-                <p className="font-yekan text-xs text-muted-foreground mt-0.5">{description}</p>
+                <p className="font-doran text-xs text-muted-foreground mt-0.5">{description}</p>
               )}
             </div>
 
@@ -442,7 +442,7 @@ export default function GoLive() {
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4 text-amber-500" />
-                <span className="font-kalameh font-bold text-sm text-foreground">
+                <span className="font-rokh-bold font-bold text-sm text-foreground">
                   محور تدبّر جلسه (پین همگام آیه برای همه مخاطبان)
                 </span>
                 {pinnedVerse && (
@@ -518,7 +518,7 @@ export default function GoLive() {
             {previewVerse && (
               <div className="rounded-xl border border-border/80 bg-card p-3 animate-fade-in">
                 <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-2 mb-2">
-                  <span className="text-xs font-bold text-accent font-kalameh">
+                  <span className="text-xs font-bold text-accent font-rokh-bold">
                     سوره {previewVerse.surahName} • آیه {fa(previewVerse.ayahNum)}
                   </span>
 
@@ -543,7 +543,7 @@ export default function GoLive() {
                 <div className="font-arabic text-sm text-foreground text-center font-bold my-1" dir="rtl">
                   {previewVerse.arabic}
                 </div>
-                <p className="font-yekan text-xs text-muted-foreground text-center line-clamp-2">
+                <p className="font-doran text-xs text-muted-foreground text-center line-clamp-2">
                   «{previewVerse.translation}»
                 </p>
               </div>
@@ -610,7 +610,7 @@ export default function GoLive() {
             ) : (
               chat.map((m, i) => (
                 <div key={i} className="text-xs">
-                  <span className={`font-bold ${m.system ? "text-amber-500 font-kalameh" : "text-primary"}`}>
+                  <span className={`font-bold ${m.system ? "text-amber-500 font-rokh-bold" : "text-primary"}`}>
                     {m.author}:{" "}
                   </span>
                   <span className={m.system ? "text-amber-600 dark:text-amber-400 font-medium" : "text-foreground/90"}>
@@ -627,7 +627,7 @@ export default function GoLive() {
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendChat()}
               placeholder="ارسال پیام یا پاسخ در جلسه زنده…"
-              className="flex-1 rounded-xl border border-border bg-background px-3.5 py-2 text-xs focus:border-primary focus:outline-none font-yekan"
+              className="flex-1 rounded-xl border border-border bg-background px-3.5 py-2 text-xs focus:border-primary focus:outline-none font-doran"
             />
             <button
               onClick={sendChat}

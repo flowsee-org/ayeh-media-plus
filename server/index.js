@@ -5,6 +5,72 @@ import http from 'http';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
+// ── Simple in-memory rate limiter for production scaling ──
+const rateLimitWindows = new Map();
+
+function rateLimiter(options = {}) {
+  const windowMs = options.windowMs || 60 * 1000; // 1 minute
+  const maxRequests = options.maxRequests || 100;
+  const skipSuccessfulRequests = options.skipSuccessfulRequests || false;
+  const skipFailedRequests = options.skipFailedRequests || false;
+
+  return (req, res, next) => {
+    // Skip rate limiting in development
+    if (process.env.NODE_ENV !== 'production') {
+      return next();
+    }
+
+    const key = req.ip || req.connection?.remoteAddress || 'unknown';
+    const now = Date.now();
+
+    let record = rateLimitWindows.get(key);
+    if (!record || now - record.resetAt > windowMs) {
+      record = { count: 0, resetAt: now + windowMs };
+      rateLimitWindows.set(key, record);
+    }
+
+    record.count += 1;
+
+    // Set rate limit headers
+    res.setHeader('X-RateLimit-Limit', maxRequests);
+    res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - record.count));
+    res.setHeader('X-RateLimit-Reset', new Date(record.resetAt).toISOString());
+
+    if (record.count > maxRequests) {
+      res.setHeader('Retry-After', Math.ceil((record.resetAt - now) / 1000));
+      return res.status(429).json({
+        message: 'Too many requests, please try again later.',
+        retryAfter: Math.ceil((record.resetAt - now) / 1000),
+      });
+    }
+
+    // Track whether to skip counting based on response status
+    const originalSend = res.send;
+    res.send = function (body) {
+      const shouldSkip =
+        (skipSuccessfulRequests && res.statusCode < 400) ||
+        (skipFailedRequests && res.statusCode >= 400);
+      if (!shouldSkip) {
+        // Already incremented above
+      }
+      return originalSend.call(this, body);
+    };
+
+    next();
+  };
+}
+
+// Clean up stale rate limit entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, record] of rateLimitWindows.entries()) {
+    if (now - record.resetAt > 300000) {
+      // 5 min stale cleanup
+      rateLimitWindows.delete(key);
+    }
+  }
+}, 300000);
+
 dotenv.config();
 
 import authRoutes from './routes/auth.js';
@@ -13,6 +79,9 @@ import uploadRoutes from './routes/upload.js';
 import aiRoutes from './routes/ai.js';
 import gamificationRoutes from './routes/gamification.js';
 import logsRoutes from './routes/logs.js';
+import videoRoutes from './routes/videos.js';
+import competitionRoutes from './routes/competitions.js';
+import moderationRoutes from './routes/moderation.js';
 import { initSocket } from './socket.js';
 import { initGlobalProcessLogging, logError } from './logger.js';
 
@@ -64,6 +133,12 @@ app.get('/api/apps/public/prod/public-settings/by-id/:appId', (req, res) => {
   });
 });
 
+// Apply rate limiting to API routes in production
+app.use('/api/', rateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  maxRequests: 100, // 100 requests per minute per IP
+}));
+
 // REST API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/entities', entitiesRoutes);
@@ -71,6 +146,9 @@ app.use('/api/integrations', uploadRoutes);
 app.use('/api/integrations', aiRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/logs', logsRoutes);
+app.use('/api/videos', videoRoutes);
+app.use('/api/competitions', competitionRoutes);
+app.use('/api/moderation', moderationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

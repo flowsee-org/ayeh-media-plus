@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Flame, Award, Lock, Sparkles, BookOpen, Library,
-  PenLine, Bookmark, Crown, ChevronDown, ChevronUp, Star,
+  PenLine, Bookmark, Crown, ChevronDown, ChevronUp,
   CheckCircle2, Compass,
 } from "lucide-react";
 import { getEngagementSnapshot, ENGAGEMENT_EVENT } from "@/lib/engagement";
@@ -102,7 +102,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
   const unlockedCount = BADGES.filter((b) => b.unlocked).length;
 
   return (
-    <div className="space-y-6 mb-8 font-yekan animate-fade-in">
+    <div className="space-y-6 mb-8 font-doran animate-fade-in">
       {/* ── Level & Streak Master Card ── */}
       <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-card to-secondary/30 p-5 sm:p-7 shadow-soft">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-5 border-b border-border/50">
@@ -114,13 +114,13 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold font-ui text-muted-foreground">رتبه معنوی شما:</span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 text-xs font-bold font-kalameh">
-                  <Star className="h-3 w-3 fill-current" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 text-xs font-bold font-rokh-bold">
+                  <Bookmark className="h-3 w-3 fill-current" />
                   {level.name}
                 </span>
               </div>
-              <div className="font-kalameh font-black text-2xl text-foreground mt-0.5">
-                {fa(xp)} <span className="text-xs font-normal text-muted-foreground font-yekan">امتیاز تدبّر</span>
+              <div className="font-rokh-bold font-black text-2xl text-foreground mt-0.5">
+                {fa(xp)} <span className="text-xs font-normal text-muted-foreground font-doran">امتیاز تدبّر</span>
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
               <Flame className="h-6 w-6 fill-current" />
             </div>
             <div>
-              <div className="flex items-center gap-1 text-sm font-black font-kalameh text-amber-600 dark:text-amber-400">
+              <div className="flex items-center gap-1 text-sm font-black font-rokh-bold text-amber-600 dark:text-amber-400">
                 <span>{fa(streak)}</span>
                 <span>روز مداومت قرآنی</span>
               </div>
@@ -171,7 +171,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
               <Crown className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="font-kalameh font-bold text-lg text-foreground">
+              <h2 className="font-rokh-bold font-bold text-lg text-foreground">
                 نشان‌های افتخار و دستاوردها
               </h2>
               <p className="text-xs text-muted-foreground">
@@ -208,10 +208,10 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
                   <Icon className="h-6 w-6" />
                 </div>
 
-                <div className="font-kalameh font-bold text-sm text-foreground">
+                <div className="font-rokh-bold font-bold text-sm text-foreground">
                   {b.title}
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-snug mt-1 font-yekan">
+                <p className="text-[11px] text-muted-foreground leading-snug mt-1 font-doran">
                   {b.description}
                 </p>
 
@@ -240,7 +240,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
         <div className="flex items-center justify-between mb-3 px-1">
           <button
             onClick={() => setShowQuests(!showQuests)}
-            className="flex items-center gap-2 text-sm font-bold font-kalameh text-foreground hover:text-accent transition-colors"
+            className="flex items-center gap-2 text-sm font-bold font-rokh-bold text-foreground hover:text-accent transition-colors"
           >
             <span>مأموریت‌های امروز و جوایز روزانه</span>
             {showQuests ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

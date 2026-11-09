@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,7 +77,7 @@ export default function Register() {
               <Mail className="w-8 h-8 text-orange-300" />
             </div>
             <h1 className="text-2xl font-display font-bold text-white">تأیید ایمیل</h1>
-            <p className="text-blue-200/70 mt-2 text-sm">کد ۶ رقمی به <span className="text-orange-300">{email}</span> ارسال شد</p>
+            <p className="text-blue-200/70 mt-2 text-sm">کد ۶ رقمی برای <span className="text-orange-300">{email}</span> ارسال شد</p>
           </div>
 
           <div className="bg-white/8 backdrop-blur-xl rounded-3xl border border-white/15 p-8 shadow-premium">
@@ -103,7 +103,7 @@ export default function Register() {
               disabled={loading || otpCode.length < 6}
             >
               {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />تأیید...</>
-                : <><CheckCircle className="w-4 h-4 mr-2" />تأیید ایمیل</>}
+                : <><CheckCircle className="w-4 h-4 mr-2" />تأیید و ورود</>}
             </Button>
 
             <p className="text-center text-sm text-blue-200/60 mt-4">
@@ -128,8 +128,8 @@ export default function Register() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-700 to-teal-950 shadow-emerald-glow mb-4 border border-amber-400/40">
             <UserPlus className="w-8 h-8 text-amber-300" />
           </div>
-          <h1 className="text-3xl font-display font-bold text-white tracking-tight">ثبت‌نام در آیه پلاس</h1>
-          <p className="text-blue-200/70 mt-2 text-sm">همین الان به جامعه قرآنی بپیوندید</p>
+          <h1 className="text-3xl font-display font-bold text-white tracking-tight">به آیه پلاس بپیوندید</h1>
+          <p className="text-blue-200/70 mt-2 text-sm">حساب بسازید، تدبّر را تجربه کنید</p>
         </div>
 
         <div className="bg-white/8 backdrop-blur-xl rounded-3xl border border-white/15 p-8 shadow-premium">
@@ -221,15 +221,15 @@ export default function Register() {
               disabled={loading}
             >
               {loading ? (
-                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />در حال ثبت‌نام...</>
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />در حال ساخت حساب...</>
               ) : (
-                "ایجاد حساب کاربری"
+                "ساخت حساب و ورود"
               )}
             </Button>
           </form>
 
           <p className="text-center text-sm text-blue-200/60 mt-6">
-            قبلاً ثبت‌نام کرده‌اید؟{" "}
+            حساب دارید؟{" "}
             <Link to="/login" className="text-orange-300 font-semibold hover:text-orange-200 transition-colors">
               وارد شوید
             </Link>

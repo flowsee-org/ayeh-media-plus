@@ -1,21 +1,31 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
-import { Loader2, Users, Send, Radio, Lock, Hand, Mic, VideoOff } from "lucide-react";
+import { Loader2, Users, Send, Radio, Lock, Hand, Mic, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import FollowButton from "@/components/live/FollowButton";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import { parseAvatar } from "@/lib/avatars";
 import { toast } from "react-hot-toast";
 import LivePinnedVerseOverlay from "@/components/live/LivePinnedVerseOverlay";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function LiveView() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [access, setAccess] = useState(null); // 'ok' | 'follow'
+  const [access, setAccess] = useState(null);
   const [ended, setEnded] = useState(false);
   const [viewerCount, setViewerCount] = useState(0);
   const [chat, setChat] = useState([]);
@@ -25,6 +35,13 @@ export default function LiveView() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [localStream, setLocalStream] = useState(null);
   const [pinnedVerse, setPinnedVerse] = useState(null);
+  const [showViewerList, setShowViewerList] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [videoQuality, setVideoQuality] = useState("auto");
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [viewers, setViewers] = useState([]);
+  const [raisedHands, setRaisedHands] = useState([]);
 
   const videoRef = useRef(null);
   const coHostVideoRef = useRef(null);
@@ -49,7 +66,6 @@ export default function LiveView() {
         return;
       }
 
-      // Followers-only: a viewer can watch only scholars they follow
       let allowed = false;
       if (me?.id) {
         allowed = me.id === s.scholar_id;
@@ -96,6 +112,8 @@ export default function LiveView() {
         setViewerCount(msg.viewerCount || 0);
         setActiveSpeaker(msg.activeSpeaker || null);
         setPinnedVerse(msg.pinnedVerse || null);
+        setViewers(msg.viewers || []);
+        setRaisedHands(msg.raisedHands || []);
         if (!msg.hasBroadcaster) {
           setEnded(true);
         }
@@ -105,6 +123,7 @@ export default function LiveView() {
       }
       if (msg.type === "presence") {
         setViewerCount(msg.viewerCount);
+        setViewers(msg.viewers || []);
       }
       if (msg.type === "offer") {
         handleOffer(msg, conn);
@@ -113,7 +132,7 @@ export default function LiveView() {
         pcRef.current.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(() => {});
       }
       if (msg.type === "chat") {
-        setChat((prev) => [...prev, msg.message].slice(-100));
+        setChat((prev) => [...prev, msg.message].slice(-200));
       }
       if (msg.type === "active_speaker_changed") {
         setActiveSpeaker(msg.speaker || null);
@@ -127,15 +146,25 @@ export default function LiveView() {
       if (msg.type === "speaker_kicked") {
         handleSpeakerKicked();
       }
+      if (msg.type === "viewer_list") {
+        setViewers(msg.viewers || []);
+      }
+      if (msg.type === "hand_raised") {
+        setRaisedHands((prev) => [...prev.filter(h => h.id !== msg.hand.id), msg.hand]);
+      }
+      if (msg.type === "hand_lowered") {
+        setRaisedHands((prev) => prev.filter(h => h.id !== msg.id));
+      }
     });
     subRef.current = sub;
 
-    // Join as viewer once connected
     setTimeout(() => {
       conn.send({
         type: "viewer_join",
         name: me?.full_name || "بیننده",
+        avatar: me?.avatar_config,
       });
+      conn.send({ type: "get_viewers" });
       setLoading(false);
     }, 500);
   };
@@ -193,7 +222,7 @@ export default function LiveView() {
   const handleSpeakerAccepted = async (conn) => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 640 }, height: { ideal: 480 } },
+        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
         audio: true,
       });
       setLocalStream(mediaStream);
@@ -204,7 +233,6 @@ export default function LiveView() {
       }
       toast.success("استاد درخواست شما را پذیرفت؛ شما هم‌اکنون روی خط زنده هستید!");
 
-      // Add local media tracks to existing peer connection if available
       if (pcRef.current) {
         mediaStream.getTracks().forEach((track) => {
           pcRef.current.addTrack(track, mediaStream);
@@ -233,6 +261,30 @@ export default function LiveView() {
     setChatInput("");
   };
 
+  const toggleMute = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach(t => t.enabled = !t.enabled);
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach(t => t.enabled = !t.enabled);
+    }
+  };
+
+  const toggleFullscreen = () => {
+    const container = videoRef.current?.parentElement;
+    if (!isFullscreen) {
+      container?.requestFullscreen?.();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen?.();
+      setIsFullscreen(false);
+    }
+  };
+
   useEffect(() => {
     return () => {
       if (localStream) localStream.getTracks().forEach((t) => t.stop());
@@ -242,16 +294,30 @@ export default function LiveView() {
     };
   }, [localStream]);
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
   if (loading) {
-    return <div className="flex justify-center py-32"><Loader2 className="h-10 w-10 animate-spin text-accent" /></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black/95">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-accent" />
+          <p className="text-sm text-white/60 font-doran">در حال اتصال به جلسه زنده...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Followers-only gate
   if (access === "follow") {
     const cfg = parseAvatar(session?.scholar_avatar);
     return (
-      <div className="mx-auto max-w-md px-4 py-16 animate-fade-in font-ui">
-        <div className="rounded-3xl border border-border bg-card p-8 text-center shadow-soft">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card variant="sonnat" className="w-full max-w-md p-8 text-center">
           <div className="flex justify-center mb-4">
             {cfg ? (
               <CharacterAvatar config={cfg} size={80} />
@@ -261,10 +327,11 @@ export default function LiveView() {
               </div>
             )}
           </div>
-          <h2 className="font-kalameh font-bold text-xl">{session?.scholar_name || "استاد"}</h2>
-          <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1.5 font-yekan">
-            <Lock className="h-3.5 w-3.5 text-primary" /> تماشای پخش زنده فقط برای دنبال‌کنندگان استاد است
-          </p>
+          <h2 className="font-rokh-bold font-bold text-xl">{session?.scholar_name || "استاد"}</h2>
+          <Badge variant="outline" className="mb-4">
+            <Lock className="h-3.5 w-3.5 ml-1.5" />
+            این جلسه فقط برای دنبال‌کنندگان استاد باز است
+          </Badge>
           <div className="flex items-center justify-center gap-2 mt-6">
             <FollowButton scholarId={session?.scholar_id} scholarName={session?.scholar_name} />
             <Link
@@ -274,154 +341,401 @@ export default function LiveView() {
               پروفایل استاد
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
 
   if (ended) {
     return (
-      <div className="mx-auto max-w-md py-24 text-center font-ui animate-fade-in">
-        <Radio className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-        <h2 className="font-kalameh font-bold text-lg text-foreground">جلسه زنده به پایان رسیده است</h2>
-        <p className="text-xs text-muted-foreground mt-1 mb-4 font-yekan">آرشیو گفتارهای پیشین استاد در بخش گفتارها و پروفایل در دسترس است.</p>
-        {session?.scholar_id && (
-          <Link to={`/scholars/${session.scholar_id}`} className="text-xs font-bold text-primary hover:underline">
-            مشاهده آرشیو جلسات استاد ←
-          </Link>
-        )}
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card variant="default" className="w-full max-w-md p-8 text-center">
+          <Radio className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+          <h2 className="font-rokh-bold font-bold text-lg text-foreground">جلسه زنده تمام شده</h2>
+          <p className="text-xs text-muted-foreground mt-1 mb-4 font-doran">این جلسه به پایان رسیده است. آرشیو گفتارهای پیشین استاد در بخش گفتارها و پروفایل در دسترس است.</p>
+          {session?.scholar_id && (
+            <Link to={`/scholars/${session.scholar_id}`} className="text-xs font-bold text-primary hover:underline inline-block mt-2">
+              دیدن آرشیو جلسات استاد ←
+            </Link>
+          )}
+        </Card>
       </div>
     );
   }
 
+  const isHost = user?.id === session?.scholar_id;
+  const isCoHost = activeSpeaker?.id === user?.id || isSpeaking;
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-4 animate-fade-in font-ui">
-      <BackButton to={session?.scholar_id ? `/scholars/${session.scholar_id}` : "/scholars"} label="بازگشت" className="mb-4" />
-      <div className="rounded-3xl overflow-hidden border border-border shadow-soft bg-black">
-        {/* Stream Video — Split Screen when Co-Host / Active Speaker is present */}
-        <div className={`relative bg-neutral-950 p-2 ${activeSpeaker || isSpeaking ? "grid grid-cols-1 sm:grid-cols-2 gap-2 aspect-[16/9] sm:aspect-[21/9]" : "aspect-video"}`}>
-          {/* Broadcaster Video */}
-          <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black flex items-center justify-center">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover"
-            />
-
-            {/* Pinned Quran Verse Floating Overlay */}
-            <LivePinnedVerseOverlay pinnedVerse={pinnedVerse} />
-
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-              <span className="text-xs font-bold text-white">زنده</span>
-            </div>
-            <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1">
-              <Users className="h-3.5 w-3.5 text-white" />
-              <span className="text-xs text-white">{viewerCount.toLocaleString("fa-IR")}</span>
-            </div>
-            <div className="absolute bottom-3 right-3 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1 text-xs text-white font-bold">
-              استاد: {session?.scholar_name || "مفسر"}
-            </div>
-          </div>
-
-          {/* Active Co-Host Video (Split Screen) */}
-          {(activeSpeaker || isSpeaking) && (
-            <div className="relative w-full h-full rounded-2xl overflow-hidden bg-neutral-900 border border-primary/30 flex items-center justify-center animate-scale-in">
-              <video
-                ref={isSpeaking ? localCoHostVideoRef : coHostVideoRef}
-                autoPlay
-                playsInline
-                muted={isSpeaking}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-3 right-3 rounded-full bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5">
-                <Mic className="h-3 w-3 animate-pulse" />
-                <span>{isSpeaking ? "شما (روی آنتن زنده)" : `مهمان برنامه: ${activeSpeaker?.name || "مهمان"}`}</span>
-              </div>
-              {isSpeaking && (
-                <button
-                  onClick={handleSpeakerKicked}
-                  className="absolute top-3 left-3 rounded-full bg-destructive/90 text-white px-2.5 py-1 text-xs font-bold flex items-center gap-1"
-                >
-                  <VideoOff className="h-3 w-3" /> خروج از گفتگو
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Info & Chat Box */}
-        <div className="bg-card p-4 sm:p-6 border-t border-border">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+    <div className="min-h-screen bg-black/95 text-white font-ui">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 to-transparent border-b border-white/10 px-4 py-3">
+        <div className="mx-auto max-w-7xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate(session?.scholar_id ? `/scholars/${session.scholar_id}` : "/scholars")} className="text-white hover:text-accent">
+              <ChevronDown className="h-5 w-5" />
+            </Button>
             <div>
-              <h2 className="font-kalameh font-bold text-lg text-foreground">{session?.title}</h2>
-              {session?.description && <p className="font-yekan text-xs text-muted-foreground mt-0.5">{session.description}</p>}
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Hand Raise Button for Viewers */}
-              {user && !isSpeaking && (
-                <button
-                  onClick={toggleHandRaise}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                    handRaised
-                      ? "bg-accent text-accent-foreground border-accent shadow-soft animate-pulse"
-                      : "bg-secondary border-border text-foreground hover:bg-secondary/70"
-                  }`}
-                  title="درخواست صحبت و پرسش زنده از استاد"
-                >
-                  <Hand className="h-4 w-4" />
-                  <span>{handRaised ? "دست شما بلند است (منتظر استاد)" : "درخواست گفتگو (دست بلند کردن)"}</span>
-                </button>
-              )}
-
-              {session?.scholar_id && (
-                <FollowButton scholarId={session.scholar_id} scholarName={session.scholar_name} />
-              )}
+              <p className="font-rokh-bold font-bold text-sm truncate max-w-[200px]">{session?.title || "جلسه زنده"}</p>
+              <p className="text-xs text-white/60 font-doran">{session?.scholar_name || "استاد"}</p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border bg-secondary/30 max-h-48 overflow-y-auto p-3 mb-3 space-y-2">
-            {chat.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-4">هنوز پیامی ارسال نشده است</p>
-            ) : (
-              chat.map((m, i) => (
-                <div key={i} className="text-xs">
-                  <span className={`font-bold ${m.system ? "text-amber-500 font-kalameh" : "text-primary"}`}>
-                    {m.author}:{" "}
-                  </span>
-                  <span className={m.system ? "text-amber-600 dark:text-amber-400 font-medium" : "text-foreground/90"}>
-                    {m.text}
-                  </span>
-                </div>
-              ))
-            )}
+          <div className="flex items-center gap-2">
+            <Badge variant="accent" className="flex items-center gap-1.5 animate-pulse">
+              <span className="h-2 w-2 rounded-full bg-white" />
+              زنده
+            </Badge>
+            <Badge variant="outline" className="flex items-center gap-1.5">
+              <Users className="h-3.5 w-3.5" />
+              {viewerCount.toLocaleString("fa-IR")}
+            </Badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-white hover:text-accent">
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-card border-border">
+                <DropdownMenuItem onClick={toggleFullscreen}>
+                  <Fullscreen className="h-3.5 w-3.5 ml-1.5" />
+                  {isFullscreen ? "خروج از تمام‌نمایش" : "تمام‌نمایش"}
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Video className="h-3.5 w-3.5 ml-1.5" />
+                  کیفیت ویدیو: {videoQuality}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={toggleMute}>
+                  <VolumeX className="h-3.5 w-3.5 ml-1.5" />
+                  {isMuted ? "لغو میوت" : "میوت"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {isHost && (
+                  <>
+                    <DropdownMenuItem>
+                      <Mic className="h-3.5 w-3.5 ml-1.5" />
+                      مدیریت مهمانان
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <List className="h-3.5 w-3.5 ml-1.5" />
+                      لیست درخواست‌ها
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive">
+                      <Radio className="h-3.5 w-3.5 ml-1.5" />
+                      پایان جلسه
+                    </DropdownMenuItem>
+                  </>
+                )}
+                {!isHost && (
+                  <>
+                    <DropdownMenuItem onClick={toggleHandRaise}>
+                      <Hand className="h-3.5 w-3.5 ml-1.5" />
+                      {handRaised ? "لغو درخواست گفتگو" : "درخواست گفتگو"}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive">
+                      <Flag className="h-3.5 w-3.5 ml-1.5" />
+                      گزارش جلسه
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-
-          {user ? (
-            <div className="flex items-center gap-2">
-              <input
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendChat()}
-                placeholder="ارسال پیام یا پرسش در جلسه زنده…"
-                className="flex-1 rounded-xl border border-border bg-background px-3.5 py-2 text-xs focus:border-primary focus:outline-none"
-              />
-              <button
-                onClick={sendChat}
-                className="h-9 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center gap-1"
-              >
-                <Send className="h-3.5 w-3.5" /> ارسال
-              </button>
-            </div>
-          ) : (
-            <div className="text-center py-2 text-xs text-muted-foreground">
-              برای ارسال پیام در چت زنده یا درخواست گفتگو، <Link to="/login" className="text-primary font-bold hover:underline">وارد حساب شوید</Link>.
-            </div>
-          )}
         </div>
-      </div>
+      </header>
+
+      <main className="pt-16 pb-4">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid lg:grid-cols-[1fr_380px] gap-4 h-[calc(100vh-80px)]">
+            <div className="lg:col-span-1 relative h-full min-h-0">
+              <div className="relative w-full h-full min-h-0 rounded-2xl overflow-hidden bg-black">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted={isMuted}
+                  className="w-full h-full object-cover"
+                  style={{ height: "calc(100vh - 120px)" }}
+                />
+                
+                <LivePinnedVerseOverlay pinnedVerse={pinnedVerse} />
+
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="accent" className="flex items-center gap-1.5 animate-pulse">
+                      <span className="h-2 w-2 rounded-full bg-white" />
+                      زنده
+                    </Badge>
+                    <span className="text-xs font-medium bg-black/50 px-2 py-1 rounded">HD</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5" />
+                      {viewerCount.toLocaleString("fa-IR")}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleMute}
+                        className={isMuted ? "text-accent" : "text-white/80 hover:text-white"}
+                      >
+                        {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleVideo}
+                        className={localStream?.getVideoTracks()[0]?.enabled === false ? "text-accent" : "text-white/80 hover:text-white"}
+                      >
+                        {localStream?.getVideoTracks()[0]?.enabled === false ? <VideoOff className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="flex items-center gap-1.5">
+                        <Users className="h-3.5 w-3.5" />
+                        {viewerCount.toLocaleString("fa-IR")}
+                      </Badge>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleFullscreen}
+                        className="text-white/80 hover:text-white"
+                      >
+                        {isFullscreen ? <X className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {(activeSpeaker || isSpeaking) && (
+                  <div className="absolute bottom-4 right-4 w-64 h-36 sm:w-80 sm:h-45 rounded-xl overflow-hidden bg-neutral-900 border border-primary/30 animate-scale-in z-20">
+                    <video
+                      ref={isSpeaking ? localCoHostVideoRef : coHostVideoRef}
+                      autoPlay
+                      playsInline
+                      muted={isSpeaking}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-2 right-2 rounded-full bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5">
+                      <Mic className="h-3 w-3 animate-pulse" />
+                      <span>{isSpeaking ? "شما (روی آنتن زنده)" : `مهمان: ${activeSpeaker?.name || "مهمان"}`}</span>
+                    </div>
+                    {isSpeaking && (
+                      <button
+                        onClick={handleSpeakerKicked}
+                        className="absolute top-2 left-2 rounded-full bg-destructive/90 text-white px-2 py-1 text-xs font-bold flex items-center gap-1"
+                      >
+                        <VideoOff className="h-3 w-3" /> خروج
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                <LivePinnedVerseOverlay pinnedVerse={pinnedVerse} />
+
+                {isHost && (
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-1.5 bg-black/50 text-white border-white/20">
+                          <MoreHorizontal className="h-4 w-4" />
+                          کنترل جلسه
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start" className="bg-card border-border">
+                        <DropdownMenuItem onClick={() => connRef.current?.send({ type: "end_session" })} className="text-destructive">
+                          <Radio className="h-3.5 w-3.5 ml-1.5" />
+                          پایان جلسه
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Mic className="h-3.5 w-3.5 ml-1.5" />
+                          دعوت به گفتگو
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <List className="h-3.5 w-3.5 ml-1.5" />
+                          لیست درخواست‌ها
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <BookOpen className="h-3.5 w-3.5 ml-1.5" />
+                          سنجاق آیه
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Video className="h-3.5 w-3.5 ml-1.5" />
+                          تغییر کیفیت: {videoQuality}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+
+                {raisedHands.length > 0 && !isHost && (
+                  <div className="absolute top-4 left-4 animate-pulse">
+                    <Badge variant="accent" className="flex items-center gap-1.5">
+                      <Hand className="h-3.5 w-3.5" />
+                      {raisedHands.length} نفر در انتظار
+                    </Badge>
+                  </div>
+                )}
+              </div>
+
+              <div className="lg:col-span-1 lg:self-stretch flex flex-col min-h-0">
+                <Card className="h-full flex flex-col border-border/20 bg-card/90 backdrop-blur-sm">
+                  <Tabs value="chat" className="border-b border-border/50 px-4">
+                    <TabsList className="grid w-full gap-1 bg-transparent p-0">
+                      <TabsTrigger value="chat" className="py-3">
+                        <span className="flex items-center gap-1.5">
+                          <MessageSquare className="h-4 w-4" />
+                          چت زنده
+                        </span>
+                      </TabsTrigger>
+                      <TabsTrigger value="viewers" className="py-3">
+                        <span className="flex items-center gap-1.5">
+                          <Users className="h-4 w-4" />
+                          بینندگان ({viewerCount})
+                        </span>
+                      </TabsTrigger>
+                      {raisedHands.length > 0 && (
+                        <TabsTrigger value="hands" className="py-3">
+                          <span className="flex items-center gap-1.5 text-accent">
+                            <Hand className="h-4 w-4 animate-pulse" />
+                            درخواست‌ها ({raisedHands.length})
+                          </span>
+                        </TabsTrigger>
+                      )}
+                    </TabsList>
+                  </Tabs>
+
+                  <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 p-0">
+                    <ScrollArea className="flex-1 p-4 space-y-3">
+                      {chat.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center h-full text-center text-white/40 py-12">
+                          <MessageSquare className="h-10 w-10 mb-3" />
+                          <p className="text-sm">هنوز پیامی ارسال نشده</p>
+                          <p className="text-xs mt-1">اولین نفر باشید که پیام می‌دهد</p>
+                        </div>
+                      ) : (
+                        <>
+                          {chat.map((m, i) => (
+                            <div key={i} className="flex gap-3 animate-fade-in">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="text-xs font-bold text-accent bg-accent/10">
+                                  {m.author?.[0] || "؟"}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-white truncate">{m.author}</span>
+                                  {m.system && <Badge variant="accent" className="text-[10px]">سیستم</Badge>}
+                                </div>
+                                <p className="text-sm text-white/80 leading-relaxed">{m.text}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </ScrollArea>
+
+                    {user ? (
+                      <div className="border-t border-border/50 p-4">
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={chatInput}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), sendChat())}
+                            placeholder="پیام یا پرسش‌تان را بنویسید... (Enter برای ارسال)"
+                            className="flex-1 bg-background/50 border-border/50 focus:border-accent focus:ring-accent/20"
+                          />
+                          <Button onClick={sendChat} variant="primary" size="sm" className="gap-1.5">
+                            <Send className="h-4 w-4" />
+                            ارسال
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border-t border-border/50 p-4 text-center">
+                        <p className="text-xs text-white/50">
+                          برای ارسال پیام، <Link to="/login" className="text-accent hover:underline font-medium">وارد شوید</Link>.
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="viewers" className="flex-1 p-4 overflow-y-auto">
+                    <div className="space-y-2">
+                      {viewers.length === 0 ? (
+                        <p className="text-center text-white/40 py-8">هیچ بیننده‌ای متصل نیست</p>
+                      ) : (
+                        viewers.map((v, i) => (
+                          <div key={v.id || i} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback className="text-sm font-bold text-accent bg-accent/10">
+                                {v.name?.[0] || v.id?.toString()[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-white truncate">{v.name || "بیننده ناشناس"}</p>
+                              <p className="text-xs text-white/50">{v.status || "مشاهده"}</p>
+                            </div>
+                            {v.is_host && <Badge variant="accent" className="text-[10px]">استاد</Badge>}
+                            {v.is_speaker && <Badge variant="secondary" className="text-[10px]">گوینده</Badge>}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="hands" className="p-4">
+                    <div className="space-y-2">
+                      {raisedHands.map((h, i) => (
+                        <div key={h.id || i} className="flex items-center gap-3 p-3 rounded-xl bg-accent/5 border border-accent/20 animate-pulse">
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback className="text-base font-bold text-accent bg-accent/10">
+                              {h.name?.[0] || "؟"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="font-medium text-white">{h.name}</p>
+                            <p className="text-xs text-white/60">در انتظار پاسخ استاد</p>
+                          </div>
+                          {isHost && (
+                            <div className="flex gap-2">
+                              <Button variant="accent" size="sm" onClick={() => connRef.current?.send({ type: "accept_speaker", target: h.id })}>
+                                <Mic className="h-3.5 w-3.5 ml-1" />
+                                قبول
+                              </Button>
+                              <Button variant="outline" size="sm" onClick={() => connRef.current?.send({ type: "reject_speaker", target: h.id })}>
+                                <X className="h-3.5 w-3.5 ml-1" />
+                                رد
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
+}
+
+function formatViews(count) {
+  if (!count) return "0";
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + "M";
+  if (count >= 1000) return (count / 1000).toFixed(1) + "K";
+  return count.toString();
 }

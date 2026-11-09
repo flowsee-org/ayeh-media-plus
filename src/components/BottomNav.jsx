@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "@/lib/router-compat";
 import { useTabNav } from "@/lib/tabNavigation";
 
 export default function BottomNav({ tabs }) {

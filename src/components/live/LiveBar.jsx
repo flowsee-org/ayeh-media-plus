@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 
 /**
@@ -8,7 +8,7 @@ import api from "@/lib/api";
  * and again on the live page itself.
  */
 export default function LiveBar() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [sessions, setSessions] = useState([]);
 
   const load = async () => {
@@ -48,7 +48,7 @@ export default function LiveBar() {
         {sessions.map((s) => (
           <button
             key={s.id}
-            onClick={() => navigate(`/live/${s.id}`)}
+            onClick={() => router.push(`/live/${s.id}`)}
             className="shrink-0 flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1.5 hover:bg-red-500/15 transition-colors"
           >
             <span className="relative flex h-2 w-2">

@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  turbopack: {},
   // eslint and TypeScript are enforced during builds (lint + typecheck pass cleanly).
   async rewrites() {
     // In development, Next.js (port 5173) proxies /api, /uploads, /socket.io
