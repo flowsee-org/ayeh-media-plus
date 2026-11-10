@@ -1,0 +1,194 @@
+# Ayeh Media Plus — single-instance production-oriented Compose (EXAMPLE)
+#
+# This is NOT a live Staging/Production deploy. Use for:
+#   - local production-like verification
+#   - a template when packaging a real host (replace secrets, TLS, managed DB)
+#
+# Usage (local verification):
+#   cp .env.production.docker.example .env.production.docker
+#   # edit secrets in the untracked .env.production.docker
+#   docker compose -f docker-compose.prod.example.yml --env-file .env.production.docker build
+#   docker compose -f docker-compose.prod.example.yml --env-file .env.production.docker up -d db
+#   ./scripts/migrate-deploy.sh --env-file .env.production.docker --compose-file docker-compose.prod.example.yml
+#   docker compose -f docker-compose.prod.example.yml --env-file .env.production.docker up -d
+#
+# Managed Postgres: remove the `db` service, set DATABASE_URL to the managed URL,
+# and ensure the api/migrate containers can reach it. Do not publish Postgres publicly.
+#
+# Migrations never run on api container start — run scripts/migrate-deploy.sh explicitly.
+
+name: ${COMPOSE_PROJECT_NAME:-ayeh-prod-local}
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB required}
+    volumes:
+      - ayeh_pg_data:/var/lib/postgresql/data
+    networks:
+      - ayeh_internal
+    # Not published to the host by default (private network only).
+    # For local psql debugging only, temporarily add: "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    image: ayeh-api:local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "5000"
+      TRUST_PROXY: "1"
+      DATABASE_PROVIDER: postgresql
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL required}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
+      OTP_PEPPER: ${OTP_PEPPER:?OTP_PEPPER required}
+      CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN required}
+      APP_PUBLIC_URL: ${APP_PUBLIC_URL:?APP_PUBLIC_URL required}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-smtp}
+      SMTP_HOST: ${SMTP_HOST:?SMTP_HOST required}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:?SMTP_USER required}
+      SMTP_PASS: ${SMTP_PASS:?SMTP_PASS required}
+      EMAIL_FROM: ${EMAIL_FROM:?EMAIL_FROM required}
+      SMTP_TIMEOUT_MS: ${SMTP_TIMEOUT_MS:-15000}
+      SMTP_REQUIRE_TLS: ${SMTP_REQUIRE_TLS:-}
+      SMTP_TLS_REJECT_UNAUTHORIZED: ${SMTP_TLS_REJECT_UNAUTHORIZED:-true}
+      # Default SMS provider is TextBee; Twilio remains optional when SMS_PROVIDER=twilio.
+      # App startup validates credentials for the selected provider (fail-closed).
+      SMS_PROVIDER: ${SMS_PROVIDER:-textbee}
+      TEXTBEE_API_KEY: ${TEXTBEE_API_KEY:-}
+      TEXTBEE_DEVICE_ID: ${TEXTBEE_DEVICE_ID:-}
+      TEXTBEE_TIMEOUT_MS: ${TEXTBEE_TIMEOUT_MS:-15000}
+      TEXTBEE_BASE_URL: ${TEXTBEE_BASE_URL:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM_NUMBER: ${TWILIO_FROM_NUMBER:-}
+      TWILIO_TIMEOUT_MS: ${TWILIO_TIMEOUT_MS:-}
+    volumes:
+      - ayeh_uploads:/app/uploads
+    networks:
+      - ayeh_internal
+    # No public ports — reach via proxy only
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:5000/api/health').then(async r=>{const j=await r.json().catch(()=>({})); process.exit(r.ok&&j.database==='ok'?0:1)}).catch(()=>process.exit(1))",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+      start_period: 45s
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    image: ayeh-web:local
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "5173"
+      HOSTNAME: 0.0.0.0
+      # Same-origin via Nginx — do not set to http://api:5000 (browser-inaccessible)
+      NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-}
+    networks:
+      - ayeh_internal
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:5173/').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  proxy:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    ports:
+      - "${AYEH_PUBLIC_PORT:-8080}:80"
+    volumes:
+      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - ayeh_internal
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+
+  # Optional one-shot migrate helper (explicit profile — never auto-starts with `up`)
+  migrate:
+    profiles: ["migrate"]
+    image: ayeh-api:local
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_PROVIDER: postgresql
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL required}
+      # Satisfy jwt/otp import-time checks if any module loads them via prisma tooling paths
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
+      OTP_PEPPER: ${OTP_PEPPER:?OTP_PEPPER required}
+    entrypoint:
+      [
+        "npx",
+        "prisma",
+        "migrate",
+        "deploy",
+        "--schema",
+        "server/prisma/schema.production.prisma",
+      ]
+    networks:
+      - ayeh_internal
+    restart: "no"
+
+  # Optional MailHog for local SMTP catcher (not for real Staging/Production)
+  mailhog:
+    profiles: ["mailhog"]
+    image: mailhog/mailhog:v1.0.1
+    restart: unless-stopped
+    ports:
+      - "${MAILHOG_UI_PORT:-8025}:8025"
+    networks:
+      - ayeh_internal
+
+networks:
+  ayeh_internal:
+    driver: bridge
+
+volumes:
+  ayeh_pg_data:
+  ayeh_uploads:

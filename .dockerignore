@@ -1,0 +1,58 @@
+# Dependencies & build outputs
+node_modules
+**/node_modules
+.next
+**/.next
+dist
+out
+coverage
+playwright-report
+test-results
+
+# Local runtime noise (can be multi-GB)
+logs
+**/logs
+screenshots
+*.log
+
+# Git / IDE / agent
+.git
+.gitignore
+.cursor
+.vscode
+.idea
+agent-transcripts
+
+# Docs & audits (not needed in image)
+*.md
+!AGENTS.md
+docs
+FUNCTIONAL_QA_AUDIT.md
+LAUNCH_AUDIT.md
+ROUTE_STATUS.md
+UI_VISUAL_AUDIT.md
+MISSION_REPORT.md
+AUDIT.md
+RELEASE_GATE_REPORT.md
+
+# Local env & secrets — never bake into image layers
+.env
+.env.*
+!.env.example
+!.env.staging.example
+!.env.production.docker.example
+
+# Local databases & media (uploads are mounted at runtime)
+**/*.db
+**/*.db-journal
+server/prisma/dev.db
+uploads
+uploads/**
+!uploads/.gitkeep
+server/uploads
+server/uploads/**
+
+# Deploy/CI files not needed inside app image build context extras
+docker-compose*.yml
+deploy
+.github

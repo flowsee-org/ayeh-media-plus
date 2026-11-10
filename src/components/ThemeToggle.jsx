@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
+/**
+ * Theme hook — light mode is the primary Aparat-style experience.
+ * Dark remains available as an explicit opt-in.
+ */
 export function useTheme() {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("tadabbur-theme");
-      if (stored) return stored;
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      if (stored === "dark" || stored === "light") return stored;
+      return "light";
     }
     return "light";
   });
@@ -19,7 +23,7 @@ export function useTheme() {
   }, [theme]);
 
   const toggle = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
-  return { theme, toggle };
+  return { theme, toggle, toggleTheme: toggle, setTheme };
 }
 
 export default function ThemeToggle() {
@@ -38,7 +42,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      aria-label="Toggle theme"
+      aria-label="تغییر تم"
       className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
     >
       {theme === "dark" ? (

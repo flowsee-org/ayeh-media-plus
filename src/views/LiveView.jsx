@@ -71,7 +71,7 @@ export default function LiveView() {
         allowed = me.id === s.scholar_id;
         if (!allowed) {
           const res = await api.entities.Follow
-            .filter({ follower_id: me.id, scholar_id: s.scholar_id })
+            .filter({ follower_id: me.id, followed_id: s.scholar_id })
             .catch(() => ({ items: [] }));
           allowed = (res.items || []).length > 0;
         }

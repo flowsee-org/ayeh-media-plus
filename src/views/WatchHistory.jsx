@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  getWatchHistory, getWatchCount, getTotalWatchTime, removeWatchEntry,
+  fetchWatchHistory, getWatchCount, getTotalWatchTime, removeWatchEntry,
   clearWatchHistory,
 } from "@/lib/watchHistory";
 import { fa } from "@/lib/utils";
+import EmptyState from "@/components/design-system/EmptyState";
 import {
-  Clock, Trash2, Play, BookOpen, Loader2, AlertCircle, Video as VideoIcon,
+  Clock, Trash2, Play, Loader2, Video as VideoIcon,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -21,9 +22,17 @@ export default function WatchHistoryPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const h = getWatchHistory();
-    setHistory(h);
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      const h = await fetchWatchHistory();
+      if (!cancelled) {
+        setHistory(h);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleRemove = (videoId) => {
@@ -50,21 +59,8 @@ export default function WatchHistoryPage() {
 
   if (history.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 text-center">
-        <AlertCircle className="h-16 w-16 text-muted-foreground/30 mx-auto mb-6" />
-        <h2 className="font-rokh-bold font-bold text-2xl text-foreground mb-4">
-          تاریخچه تماشایی خالی است
-        </h2>
-        <p className="text-muted-foreground mb-8">
-          ویدیوهایی که تماشای می‌کنید اینجا نمایش داده می‌شوند.
-        </p>
-        <Link
-          to="/explore"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow"
-        >
-          <BookOpen className="h-5 w-5" />
-          <span>کاوش محتوا</span>
-        </Link>
+      <div className="page-shell-narrow py-6">
+        <EmptyState type="history" />
       </div>
     );
   }
@@ -80,12 +76,12 @@ export default function WatchHistoryPage() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in font-doran">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="page-shell animate-fade-in font-doran">
+      <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="font-rokh-bold font-bold text-2xl sm:text-3xl text-foreground">تاریخچه تماشا</h1>
-          <p className="text-muted-foreground mt-1">
-            ویدیوهای تماشای شده شما
+          <p className="text-muted-foreground mt-1.5 text-sm font-editorial">
+            ویدیوهای تماشا‌شده شما
           </p>
         </div>
       </div>
@@ -131,12 +127,19 @@ export default function WatchHistoryPage() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <Link
-                    to={`/watch/${entry.video_id}`}
-                    className="font-medium text-foreground truncate block hover:text-primary transition-colors"
-                  >
-                    {entry.title || "ویدیو بدون عنوان"}
-                  </Link>
+                  {entry.video_available === false ? (
+                    <span className="font-medium text-muted-foreground truncate block">
+                      {entry.title || "ویدیو حذف‌شده"}
+                      <span className="ms-2 text-xs font-normal">(دیگر در دسترس نیست)</span>
+                    </span>
+                  ) : (
+                    <Link
+                      href={`/watch/${entry.video_id}`}
+                      className="font-medium text-foreground truncate block hover:text-primary transition-colors"
+                    >
+                      {entry.title || "ویدیو بدون عنوان"}
+                    </Link>
+                  )}
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                     <span>{fa(entry.watch_count || 1)} بار تماشا</span>
                     <span>•</span>
@@ -147,7 +150,9 @@ export default function WatchHistoryPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Play className="h-4 w-4 text-primary/60 hover:text-primary transition-colors" />
+                {entry.video_available !== false && (
+                  <Play className="h-4 w-4 text-primary/60 hover:text-primary transition-colors" />
+                )}
                 <button
                   onClick={() => handleRemove(entry.video_id)}
                   className="p-2 text-muted-foreground hover:text-red-600 transition-colors"

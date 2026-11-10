@@ -44,7 +44,7 @@ export default function ScholarProfile() {
 
       if (current?.id && current.id !== id) {
         const f = await api.entities.Follow
-          .filter({ follower_id: current.id, scholar_id: id })
+          .filter({ follower_id: current.id, followed_id: id })
           .catch(() => ({ items: [] }));
         setFollowed((f.items || []).length > 0);
       } else {
@@ -79,7 +79,7 @@ export default function ScholarProfile() {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h1 className="font-display font-bold text-xl truncate">{name}</h1>
+            <h1 className="font-rokh-bold font-bold text-xl truncate">{name}</h1>
             <p className="text-xs text-muted-foreground mt-1">
               {sessions.length.toLocaleString("fa-IR")} جلسه منتشرشده
             </p>
@@ -134,7 +134,7 @@ export default function ScholarProfile() {
 
       {/* Archive */}
       <div className="mt-8">
-        <h2 className="font-display font-bold text-lg mb-4 flex items-center gap-2">
+        <h2 className="font-rokh-bold font-bold text-lg mb-4 flex items-center gap-2">
           <Video className="h-5 w-5 text-accent" /> آرشیو جلسات
         </h2>
 

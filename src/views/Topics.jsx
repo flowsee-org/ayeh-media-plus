@@ -3,10 +3,10 @@ import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "@/lib/router-compat";
 import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
-import { TOPIC_CATEGORIES } from "@/lib/topicData";
+import { TOPIC_CATEGORIES, TOPIC_VERSE_KEYS } from "@/lib/topicData";
+import { getAyah } from "@/lib/quranApi";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
-import { IslamicStar, SectionOrnament } from "@/components/IslamicOrnaments";
-import { Compass, ChevronRight, BookOpen } from "lucide-react";
+import { Compass, ChevronRight, BookOpen, Loader2 } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
 
 const verseKeyToPath = (vk) => {
@@ -14,226 +14,271 @@ const verseKeyToPath = (vk) => {
   return `/verse/${s}/${a}`;
 };
 
+function normalizeKeys(keys) {
+  if (!keys) return [];
+  if (Array.isArray(keys)) return keys.filter(Boolean);
+  if (typeof keys === "string") {
+    try {
+      const parsed = JSON.parse(keys);
+      if (Array.isArray(parsed)) return parsed.filter(Boolean);
+    } catch {
+      return keys.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+  }
+  return [];
+}
+
 export default function Topics() {
   const [params, setParams] = useSearchParams();
   const selectedTopic = params.get("topic");
   const catFilter = params.get("cat");
 
-  const [verses, setVerses] = useState([]);
+  const [matchingVerses, setMatchingVerses] = useState([]);
   const [topicEntities, setTopicEntities] = useState([]);
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
-  const load = () => {
-    api.entities.Verse.list("-created_date", 200)
-      .then(setVerses)
-      .catch(() => {});
-    if (selectedTopic) {
-      api.entities.Topic.filter({ name: selectedTopic })
-        .then(setTopicEntities)
-        .catch(() => {});
-    }
-  };
+  const loadTopics = () =>
+    api.entities.Topic.list("-created_date", 200)
+      .then((rows) => setTopicEntities(Array.isArray(rows) ? rows : rows?.items || []))
+      .catch(() => setTopicEntities([]));
 
   useEffect(() => {
-    load();
+    loadTopics();
   }, []);
 
   useEffect(() => {
-    if (selectedTopic) {
-      api.entities.Topic.filter({ name: selectedTopic })
-        .then(setTopicEntities)
-        .catch(() => {});
-    } else {
-      setTopicEntities([]);
+    if (!selectedTopic) {
+      setMatchingVerses([]);
+      return;
     }
-  }, [selectedTopic]);
 
-  const matchingVerses = useMemo(() => {
-    if (!selectedTopic) return [];
-    const tl = selectedTopic.toLowerCase();
-    const topicVerseKeys = new Set();
-    topicEntities.forEach((t) => {
-      (t.verse_keys || []).forEach((k) => topicVerseKeys.add(k));
-    });
+    let cancelled = false;
+    setLoadingDetail(true);
 
-    return verses.filter(
-      (v) =>
-        topicVerseKeys.has(v.verse_key) ||
-        (v.tags || []).some((t) => t.toLowerCase().includes(tl)) ||
-        v.translation?.toLowerCase().includes(tl) ||
-        v.tadabbur?.toLowerCase().includes(tl) ||
-        (v.life_lessons || []).some((l) => l.toLowerCase().includes(tl))
-    );
-  }, [selectedTopic, verses, topicEntities]);
+    (async () => {
+      const tl = selectedTopic.toLowerCase();
+      const topicVerseKeys = new Set();
 
-  const filteredCategories = catFilter
-    ? TOPIC_CATEGORIES.filter((c) => c.id === catFilter)
-    : TOPIC_CATEGORIES;
+      // 1) Curated static keys for directory labels
+      (TOPIC_VERSE_KEYS[selectedTopic] || []).forEach((k) => topicVerseKeys.add(k));
+
+      // 2) Fuzzy-match DB Topic rows (seed names are longer than directory labels)
+      const entities =
+        topicEntities.length > 0
+          ? topicEntities
+          : await api.entities.Topic.list("-created_date", 200)
+              .then((rows) => (Array.isArray(rows) ? rows : rows?.items || []))
+              .catch(() => []);
+
+      entities.forEach((t) => {
+        const name = (t.name || "").toLowerCase();
+        if (
+          name === tl ||
+          name.includes(tl) ||
+          tl.includes(name) ||
+          (t.slug && t.slug.toLowerCase() === tl)
+        ) {
+          normalizeKeys(t.verse_keys).forEach((k) => topicVerseKeys.add(k));
+          if (TOPIC_VERSE_KEYS[t.name]) {
+            TOPIC_VERSE_KEYS[t.name].forEach((k) => topicVerseKeys.add(k));
+          }
+        }
+      });
+
+      const keys = [...topicVerseKeys];
+      const loaded = [];
+      for (const key of keys) {
+        const [s, a] = String(key).split(":");
+        const surah = Number(s);
+        const ayah = Number(a);
+        if (!surah || !ayah) continue;
+        try {
+          const ayahData = await getAyah(surah, ayah);
+          loaded.push({
+            id: key,
+            verse_key: key,
+            arabic: ayahData.arabic,
+            translation: ayahData.translation,
+            surah_number: surah,
+            verse_number: ayah,
+          });
+        } catch {
+          /* skip unavailable ayah */
+        }
+      }
+
+      if (!cancelled) {
+        setMatchingVerses(loaded);
+        setLoadingDetail(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedTopic, topicEntities]);
+
+  const filteredCategories = useMemo(
+    () => (catFilter ? TOPIC_CATEGORIES.filter((c) => c.id === catFilter) : TOPIC_CATEGORIES),
+    [catFilter]
+  );
 
   /* ── Topic detail view ── */
   if (selectedTopic) {
     return (
-      <PullToRefresh onRefresh={load}>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
-        <button
-          onClick={() => setParams({})}
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-accent transition-colors mb-6 sm:mb-8"
-        >
-          <ChevronRight className="h-4 w-4" /> همه موضوعات
-        </button>
+      <PullToRefresh
+        onRefresh={async () => {
+          await loadTopics();
+        }}
+      >
+        <div className="page-shell-reading animate-fade-in">
+          <button
+            onClick={() => setParams({})}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-accent transition-colors mb-6 sm:mb-8"
+          >
+            <ChevronRight className="h-4 w-4" /> همه موضوعات
+          </button>
 
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-accent text-xs font-medium mb-4">
-            <Compass className="h-3.5 w-3.5" /> موضوع
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-accent text-xs font-medium mb-4">
+              <Compass className="h-3.5 w-3.5" /> موضوع
+            </div>
+            <h1 className="font-rokh-bold font-extrabold text-3xl sm:text-4xl tracking-tight">{selectedTopic}</h1>
+            <OrnamentalDivider className="mt-6" />
           </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl tracking-tight">{selectedTopic}</h1>
-          <OrnamentalDivider className="mt-6" />
+
+          {loadingDetail ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-accent" />
+            </div>
+          ) : matchingVerses.length > 0 ? (
+            <div className="space-y-4">
+              {matchingVerses.map((v, i) => (
+                <Link
+                  key={v.id || v.verse_key}
+                  to={verseKeyToPath(v.verse_key)}
+                  className="group block rounded-xl border border-accent/10 bg-card/40 p-4 sm:p-6 hover:border-accent/30 hover:shadow-premium transition-all duration-300 animate-fade-in-up will-animate"
+                  style={{ animationDelay: `${i * 0.05}s` }}
+                >
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                    <span className="font-medium">{v.verse_key}</span>
+                  </div>
+                  <div
+                    className="text-xl sm:text-2xl font-arabic leading-loose text-right text-foreground/80 mb-3"
+                    dir="rtl"
+                    lang="ar"
+                  >
+                    {v.arabic}
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                    {v.translation}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
+              <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">
+                هنوز آیه‌ای برای موضوع «{selectedTopic}» ثبت نشده است.
+              </p>
+            </div>
+          )}
         </div>
-
-        {matchingVerses.length > 0 ? (
-          <div className="space-y-4">
-            {matchingVerses.map((v, i) => (
-              <Link
-                key={v.id}
-                to={verseKeyToPath(v.verse_key)}
-                className="group block rounded-xl border border-accent/10 bg-card/40 p-4 sm:p-6 hover:border-accent/30 hover:shadow-premium transition-all duration-300 animate-fade-in-up will-animate"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              >
-                <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
-                  <span className="font-medium">{v.verse_key}</span>
-                  {v.difficulty_level && (
-                    <span className="px-2 py-0.5 rounded-full bg-muted/60 text-xs">
-                      {v.difficulty_level === "beginner" ? "مقدماتی" : v.difficulty_level === "intermediate" ? "متوسط" : "پیشرفته"}
-                    </span>
-                  )}
-                </div>
-                <div className="text-xl sm:text-2xl font-arabic leading-loose text-right text-foreground/80 mb-3" dir="rtl" lang="ar">{v.arabic}</div>
-                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{v.translation}</p>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">
-              هنوز تدبّری برای موضوع «{selectedTopic}» ثبت نشده است.
-            </p>
-            <p className="text-xs text-muted-foreground/70 mt-2">به‌زودی آیات مرتبط با این موضوع افزوده خواهد شد.</p>
-          </div>
-        )}
-      </div>
       </PullToRefresh>
     );
   }
 
   /* ── Topic directory view ── */
   return (
-    <PullToRefresh onRefresh={load}>
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
-      {/* Clean UI Kit Header with Persian Vault ambiance */}
-      <div className="relative overflow-hidden rounded-3xl border border-amber-400/30 bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <img
-            src="/images/art/nasir_vault_ceiling.webp"
-            alt=""
-            className="w-full h-full object-cover filter brightness-[0.22] dark:brightness-[0.14] contrast-[1.1] scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-card/85 via-card/75 to-card/95 backdrop-blur-[1px]" />
-        </div>
-
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
-            <Compass className="h-3.5 w-3.5" /> کاوش موضوعی و معنایی آیات
+    <PullToRefresh onRefresh={loadTopics}>
+      <div className="page-shell animate-fade-in">
+        <div className="relative overflow-hidden rounded-3xl border border-amber-400/30 bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <img
+              src="/images/art/nasir_vault_ceiling.webp"
+              alt=""
+              className="w-full h-full object-cover filter brightness-[0.22] dark:brightness-[0.14] contrast-[1.1] scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-card/85 via-card/75 to-card/95 backdrop-blur-[1px]" />
           </div>
-          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
-            موضوعات و مفاهیم قرآنی
-          </h1>
-          <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
-            کاوش و تدبّر در معارف وحیانی قرآن کریم بر اساس دسته‌بندی‌های موضوعی کاربردی
-          </p>
 
-          {/* Category filter */}
-          <div className="flex flex-wrap justify-center gap-2 mt-6 font-ui">
-            <button
-              onClick={() => setParams({})}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                !catFilter
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-card/80 text-muted-foreground hover:text-foreground border border-border/80 backdrop-blur-sm"
-              }`}
-            >
-              همه موضوعات
-            </button>
-            {TOPIC_CATEGORIES.map((cat) => (
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
+              <Compass className="h-3.5 w-3.5" /> کاوش موضوعی و معنایی آیات
+            </div>
+            <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+              موضوعات و مفاهیم قرآنی
+            </h1>
+            <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
+              کاوش و تدبّر در معارف وحیانی قرآن کریم بر اساس دسته‌بندی‌های موضوعی کاربردی
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-2 mt-6 font-ui">
               <button
-                key={cat.id}
-                onClick={() => setParams({ cat: cat.id })}
+                onClick={() => setParams({})}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                  catFilter === cat.id
+                  !catFilter
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-card/80 text-muted-foreground hover:text-foreground border border-border/80 backdrop-blur-sm"
                 }`}
               >
-                {cat.title}
+                همه موضوعات
               </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Topic cards by category */}
-      <div className="space-y-12">
-        {filteredCategories.map((cat, ci) => (
-          <div key={cat.id}>
-            <div className="flex items-center gap-3 mb-6">
-              <div
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center ring-1 ring-border/40"
-                style={{ backgroundColor: `${cat.color}18`, color: cat.color }}
-              >
-                <Compass className="h-5 w-5" />
-              </div>
-              <div>
-                <h2 className="font-display font-bold text-lg sm:text-2xl tracking-tight">{cat.name}</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">{cat.topics.length} موضوع</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {cat.topics.map((topic, i) => (
+              {TOPIC_CATEGORIES.map((cat) => (
                 <button
-                  key={topic.name}
-                  onClick={() => setParams({ topic: topic.name })}
-                  className="group relative text-right rounded-2xl border border-accent/20 bg-card/85 backdrop-blur-md p-5 hover:border-accent/50 hover:shadow-premium hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between"
-                  style={{ animationDelay: `${ci * 0.05 + i * 0.03}s` }}
+                  key={cat.id}
+                  onClick={() => setParams({ cat: cat.id })}
+                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                    catFilter === cat.id
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "bg-card/80 text-muted-foreground hover:text-foreground border border-border/80 backdrop-blur-sm"
+                  }`}
                 >
-                  <div>
-                    <div className="flex items-start justify-between mb-3">
-                      <div
-                        className="h-10 w-10 rounded-xl flex items-center justify-center ring-1 ring-border/40 shadow-soft"
-                        style={{ backgroundColor: `${cat.color}18`, color: cat.color }}
-                      >
-                        <IslamicStar size={18} className="text-current" />
-                      </div>
-                      <div className="font-arabic text-2xl text-accent/50 group-hover:text-accent transition-colors" dir="rtl">
-                        {topic.name_arabic}
-                      </div>
-                    </div>
-                    <div className="font-display font-bold text-base text-foreground mb-1 group-hover:text-primary transition-colors">
-                      {topic.name}
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{topic.description}</p>
-                  </div>
-                  <div className="mt-4 pt-2 border-t border-border/40 text-[11px] font-bold text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
-                    <span>مشاهده آیات مرتبط</span>
-                    <ChevronRight className="h-3 w-3" />
-                  </div>
+                  {cat.title || cat.name}
                 </button>
               ))}
             </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <SectionOrnament className="mt-12" />
-    </div>
+        <div className="space-y-12">
+          {filteredCategories.map((cat) => (
+            <div key={cat.id}>
+              <div className="flex items-center gap-3 mb-6">
+                <div
+                  className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center ring-1 ring-border/40"
+                  style={{ backgroundColor: `${cat.color}18`, color: cat.color }}
+                >
+                  <Compass className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="font-rokh-bold font-bold text-lg sm:text-2xl tracking-tight">{cat.name}</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">{cat.topics.length} موضوع</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {cat.topics.map((topic, i) => (
+                  <button
+                    key={topic.name}
+                    onClick={() => setParams({ topic: topic.name })}
+                    className="text-right rounded-2xl border border-border/60 bg-card/60 p-4 hover:border-accent/30 hover:shadow-soft transition-all animate-fade-in-up will-animate"
+                    style={{ animationDelay: `${i * 0.03}s` }}
+                  >
+                    <div className="font-rokh-bold font-bold text-sm mb-1">{topic.name}</div>
+                    {topic.name_arabic && (
+                      <div className="font-arabic text-xs text-accent/80 mb-2" dir="rtl" lang="ar">
+                        {topic.name_arabic}
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground line-clamp-2">{topic.description}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </PullToRefresh>
   );
 }

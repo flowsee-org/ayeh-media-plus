@@ -87,7 +87,7 @@ export default function VerseGuide() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
+    <div className="page-shell-reading animate-fade-in">
       <BackButton label="بازگشت به خانه" to="/" className="mb-6" />
 
       {/* Clean UI Kit Header */}
@@ -98,7 +98,7 @@ export default function VerseGuide() {
         <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
           آیه‌ی راه
         </h1>
-        <p className="font-doran text-muted-foreground text-sm max-w-lg mx-auto">
+        <p className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
           کلام وحی برای تسکین اندوه‌ها، رفع تردیدها و یافتن هدایت در گذرگاه‌های سخت زندگی
         </p>
       </div>

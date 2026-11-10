@@ -28,7 +28,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ScholarCard from "@/components/design-system/ScholarCard";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 const MIHRAB_IMG = "/images/art/nasir_light_columns.jpg";
@@ -245,7 +245,7 @@ export default function VerseDetail() {
         <IslamicPattern className="text-foreground" opacity={0.03} />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-accent/8 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
+        <div className="relative page-shell-reading py-6 sm:py-10">
           {/* Navigation & Surah Info */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <BackButton to={`/quran?surah=${surah}`} label={surahName} />
@@ -322,7 +322,7 @@ export default function VerseDetail() {
 
               {prefs.showTranslation && (
                 <p
-                  className="max-w-3xl mx-auto text-foreground/90 font-medium leading-[2.4] text-lg sm:text-xl"
+                  className="max-w-3xl mx-auto text-foreground/90 font-editorial leading-[2.4] text-lg sm:text-xl"
                   style={{
                     fontSize: `calc(clamp(1.125rem, 2.5vw, 1.5rem) * ${prefs.translationScale || 1.0})`,
                   }}
@@ -487,7 +487,7 @@ export default function VerseDetail() {
 
       {/* ═══════════════ TAB BAR — TED Style ═══════════════ */}
       <div className="sticky top-16 z-30 border-b border-accent/10 glass-strong">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="page-shell">
           <Tabs value={tab} onValueChange={setTab} className="w-full">
             <TabsList className="grid w-full gap-1 p-1 bg-muted/50 rounded-xl" aria-label="بخش‌های آیه">
               {TABS.map(({ id: tid, label, icon: Icon }) => (
@@ -506,7 +506,7 @@ export default function VerseDetail() {
       </div>
 
       {/* ═══════════════ CONTENT ═══════════════ */}
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+      <div className="page-shell py-6 sm:py-8">
         <div className="grid lg:grid-cols-[1fr_320px] gap-8 lg:gap-12">
           {/* Main Content */}
           <div className="lg:col-span-1">
@@ -541,10 +541,7 @@ export default function VerseDetail() {
             <div className="sticky top-24 space-y-6">
               {/* Speaker / Scholar Card */}
               {reflection?.scholar_id && scholars[reflection.scholar_id] && (
-                <ScholarCard
-                  scholar={scholars[reflection.scholar_id]}
-                  onNavigate={navigate}
-                />
+                <ScholarCard item={scholars[reflection.scholar_id]} />
               )}
 
               {/* Chapters / Timestamps */}
@@ -590,34 +587,6 @@ function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
-
-function ScholarCard({ scholar, onNavigate }) {
-  return (
-    <Card variant="sonnat" className="p-5">
-      <div className="flex items-center gap-4">
-        <Avatar className="h-16 w-16">
-          <AvatarImage src={scholar.avatar_url || scholar.avatar} alt={scholar.name} />
-          <AvatarFallback className="text-xl font-bold text-accent bg-accent/10">
-            {scholar.name?.[0]}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <h4 className="font-rokh-bold font-bold text-base text-foreground truncate">{scholar.name}</h4>
-          <p className="text-xs text-muted-foreground mt-0.5">{scholar.title || "مفسر و محقق قرآن"}</p>
-        </div>
-      </div>
-      <Button
-        variant="outline"
-        size="sm"
-        className="mt-3 w-full gap-1.5"
-        onClick={() => onNavigate(`/scholars/${scholar.id}`)}
-      >
-        <ChevronLeft className="h-3.5 w-3.5" />
-        <span>مشاهده پروفایل کامل</span>
-      </Button>
-    </Card>
-  );
 }
 
 function ChapterList({ chapters, currentTrack, isPlaying, onSeek }) {
@@ -837,7 +806,7 @@ function TimelineItem({ icon: Icon, title, children }) {
         <Icon className="h-3 w-3 text-accent" />
       </div>
       <div className="mr-8">
-        <h3 className="font-display font-bold text-lg mb-3">{title}</h3>
+        <h3 className="font-rokh-bold font-bold text-lg mb-3">{title}</h3>
         <Card variant="default" className="p-5">{children}</Card>
       </div>
     </div>

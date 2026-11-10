@@ -119,7 +119,7 @@ export default function ProfilePage({ params }) {
         <AlertCircle className="h-10 w-10 text-muted-foreground/40 mb-3" />
         <h2 className="font-semibold text-foreground">{error || 'پروفایل یافت نشد'}</h2>
         <Link
-          to="/"
+          href="/"
           className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
         >
           بازگشت به صفحه اصلی

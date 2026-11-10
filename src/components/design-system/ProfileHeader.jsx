@@ -2,21 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { Image } from '@/components/ui/image';
-import { User2, Play, ShieldCheck } from 'lucide-react';
+import { User2, ShieldCheck, Loader2 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import api from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
+import { fa } from '@/lib/utils';
 
 /**
- * Reusable profile header for creators, qaris, and scholars.
- * Supports: profile image, cover image, name, bio, verification badge,
- * follow/unfollow, follower count, content count, and role-specific fields.
- *
- * Follow/unfollow uses the existing Follow entity (follower_id / followed_id).
+ * Aparat-style channel header
  */
 export default function ProfileHeader({
   profileId,
-  _profileType = 'creator', // 'creator' | 'qari' | 'scholar'
+  _profileType = 'creator',
   coverImage,
   profileImage,
   name,
@@ -25,27 +22,22 @@ export default function ProfileHeader({
   followerCount = 0,
   contentCount = 0,
   following = false,
-  roleSpecific = null, // React node for qari/scholar specific fields
+  roleSpecific = null,
   isOwnProfile = false,
   className = '',
 }) {
-  const { user: authUser } = useAuth();
+  const { user: authUser, openAuthModal } = useAuth();
   const { toast } = useToast();
   const [isFollowing, setIsFollowing] = useState(following);
   const [isLoading, setIsLoading] = useState(false);
-  const isLoggedIn = !!authUser;
 
-  // Sync initial following state from prop
   useEffect(() => {
     setIsFollowing(following);
   }, [following]);
 
   const handleFollow = async () => {
-    if (!isLoggedIn) {
-      // Dispatch a login event via custom event for components upstream to handle
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('require-login'));
-      }
+    if (!authUser) {
+      openAuthModal?.();
       return;
     }
     if (isLoading || !authUser?.id) return;
@@ -57,10 +49,7 @@ export default function ProfileHeader({
           followed_id: profileId,
         });
         setIsFollowing(false);
-        toast({
-          title: 'لغو پیگیری',
-          description: 'پیوند از این کاربر لغو شد.',
-        });
+        toast({ title: 'لغو دنبال‌کردن', description: 'دیگر این کانال را دنبال نمی‌کنید.' });
       } else {
         await api.entities.Follow.create({
           follower_id: authUser.id,
@@ -69,16 +58,13 @@ export default function ProfileHeader({
           followed_name: name,
         });
         setIsFollowing(true);
-        toast({
-          title: 'پیگیری شد',
-          description: 'از این کاربر پیگیری شد.',
-        });
+        toast({ title: 'دنبال شد', description: 'این کانال را دنبال می‌کنید.' });
       }
     } catch {
       toast({
         variant: 'destructive',
         title: 'خطا',
-        description: 'امکان انجام عملیات وجود ندارد. دوباره تلاش کنید.',
+        description: 'امکان انجام عملیات وجود ندارد.',
       });
     } finally {
       setIsLoading(false);
@@ -86,103 +72,80 @@ export default function ProfileHeader({
   };
 
   return (
-    <div className={`relative w-full ${className}`}>
-      {/* Cover image */}
-      {coverImage && (
-        <div className="h-48 w-full bg-border/50 border-b border-border relative overflow-hidden">
-          <Image
-            src={coverImage}
-            alt="تصویر covering"
-            className="w-full h-48 object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        </div>
-      )}
+    <div className={`relative w-full overflow-hidden rounded-2xl border border-border bg-card ${className}`}>
+      <div className="h-36 sm:h-44 md:h-52 w-full bg-gradient-to-br from-primary/25 via-accent/15 to-muted relative overflow-hidden">
+        {coverImage ? (
+          <Image src={coverImage} alt="" className="w-full h-full object-cover" />
+        ) : null}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+      </div>
 
-      <div className="mt-[-40px] md:mt-[-60px] relative z-10">
-        {/* Profile image */}
-        <div className="flex justify-center md:justify-end pr-6 md:pr-0">
-          <div className="relative z-10">
-            <div className="w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-background shadow-lg overflow-hidden bg-border">
+      <div className="px-4 sm:px-6 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12">
+          <div className="relative shrink-0">
+            <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-full border-4 border-card shadow-md overflow-hidden bg-muted">
               {profileImage ? (
-                <Image
-                  src={profileImage}
-                  alt={`${name} پروفایل`}
-                  className="w-full h-full object-cover"
-                />
+                <Image src={profileImage} alt={name || ''} className="w-full h-full object-cover" />
               ) : (
-                <div className="flex items-center justify-center bg-muted">
-                  <User2 className="w-16 h-16 text-muted-foreground/40" />
+                <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">
+                  <User2 className="h-10 w-10" />
                 </div>
               )}
             </div>
             {verified && (
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-accent rounded-full border-2 border-background flex items-center justify-center text-accent-foreground shadow-sm">
-                <ShieldCheck className="w-5 h-5" />
+              <div className="absolute bottom-1 end-1 h-7 w-7 rounded-full bg-primary text-primary-foreground border-2 border-card flex items-center justify-center">
+                <ShieldCheck className="h-4 w-4" />
               </div>
             )}
           </div>
-        </div>
 
-        <div className="px-4 pt-12 pb-6 md:px-8 text-right">
-          <div className="flex flex-col items-end gap-2 md:flex-row md:items-start md:justify-between">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl md:text-3xl font-semibold text-foreground tracking-tight">{name}</h1>
+          <div className="flex-1 min-w-0 pt-2 sm:pb-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">{name}</h1>
               {verified && (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent text-accent-foreground text-xs font-medium">
-                  <ShieldCheck className="w-3 h-3" /> تایید شده
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+                  <ShieldCheck className="h-3 w-3" /> تایید شده
                 </span>
               )}
             </div>
-
-            {!isOwnProfile && (
-              <button
-                onClick={handleFollow}
-                disabled={isLoading}
-                className={`px-6 py-2.5 rounded-full font-medium text-sm transition-all disabled:opacity-50 ${
-                  isFollowing
-                    ? 'bg-muted text-muted-foreground hover:bg-muted/80 border border-border'
-                    : 'bg-quranic-emerald text-white hover:bg-quranic-emerald/90 shadow-quranic-glow'
-                } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-              >
-                {isLoading ? (
-                  <Play className="w-4 h-4 animate-spin" />
-                ) : isFollowing ? (
-                  <>
-                    <span className="mr-1"> پیگیری شده</span>
-                  </>
-                ) : (
-                  <>
-                    <User2 className="w-4 h-4 mr-1" /> پیگیری
-                  </>
-                )}
-              </button>
+            {bio && (
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-2xl line-clamp-3">
+                {bio}
+              </p>
             )}
           </div>
 
-          <p className="mt-3 md:mt-4 text-muted-foreground leading-relaxed max-w-2xl md:max-w-3xl text-sm md:text-base">
-            {bio}
-          </p>
-
-          {/* Stats row */}
-          <div className="mt-6 md:mt-8 flex flex-wrap justify-end gap-6 text-sm text-muted-foreground border-t border-border/50 pt-4">
-            <div className="flex flex-col items-end gap-1">
-              <span className="font-semibold text-foreground">{followerCount}</span>
-              <span className="text-xs"> فالوور</span>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <span className="font-semibold text-foreground">{contentCount}</span>
-              <span className="text-xs">محتوای منتشر شده</span>
-            </div>
-          </div>
-
-          {/* Role-specific fields */}
-          {roleSpecific && (
-            <div className="mt-6 md:mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-border/50">
-              {roleSpecific}
-            </div>
+          {!isOwnProfile && (
+            <button
+              onClick={handleFollow}
+              disabled={isLoading}
+              className={`shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 ${
+                isFollowing
+                  ? 'bg-muted text-foreground border border-border hover:bg-muted/80'
+                  : 'bg-primary text-primary-foreground hover:opacity-90'
+              }`}
+            >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : isFollowing ? 'دنبال می‌کنید' : 'دنبال کردن'}
+            </button>
           )}
         </div>
+
+        <div className="mt-5 flex flex-wrap gap-5 text-sm border-t border-border pt-4">
+          <div>
+            <span className="font-bold text-foreground tabular-nums">{fa(followerCount)}</span>
+            <span className="text-muted-foreground ms-1.5">دنبال‌کننده</span>
+          </div>
+          <div>
+            <span className="font-bold text-foreground tabular-nums">{fa(contentCount)}</span>
+            <span className="text-muted-foreground ms-1.5">ویدیو</span>
+          </div>
+        </div>
+
+        {roleSpecific && (
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-border">
+            {roleSpecific}
+          </div>
+        )}
       </div>
     </div>
   );

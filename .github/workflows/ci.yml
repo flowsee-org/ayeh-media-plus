@@ -1,0 +1,59 @@
+# Minimal provider-independent CI (Task 13).
+# No Production deploy. No repository secrets required for the default job.
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    name: Schema / delivery / critical / API / typecheck / build
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate SQLite Prisma Client
+        run: pnpm db:generate
+
+      - name: Schema parity
+        run: pnpm test:schema
+
+      - name: Delivery / OTP unit tests
+        run: pnpm test:delivery
+
+      - name: Critical functional tests
+        run: pnpm test:critical
+
+      - name: Full API tests
+        run: pnpm test
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Production Next.js build
+        run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"

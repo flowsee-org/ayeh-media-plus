@@ -84,7 +84,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in font-ui">
+    <div className="page-shell-reading animate-fade-in font-doran">
       {!user && (
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 mb-6 flex items-center justify-between gap-3 text-right">
           <div>
@@ -169,7 +169,7 @@ export default function Profile() {
         <div className="relative flex flex-col items-center gap-6">
           <ProgressRing percent={progress} />
           <div className="text-center">
-            <div className="text-3xl font-display font-bold text-accent">
+            <div className="text-3xl font-rokh-bold font-bold text-accent">
               {readCount.toLocaleString("fa-IR")}
             </div>
             <div className="text-sm text-muted-foreground mt-1">
@@ -191,13 +191,13 @@ export default function Profile() {
 
       {/* My posts — Instagram-style grid */}
       <div className="mb-8">
-        <h2 className="font-display font-bold text-lg mb-4">پست‌های من</h2>
+        <h2 className="font-rokh-bold font-bold text-lg mb-4">پست‌های من</h2>
         <MyPostsGrid userId={user?.id} />
       </div>
 
       {/* Juz Progress Grid */}
       <div className="rounded-xl border border-accent/10 bg-card/40 p-6 mb-8">
-        <h2 className="font-display font-bold text-lg mb-4 flex items-center gap-2">
+        <h2 className="font-rokh-bold font-bold text-lg mb-4 flex items-center gap-2">
           <Target className="h-5 w-5 text-accent" />
           پیشرفت اجزاء
         </h2>
@@ -228,7 +228,7 @@ export default function Profile() {
       {/* Recently Read */}
       {recent.length > 0 ? (
         <div>
-          <h2 className="font-display font-bold text-lg mb-4 flex items-center gap-2">
+          <h2 className="font-rokh-bold font-bold text-lg mb-4 flex items-center gap-2">
             <Clock className="h-5 w-5 text-accent" />
             آخرین آیات خوانده شده
           </h2>
@@ -305,7 +305,7 @@ function SettingsSection({ user }) {
 
   return (
     <div className="rounded-xl border border-destructive/20 bg-destructive/[0.03] p-6 mt-10">
-      <h2 className="font-display font-bold text-lg mb-2 flex items-center gap-2">
+      <h2 className="font-rokh-bold font-bold text-lg mb-2 flex items-center gap-2">
         <SettingsIcon className="h-5 w-5 text-destructive" /> تنظیمات حساب
       </h2>
       <p className="text-xs text-muted-foreground leading-relaxed mb-4">
@@ -320,7 +320,7 @@ function SettingsSection({ user }) {
           </AlertDialogTrigger>
           <AlertDialogContent className="max-w-md">
             <AlertDialogHeader>
-              <AlertDialogTitle className="font-display">حذف حساب کاربری</AlertDialogTitle>
+              <AlertDialogTitle className="font-rokh-bold">حذف حساب کاربری</AlertDialogTitle>
               <AlertDialogDescription className="leading-relaxed">
                 با حذف حساب، تمام داده‌های شما — پیشرفت تلاوت، نشان‌ها، یادداشت‌ها، پست‌ها و فعالیت‌ها — برای همیشه از بین می‌رود و بازگشت ندارد.
               </AlertDialogDescription>

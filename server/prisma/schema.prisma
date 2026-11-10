@@ -58,6 +58,7 @@ model User {
   badges          UserBadge[]  @relation("UserBadgeOwner")
   questProgress   DailyQuestProgress[] @relation("QuestProgressOwner")
   authOtps        AuthOtp[]    @relation("AuthOtpOwner")
+  watchHistory    WatchHistory[] @relation("WatchHistoryOwner")
 
   @@index([role])
   @@index([email])
@@ -356,7 +357,8 @@ model Bookmark {
 model Follow {
   id            String   @id @default(uuid())
   follower_id   String
-  followed_id   String  // the reciter/channel being followed
+  follower_name String?  // denormalized display name at follow time
+  followed_id   String   // the reciter/channel being followed (legacy clients sent scholar_id)
   followed_name String?
   created_date  DateTime @default(now())
 
@@ -433,6 +435,7 @@ model Notification {
   title           String?
   message         String?
   post_id         String?
+  post_excerpt    String?  // short preview for notification UI
   video_id        String?
   comment_id      String?
   entry_id        String?
@@ -591,11 +594,16 @@ model KhatmPart {
   user_id      String?
   user_name    String?
   user_avatar  String?
-  status       String      @default("available")
+  status       String      @default("available") // available | reserved | completed
   reserved_at  DateTime?
   completed_at DateTime?
   created_date DateTime    @default(now())
   updated_date DateTime    @updatedAt
+
+  @@unique([session_id, part_number])
+  @@index([session_id])
+  @@index([status])
+  @@index([user_id])
 }
 
 model KhatmDua {
@@ -606,6 +614,66 @@ model KhatmDua {
   user_avatar  String?
   message      String
   created_date DateTime    @default(now())
+}
+
+/// Curated verse enrichment (tafsir, reflections, media). Used by Admin,
+/// VerseDetail, CardStudio, CollectionStudy, and gamification featured verse.
+model Verse {
+  id                         String   @id @default(uuid())
+  surah_number               Int
+  surah_name_english         String?
+  surah_name_arabic          String?
+  surah_name_transliteration String?
+  surah_type                 String   @default("meccan")
+  surah_verse_count          Int?
+  verse_number               Int
+  verse_key                  String   // e.g. "7:31"
+  arabic                     String
+  translation                String?
+  transliteration            String?
+  audio_url                  String?
+  reciter                    String?
+  word_analysis              String?  // JSON string
+  tafsir                     String?  // JSON or text
+  reflections                String?  // JSON string
+  themes                     String?  // JSON string
+  linguistic_gems            String?  // JSON string
+  hadith_connections         String?  // JSON string
+  historical_context         String?
+  scholars_lectures          String?  // JSON string
+  videos                     String?  // JSON string array: [{ title, scholar, url, duration }]
+  images                     String?  // JSON string array
+  tags                       String?  // JSON string array
+  difficulty_level           String?  // beginner, intermediate, advanced
+  created_date               DateTime @default(now())
+  updated_date               DateTime @updatedAt
+
+  @@unique([verse_key])
+  @@index([surah_number, verse_number])
+  @@index([created_date])
+}
+
+/// Podcast / audio lesson — used by TalkStudioModal and /entities/Podcast.
+/// Field semantics match across SQLite and PostgreSQL (JSON columns as strings).
+model Podcast {
+  id             String   @id @default(uuid())
+  title          String
+  scholar_id     String?
+  scholar_name   String?
+  scholar_avatar String?
+  audio_url      String
+  cover_image    String?
+  duration       String?
+  description    String?
+  chapters       String?  // JSON: [{ title, timestamp, seconds }]
+  verse_keys     String?  // JSON string array: ["7:31"]
+  views_count    Int      @default(0)
+  likes_count    Int      @default(0)
+  created_date   DateTime @default(now())
+  updated_date   DateTime @updatedAt
+
+  @@index([scholar_id])
+  @@index([created_date])
 }
 
 model UserBadge {
@@ -637,14 +705,38 @@ model DailyQuestProgress {
   user           User?    @relation("QuestProgressOwner", fields: [user_id], references: [id])
 }
 
+/// Per-user watch progress. video_id is a soft reference (no FK) so history
+/// survives deleted/unavailable videos; list handlers enrich when Video exists.
+model WatchHistory {
+  id                     String   @id @default(uuid())
+  user_id                String
+  video_id               String
+  title                  String?
+  thumbnail_url          String?
+  watch_seconds          Int      @default(0)
+  completion_percentage  Float    @default(0)
+  watch_count            Int      @default(1)
+  last_watched_at        DateTime @default(now())
+  created_date           DateTime @default(now())
+  updated_date           DateTime @updatedAt
+
+  user User @relation("WatchHistoryOwner", fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, video_id])
+  @@index([user_id, last_watched_at])
+  @@index([video_id])
+}
+
 model AuthOtp {
-  id          String   @id @default(uuid())
-  email       String?  @unique
-  phone       String?  @unique
-  code        String
-  expires_at  DateTime
-  created_date DateTime @default(now())
-  user        User?    @relation("AuthOtpOwner", fields: [email], references: [email])
+  id           String    @id @default(uuid())
+  email        String?   @unique
+  phone        String?   @unique
+  code         String
+  expires_at   DateTime
+  attempts     Int       @default(0)
+  last_sent_at DateTime?
+  created_date DateTime  @default(now())
+  user         User?     @relation("AuthOtpOwner", fields: [email], references: [email])
   @@index([email])
   @@index([phone])
 }

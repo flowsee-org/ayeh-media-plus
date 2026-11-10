@@ -17,31 +17,104 @@ import {
   completeProfileSchema,
   updateMeSchema,
 } from '../lib/validation.js';
+import { getEmailProvider } from '../lib/delivery/email/index.js';
+import { getSmsProvider } from '../lib/delivery/sms/index.js';
+import {
+  DEV_EMAIL_OTP,
+  DEV_PHONE_OTP,
+  evaluateOtpAttempt,
+  generateEmailOtpCode,
+  generatePhoneOtpCode,
+  emailOtpExpiresAt,
+  phoneOtpExpiresAt,
+  getMaxOtpVerifyAttempts,
+  hashOtpCode,
+} from '../lib/delivery/otp.js';
+import { normalizePhoneNumber, toEnglishDigits } from '../lib/delivery/phone.js';
+import {
+  getAuthRateLimits,
+  clientKey,
+  consumeRateLimit,
+  consumeResendCooldown,
+  rejectRateLimited,
+  destinationEmailKey,
+  destinationPhoneKey,
+  accountLoginKey,
+} from '../lib/delivery/rateLimit.js';
+import {
+  emailVerificationMessage,
+  passwordResetMessage,
+  smsOtpMessage,
+} from '../lib/delivery/messages.js';
+import { shouldExposeDevDeliveryHints } from '../lib/delivery/config.js';
+import { DeliveryError } from '../lib/delivery/errors.js';
 
 const router = Router();
-
-// Fixed demo codes are a development convenience only. They must never be
-// accepted in production, otherwise anyone who knows a phone/email can log in
-// without receiving a real OTP.
-const DEV_PHONE_OTP = '12345';
-const DEV_EMAIL_OTP = '123456';
-
-function generateEmailOtp() {
-  return IS_PRODUCTION
-    ? String(Math.floor(100000 + Math.random() * 900000))
-    : DEV_EMAIL_OTP;
-}
 
 // Database-backed OTP / captcha store (replaces in-memory Maps so data
 // survives server restarts and works across multiple instances).
 
-// Helper to convert Persian/Arabic digits to English digits
-function toEnglishDigits(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
-    .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
-    .trim();
+function deliveryFailure(res, err, fallbackMessage) {
+  if (err instanceof DeliveryError) {
+    // Never echo provider internals or OTP material to clients.
+    return res.status(err.status || 502).json({
+      message: fallbackMessage,
+      code: err.code,
+    });
+  }
+  console.error('[auth/delivery]', err?.name || 'Error', err?.code || '');
+  return res.status(500).json({ message: fallbackMessage });
+}
+
+async function storeEmailOtp(email, code) {
+  const now = new Date();
+  const stored = hashOtpCode(code);
+  return prisma.authOtp.upsert({
+    where: { email },
+    update: {
+      code: stored,
+      expires_at: emailOtpExpiresAt(),
+      attempts: 0,
+      last_sent_at: now,
+    },
+    create: {
+      email,
+      code: stored,
+      expires_at: emailOtpExpiresAt(),
+      attempts: 0,
+      last_sent_at: now,
+    },
+  });
+}
+
+async function storePhoneOtp(phone, code) {
+  const now = new Date();
+  const stored = hashOtpCode(code);
+  return prisma.authOtp.upsert({
+    where: { phone },
+    update: {
+      code: stored,
+      expires_at: phoneOtpExpiresAt(),
+      attempts: 0,
+      last_sent_at: now,
+    },
+    create: {
+      phone,
+      code: stored,
+      expires_at: phoneOtpExpiresAt(),
+      attempts: 0,
+      last_sent_at: now,
+    },
+  });
+}
+
+async function sendEmailOtp(email, code) {
+  const msg = emailVerificationMessage(code);
+  await getEmailProvider().send({ to: email, ...msg });
+}
+
+async function sendSmsOtp(e164, code) {
+  await getSmsProvider().send({ toE164: e164, body: smsOtpMessage(code) });
 }
 
 async function generateNumericSvgCaptcha() {
@@ -130,6 +203,9 @@ router.post('/send-otp-phone', async (req, res) => {
       return res.status(400).json({ message: 'شماره همراه و کد امنیتی الزامی است' });
     }
 
+    const sendLimit = consumeRateLimit(clientKey(req, 'sms-send'), getAuthRateLimits().otpSendMax);
+    if (!sendLimit.allowed) return rejectRateLimited(res, sendLimit);
+
     // Verify Captcha (database-backed)
     const cap = await prisma.authCaptcha.findUnique({ where: { captcha_id: captchaId } });
     if (!cap || cap.expires_at < new Date()) {
@@ -142,46 +218,41 @@ router.post('/send-otp-phone', async (req, res) => {
     }
     await prisma.authCaptcha.delete({ where: { captcha_id: captchaId } });
 
-    // Validate and format Phone
-    let cleanPhone = toEnglishDigits(phone).replace(/[\s-+]/g, '');
-    if (cleanPhone.startsWith('98')) {
-      cleanPhone = '0' + cleanPhone.slice(2);
-    } else if (cleanPhone.length === 10 && cleanPhone.startsWith('9')) {
-      cleanPhone = '0' + cleanPhone;
+    const normalized = normalizePhoneNumber(phone);
+    if (!normalized.ok) {
+      return res.status(400).json({ message: normalized.message });
     }
 
-    if (!/^09\d{9}$/.test(cleanPhone)) {
-      return res.status(400).json({ message: 'شماره تلفن همراه معتبر نیست (مثال: ۰۹۱۲۳۴۵۶۷۸۹)' });
+    const destSendLimit = consumeRateLimit(
+      destinationPhoneKey(normalized.storageKey, 'send'),
+      getAuthRateLimits().otpSendMax
+    );
+    if (!destSendLimit.allowed) return rejectRateLimited(res, destSendLimit);
+
+    const cooldown = consumeResendCooldown(`sms:${normalized.storageKey}`);
+    if (!cooldown.allowed) return rejectRateLimited(res, cooldown);
+
+    const otp = generatePhoneOtpCode();
+    await storePhoneOtp(normalized.storageKey, otp);
+
+    try {
+      await sendSmsOtp(normalized.e164, otp);
+    } catch (err) {
+      // Do not leave a code that was never delivered (user would burn attempts).
+      await prisma.authOtp.delete({ where: { phone: normalized.storageKey } }).catch(() => {});
+      return deliveryFailure(res, err, 'خطا در ارسال کد تایید');
     }
-
-    // Generate 5-digit OTP
-    const otp = Math.floor(10000 + Math.random() * 90000).toString();
-    // Upsert phone OTP (update existing or create new)
-    await prisma.authOtp.upsert({
-      where: { phone: cleanPhone },
-      update: {
-        code: otp,
-        expires_at: new Date(Date.now() + 5 * 60 * 1000),
-      },
-      create: {
-        phone: cleanPhone,
-        code: otp,
-        expires_at: new Date(Date.now() + 5 * 60 * 1000),
-      },
-    });
-
-    console.log(`[SMS/AUTH] Verification code for ${cleanPhone}: ${otp}`);
 
     res.json({
       success: true,
       message: 'کد تأیید پیامک شد',
-      phone: cleanPhone,
+      phone: normalized.storageKey,
       // Never leak the code in production; it is a dev convenience only.
-      ...(!IS_PRODUCTION ? { dev_otp: otp } : {}),
+      ...(shouldExposeDevDeliveryHints() ? { dev_otp: otp } : {}),
     });
   } catch (err) {
-    console.error('Send OTP Phone error:', err);
-    res.status(500).json({ message: 'خطا در ارسال کد تایید', error: err.message });
+    console.error('Send OTP Phone error:', err?.name || err);
+    res.status(500).json({ message: 'خطا در ارسال کد تایید' });
   }
 });
 
@@ -195,22 +266,40 @@ router.post('/verify-otp-phone', async (req, res) => {
       return res.status(400).json({ message: 'شماره همراه و کد تایید الزامی است' });
     }
 
-    let cleanPhone = toEnglishDigits(phone).replace(/[\s-+]/g, '');
-    if (cleanPhone.startsWith('98')) {
-      cleanPhone = '0' + cleanPhone.slice(2);
-    } else if (cleanPhone.length === 10 && cleanPhone.startsWith('9')) {
-      cleanPhone = '0' + cleanPhone;
+    const verifyLimit = consumeRateLimit(clientKey(req, 'sms-verify'), getAuthRateLimits().otpVerifyMax * 4);
+    if (!verifyLimit.allowed) return rejectRateLimited(res, verifyLimit);
+
+    const normalized = normalizePhoneNumber(phone);
+    if (!normalized.ok) {
+      return res.status(400).json({ message: normalized.message });
     }
+    const cleanPhone = normalized.storageKey;
+
+    const destVerifyLimit = consumeRateLimit(
+      destinationPhoneKey(cleanPhone, 'verify'),
+      getAuthRateLimits().otpVerifyMax * 4
+    );
+    if (!destVerifyLimit.allowed) return rejectRateLimited(res, destVerifyLimit);
 
     const cleanOtp = toEnglishDigits(otp);
     const record = await prisma.authOtp.findUnique({ where: { phone: cleanPhone } });
+    const verdict = evaluateOtpAttempt(record, cleanOtp, {
+      allowDevFallback: !IS_PRODUCTION,
+      devCode: DEV_PHONE_OTP,
+    });
 
-    // Accept the stored OTP, plus the fixed dev code outside production.
-    const isValid =
-      (record && record.code === cleanOtp && record.expires_at >= new Date()) ||
-      (!IS_PRODUCTION && cleanOtp === DEV_PHONE_OTP);
-    if (!isValid) {
-      return res.status(400).json({ message: 'کد تایید اشتباه یا منقضی شده است' });
+    if (!verdict.ok) {
+      if (record && verdict.reason !== 'locked') {
+        await prisma.authOtp.update({
+          where: { phone: cleanPhone },
+          data: { attempts: { increment: 1 } },
+        });
+      }
+      const message =
+        verdict.reason === 'locked'
+          ? 'تعداد تلاش برای این کد بیش از حد مجاز است. کد جدید درخواست کنید'
+          : 'کد تایید اشتباه یا منقضی شده است';
+      return res.status(400).json({ message });
     }
 
     // The dev fallback code is accepted without a stored record, so only
@@ -230,7 +319,13 @@ router.post('/verify-otp-phone', async (req, res) => {
           phone: cleanPhone,
           full_name: 'کاربر آیه ' + cleanPhone.slice(-4),
           role: 'user',
+          phone_verified: true,
         },
+      });
+    } else if (!user.phone_verified) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { phone_verified: true },
       });
     }
 
@@ -299,14 +394,26 @@ router.post('/register', async (req, res) => {
     if (!validation.success) return;
     const { email, password, full_name } = validation.data;
 
+    const registerLimit = consumeRateLimit(clientKey(req, 'register'), getAuthRateLimits().otpSendMax);
+    if (!registerLimit.allowed) return rejectRateLimited(res, registerLimit);
+
     const normalizedEmail = email.trim().toLowerCase();
+    const destRegisterLimit = consumeRateLimit(
+      destinationEmailKey(normalizedEmail, 'send'),
+      getAuthRateLimits().otpSendMax
+    );
+    if (!destRegisterLimit.allowed) return rejectRateLimited(res, destRegisterLimit);
+
     const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existing) {
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
+    const registerCooldown = consumeResendCooldown(`email:${normalizedEmail}`);
+    if (!registerCooldown.allowed) return rejectRateLimited(res, registerCooldown);
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: normalizedEmail,
         password: hashedPassword,
@@ -314,30 +421,29 @@ router.post('/register', async (req, res) => {
       },
     });
 
-    // Store a random 6-digit OTP (fixed demo code outside production).
-    const otp = generateEmailOtp();
-    await prisma.authOtp.upsert({
-      where: { email: normalizedEmail },
-      update: {
-        code: otp,
-        expires_at: new Date(Date.now() + 15 * 60 * 1000),
-      },
-      create: {
-        email: normalizedEmail,
-        code: otp,
-        expires_at: new Date(Date.now() + 15 * 60 * 1000),
-      },
-    });
-    console.log(`[AUTH] Verification OTP for ${normalizedEmail}: ${otp}`);
+    const otp = generateEmailOtpCode();
+    await storeEmailOtp(normalizedEmail, otp);
+
+    try {
+      await sendEmailOtp(normalizedEmail, otp);
+    } catch (err) {
+      // Account exists unverified — recoverable via /resend-otp once delivery works.
+      return deliveryFailure(
+        res,
+        err,
+        'Failed to send verification code. Account created — request a new code via resend-otp.'
+      );
+    }
 
     res.json({
       success: true,
       message: 'Verification code sent',
       email: normalizedEmail,
+      ...(shouldExposeDevDeliveryHints() ? { dev_otp: otp } : {}),
     });
   } catch (err) {
-    console.error('Register error:', err);
-    res.status(500).json({ message: 'Failed to register', error: err.message });
+    console.error('Register error:', err?.name || err);
+    res.status(500).json({ message: 'Failed to register' });
   }
 });
 
@@ -348,39 +454,69 @@ router.post('/verify-otp', async (req, res) => {
     if (!validation.success) return;
     const { email, otpCode } = validation.data;
 
+    const verifyLimit = consumeRateLimit(clientKey(req, 'email-verify'), getAuthRateLimits().otpVerifyMax * 4);
+    if (!verifyLimit.allowed) return rejectRateLimited(res, verifyLimit);
+
     const normalizedEmail = email.trim().toLowerCase();
+    const destVerifyLimit = consumeRateLimit(
+      destinationEmailKey(normalizedEmail, 'verify'),
+      getAuthRateLimits().otpVerifyMax * 4
+    );
+    if (!destVerifyLimit.allowed) return rejectRateLimited(res, destVerifyLimit);
+
     const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      // Avoid account enumeration via verify endpoint differences where possible.
+      return res.status(400).json({ message: 'Invalid or expired verification code' });
     }
 
     const record = await prisma.authOtp.findUnique({ where: { email: normalizedEmail } });
-    // Accept the stored OTP, plus the fixed dev code outside production.
-    const isValid =
-      (record && record.code === otpCode && record.expires_at >= new Date()) ||
-      (!IS_PRODUCTION && otpCode === DEV_EMAIL_OTP);
-    if (!isValid) {
-      return res.status(400).json({ message: 'Invalid or expired verification code' });
+    const verdict = evaluateOtpAttempt(record, otpCode, {
+      allowDevFallback: !IS_PRODUCTION,
+      devCode: DEV_EMAIL_OTP,
+    });
+    if (!verdict.ok) {
+      if (record && verdict.reason !== 'locked') {
+        await prisma.authOtp.update({
+          where: { email: normalizedEmail },
+          data: { attempts: { increment: 1 } },
+        });
+      }
+      const message =
+        verdict.reason === 'locked'
+          ? `Too many verification attempts. Request a new code (max ${getMaxOtpVerifyAttempts()}).`
+          : 'Invalid or expired verification code';
+      return res.status(400).json({ message });
     }
 
     if (record) {
       await prisma.authOtp.delete({ where: { email: normalizedEmail } });
     }
-    const token = generateToken(user);
+
+    // Mark inbox as verified — login requires this flag for email/password.
+    const verifiedUser = user.email_verified
+      ? user
+      : await prisma.user.update({
+          where: { id: user.id },
+          data: { email_verified: true },
+        });
+
+    const token = generateToken(verifiedUser);
 
     const safeUser = {
-      id: user.id,
-      email: user.email,
-      full_name: user.full_name,
-      role: user.role,
-      is_scholar: user.is_scholar,
-      avatar_config: user.avatar_config,
-      avatar_url: user.avatar_url,
-      bio: user.bio,
-      streak_days: user.streak_days || 0,
-      max_streak: user.max_streak || 0,
-      total_xp: user.total_xp || 0,
-      spiritual_level: user.spiritual_level || 'مستمع',
+      id: verifiedUser.id,
+      email: verifiedUser.email,
+      full_name: verifiedUser.full_name,
+      role: verifiedUser.role,
+      is_scholar: verifiedUser.is_scholar,
+      avatar_config: verifiedUser.avatar_config,
+      avatar_url: verifiedUser.avatar_url,
+      bio: verifiedUser.bio,
+      streak_days: verifiedUser.streak_days || 0,
+      max_streak: verifiedUser.max_streak || 0,
+      total_xp: verifiedUser.total_xp || 0,
+      spiritual_level: verifiedUser.spiritual_level || 'مستمع',
+      email_verified: true,
     };
 
     res.json({
@@ -389,7 +525,8 @@ router.post('/verify-otp', async (req, res) => {
       user: safeUser,
     });
   } catch (err) {
-    res.status(500).json({ message: 'Verification failed', error: err.message });
+    console.error('Verify OTP error:', err?.name || err);
+    res.status(500).json({ message: 'Verification failed' });
   }
 });
 
@@ -400,24 +537,42 @@ router.post('/resend-otp', async (req, res) => {
     if (!validation.success) return;
     const { email } = validation.data;
     const normalizedEmail = email.trim().toLowerCase();
-    const otp = generateEmailOtp();
-    await prisma.authOtp.upsert({
-      where: { email: normalizedEmail },
-      update: {
-        code: otp,
-        expires_at: new Date(Date.now() + 15 * 60 * 1000),
-      },
-      create: {
-        email: normalizedEmail,
-        code: otp,
-        expires_at: new Date(Date.now() + 15 * 60 * 1000),
-      },
+
+    const sendLimit = consumeRateLimit(clientKey(req, 'email-resend'), getAuthRateLimits().otpSendMax);
+    if (!sendLimit.allowed) return rejectRateLimited(res, sendLimit);
+
+    const destSendLimit = consumeRateLimit(
+      destinationEmailKey(normalizedEmail, 'send'),
+      getAuthRateLimits().otpSendMax
+    );
+    if (!destSendLimit.allowed) return rejectRateLimited(res, destSendLimit);
+
+    const cooldown = consumeResendCooldown(`email:${normalizedEmail}`);
+    if (!cooldown.allowed) return rejectRateLimited(res, cooldown);
+
+    // Always return a generic success when the account is missing to avoid enumeration.
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (!user) {
+      return res.json({ success: true, message: 'Code resent' });
+    }
+
+    const otp = generateEmailOtpCode();
+    await storeEmailOtp(normalizedEmail, otp);
+
+    try {
+      await sendEmailOtp(normalizedEmail, otp);
+    } catch (err) {
+      return deliveryFailure(res, err, 'Failed to resend code');
+    }
+
+    res.json({
+      success: true,
+      message: 'Code resent',
+      ...(shouldExposeDevDeliveryHints() ? { dev_otp: otp } : {}),
     });
-    console.log(`[AUTH] Resent OTP for ${normalizedEmail}: ${otp}`);
-    res.json({ success: true, message: 'Code resent' });
   } catch (err) {
-    console.error('Resend OTP error:', err);
-    res.status(500).json({ message: 'Failed to resend code', error: err.message });
+    console.error('Resend OTP error:', err?.name || err);
+    res.status(500).json({ message: 'Failed to resend code' });
   }
 });
 
@@ -429,14 +584,28 @@ router.post('/login', async (req, res) => {
     const { email, password } = validation.data;
 
     const normalizedEmail = email.trim().toLowerCase();
+    // Per-IP and per-account login caps (in-memory; not multi-instance safe).
+    const loginIpLimit = consumeRateLimit(clientKey(req, 'login'), getAuthRateLimits().loginMax);
+    if (!loginIpLimit.allowed) return rejectRateLimited(res, loginIpLimit);
+    const loginAcctLimit = consumeRateLimit(accountLoginKey(normalizedEmail), getAuthRateLimits().loginMax);
+    if (!loginAcctLimit.allowed) return rejectRateLimited(res, loginAcctLimit);
+
     const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
-    if (!user) {
+    if (!user || !user.password) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    if (!user.email_verified) {
+      return res.status(403).json({
+        message: 'ایمیل شما هنوز تایید نشده است. کد ارسال‌شده را وارد کنید',
+        code: 'EMAIL_NOT_VERIFIED',
+        email: user.email,
+      });
     }
 
     const token = generateToken(user);
@@ -453,6 +622,7 @@ router.post('/login', async (req, res) => {
       max_streak: user.max_streak || 0,
       total_xp: user.total_xp || 0,
       spiritual_level: user.spiritual_level || 'مستمع',
+      email_verified: user.email_verified,
     };
 
     res.json({
@@ -517,6 +687,15 @@ router.post('/reset-password-request', async (req, res) => {
     const { email } = validation.data;
     const normalizedEmail = email.trim().toLowerCase();
 
+    const resetLimit = consumeRateLimit(clientKey(req, 'reset'), getAuthRateLimits().otpSendMax);
+    if (!resetLimit.allowed) return rejectRateLimited(res, resetLimit);
+
+    const destResetLimit = consumeRateLimit(
+      destinationEmailKey(normalizedEmail, 'reset'),
+      getAuthRateLimits().otpSendMax
+    );
+    if (!destResetLimit.allowed) return rejectRateLimited(res, destResetLimit);
+
     // Only mint a token for an existing account, but always answer with the
     // same generic message so the endpoint cannot be used to enumerate users.
     const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
@@ -527,10 +706,17 @@ router.post('/reset-password-request', async (req, res) => {
         JWT_SECRET,
         { expiresIn: '1h' }
       );
-      console.log(`[AUTH] Password reset link for ${normalizedEmail}: /reset-password?token=${resetToken}`);
-      // In production the token is only delivered out-of-band (email/SMS).
-      // Returning it from the API would let any caller reset any account.
-      if (!IS_PRODUCTION) devToken = resetToken;
+      const msg = passwordResetMessage(resetToken);
+      try {
+        await getEmailProvider().send({ to: normalizedEmail, ...msg });
+        // In production the token is only delivered out-of-band (email).
+        // Returning it from the API would let any caller reset any account.
+        if (shouldExposeDevDeliveryHints()) devToken = resetToken;
+      } catch (err) {
+        // Do not change the HTTP shape based on account existence or delivery
+        // outcome — enumeration risk. Ops must monitor delivery error logs.
+        console.error('Reset password email delivery failed:', err?.code || err?.name || 'error');
+      }
     }
 
     res.json({
@@ -539,7 +725,7 @@ router.post('/reset-password-request', async (req, res) => {
       ...(devToken ? { resetToken: devToken } : {}),
     });
   } catch (err) {
-    console.error('Reset password request error:', err);
+    console.error('Reset password request error:', err?.name || err);
     res.status(500).json({ message: 'Failed to request password reset' });
   }
 });
@@ -557,9 +743,10 @@ router.post('/reset-password', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Proving inbox control via reset link also verifies the email.
     await prisma.user.update({
       where: { email: decoded.email },
-      data: { password: hashedPassword },
+      data: { password: hashedPassword, email_verified: true },
     });
 
     res.json({ success: true, message: 'Password updated successfully' });
@@ -590,11 +777,21 @@ router.delete('/me', authenticate({ required: true }), async (req, res) => {
       prisma.comment.deleteMany({ where: { author_id: userId } }),
       prisma.story.deleteMany({ where: { author_id: userId } }),
       prisma.competitionEntry.deleteMany({ where: { author_id: userId } }),
+      prisma.vote.deleteMany({ where: { user_id: userId } }),
+      prisma.like.deleteMany({ where: { user_id: userId } }),
+      prisma.bookmark.deleteMany({ where: { user_id: userId } }),
+      prisma.report.deleteMany({ where: { reporter_id: userId } }),
+      prisma.moderationAction.deleteMany({ where: { actor_id: userId } }),
+      // Null out reviewer attribution rather than blocking deletion.
+      prisma.report.updateMany({
+        where: { reviewed_by: userId },
+        data: { reviewed_by: null },
+      }),
       prisma.notification.deleteMany({
         where: { OR: [{ recipient_id: userId }, { actor_id: userId }] },
       }),
       prisma.follow.deleteMany({
-        where: { OR: [{ follower_id: userId }, { scholar_id: userId }] },
+        where: { OR: [{ follower_id: userId }, { followed_id: userId }] },
       }),
       prisma.khatmDua.deleteMany({ where: { user_id: userId } }),
       ...(ownedSessionIds.length
@@ -615,10 +812,17 @@ router.delete('/me', authenticate({ required: true }), async (req, res) => {
           reserved_at: null,
         },
       }),
+      prisma.watchHistory.deleteMany({ where: { user_id: userId } }),
       prisma.userBadge.deleteMany({ where: { user_id: userId } }),
       prisma.dailyQuestProgress.deleteMany({ where: { user_id: userId } }),
       prisma.podcast.deleteMany({ where: { scholar_id: userId } }),
       prisma.liveSession.deleteMany({ where: { scholar_id: userId } }),
+      // Keep uploaded media/content attribution soft when the account leaves.
+      prisma.video.updateMany({ where: { reciter_id: userId }, data: { reciter_id: null } }),
+      prisma.competition.updateMany({
+        where: { organizer_id: userId },
+        data: { organizer_id: null },
+      }),
       // Curated collections are platform content; keep them, drop the owner.
       prisma.collection.updateMany({ where: { user_id: userId }, data: { user_id: null } }),
       ...(user.email ? [prisma.authOtp.deleteMany({ where: { email: user.email } })] : []),
@@ -630,7 +834,7 @@ router.delete('/me', authenticate({ required: true }), async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     console.error('Delete account error:', err);
-    res.status(500).json({ message: 'Failed to delete account', error: err.message });
+    res.status(500).json({ message: 'Failed to delete account' });
   }
 });
 

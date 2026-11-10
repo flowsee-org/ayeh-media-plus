@@ -8,6 +8,7 @@ import { scopedKey } from "@/lib/storageScope";
 import { toast } from "react-hot-toast";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import BackButton from "@/components/BackButton";
+import EmptyState from "@/components/design-system/EmptyState";
 import {
   ChevronRight, ChevronLeft, BookOpen, Loader2, Languages,
   Compass, Sparkles, Users, Clock, Play, Pause, Tag, CheckCircle2,
@@ -153,7 +154,7 @@ export default function CollectionStudy() {
               <BookOpen className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <h1 className="font-display font-bold text-lg sm:text-xl truncate">{collection.name}</h1>
+              <h1 className="font-rokh-bold font-bold text-lg sm:text-xl truncate">{collection.name}</h1>
               <p className="text-xs text-muted-foreground">{verses.length} آیه • مطالعه تعاملی</p>
             </div>
           </div>
@@ -321,8 +322,28 @@ export default function CollectionStudy() {
 
 /* ── Linguistic Tab ── */
 function LinguisticTab({ verse, color }) {
-  if (!verse._enriched) {
-    return <EmptyState text="تحلیل زبانی برای این آیه موجود نیست." />;
+  const hasCurated =
+    verse._enriched &&
+    (verse.word_analysis?.length || verse.root_words?.length || verse.grammar_breakdown);
+  if (!hasCurated) {
+    // Functional fallback from quranApi (no Verse entity required)
+    return (
+      <div className="space-y-5">
+        <SectionTitle icon={Languages} title="ترجمه و آوانگاری" color={color} />
+        {verse.transliteration ? (
+          <p className="text-sm text-muted-foreground leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4" dir="ltr">
+            {verse.transliteration}
+          </p>
+        ) : null}
+        {verse.translation ? (
+          <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+            {verse.translation}
+          </p>
+        ) : (
+          <EmptyState type="content" showAction={false} title="تحلیل زبانی برای این آیه موجود نیست." subtitle=" " />
+        )}
+      </div>
+    );
   }
   return (
     <div className="space-y-6">
@@ -379,7 +400,7 @@ function LinguisticTab({ verse, color }) {
 function CommentaryTab({ verse, scholars, color }) {
   const reflections = (verse.reflections || []).filter(r => r.scholar_id);
   if (!reflections.length) {
-    return <EmptyState text="هیچ تفسیری از علما برای این آیه ثبت نشده است." />;
+    return <EmptyState type="content" showAction={false} title="هیچ تفسیری از علما برای این آیه ثبت نشده است." subtitle=" " />;
   }
   return (
     <div className="space-y-4">
@@ -412,12 +433,22 @@ function CommentaryTab({ verse, scholars, color }) {
 
 /* ── Classical Tafsir Tab ── */
 function TafsirTab({ verse, color }) {
-  if (!verse._enriched) {
-    return <EmptyState text="تفسیر کلاسیک برای این آیه موجود نیست." />;
-  }
-  const hasContent = verse.classical_tafsir || verse.asbab_al_nuzul || verse.historical_context;
+  const hasContent = verse.classical_tafsir || verse.asbab_al_nuzul || verse.historical_context || verse.tafsir;
   if (!hasContent) {
-    return <EmptyState text="تفسیر کلاسیک برای این آیه موجود نیست." />;
+    if (verse.translation) {
+      return (
+        <div className="space-y-5">
+          <SectionTitle icon={Compass} title="معنای آیه" color={color} />
+          <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+            {verse.translation}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            تفسیر تفصیلی کلاسیک برای این آیه هنوز در پایگاه داده ثبت نشده است.
+          </p>
+        </div>
+      );
+    }
+    return <EmptyState type="content" showAction={false} title="تفسیر کلاسیک برای این آیه موجود نیست." subtitle=" " />;
   }
   return (
     <div className="space-y-5">
@@ -452,11 +483,11 @@ function TafsirTab({ verse, color }) {
 /* ── Tadabbur Tab ── */
 function ReflectionTab({ verse, color }) {
   if (!verse._enriched) {
-    return <EmptyState text="تدبّر برای این آیه موجود نیست." />;
+    return <EmptyState type="content" showAction={false} title="تدبّر برای این آیه موجود نیست." subtitle=" " />;
   }
   const hasContent = verse.tadabbur || verse.life_lessons?.length || verse.practical_applications?.length || verse.questions_to_reflect?.length;
   if (!hasContent) {
-    return <EmptyState text="تدبّر برای این آیه موجود نیست." />;
+    return <EmptyState type="content" showAction={false} title="تدبّر برای این آیه موجود نیست." subtitle=" " />;
   }
   return (
     <div className="space-y-5">
@@ -517,16 +548,7 @@ function SectionTitle({ icon: Icon, title, color }) {
       <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${color}18`, color }}>
         <Icon className="h-4 w-4" />
       </div>
-      <h3 className="font-display font-bold text-base">{title}</h3>
-    </div>
-  );
-}
-
-function EmptyState({ text }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border/60 p-10 text-center">
-      <BookOpen className="h-7 w-7 text-muted-foreground/30 mx-auto mb-3" />
-      <p className="text-sm text-muted-foreground">{text}</p>
+      <h3 className="font-rokh-bold font-bold text-base">{title}</h3>
     </div>
   );
 }

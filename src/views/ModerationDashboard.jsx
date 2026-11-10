@@ -129,12 +129,12 @@ export default function ModerationDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background font-doran">
-      <div className="container-quranic py-6">
+    <div className="font-doran">
+      <div className="page-shell">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
           <div>
             <h1 className="font-rokh-bold font-black text-2xl sm:text-3xl text-foreground mb-1">صف بررسی محتوا</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-editorial">
               بررسی، تایید یا رد محتوای ارسالی توسط کاربران و تولیدکنندگان
             </p>
           </div>

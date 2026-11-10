@@ -5,10 +5,10 @@ import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { getBookmarks, removeBookmark, getSavedPosts, toggleSavedPost } from "@/lib/readingTracker";
 import { getAyah, getSurahList } from "@/lib/quranApi";
-import OrnamentalDivider from "@/components/OrnamentalDivider";
 import PullToRefresh from "@/components/PullToRefresh";
+import EmptyState from "@/components/design-system/EmptyState";
 import {
-  Bookmark, Loader2, BookOpen, Trash2, BookMarked, MessageCircle, Sparkles,
+  Bookmark, Loader2, Trash2, BookMarked, MessageCircle,
 } from "lucide-react";
 
 export default function Bookmarks() {
@@ -78,28 +78,28 @@ export default function Bookmarks() {
 
   return (
     <PullToRefresh onRefresh={() => Promise.all([loadVerses(), loadPosts()])}>
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-accent text-xs font-medium mb-4">
-          <BookMarked className="h-3.5 w-3.5" /> نشان‌گذاری‌های من
+    <div className="page-shell-narrow animate-fade-in font-doran">
+      <div className="mb-6">
+        <div className="inline-flex items-center gap-2 text-primary text-xs font-medium mb-2">
+          <BookMarked className="h-3.5 w-3.5" /> نشان‌گذاری‌ها
         </div>
-        <h1 className="font-display font-extrabold text-3xl sm:text-4xl">نشان‌شده‌های من</h1>
-        <OrnamentalDivider className="mt-6" />
+        <h1 className="font-rokh-bold font-bold text-2xl sm:text-3xl text-foreground">نشان‌شده‌های من</h1>
+        <p className="text-sm text-muted-foreground mt-1.5 font-editorial">
+          آیات و پست‌هایی که برای مطالعه دوباره ذخیره کرده‌اید
+        </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-center gap-2 mb-8">
+      <div className="flex gap-2 mb-6">
         <button
           onClick={() => setTab("verses")}
-          className={`inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-medium transition-all ${tab === "verses" ? "bg-accent text-accent-foreground shadow-soft" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}
+          className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all ${tab === "verses" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
         >
           <Bookmark className="h-4 w-4" /> آیات
           {keys.length > 0 && <span className="text-xs opacity-70">({keys.length.toLocaleString("fa-IR")})</span>}
         </button>
         <button
           onClick={() => setTab("posts")}
-          className={`inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-medium transition-all ${tab === "posts" ? "bg-accent text-accent-foreground shadow-soft" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}
+          className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all ${tab === "posts" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"}`}
         >
           <MessageCircle className="h-4 w-4" /> پست‌ها
           {posts.length > 0 && <span className="text-xs opacity-70">({posts.length.toLocaleString("fa-IR")})</span>}
@@ -107,21 +107,16 @@ export default function Bookmarks() {
       </div>
 
       {loadingActive ? (
-        <div className="flex justify-center py-24"><Loader2 className="h-10 w-10 animate-spin text-accent" /></div>
+        <div className="flex justify-center py-24"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>
       ) : tab === "verses" ? (
         keys.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
-            <Bookmark className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-4">
-              هنوز آیه‌ای نشان‌گذاری نکرده‌اید. در صفحه هر آیه، دکمه نشان را برای ذخیره فشار دهید.
-            </p>
-            <Link
-              to="/quran"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
-            >
-              <BookOpen className="h-4 w-4" /> مرور قرآن
-            </Link>
-          </div>
+          <EmptyState
+            type="bookmarks"
+            title="هنوز آیه‌ای نشان‌گذاری نکرده‌اید"
+            subtitle="در صفحه هر آیه، دکمه نشان را برای ذخیره فشار دهید."
+            actionLabel="مرور قرآن"
+            actionHref="/quran"
+          />
         ) : (
           <div className="space-y-4">
             {verses.map(({ key, data }) => {
@@ -165,18 +160,13 @@ export default function Bookmarks() {
           </div>
         )
       ) : posts.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
-          <MessageCircle className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">
-            هنوز پستی ذخیره نکرده‌اید. در فید جامعه، دکمه نشان روی هر پست را فشار دهید.
-          </p>
-          <Link
-            to="/community"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
-          >
-            <Sparkles className="h-4 w-4" /> رفتن به جامعه
-          </Link>
-        </div>
+          <EmptyState
+            type="bookmarks"
+            title="هنوز پستی ذخیره نکرده‌اید"
+            subtitle="در فید جامعه، دکمه نشان روی هر پست را فشار دهید."
+            actionLabel="رفتن به جامعه"
+            actionHref="/community"
+          />
       ) : (
         <div className="space-y-4">
           {posts.map((p) => (

@@ -66,6 +66,11 @@ export function filterModelFields(entityName, payload) {
     normalized.image_url = normalized.media_url;
   }
 
+  // 3b. Follow alias: older clients sent scholar_id for the followed user
+  if (allowed.has('followed_id') && !normalized.followed_id && normalized.scholar_id) {
+    normalized.followed_id = normalized.scholar_id;
+  }
+
   // 4. Fallbacks for strictly non-null required fields
   if (allowed.has('author_id') && !normalized.author_id) {
     normalized.author_id = 'guest';
@@ -145,11 +150,19 @@ const IGNORED_FILTER_KEYS = new Set([
 ]);
 
 // Helper to construct Prisma where query from Base44 query object
-function parseWhere(query) {
+function parseWhere(query, entityName = null) {
   if (!query || typeof query !== 'object') return {};
   const where = {};
-  for (const [key, val] of Object.entries(query)) {
-    if (val === undefined || IGNORED_FILTER_KEYS.has(key)) continue;
+  for (const [rawKey, val] of Object.entries(query)) {
+    if (val === undefined || IGNORED_FILTER_KEYS.has(rawKey)) continue;
+    // Follow: accept scholar_id as alias for followed_id (legacy client payloads)
+    let key = rawKey;
+    if (
+      (entityName === 'Follow' || entityName === 'follow') &&
+      rawKey === 'scholar_id'
+    ) {
+      key = 'followed_id';
+    }
     if (val && typeof val === 'object' && !Array.isArray(val)) {
       if (val.$in && Array.isArray(val.$in)) {
         where[key] = { in: val.$in };
@@ -199,9 +212,46 @@ const STRICT_OWNER_ENTITIES = new Set([
   'Follow',
   'Notification',
   'LiveSession',
+  'Bookmark',
+  'Like',
+  'Report',
+  'Vote',
+  'UserBadge',
+  'DailyQuestProgress',
+  'WatchHistory',
+]);
+
+// Rows that must never be listed across accounts (private user data).
+const PRIVATE_OWNER_ENTITIES = new Set([
+  'Bookmark',
+  'Like',
+  'Notification',
+  'Report',
+  'Vote',
+  'UserBadge',
+  'DailyQuestProgress',
+  'WatchHistory',
 ]);
 
 const isAdmin = (req) => req.user?.role === 'admin';
+const isStaff = (req) =>
+  req.user?.role === 'admin' || req.user?.role === 'moderator';
+
+// Judging / approval fields must only change via staff moderation or
+// /api/competitions/entries/:id/judge — never via author self-service updates.
+const COMPETITION_ENTRY_JUDGE_FIELDS = new Set([
+  'score_tajweed',
+  'score_voice',
+  'score_accuracy',
+  'score_total',
+  'rank_position',
+  'judged_by',
+  'judged_at',
+  'status',
+  'rejection_reason',
+  'reviewed_by',
+  'reviewed_at',
+]);
 
 // Some fields are legitimately changed by users who don't own the row:
 // likes, comment counts, story views and competition votes. Restrict such
@@ -252,8 +302,8 @@ function ensureWritable(req, res, entityName) {
 
 // Force ownership/identity fields on create so clients cannot impersonate.
 function applyCreatePolicy(req, entityName, payload) {
-  if (isAdmin(req) || !STRICT_OWNER_ENTITIES.has(entityName)) return payload;
   const fields = fieldsOf(entityName);
+  const ownerField = ownerFieldFor(entityName);
 
   // Notifications are addressed to someone else: the client legitimately
   // supplies recipient_id, while the actor identity is always the caller.
@@ -263,13 +313,66 @@ function applyCreatePolicy(req, entityName, payload) {
     return payload;
   }
 
-  const ownerField = ownerFieldFor(entityName);
-  if (ownerField) payload[ownerField] = req.user.id;
+  // Khatm parts are structural rows owned by the parent session. user_id is the
+  // optional reserver — never bind it to the session creator on create.
+  if (entityName === 'KhatmPart') {
+    if (payload.user_id === undefined) payload.user_id = null;
+    if (payload.status === undefined) payload.status = 'available';
+    return payload;
+  }
+
+  // Always bind owner/identity fields to the authenticated caller for owned entities.
+  if (ownerField && (!isAdmin(req) || STRICT_OWNER_ENTITIES.has(entityName) || PRIVATE_OWNER_ENTITIES.has(entityName))) {
+    payload[ownerField] = req.user.id;
+  }
+
+  if (!isAdmin(req) && !STRICT_OWNER_ENTITIES.has(entityName) && !ownerField) return payload;
+
   if (fields?.has('author_name')) payload.author_name = req.user.full_name || 'کاربر آیه';
   if (fields?.has('creator_name')) payload.creator_name = req.user.full_name || 'کاربر آیه';
   if (fields?.has('follower_name')) payload.follower_name = req.user.full_name || 'کاربر آیه';
   if (fields?.has('user_name')) payload.user_name = req.user.full_name || 'کاربر آیه';
   return payload;
+}
+
+function applyPrivateListScope(req, res, entityName, where) {
+  if (!PRIVATE_OWNER_ENTITIES.has(entityName)) return where;
+  if (!req.user) {
+    deny(res, 401, 'Authentication required');
+    return null;
+  }
+  if (isAdmin(req)) return where;
+  const ownerField = ownerFieldFor(entityName);
+  if (!ownerField) return where;
+  return { ...where, [ownerField]: req.user.id };
+}
+
+async function ensurePrivateRecordReadable(req, res, entityName, record) {
+  if (!PRIVATE_OWNER_ENTITIES.has(entityName)) return true;
+  if (!req.user) return deny(res, 401, 'Authentication required');
+  if (isAdmin(req)) return true;
+  const ownerField = ownerFieldFor(entityName);
+  if (!ownerField) return true;
+  if (record[ownerField] === req.user.id) return true;
+  return deny(res, 403, 'You can only access your own records');
+}
+
+async function ensureCanManageKhatmPart(req, res, part, action) {
+  if (!req.user) return deny(res, 401, 'Authentication required');
+  if (isStaff(req)) return true;
+  if (!part?.session_id) return deny(res, 403, 'Forbidden');
+  const session = await prisma.khatmSession.findUnique({
+    where: { id: part.session_id },
+    select: { creator_id: true },
+  });
+  if (session?.creator_id === req.user.id) return true;
+  return deny(
+    res,
+    403,
+    action === 'create'
+      ? 'Only the session creator can add parts'
+      : 'Only the session creator or staff can modify parts'
+  );
 }
 
 /* ── Public User Profile Projection ──
@@ -316,6 +419,15 @@ async function ensureCanMutateRecord(req, res, entityName, id, payload, action) 
     return isAdmin(req) ? true : deny(res, 403, 'Admin access required');
   }
 
+  // KhatmPart rows are not "owned" by the reserver for structural edits —
+  // only session creator or staff may update/delete via the generic API.
+  if (entityName === 'KhatmPart') {
+    const model = getPrismaModel(entityName);
+    const record = await model.findUnique({ where: { id } });
+    if (!record) return deny(res, 404, 'Record not found');
+    return ensureCanManageKhatmPart(req, res, record, action);
+  }
+
   const ownerField = ownerFieldFor(entityName);
   if (!ownerField) {
     return isAdmin(req) ? true : deny(res, 403, 'Admin access required');
@@ -353,7 +465,9 @@ router.get('/:entity', async (req, res) => {
     const { limit, sort, cursor, fields: _f, select: _s, skip: _sk, ...filterParams } = req.query;
     const take = limit ? Math.min(parseInt(limit, 10), 500) : 100;
     const orderBy = parseSort(sort || '-created_date');
-    const where = parseWhere(filterParams);
+    let where = parseWhere(filterParams, entityName);
+    where = applyPrivateListScope(req, res, entityName, where);
+    if (where === null) return;
 
     const [items, total] = await Promise.all([
       model.findMany({
@@ -400,7 +514,9 @@ router.post('/:entity/filter', async (req, res) => {
     const take = limit ? Math.min(parseInt(limit, 10), 500) : 100;
     const offset = Math.max(0, parseInt(skip, 10) || 0);
     const orderBy = parseSort(sort);
-    const where = parseWhere(query);
+    let where = parseWhere(query, entityName);
+    where = applyPrivateListScope(req, res, entityName, where);
+    if (where === null) return;
 
     const [items, total] = await Promise.all([
       model.findMany({ where, orderBy, take, skip: offset }),
@@ -437,6 +553,8 @@ router.get('/:entity/:id', async (req, res) => {
     const item = await model.findUnique({ where: { id: req.params.id } });
     if (!item) return res.status(404).json({ message: 'Record not found' });
 
+    if (!(await ensurePrivateRecordReadable(req, res, entityName, item))) return;
+
     // Public User profiles only expose approved fields (API3:2023)
     if (entityName === 'User') {
       return res.json(projectPublicUser(item));
@@ -454,7 +572,7 @@ router.post('/follow', async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'Authentication required' });
 
-    const { followed_id } = req.body;
+    const followed_id = req.body.followed_id || req.body.scholar_id;
     if (!followed_id || typeof followed_id !== 'string') {
       return res.status(400).json({ message: 'Target user ID is required' });
     }
@@ -482,7 +600,7 @@ router.post('/follow', async (req, res) => {
       data: {
         follower_id: req.user.id,
         followed_id,
-        followed_name: targetUser.full_name || 'کاربر آیه',
+        followed_name: targetUser.full_name || req.body.scholar_name || req.body.followed_name || 'کاربر آیه',
       },
     });
 
@@ -562,6 +680,18 @@ router.post('/:entity', async (req, res) => {
       }
     }
 
+    if (entityName === 'KhatmPart') {
+      if (!(await ensureCanManageKhatmPart(req, res, payload, 'create'))) return;
+    }
+
+    // Authors cannot self-award scores / ranks / publish via create either.
+    if (entityName === 'CompetitionEntry' && !isStaff(req)) {
+      for (const field of COMPETITION_ENTRY_JUDGE_FIELDS) {
+        delete payload[field];
+      }
+      payload.status = 'pending_review';
+    }
+
     const created = await model.create({ data: payload });
     const result = deserializeRecord(created);
 
@@ -595,6 +725,21 @@ router.post('/:entity/bulk', async (req, res) => {
       .map(serializePayload)
       .map((item) => filterModelFields(entityName, item))
       .map((item) => applyCreatePolicy(req, entityName, item));
+
+    if (entityName === 'KhatmPart') {
+      for (const item of serializedItems) {
+        if (!(await ensureCanManageKhatmPart(req, res, item, 'create'))) return;
+      }
+    }
+
+    if (entityName === 'CompetitionEntry' && !isStaff(req)) {
+      for (const item of serializedItems) {
+        for (const field of COMPETITION_ENTRY_JUDGE_FIELDS) {
+          delete item[field];
+        }
+        item.status = 'pending_review';
+      }
+    }
 
     const created = await prisma.$transaction(
       serializedItems.map((item) => model.create({ data: item }))
@@ -633,6 +778,38 @@ const updateHandler = async (req, res) => {
       return;
     }
     payload = applyUpdatePolicy(req, entityName, payload);
+
+    // Reservation state for Khatm parts must go through atomic /api/khatm routes.
+    if (entityName === 'KhatmPart') {
+      const reservedFields = [
+        'status',
+        'user_id',
+        'user_name',
+        'user_avatar',
+        'reserved_at',
+        'completed_at',
+      ];
+      if (Object.keys(payload).some((k) => reservedFields.includes(k))) {
+        return res.status(400).json({
+          message:
+            'Use /api/khatm/parts/:id/reserve|release|complete for reservation state changes',
+        });
+      }
+    }
+
+    // Competition judging / approval must go through staff judge/moderation paths.
+    if (entityName === 'CompetitionEntry' && !isStaff(req)) {
+      const attempted = Object.keys(payload).filter((k) =>
+        COMPETITION_ENTRY_JUDGE_FIELDS.has(k)
+      );
+      if (attempted.length) {
+        return res.status(403).json({
+          message:
+            'Judging and approval fields can only be changed by staff via /api/competitions/entries/:id/judge',
+          fields: attempted,
+        });
+      }
+    }
 
     const updated = await model.update({
       where: { id: req.params.id },
@@ -695,7 +872,7 @@ router.post('/:entity/delete-many', async (req, res) => {
     const model = getPrismaModel(entityName);
     if (!model) return res.status(404).json({ message: `Entity not found` });
 
-    const where = parseWhere(req.body);
+    const where = parseWhere(req.body, entityName);
 
     // Non-admins may only mass-delete rows they own.
     if (!isAdmin(req)) {

@@ -198,30 +198,22 @@ export default function Khatm() {
   });
 
   return (
-    <div className="min-h-screen bg-background pb-20 pt-4" dir="rtl">
-      {/* Hero Banner with Authentic Persian Carpet & Stained Glass Backdrop */}
-      <div className="relative overflow-hidden rounded-3xl mx-4 sm:mx-8 mb-8 border border-amber-400/30 bg-card p-6 sm:p-10 shadow-2xl">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <img
-            src="/images/art/nasir_carpet_window.jpg"
-            alt=""
-            className="w-full h-full object-cover filter brightness-[0.25] dark:brightness-[0.16] contrast-[1.1] scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-card via-card/85 to-card/95 backdrop-blur-[1px]" />
-        </div>
-        <div className="absolute -left-12 -top-12 w-48 h-48 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+    <div className="page-shell animate-fade-in font-doran pb-16" dir="rtl">
+      {/* Soft hero — no carpet full-bleed; matches catalog page headers */}
+      <div className="relative overflow-hidden rounded-3xl mb-8 border border-border bg-card p-6 sm:p-10 shadow-soft">
+        <div className="absolute -start-12 -top-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -end-12 -bottom-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
               <Sparkles className="w-3.5 h-3.5" />
               <span>محفل تلاوت و ختم‌های دسته‌جمعی آیه پلاس</span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-bold font-rokh-bold tracking-tight text-foreground">
               ختم قرآن دسته‌جمعی و گروه‌های تلاوت
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+            <p className="text-sm sm:text-base text-muted-foreground font-editorial leading-relaxed">
               در ثواب تلاوت کلام‌الله مجید سهیم شوید. جزء یا حزب مورد نظر خود را انتخاب کرده، با دیگر همراهان به تلاوت بپردازید و نیت‌های معنوی خود را در دیوار دعا ثبت کنید.
             </p>
           </div>
@@ -229,14 +221,14 @@ export default function Khatm() {
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-accent text-accent-foreground font-semibold shadow-md hover:bg-accent/90 transition-all active:scale-95"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90 transition-all active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>ایجاد دوره جدید</span>
             </button>
             <button
               onClick={() => setShowJoinModal(true)}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-card border border-border/70 hover:border-accent/40 font-medium text-foreground transition-all active:scale-95 shadow-sm"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-card border border-border hover:border-primary/40 font-medium text-foreground transition-all active:scale-95 shadow-sm"
             >
               <Lock className="w-4 h-4 text-muted-foreground" />
               <span>ورود با کد دعوت</span>
@@ -244,10 +236,9 @@ export default function Khatm() {
           </div>
         </div>
 
-        {/* Global Stats Bar */}
-        <div className="mt-8 pt-6 border-t border-border/40 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="mt-8 pt-6 border-t border-border grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
               <BookMarked className="w-5 h-5" />
             </div>
             <div>
@@ -256,7 +247,7 @@ export default function Khatm() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
@@ -265,7 +256,7 @@ export default function Khatm() {
             </div>
           </div>
           <div className="col-span-2 sm:col-span-1 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-secondary text-foreground flex items-center justify-center font-bold">
               <HeartHandshake className="w-5 h-5" />
             </div>
             <div>
@@ -277,9 +268,9 @@ export default function Khatm() {
       </div>
 
       {/* Controls & Filter Bar */}
-      <div className="mx-4 sm:mx-8 mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+      <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-card/60 backdrop-blur border border-border/50 rounded-2xl overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-card border border-border rounded-2xl overflow-x-auto no-scrollbar">
           {[
             { id: "all", label: "همه دوره‌ها" },
             { id: "juz", label: "۳۰ جزء" },
@@ -291,8 +282,8 @@ export default function Khatm() {
               onClick={() => setFilterType(tab.id)}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                 filterType === tab.id
-                  ? "bg-accent text-accent-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent/5"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
               {tab.label}
@@ -308,13 +299,13 @@ export default function Khatm() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="جستجوی نیت، عنوان یا هدف..."
-            className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-card border border-border/60 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all placeholder:text-muted-foreground/60"
+            className="w-full pe-10 ps-4 py-2.5 rounded-xl bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 transition-all placeholder:text-muted-foreground/60"
           />
         </div>
       </div>
 
       {/* Session Cards Grid */}
-      <div className="mx-4 sm:mx-8">
+      <div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((n) => (
@@ -330,7 +321,7 @@ export default function Khatm() {
             </p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-accent-foreground text-sm font-semibold shadow-sm hover:bg-accent/90"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold shadow-sm hover:bg-primary/90"
             >
               <Plus className="w-4 h-4" />
               <span>ایجاد دوره جدید</span>
@@ -351,12 +342,12 @@ export default function Khatm() {
           <div className="bg-card border border-border rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-accent" />
+                <Sparkles className="w-5 h-5 text-primary" />
                 <h2 className="text-lg font-bold text-foreground">ایجاد دوره جدید ختم قرآن</h2>
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="w-8 h-8 rounded-full hover:bg-accent/10 flex items-center justify-center text-muted-foreground hover:text-foreground text-lg"
+                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground text-lg"
               >
                 ✕
               </button>
@@ -371,7 +362,7 @@ export default function Khatm() {
                   value={createForm.title}
                   onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
                   placeholder="مثال: ختم نورانی به نیت شفای بیماران"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30"
                 />
               </div>
 
@@ -380,7 +371,7 @@ export default function Khatm() {
                 <select
                   value={createForm.intention}
                   onChange={(e) => setCreateForm({ ...createForm, intention: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent mb-2"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 mb-2"
                 >
                   {INTENTION_SUGGESTIONS.map((int) => (
                     <option key={int} value={int}>{int}</option>
@@ -393,7 +384,7 @@ export default function Khatm() {
                     value={createForm.customIntention}
                     onChange={(e) => setCreateForm({ ...createForm, customIntention: e.target.value })}
                     placeholder="نیت معنوی اختصاصی خود را بنویسید..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30"
                   />
                 )}
               </div>
@@ -406,7 +397,7 @@ export default function Khatm() {
                     onClick={() => setCreateForm({ ...createForm, target_type: "juz" })}
                     className={`p-3 rounded-xl border text-center transition-all ${
                       createForm.target_type === "juz"
-                        ? "border-accent bg-accent/10 text-accent font-semibold"
+                        ? "border-primary bg-primary/10 text-primary font-semibold"
                         : "border-border/60 hover:border-border text-muted-foreground"
                     }`}
                   >
@@ -418,7 +409,7 @@ export default function Khatm() {
                     onClick={() => setCreateForm({ ...createForm, target_type: "hezb" })}
                     className={`p-3 rounded-xl border text-center transition-all ${
                       createForm.target_type === "hezb"
-                        ? "border-accent bg-accent/10 text-accent font-semibold"
+                        ? "border-primary bg-primary/10 text-primary font-semibold"
                         : "border-border/60 hover:border-border text-muted-foreground"
                     }`}
                   >
@@ -435,7 +426,7 @@ export default function Khatm() {
                   value={createForm.description}
                   onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
                   placeholder="پیام یا توضیحاتی برای شرکت‌کنندگان در این ختم..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-background border border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30"
                 />
               </div>
 
@@ -456,14 +447,14 @@ export default function Khatm() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2.5 rounded-xl hover:bg-accent/10 text-muted-foreground font-medium"
+                  className="px-4 py-2.5 rounded-xl hover:bg-muted text-muted-foreground font-medium"
                 >
                   انصراف
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-6 py-2.5 rounded-xl bg-accent text-accent-foreground font-semibold shadow-md hover:bg-accent/90 disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90 disabled:opacity-50"
                 >
                   {creating ? "در حال ایجاد..." : "تایید و شروع ختم"}
                 </button>
@@ -479,12 +470,12 @@ export default function Khatm() {
           <div className="bg-card border border-border rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6">
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="flex items-center gap-2">
-                <Lock className="w-5 h-5 text-accent" />
+                <Lock className="w-5 h-5 text-primary" />
                 <h2 className="text-lg font-bold text-foreground">ورود به دوره با کد دعوت</h2>
               </div>
               <button
                 onClick={() => setShowJoinModal(false)}
-                className="w-8 h-8 rounded-full hover:bg-accent/10 flex items-center justify-center text-muted-foreground hover:text-foreground text-lg"
+                className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground text-lg"
               >
                 ✕
               </button>
@@ -502,7 +493,7 @@ export default function Khatm() {
                   value={inviteCodeInput}
                   onChange={(e) => setInviteCodeInput(e.target.value.toUpperCase())}
                   placeholder="مثال: A7B9F2"
-                  className="w-full text-center tracking-widest text-lg font-mono uppercase px-4 py-3 rounded-xl bg-background border border-border/70 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                  className="w-full text-center tracking-widest text-lg font-mono uppercase px-4 py-3 rounded-xl bg-background border border-border/70 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30"
                 />
               </div>
 
@@ -510,14 +501,14 @@ export default function Khatm() {
                 <button
                   type="button"
                   onClick={() => setShowJoinModal(false)}
-                  className="px-4 py-2.5 rounded-xl hover:bg-accent/10 text-muted-foreground font-medium"
+                  className="px-4 py-2.5 rounded-xl hover:bg-muted text-muted-foreground font-medium"
                 >
                   انصراف
                 </button>
                 <button
                   type="submit"
                   disabled={joining}
-                  className="px-6 py-2.5 rounded-xl bg-accent text-accent-foreground font-semibold shadow-md hover:bg-accent/90 disabled:opacity-50"
+                  className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90 disabled:opacity-50"
                 >
                   {joining ? "در حال بررسی..." : "ورود به محفل"}
                 </button>
@@ -561,15 +552,14 @@ function KhatmCard({ session }) {
   return (
     <Link
       to={`/khatm/${session.id}`}
-      className="group flex flex-col justify-between rounded-3xl border border-border/50 bg-card p-6 shadow-sm hover:shadow-xl hover:border-accent/40 transition-all duration-300 relative overflow-hidden"
+      className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-soft hover:shadow-md hover:border-primary/30 transition-all duration-300 relative overflow-hidden"
     >
-      {/* Decorative top accent glow */}
-      <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-l from-accent via-amber-400 to-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute top-0 right-0 left-0 h-1 bg-primary/0 group-hover:bg-primary/70 transition-colors" />
 
       <div>
         {/* Badges row */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
             <Sparkles className="w-3 h-3" />
             <span>{session.target_type === "hezb" ? "۶۰ حزب" : "۳۰ جزء"}</span>
           </span>
@@ -581,7 +571,7 @@ function KhatmCard({ session }) {
                 <span>خصوصی</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-md">
                 <Globe className="w-3 h-3" />
                 <span>عمومی</span>
               </span>
@@ -590,7 +580,7 @@ function KhatmCard({ session }) {
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-bold font-rokh-bold text-foreground group-hover:text-accent transition-colors line-clamp-1 mb-1.5">
+        <h3 className="text-lg font-bold font-rokh-bold text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1.5">
           {session.title}
         </h3>
 
@@ -617,15 +607,15 @@ function KhatmCard({ session }) {
             <span className="text-foreground">
               {completedCount.toLocaleString("fa-IR")} از {totalParts.toLocaleString("fa-IR")} سهم تکمیل شده
             </span>
-            <span className="text-accent font-bold">{progressPercent.toLocaleString("fa-IR")}٪</span>
+            <span className="text-primary font-bold">{progressPercent.toLocaleString("fa-IR")}٪</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-muted/60 overflow-hidden flex">
+          <div className="w-full h-2 rounded-full bg-muted overflow-hidden flex">
             <div
-              className="bg-emerald-500 h-full transition-all duration-500"
+              className="bg-primary h-full transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
             <div
-              className="bg-amber-400 h-full transition-all duration-500"
+              className="bg-primary/40 h-full transition-all duration-500"
               style={{ width: `${Math.round((reservedCount / totalParts) * 100)}%` }}
             />
           </div>
@@ -635,14 +625,14 @@ function KhatmCard({ session }) {
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             {session.salawat_count > 0 && (
-              <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+              <span className="inline-flex items-center gap-1 text-primary">
                 <HeartHandshake className="w-3.5 h-3.5" />
                 <span>{session.salawat_count.toLocaleString("fa-IR")} صلوات</span>
               </span>
             )}
           </div>
 
-          <div className="inline-flex items-center gap-1 text-xs font-semibold text-accent group-hover:-translate-x-1 transition-transform">
+          <div className="inline-flex items-center gap-1 text-xs font-semibold text-primary group-hover:-translate-x-1 transition-transform">
             <span>مشاهده و انتخاب سهم</span>
             <ChevronLeft className="w-4 h-4" />
           </div>

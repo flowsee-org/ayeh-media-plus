@@ -42,10 +42,7 @@ export default function Quran() {
     if (!khatmPartId) return;
     try {
       setCompletingKhatm(true);
-      await api.entities.KhatmPart.update(khatmPartId, {
-        status: "completed",
-        completed_at: new Date(),
-      });
+      await api.khatm.completePart(khatmPartId);
       api.gamification.trackActivity({ type: "social", action_detail: "تکمیل سهم ختم قرآن" }).catch(() => {});
       confetti({
         particleCount: 100,
@@ -57,14 +54,14 @@ export default function Quran() {
       setKhatmDone(true);
     } catch (err) {
       console.error("Error completing khatm part:", err);
-      toast.error("خطا در ثبت اتمام قرائت");
+      toast.error(err?.message || "خطا در ثبت اتمام قرائت");
     } finally {
       setCompletingKhatm(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="page-shell">
       {/* Pinned Khatm Recitation Floating Action Bar */}
       {khatmPartId && (
         <div className="sticky top-20 z-40 mb-6 p-4 rounded-2xl bg-card/95 backdrop-blur-md border border-accent/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4">
@@ -154,7 +151,9 @@ function SurahList({ onPick, onPickJuz }) {
 
   return (
     <PullToRefresh onRefresh={loadSurahs}>
-      <div className="animate-fade-in font-doran">
+      {/* suppressHydrationWarning: password-manager extensions (e.g. Proton Pass)
+          may inject data-* attrs onto ancestors of text inputs before hydrate. */}
+      <div className="animate-fade-in font-doran" suppressHydrationWarning>
         {/* Header section */}
         <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
@@ -171,7 +170,15 @@ function SurahList({ onPick, onPickJuz }) {
           <div className="relative max-w-md mx-auto">
             <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
-              type="text"
+              type="search"
+              name="surah-search"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+              data-1p-ignore="true"
+              data-lpignore="true"
+              data-form-type="other"
+              data-protonpass-ignore="true"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="جستجوی نام سوره یا شماره جزء..."
@@ -805,7 +812,7 @@ function JuzView({ n, onBack }) {
 
       <div className="text-center mb-10">
         <div className="text-xs tracking-[0.25em] text-muted-foreground mb-2">جزء</div>
-        <h1 className="font-display font-extrabold text-4xl sm:text-5xl tracking-tight">
+        <h1 className="font-rokh-bold font-extrabold text-4xl sm:text-5xl tracking-tight">
           جزء {fa(n)}
         </h1>
         <OrnamentalDivider className="mt-6" />

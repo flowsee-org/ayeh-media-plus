@@ -66,6 +66,13 @@ const EMPTY_STATE_CONFIGS = {
     actionLabel: 'مشاهده محتوای محبوب',
     actionHref: '/',
   },
+  history: {
+    icon: Clock,
+    title: 'تاریخچه تماشا خالی است',
+    subtitle: 'ویدیوهایی که تماشا می‌کنید اینجا نمایش داده می‌شوند.',
+    actionLabel: 'کاوش محتوا',
+    actionHref: '/explore',
+  },
 };
 
 export default function EmptyState({
@@ -75,6 +82,7 @@ export default function EmptyState({
   icon: Icon,
   actionLabel,
   actionHref,
+  onAction,
   showAction = true,
   className = '',
 }) {
@@ -84,6 +92,8 @@ export default function EmptyState({
   const DisplayIcon = Icon || config.icon;
   const displayActionLabel = actionLabel || config.actionLabel;
   const displayActionHref = actionHref || config.actionHref;
+  const actionClassName =
+    'inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-doran font-semibold text-sm hover:opacity-90 shadow-sm transition-all';
 
   return (
     <div
@@ -96,11 +106,13 @@ export default function EmptyState({
       <p className="font-doran text-sm text-muted-foreground max-w-md mx-auto leading-relaxed mb-8">
         {displaySubtitle}
       </p>
-      {showAction && (
-        <Link
-          href={displayActionHref}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow hover:shadow-[0_0_30px_-6px_hsl(var(--quranic-emerald)_/0.6)]"
-        >
+      {showAction && onAction && (
+        <button type="button" onClick={onAction} className={actionClassName}>
+          {displayActionLabel}
+        </button>
+      )}
+      {showAction && !onAction && (
+        <Link href={displayActionHref} className={actionClassName}>
           {displayActionLabel}
         </Link>
       )}

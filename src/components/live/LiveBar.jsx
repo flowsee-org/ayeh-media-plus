@@ -22,7 +22,9 @@ export default function LiveBar() {
       api.entities.LiveSession.filter({ status: "live" }, { sort: "-created_date", limit: 30 })
         .catch(() => ({ items: [] })),
     ]);
-    const followed = new Set((followRes.items || []).map((f) => f.scholar_id));
+    const followed = new Set(
+      (followRes.items || []).map((f) => f.followed_id || f.scholar_id).filter(Boolean)
+    );
     setSessions(
       (liveRes.items || []).filter(
         (s) => followed.has(s.scholar_id) || s.scholar_id === me.id

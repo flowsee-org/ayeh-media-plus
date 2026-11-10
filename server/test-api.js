@@ -37,6 +37,9 @@ async function runTests() {
   // 4. Entities - List Verses
   console.log('4. Testing GET /entities/Verse...');
   const versesRes = await fetch(`${BASE_URL}/entities/Verse?limit=5`);
+  if (versesRes.status !== 200) {
+    throw new Error(`GET /entities/Verse expected 200, got ${versesRes.status}`);
+  }
   const verses = await versesRes.json();
   console.log(`   Fetched ${verses.items?.length || 0} verses ✅`);
 
@@ -84,6 +87,9 @@ async function runTests() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: { surah_number: 1 }, limit: 10 }),
   });
+  if (filterRes.status !== 200) {
+    throw new Error(`POST /entities/Verse/filter expected 200, got ${filterRes.status}`);
+  }
   const filterData = await filterRes.json();
   console.log(`   Filtered verses count: ${filterData.items?.length || 0} ✅`);
 
@@ -378,38 +384,32 @@ async function runTests() {
   }
   console.log(`    Bulk created 30 Khatm parts ✅`);
 
-  // Reserve Part 1
+  // Reserve Part 1 via atomic khatm API (generic entity state updates are blocked)
   const part1 = createdParts[0];
-  const reserveRes = await fetch(`${BASE_URL}/entities/KhatmPart/${part1.id}`, {
-    method: 'PUT',
+  const reserveRes = await fetch(`${BASE_URL}/khatm/parts/${part1.id}/reserve`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({
-      status: 'reserved',
-      user_id: me.id,
-      user_name: me.full_name,
-    }),
   });
   const reservedPart = await reserveRes.json();
-  if (reservedPart.status !== 'reserved' || reservedPart.user_id !== me.id) {
-    throw new Error('Reservation of Khatm part failed');
+  if (reservedPart.status !== 'reserved' || reservedPart.user_id !== me.id || !reservedPart.reserved_at) {
+    throw new Error('Reservation of Khatm part failed: ' + JSON.stringify(reservedPart));
   }
   console.log(`    Successfully reserved Part 1 by user: ${reservedPart.user_name} ✅`);
 
   // Complete Part 1
-  const completeRes = await fetch(`${BASE_URL}/entities/KhatmPart/${part1.id}`, {
-    method: 'PUT',
+  const completeRes = await fetch(`${BASE_URL}/khatm/parts/${part1.id}/complete`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ status: 'completed' }),
   });
   const completedPart = await completeRes.json();
   if (completedPart.status !== 'completed') {
-    throw new Error('Completion of Khatm part failed');
+    throw new Error('Completion of Khatm part failed: ' + JSON.stringify(completedPart));
   }
   console.log(`    Successfully marked Part 1 as completed ✅`);
 

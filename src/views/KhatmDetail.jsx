@@ -136,17 +136,11 @@ export default function KhatmDetail() {
     }
   };
 
-  // Reserve Part
+  // Reserve Part (atomic /api/khatm — entity updates are blocked)
   const doReservePart = async (part, targetUser) => {
     if (!targetUser) return;
     try {
-      const updated = await api.entities.KhatmPart.update(part.id, {
-        status: "reserved",
-        user_id: targetUser.id,
-        user_name: targetUser.full_name || "کاربر آیه پلاس",
-        user_avatar: targetUser.avatar_url || null,
-        reserved_at: new Date(),
-      });
+      const updated = await api.khatm.reservePart(part.id);
 
       setParts((prev) =>
         prev.map((p) => (p.id === part.id ? { ...p, ...updated } : p))
@@ -154,7 +148,7 @@ export default function KhatmDetail() {
       toast.success(`${session.target_type === "hezb" ? "حزب" : "جزء"} ${part.part_number} با موفقیت برای شما رزرو شد 📖`);
     } catch (err) {
       console.error("Error reserving part:", err);
-      toast.error("خطا در رزرو سهم");
+      toast.error(err?.message || "خطا در رزرو سهم");
     }
   };
 
@@ -171,13 +165,7 @@ export default function KhatmDetail() {
   // Cancel Reservation
   const handleCancelReservation = async (part) => {
     try {
-      const updated = await api.entities.KhatmPart.update(part.id, {
-        status: "available",
-        user_id: null,
-        user_name: null,
-        user_avatar: null,
-        reserved_at: null,
-      });
+      const updated = await api.khatm.releasePart(part.id);
 
       setParts((prev) =>
         prev.map((p) => (p.id === part.id ? { ...p, ...updated } : p))
@@ -185,17 +173,14 @@ export default function KhatmDetail() {
       toast("سهم آزاد شد و به لیست بازگشت", { icon: "ℹ️" });
     } catch (err) {
       console.error("Error cancelling reservation:", err);
-      toast.error("خطا در لغو رزرو");
+      toast.error(err?.message || "خطا در لغو رزرو");
     }
   };
 
   // Mark Part Completed
   const handleCompletePart = async (part) => {
     try {
-      const updated = await api.entities.KhatmPart.update(part.id, {
-        status: "completed",
-        completed_at: new Date(),
-      });
+      const updated = await api.khatm.completePart(part.id);
 
       // Confetti celebration
       confetti({
@@ -211,7 +196,7 @@ export default function KhatmDetail() {
       toast.success(`قبول حق! تلاوت ${session.target_type === "hezb" ? "حزب" : "جزء"} ${part.part_number} به عنوان خوانده‌شده ثبت شد ✨`);
     } catch (err) {
       console.error("Error completing part:", err);
-      toast.error("خطا در ثبت اتمام سهم");
+      toast.error(err?.message || "خطا در ثبت اتمام سهم");
     }
   };
 

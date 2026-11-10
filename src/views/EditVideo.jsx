@@ -5,6 +5,7 @@ import { useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
+import { fa } from "@/lib/utils";
 import { Loader2, Trash2, Save, ArrowLeft, Play, Video as VideoIcon, Mic, BookOpen } from "lucide-react";
 
 /**
@@ -186,7 +187,7 @@ export default function EditVideoPage({ videoId }) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in font-doran">
+    <div className="page-shell-narrow animate-fade-in font-doran">
       <div className="mb-8 flex items-center justify-between">
         <LinkBack onClick={() => navigate(`/watch/${videoId}`)} label="بازگشت به ویدیو" />
         <h1 className="font-rokh-bold font-bold text-2xl sm:text-3xl text-foreground">ویرایش محتوای ویدیویی</h1>

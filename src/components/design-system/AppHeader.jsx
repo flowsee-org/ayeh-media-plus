@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Menu, Upload, Sun, Moon } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Menu, Upload, Sun, Moon, Search } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useTheme } from '@/components/ThemeToggle';
 import BrandLogo from './BrandLogo';
@@ -9,30 +11,35 @@ import GlobalSearch from './GlobalSearch';
 import NotificationBell from '@/components/notifications/NotificationBell';
 
 /**
- * Ayeh Media Plus Global Header — Aparat Style
- * Dark header with:
- * - Ayeh logo
- * - Prominent global search
- * - Upload button (call-to-action)
- * - Notifications, theme toggle, profile
- * - Responsive design (mobile drawer toggle)
+ * Global Header — Aparat-style light chrome
+ * Logo · centered search · upload CTA · notifications · theme · profile
  */
 export default function AppHeader({ onMenuToggle, className = '' }) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { user: authUser, openAuthModal } = useAuth();
   const { toggleTheme, theme } = useTheme();
-  const Icon = theme === 'dark' ? Sun : Moon;
+  const router = useRouter();
+  const ThemeIcon = theme === 'dark' ? Sun : Moon;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleUpload = () => {
+    if (!authUser) {
+      openAuthModal();
+      return;
+    }
+    router.push('/upload');
+  };
+
   return (
     <header
-      className={`sticky top-0 z-50 border-b border-border transition-all duration-300 ${
-        isScrolled ? 'bg-background/95 shadow-lg' : 'bg-background/80 backdrop-blur-md'
+      className={`sticky top-0 z-50 border-b border-border/80 transition-all duration-200 ${
+        isScrolled ? 'bg-card/95 shadow-sm backdrop-blur-md' : 'bg-card/90 backdrop-blur-md'
       } ${className}`}
       style={{
         paddingTop: 'env(safe-area-inset-top)',
@@ -40,9 +47,9 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
         paddingRight: 'env(safe-area-inset-right)',
       }}
     >
-      <div className="px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-        {/* Left: Mobile Menu + Logo */}
-        <div className="flex items-center gap-3">
+      <div className="px-3 sm:px-5 lg:px-6 h-14 sm:h-16 flex items-center gap-3">
+        {/* Start: Menu + Logo */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onMenuToggle}
             className="lg:hidden p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors"
@@ -50,75 +57,71 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <BrandLogo variant="inline" className="shrink-0" />
+          {/* Logo only on mobile/tablet — desktop sidebar already shows brand */}
+          <BrandLogo variant="inline" className="shrink-0 lg:hidden" />
         </div>
 
-        {/* Center: Prominent Global Search */}
-        <div className="hidden lg:flex items-center flex-1 max-w-[700px] mx-8">
-          <div className="relative w-full">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Menu className="h-4 w-4 text-muted-foreground/50" />
-            </div>
-            <GlobalSearch className="w-full pl-10" />
-          </div>
+        {/* Center: Search */}
+        <div className="hidden md:flex items-center flex-1 max-w-[640px] mx-auto">
+          <GlobalSearch className="w-full" />
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex items-center gap-2">
+        {/* End: Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2 ms-auto shrink-0">
           <button
-            onClick={() => openAuthModal()}
-            className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-quranic-emerald text-white text-xs font-bold hover:opacity-90 shadow-quranic-glow transition-all"
+            onClick={() => setMobileSearchOpen((v) => !v)}
+            className="md:hidden p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors"
+            aria-label="جستجو"
           >
-            <Upload className="h-3.5 w-3.5 mr-1.5" />
+            <Search className="h-5 w-5" />
+          </button>
+
+          <button
+            onClick={handleUpload}
+            className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 shadow-sm transition-all"
+          >
+            <Upload className="h-3.5 w-3.5" />
             آپلود ویدیو
           </button>
-          <NotificationBell className="hidden sm:block" />
+
+          {authUser && <NotificationBell className="hidden sm:block" />}
+
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors sm:block"
+            className="p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors"
             aria-label="تغییر تم"
           >
-            <Icon className="h-5 w-5" />
+            <ThemeIcon className="h-5 w-5" />
           </button>
+
           {authUser ? (
-            <ProfileTrigger />
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-xl hover:bg-muted text-foreground text-xs font-medium transition-all group"
+            >
+              <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20 group-hover:scale-105 transition-transform">
+                {(authUser?.full_name || 'ک').charAt(0)}
+              </div>
+              <span className="hidden lg:block truncate max-w-[100px]">
+                {authUser?.full_name || 'کاربر'}
+              </span>
+            </Link>
           ) : (
-            <AuthButton />
+            <button
+              onClick={() => openAuthModal()}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-border bg-card text-foreground text-xs font-bold hover:bg-muted transition-all"
+            >
+              ورود
+            </button>
           )}
         </div>
       </div>
-    </header>
-  );
-}
 
-function ProfileTrigger() {
-  const { user: authUser, openAuthModal } = useAuth();
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => openAuthModal()}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted text-foreground text-xs font-medium hover:bg-muted/80 transition-all group"
-      >
-        <div className="h-7 w-7 rounded-full bg-quranic-emerald text-quranic-ink flex items-center justify-center font-bold text-xs shrink-0 border border-quranic-emerald/30 group-hover:scale-105 transition-transform">
-          {(authUser?.full_name || 'ک').charAt(0)}
+      {mobileSearchOpen && (
+        <div className="md:hidden px-3 pb-3 border-t border-border/60">
+          <GlobalSearch className="w-full mt-3" />
         </div>
-        <span className="hidden sm:block truncate max-w-[120px]">
-          {authUser?.full_name || 'کاربر'}
-        </span>
-      </button>
-    </div>
-  );
-}
-
-function AuthButton() {
-  const { openAuthModal } = useAuth();
-  return (
-    <button
-      onClick={() => openAuthModal()}
-      className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-quranic-emerald text-white text-xs font-bold hover:opacity-90 shadow-quranic-glow transition-all"
-    >
-      ورود / ثبت‌نام
-    </button>
+      )}
+    </header>
   );
 }

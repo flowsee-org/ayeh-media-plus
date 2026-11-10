@@ -1,0 +1,35 @@
+# Example local/ops Staging Postgres only — NOT a deployed Staging environment.
+# Copy/adapt on your host. Do not point this at Production. Do not commit secrets.
+#
+# Usage (example):
+#   docker compose -f docker-compose.staging.example.yml up -d
+#   export DATABASE_PROVIDER=postgresql
+#   export DATABASE_URL='postgresql://ayeh_staging:ayeh_staging@127.0.0.1:5434/ayeh_staging?schema=public'
+#   pnpm db:prepare:prod
+#   pnpm db:migrate
+#   pnpm db:generate   # restore SQLite client for local app/tests afterward
+#
+# Application process, Brevo SMTP, TextBee SMS (or Twilio), JWT, uploads volume,
+# and public URL remain operator-provided. This file alone does not constitute a
+# verified Staging deploy.
+
+services:
+  staging-db:
+    image: postgres:16-alpine
+    container_name: ayeh-staging-pg-example
+    environment:
+      POSTGRES_USER: ayeh_staging
+      POSTGRES_PASSWORD: ayeh_staging
+      POSTGRES_DB: ayeh_staging
+    ports:
+      - "5434:5432"
+    volumes:
+      - ayeh_staging_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ayeh_staging -d ayeh_staging"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ayeh_staging_pg_data:

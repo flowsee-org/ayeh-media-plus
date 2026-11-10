@@ -37,9 +37,27 @@ export default function CompetitionDetail() {
     Promise.all([
       api.entities.Competition.get(id).catch(() => null),
       api.entities.CompetitionEntry.filter({ competition_id: id }, "-votes_count", 100).catch(() => []),
-    ]).then(([c, e]) => {
+      // Enrich with authoritative vote state when competitions API is available
+      api.competitions
+        .listEntries(id, { sort: "-votes_count", limit: 100 })
+        .then((res) => res.items || [])
+        .catch(() => []),
+    ]).then(([c, entityEntries, votedEntries]) => {
       setComp(c);
-      setEntries(e);
+      const base = Array.isArray(entityEntries) ? entityEntries : entityEntries?.items || [];
+      const voteMap = new Map((votedEntries || []).map((e) => [e.id, e]));
+      setEntries(
+        base.map((e) => {
+          const v = voteMap.get(e.id);
+          if (!v) return e;
+          return {
+            ...e,
+            votes_count: v.votes_count ?? e.votes_count,
+            voted_by: v.voted_by || e.voted_by || [],
+            user_has_voted: v.user_has_voted,
+          };
+        })
+      );
       setLoading(false);
     });
   }, [id, authUser]);
@@ -51,22 +69,40 @@ export default function CompetitionDetail() {
       });
       return;
     }
-    const votedBy = entry.voted_by || [];
-    const hasVoted = votedBy.includes(user.id);
-    const newVotedBy = hasVoted ? votedBy.filter((uid) => uid !== user.id) : [...votedBy, user.id];
+    const hasVoted = entry.user_has_voted || (entry.voted_by || []).includes(user.id);
+    const prevCount = entry.votes_count || 0;
+    const optimisticCount = hasVoted ? Math.max(0, prevCount - 1) : prevCount + 1;
+    const optimisticVotedBy = hasVoted
+      ? (entry.voted_by || []).filter((uid) => uid !== user.id)
+      : [...(entry.voted_by || []), user.id];
+
     setEntries((prev) =>
       prev.map((e) =>
         e.id === entry.id
-          ? { ...e, voted_by: newVotedBy, votes_count: newVotedBy.length }
+          ? {
+              ...e,
+              voted_by: optimisticVotedBy,
+              votes_count: optimisticCount,
+              user_has_voted: !hasVoted,
+            }
           : e
       )
     );
     try {
-      await api.entities.CompetitionEntry.update(entry.id, {
-        voted_by: newVotedBy,
-        votes_count: newVotedBy.length,
-      });
-      toast.success(hasVoted ? "رأی شما پس گرفته شد" : "رأی شما با موفقیت ثبت شد");
+      const result = await api.competitions.vote(id, entry.id, "upvote");
+      setEntries((prev) =>
+        prev.map((e) =>
+          e.id === entry.id
+            ? {
+                ...e,
+                votes_count: result.votes_count ?? e.votes_count,
+                user_has_voted: !!result.user_vote,
+                voted_by: result.user_vote ? [user.id] : [],
+              }
+            : e
+        )
+      );
+      toast.success(result.user_vote ? "رأی شما با موفقیت ثبت شد" : "رأی شما پس گرفته شد");
     } catch {
       setEntries((prev) => prev.map((e) => (e.id === entry.id ? entry : e)));
       toast.error("ثبت رأی ناموفق بود.");
@@ -261,11 +297,16 @@ export default function CompetitionDetail() {
             onClose={() => setShowSubmit(false)}
             onSubmitted={() => {
               setShowSubmit(false);
-              api.entities.CompetitionEntry.filter(
-                { competition_id: id },
-                "-votes_count",
-                100
-              ).then(setEntries);
+              api.competitions
+                .listEntries(id, { status: "all", sort: "-votes_count", limit: 100 })
+                .then((res) => setEntries(res.items || res || []))
+                .catch(() =>
+                  api.entities.CompetitionEntry.filter(
+                    { competition_id: id },
+                    "-votes_count",
+                    100
+                  ).then(setEntries)
+                );
             }}
           />
         )}
@@ -288,7 +329,8 @@ function MetaCard({ icon: Icon, label, value }) {
  * Enhanced Entry Card supporting video or dedicated luxury Quranic audio player
  */
 function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
-  const hasVoted = (entry.voted_by || []).includes(currentUser?.id);
+  const hasVoted =
+    !!entry.user_has_voted || (entry.voted_by || []).includes(currentUser?.id);
   const { playTrack, track: currentTrack, isPlaying, togglePlay } = useAudioPlayer();
 
   // Detect media type: audio vs video

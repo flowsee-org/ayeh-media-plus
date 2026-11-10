@@ -9,7 +9,10 @@ import { transcodeVideo, cleanupVideo } from '../lib/transcode.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadDir = path.join(__dirname, '..', 'uploads');
+// Resolve from this file so uploads stay at repo-root /uploads even if the
+// process is started with a non-repo cwd. Must match server/index.js and
+// server/lib/transcode.js — never server/uploads.
+const uploadDir = path.join(__dirname, '..', '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }

@@ -29,11 +29,28 @@ function serializeComp(c) {
 }
 
 // ── Helper: serialize entry ──
-function serializeEntry(e) {
-  return {
-    ...e,
-    votes: e.votes ? JSON.parse(e.votes) : [],
+function serializeEntry(e, { userId = null, userVotedEntryIds = null, publicResults = false } = {}) {
+  const { votes, _count, ...rest } = e;
+  const votesRelation = Array.isArray(votes) ? votes : [];
+  const hasVoted = userVotedEntryIds ? userVotedEntryIds.has(rest.id) : false;
+  const base = {
+    ...rest,
+    votes_count: rest.votes_count ?? _count?.votes ?? votesRelation.length ?? 0,
+    comments_count: rest.comments_count ?? _count?.comments ?? 0,
+    // Compatibility with clients that still read voted_by as an array of user ids
+    voted_by: userId && hasVoted ? [userId] : [],
+    user_has_voted: hasVoted,
   };
+  if (!publicResults) return base;
+  // Public results: keep display fields, drop internal moderation attribution.
+  const {
+    rejection_reason,
+    reviewed_by,
+    reviewed_at,
+    judged_by,
+    ...publicFields
+  } = base;
+  return publicFields;
 }
 
 // ── GET /api/competitions — List competitions ──
@@ -95,6 +112,48 @@ router.get('/', async (req, res) => {
     });
   } catch (err) {
     console.error('List competitions error:', err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── GET /api/competitions/:id/results — Public ranked results
+// Registered before /:id so Express never treats "results" as an id segment confusion
+// for nested paths (and keeps static-ish suffixes ahead of the generic getter).
+router.get('/:id/results', async (req, res) => {
+  try {
+    const competition = await prisma.competition.findUnique({
+      where: { id: req.params.id },
+    });
+    if (!competition) {
+      return res.status(404).json({ message: 'Competition not found' });
+    }
+
+    const entries = await prisma.competitionEntry.findMany({
+      where: {
+        competition_id: req.params.id,
+        status: { in: ['verified', 'published'] },
+        judged_at: { not: null },
+      },
+      orderBy: [
+        { rank_position: 'asc' },
+        { score_total: 'desc' },
+        { votes_count: 'desc' },
+      ],
+      include: {
+        author: { select: { id: true, full_name: true, avatar_url: true } },
+        _count: { select: { votes: true } },
+      },
+    });
+
+    res.json({
+      competition_id: competition.id,
+      competition_title: competition.title,
+      competition_status: competition.status,
+      total: entries.length,
+      items: entries.map((e) => serializeEntry(e, { publicResults: true })),
+    });
+  } catch (err) {
+    console.error('Competition results error:', err);
     res.status(500).json({ message: err.message });
   }
 });
@@ -321,8 +380,23 @@ router.get('/:id/entries', async (req, res) => {
       prisma.competitionEntry.count({ where }),
     ]);
 
+    let userVotedEntryIds = null;
+    if (req.user?.id) {
+      const myVotes = await prisma.vote.findMany({
+        where: {
+          user_id: req.user.id,
+          competition_id: req.params.id,
+          entry_id: { in: entries.map((e) => e.id) },
+        },
+        select: { entry_id: true },
+      });
+      userVotedEntryIds = new Set(myVotes.map((v) => v.entry_id));
+    }
+
     res.json({
-      items: entries.map(serializeEntry),
+      items: entries.map((e) =>
+        serializeEntry(e, { userId: req.user?.id || null, userVotedEntryIds })
+      ),
       has_more: offset + entries.length < total,
       total,
     });
@@ -516,6 +590,55 @@ router.post(
   }
 );
 
+async function recalculateCompetitionRanks(competitionId, tx = prisma) {
+  const judged = await tx.competitionEntry.findMany({
+    where: {
+      competition_id: competitionId,
+      status: { in: ['verified', 'published'] },
+      judged_at: { not: null },
+    },
+    orderBy: [
+      { score_total: 'desc' },
+      { votes_count: 'desc' },
+      { created_date: 'asc' },
+    ],
+  });
+
+  await Promise.all(
+    judged.map((entry, index) =>
+      tx.competitionEntry.update({
+        where: { id: entry.id },
+        data: { rank_position: index + 1 },
+      })
+    )
+  );
+
+  // Clear ranks for rejected/disqualified/pending so results stay consistent
+  await tx.competitionEntry.updateMany({
+    where: {
+      competition_id: competitionId,
+      OR: [
+        { status: { in: ['rejected', 'disqualified', 'pending_review'] } },
+        { judged_at: null },
+      ],
+    },
+    data: { rank_position: null },
+  });
+
+  return judged.length;
+}
+
+function computeScoreTotal({ score_tajweed, score_voice, score_accuracy, score_total }) {
+  if (score_total !== undefined && score_total !== null && score_total !== '') {
+    return Number(score_total);
+  }
+  const parts = [score_tajweed, score_voice, score_accuracy]
+    .map((v) => (v === undefined || v === null || v === '' ? null : Number(v)))
+    .filter((v) => v !== null && !Number.isNaN(v));
+  if (!parts.length) return null;
+  return parts.reduce((a, b) => a + b, 0) / parts.length;
+}
+
 // ── POST /api/competitions/entries/:entryId/judge — Judge entry (moderator+) ──
 router.post(
   '/entries/:entryId/judge',
@@ -529,7 +652,7 @@ router.post(
         score_accuracy,
         score_total,
         rank_position,
-        status = 'verified',
+        status,
         rejection_reason,
       } = req.body;
 
@@ -542,23 +665,58 @@ router.post(
         return res.status(404).json({ message: 'Entry not found' });
       }
 
-      const updated = await prisma.competitionEntry.update({
-        where: { id: req.params.entryId },
-        data: {
-          score_tajweed: score_tajweed !== undefined ? score_tajweed : entry.score_tajweed,
-          score_voice: score_voice !== undefined ? score_voice : entry.score_voice,
-          score_accuracy: score_accuracy !== undefined ? score_accuracy : entry.score_accuracy,
-          score_total: score_total !== undefined ? score_total : entry.score_total,
-          rank_position,
-          status,
-          rejection_reason: rejection_reason || null,
-          judged_by: req.user.id,
-          judged_at: new Date(),
-        },
+      const nextTajweed =
+        score_tajweed !== undefined ? Number(score_tajweed) : entry.score_tajweed;
+      const nextVoice =
+        score_voice !== undefined ? Number(score_voice) : entry.score_voice;
+      const nextAccuracy =
+        score_accuracy !== undefined ? Number(score_accuracy) : entry.score_accuracy;
+      const computedTotal = computeScoreTotal({
+        score_tajweed: nextTajweed,
+        score_voice: nextVoice,
+        score_accuracy: nextAccuracy,
+        score_total,
       });
 
-      // If verified/published, notify
-      if ((status === 'published' || status === 'verified') && io) {
+      // Preserve prior product default: omit status → verified (results include verified|published).
+      const nextStatus = status || 'verified';
+      const isReject =
+        nextStatus === 'rejected' || nextStatus === 'disqualified';
+
+      const updated = await prisma.$transaction(async (tx) => {
+        const row = await tx.competitionEntry.update({
+          where: { id: req.params.entryId },
+          data: {
+            score_tajweed: nextTajweed,
+            score_voice: nextVoice,
+            score_accuracy: nextAccuracy,
+            score_total:
+              computedTotal !== null && computedTotal !== undefined
+                ? computedTotal
+                : entry.score_total,
+            rank_position:
+              rank_position !== undefined ? rank_position : entry.rank_position,
+            status: nextStatus,
+            rejection_reason: isReject
+              ? rejection_reason || entry.rejection_reason || null
+              : rejection_reason || null,
+            judged_by: req.user.id,
+            judged_at: new Date(),
+          },
+        });
+
+        // Auto-rank judged entries unless the caller supplied an explicit rank override.
+        if (rank_position === undefined) {
+          await recalculateCompetitionRanks(entry.competition_id, tx);
+        }
+
+        return tx.competitionEntry.findUnique({
+          where: { id: row.id },
+          include: { _count: { select: { votes: true, comments: true } } },
+        });
+      });
+
+      if ((nextStatus === 'published' || nextStatus === 'verified') && io) {
         io.emit('moderation:entry_approved', {
           entry_id: entry.id,
           competition_id: entry.competition_id,

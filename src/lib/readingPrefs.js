@@ -5,6 +5,13 @@ const PREFS_CHANGE_EVENT = "ayeh-reading-prefs-changed";
 
 export const QURAN_FONTS = [
   {
+    id: "tajrid",
+    label: "تجرید (عربی آیه پلاس)",
+    family: "'Tajrid', 'Noto Naskh Arabic', serif",
+    sample: "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+    description: "قلم تخصصی عربی پلتفرم برای آیات و متن قرآنی",
+  },
+  {
     id: "amiri-quran",
     label: "امیری قرآنی (مصحف مدینه)",
     family: "'Amiri Quran', 'Amiri', serif",
@@ -78,8 +85,8 @@ export const DEFAULT_PREFS = {
   lineHeight: 2.5, // 2.0 to 3.4
   translationScale: 1.0, // 0.85 to 1.35
   showTranslation: true,
-  arabicFont: "'Amiri Quran', 'Amiri', serif",
-  fontId: "amiri-quran",
+  arabicFont: "'Tajrid', 'Noto Naskh Arabic', serif",
+  fontId: "tajrid",
   diacriticTheme: "classic", // classic | ruby | gold | turquoise
   highlightWaqf: true,
 };

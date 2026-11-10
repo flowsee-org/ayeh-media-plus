@@ -377,8 +377,8 @@ export default function CardStudio() {
   };
 
   return (
-    <div dir="rtl" className="min-h-screen pb-20 pt-4 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div dir="rtl" className="page-shell animate-fade-in font-doran pb-16">
+      <div>
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between mb-5">
           <Link
@@ -390,8 +390,8 @@ export default function CardStudio() {
           </Link>
 
           <div className="flex items-center gap-2">
-            <span className="p-1 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <Sparkles className="w-4 h-4 text-primary" />
+            <span className="p-1 rounded-lg bg-primary/10 text-primary border border-primary/20">
+              <Sparkles className="w-4 h-4" />
             </span>
             <span className="text-xs font-bold font-rokh-bold text-foreground">
               استودیوی طراحی استوری و کارت قرآنی
@@ -428,7 +428,7 @@ export default function CardStudio() {
             </div>
 
             {/* Live Card Container */}
-            <div className="w-full max-w-[360px] sm:max-w-[420px] rounded-3xl p-2 bg-gradient-to-br from-emerald-950/40 via-card to-card border border-primary/30 shadow-2xl backdrop-blur-md relative overflow-hidden group">
+            <div className="w-full max-w-[360px] sm:max-w-[420px] rounded-3xl p-2 bg-gradient-to-br from-primary/15 via-card to-card border border-border shadow-soft relative overflow-hidden group">
               <div
                 className="w-full relative rounded-2xl overflow-hidden shadow-inner flex items-center justify-center bg-black/50"
                 style={{
@@ -466,7 +466,7 @@ export default function CardStudio() {
               <button
                 onClick={handlePublishStory}
                 disabled={busyAction !== null}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold font-rokh-bold shadow-md transition-transform active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold font-rokh-bold shadow-sm transition-transform active:scale-95 disabled:opacity-50"
                 title="انتشار مستقیم در استوری‌های آیه"
               >
                 {busyAction === "story" ? (
@@ -480,7 +480,7 @@ export default function CardStudio() {
               <button
                 onClick={handlePublishPost}
                 disabled={busyAction !== null}
-                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold font-rokh-bold shadow-md transition-transform active:scale-95 disabled:opacity-50"
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-2xl bg-secondary hover:bg-muted text-foreground border border-border text-xs font-bold font-rokh-bold shadow-sm transition-transform active:scale-95 disabled:opacity-50"
                 title="انتشار به عنوان پست در جامعه"
               >
                 {busyAction === "post" ? (

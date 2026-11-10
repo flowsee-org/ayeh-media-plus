@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { getSurahList } from "@/lib/quranApi";
 import { JUZ_DATA } from "@/lib/juzData";
@@ -408,42 +408,42 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
-      <div className="text-center mb-10">
-        <h1 className="font-display font-extrabold text-4xl sm:text-5xl tracking-tight">جستجو</h1>
-        <p className="text-muted-foreground mt-2">
-          جستجو در آیات، ترجمه، سوره‌ها، قاریان، اساتید، تفسیر، مسابقات، محافل و ویدیوها.
+    <div className="page-shell animate-fade-in space-y-5 font-doran">
+      <div>
+        <h1 className="font-rokh-bold font-bold text-2xl tracking-tight text-foreground">جستجو</h1>
+        <p className="text-muted-foreground text-sm mt-1.5 font-editorial">
+          جستجو در ویدیوها، قاریان، اساتید، سوره‌ها، مسابقات و محافل
         </p>
       </div>
 
       {/* Search Input */}
-      <div className="relative mb-10">
-        <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <div className="relative">
+        <Search className="absolute end-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="کلمه عربی، ترجمه فارسی، نام سوره، نام قاری، یا موضوع…"
-          className="w-full pr-12 pl-4 py-3.5 rounded-2xl border border-border/50 bg-card/50 text-sm focus:outline-none focus:ring-2 focus-ring focus:ring-primary/20 focus:border-primary/30 transition-all"
+          placeholder="عنوان ویدیو، نام قاری، سوره یا موضوع…"
+          className="w-full h-12 pe-11 ps-4 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 transition-all"
         />
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-8 border-b border-border/60">
-        {SEARCH_FILTERS.map((filter) => {
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        {SEARCH_FILTERS.filter((f) => !['qari', 'ayah'].includes(f.id)).map((filter) => {
           const Icon = filter.icon;
           const isActive = activeFilter === filter.id;
           return (
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id)}
-              className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium font-ui transition-all border ${
+              className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-sm font-medium transition-all border ${
                 isActive
-                  ? 'bg-quranic-emerald text-white shadow-quranic-glow'
-                  : 'bg-transparent text-muted-foreground border-border/50 hover:bg-muted/50 hover:text-foreground'
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-card text-foreground/80 border-border hover:bg-muted'
               }`}
             >
-              <Icon className={`h-3 w-3 ${isActive ? 'text-white' : 'text-muted-foreground/60'}`} />
+              <Icon className="h-3.5 w-3.5" />
               {filter.label}
             </button>
           );
@@ -456,17 +456,13 @@ export default function SearchPage() {
           <SkeletonGrid count={6} />
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-destructive/20 bg-destructive/[0.03] p-12 text-center">
-          <BookOpen className="h-8 w-8 text-destructive/30 mx-auto mb-3" />
-          <h3 className="font-rokh-bold font-bold text-lg text-destructive mb-2">خطا در جستجو</h3>
-          <p className="text-sm text-muted-foreground">{error}</p>
-          <button
-            onClick={() => runSearch(query)}
-            className="mt-4 px-6 py-2 rounded-xl bg-quranic-emerald text-white text-sm font-medium hover:opacity-90 transition-colors"
-          >
-            تلاش مجدد
-          </button>
-        </div>
+        <EmptyState
+          type="search"
+          title="خطا در جستجو"
+          subtitle={error}
+          showAction={false}
+          className="border-destructive/20"
+        />
       ) : (
         <>
           {searched && totalCount === 0 && (
@@ -485,7 +481,7 @@ export default function SearchPage() {
                 <span className="font-ui text-xs text-muted-foreground">
                   {totalCount} نتیجه یافت شد
                 </span>
-                <span className="font-ui text-xs text-quranic-emerald font-semibold">
+                <span className="font-ui text-xs text-primary font-semibold">
                   فیلتر: {SEARCH_FILTERS.find(f => f.id === internalFilter)?.label || 'همه'}
                 </span>
               </div>
@@ -494,7 +490,7 @@ export default function SearchPage() {
                 <div className="grid gap-8">
                   {results.surahs.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">سوره‌ها</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">سوره‌ها</h3>
                       <div className="grid sm:grid-cols-2 gap-2">
                         {results.surahs.slice(0, 8).map((s) => renderResultItem(s, 'surah'))}
                       </div>
@@ -502,7 +498,7 @@ export default function SearchPage() {
                   )}
                   {results.qaris.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">قاریان</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">قاریان</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.qaris.slice(0, 6).map((q) => renderResultItem(q, 'qari'))}
                       </div>
@@ -510,7 +506,7 @@ export default function SearchPage() {
                   )}
                   {results.scholars.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">اساتید</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">اساتید</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.scholars.slice(0, 6).map((s) => renderResultItem(s, 'scholar'))}
                       </div>
@@ -518,7 +514,7 @@ export default function SearchPage() {
                   )}
                   {results.gatherings.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">محافل</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">محافل</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.gatherings.slice(0, 6).map((g) => renderResultItem(g, 'gathering'))}
                       </div>
@@ -526,7 +522,7 @@ export default function SearchPage() {
                   )}
                   {results.tafsir.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">تفسیر</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">تفسیر</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.tafsir.slice(0, 6).map((t) => renderResultItem(t, 'videos'))}
                       </div>
@@ -534,7 +530,7 @@ export default function SearchPage() {
                   )}
                   {results.competitions.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">مسابقات</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">مسابقات</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.competitions.slice(0, 6).map((c) => renderResultItem(c, 'competitions'))}
                       </div>
@@ -542,7 +538,7 @@ export default function SearchPage() {
                   )}
                   {results.videos.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">ویدئوها</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">ویدئوها</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.videos.slice(0, 6).map((v) => renderResultItem(v, 'videos'))}
                       </div>
@@ -550,7 +546,7 @@ export default function SearchPage() {
                   )}
                   {results.collections.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">مجموعه‌ها</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">مجموعه‌ها</h3>
                       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {results.collections.slice(0, 6).map((c) => renderResultItem(c, 'collections'))}
                       </div>
@@ -558,7 +554,7 @@ export default function SearchPage() {
                   )}
                   {results.ayahs.length > 0 && (
                     <div>
-                      <h3 className="text-xs font-medium tracking-wider text-muted-foreground uppercase mb-3">آیات</h3>
+                      <h3 className="font-rokh-bold text-sm font-bold text-foreground mb-3">آیات</h3>
                       <div className="space-y-3">
                         {results.ayahs.slice(0, 8).map((a) => renderResultItem(a, 'ayah'))}
                       </div>
@@ -585,10 +581,12 @@ export default function SearchPage() {
           )}
 
           {!searched && (
-            <div className="rounded-2xl border border-dashed border-border/60 p-16 text-center">
-              <Search className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground">برای جستجو شروع به تایپ کنید.</p>
-            </div>
+            <EmptyState
+              type="search"
+              title="آماده جستجو"
+              subtitle="عنوان ویدیو، نام قاری، سوره یا موضوع را تایپ کنید."
+              showAction={false}
+            />
           )}
         </>
       )}

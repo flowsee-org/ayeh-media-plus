@@ -11,6 +11,7 @@ import CreatePost from "@/components/community/CreatePost";
 import ActivePrizeStrip from "@/components/community/ActivePrizeStrip";
 import VerseCardStudio from "@/components/cards/VerseCardStudio";
 import { Avatar } from "@/components/community/shared";
+import EmptyState from "@/components/design-system/EmptyState";
 import {
   Plus, Loader2, Sparkles, Trophy, Palette, BookOpen,
   HelpCircle, Video, Compass,
@@ -120,22 +121,22 @@ export default function Community() {
 
   return (
     <PullToRefresh onRefresh={loadPosts}>
-      <div className="mx-auto max-w-[500px] px-3 pb-8 pt-2 sm:px-0 sm:py-6 animate-fade-in font-doran">
+      <div className="page-shell-narrow animate-fade-in space-y-4 font-doran pb-8">
         {/* Compact & Clean Page Header */}
-        <div className="mb-4 flex items-center justify-between gap-3 px-1 pt-1">
+        <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="font-rokh-bold font-bold text-2xl text-foreground tracking-tight">
               جامعه تدبّر
             </h1>
-            <p className="font-doran text-xs text-muted-foreground mt-0.5">
+            <p className="font-editorial text-sm text-muted-foreground mt-1">
               جایی که آیات در زندگی‌ها رویداد می‌شوند
             </p>
           </div>
           <Link
             to="/competitions"
-            className="flex shrink-0 items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-3.5 py-1.5 font-ui text-xs font-bold text-accent transition-all hover:bg-accent/20 hover:scale-[1.02]"
+            className="flex shrink-0 items-center gap-1.5 rounded-xl border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary transition-all hover:bg-primary/15"
           >
-            <Trophy className="h-3.5 w-3.5 text-accent" />
+            <Trophy className="h-3.5 w-3.5" />
             <span>چالش‌های قرآنی</span>
           </Link>
         </div>
@@ -144,7 +145,7 @@ export default function Community() {
         <ActivePrizeStrip />
 
         {/* Quick Create Prompt Bar */}
-        <div className="mb-4 rounded-2xl border border-border/70 bg-card p-3.5 shadow-soft transition-all hover:border-primary/40">
+        <div className="rounded-2xl border border-border bg-card p-3.5 shadow-soft transition-all hover:border-primary/40">
           <button
             onClick={handleOpenCreate}
             className="flex w-full items-center gap-3 text-right group"
@@ -158,7 +159,7 @@ export default function Community() {
             <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium">
               آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
               <Plus className="h-4 w-4" />
             </div>
           </button>
@@ -167,23 +168,23 @@ export default function Community() {
           <div className="mt-3 flex items-center gap-2 border-t border-border/50 pt-2.5">
             <button
               onClick={handleOpenStudio}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent/10 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent/20 font-ui"
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
             >
               <Palette className="h-3.5 w-3.5" />
               <span>سازماندهی بصری آیه</span>
             </button>
             <button
               onClick={handleOpenCreate}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-secondary/80 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-secondary font-ui"
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-secondary py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span>نوشتن تدبّر</span>
             </button>
           </div>
         </div>
 
         {/* Filter Chips Bar */}
-        <div className="mb-4 flex items-center gap-2 overflow-x-auto no-scrollbar py-1 px-0.5">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {CHIPS.map((chip) => {
             const isSelected = selectedChip === chip.id;
             const Icon = chip.icon;
@@ -191,10 +192,10 @@ export default function Community() {
               <button
                 key={chip.id}
                 onClick={() => setSelectedChip(chip.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold font-ui transition-all ${
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all border ${
                   isSelected
-                    ? "bg-primary text-primary-foreground shadow-xs scale-[1.02]"
-                    : "bg-card border border-border/70 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-card border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
                 }`}
               >
                 <Icon className="h-3 w-3" />
@@ -207,7 +208,7 @@ export default function Community() {
         {/* Feed List */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <Loader2 className="h-8 w-8 animate-spin text-accent" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-xs text-muted-foreground">در حال بارگذاری مطالب جامعه قرآنی...</p>
           </div>
         ) : filteredPosts.length > 0 ? (
@@ -223,24 +224,18 @@ export default function Community() {
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-border/70 bg-card/50 p-10 text-center animate-fade-in">
-            <Sparkles className="h-8 w-8 text-accent/50 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-foreground mb-1">
-              {selectedChip === "all"
+          <EmptyState
+            type="general"
+            icon={Sparkles}
+            title={
+              selectedChip === "all"
                 ? "هنوز کسی تدبّری به اشتراک نگذاشته"
-                : "در این دسته‌بندی تدبّری یافت نشد"}
-            </p>
-            <p className="text-xs text-muted-foreground mb-4">
-              نخستین نفری باشید که آیه‌ای را به زندگی خود متصل می‌کند و با دیگران به اشتراک می‌گذارد
-            </p>
-            <button
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-bold hover:shadow-soft transition-all"
-            >
-              <Plus className="h-4 w-4" />
-              <span>تدبّر خود را بنویسید</span>
-            </button>
-          </div>
+                : "در این دسته‌بندی تدبّری یافت نشد"
+            }
+            subtitle="نخستین نفری باشید که آیه‌ای را به زندگی خود متصل می‌کند و با دیگران به اشتراک می‌گذارد"
+            actionLabel="تدبّر خود را بنویسید"
+            onAction={handleOpenCreate}
+          />
         )}
 
         {/* Create Post Modal */}

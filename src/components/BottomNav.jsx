@@ -7,7 +7,7 @@ export default function BottomNav({ tabs }) {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-xl shadow-soft font-ui"
+      className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur-xl shadow-soft font-ui"
       style={{
         paddingBottom: "env(safe-area-inset-bottom, 8px)",
         paddingLeft: "env(safe-area-inset-left)",

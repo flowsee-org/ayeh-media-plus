@@ -79,7 +79,7 @@ export default async function ProfileRoute({ params }) {
         <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
       </div>
     }>
-      <ProfilePage params={params} />
+      <ProfilePage params={{ id }} />
     </Suspense>
   );
 }

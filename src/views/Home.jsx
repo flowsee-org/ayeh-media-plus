@@ -6,39 +6,35 @@ import Link from "next/link";
 import api from "@/lib/api";
 import { fa } from "@/lib/utils";
 import {
-  Play, Sparkles, Video, BookOpen, Flame, Users, Clock, Trophy,
-  Mic, ChevronRight, Eye, User, Compass, Volume2, Award, Star,
-  Upload, Smartphone, Loader2,
+  Play, Video, BookOpen, Flame, Users, Clock, Trophy,
+  Mic, ChevronLeft, Eye, User, Compass, Upload, Radio,
 } from "lucide-react";
 
 import VideoCard from "@/components/design-system/VideoCard";
 import ScholarCard from "@/components/design-system/ScholarCard";
-import GatheringCard from "@/components/design-system/GatheringCard";
 import ContentSection from "@/components/design-system/ContentSection";
-import { SkeletonPage, SkeletonGrid } from "@/components/design-system/LoadingSkeleton";
+import { SkeletonPage } from "@/components/design-system/LoadingSkeleton";
 import EmptyState from "@/components/design-system/EmptyState";
 
 /**
- * Ayeh Media Plus — Homepage
- * Pure video platform inspired by Aparat.
- * Sections: Hero/Featured, Trending, Recitations, Shorts, Live, Qaris, Collections
+ * Homepage — Aparat-style video discovery
+ * Topic chips · featured hero · dense video grid · channels · collections
  */
 
 const CATEGORY_CHIPS = [
-  { label: 'همه', key: 'all', icon: Compass },
+  { label: 'برای شما', key: 'all', icon: Compass },
   { label: 'تلاوت', key: 'recitation', icon: Mic },
   { label: 'تفسیر', key: 'tafsir', icon: BookOpen },
-  { label: 'مسابقات', key: 'competition', icon: Trophy },
   { label: 'محافل', key: 'gathering', icon: Users },
+  { label: 'مسابقات', key: 'competition', icon: Trophy },
+  { label: 'زنده', key: 'live', icon: Radio },
 ];
 
 export default function Home() {
   const router = useRouter();
   const [featured, setFeatured] = useState([]);
-  const [trending, setTrending] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const [allVideos, setAllVideos] = useState([]);
   const [qaris, setQaris] = useState([]);
-  const [gatherings, setGatherings] = useState([]);
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -47,7 +43,7 @@ export default function Home() {
     let mounted = true;
     const loadData = async () => {
       try {
-        const [vids, scholars, collections] = await Promise.all([
+        const [vids, scholars, cols] = await Promise.all([
           api.entities.Video.filter(
             { status: { in: ["published", "verified"] } },
             { sort: "-created_date", limit: 100 }
@@ -56,22 +52,25 @@ export default function Home() {
           api.entities.Collection.filter({ is_public: true }, { sort: "-created_date", limit: 12 }).catch(() => ({ items: [] })),
         ]);
 
+        if (!mounted) return;
+
         const items = vids.items || vids || [];
         const scholarItems = scholars.items || scholars || [];
 
-        // Deduplicate featured
         const featuredIds = new Set();
         const featuredDeduped = items
-          .filter(v => v.is_live || v.is_competition || v.category === 'gathering')
-          .filter(v => { if (featuredIds.has(v.id)) return false; featuredIds.add(v.id); return true; })
-          .slice(0, 6);
+          .filter((v) => v.is_live || v.is_competition || v.category === 'gathering' || v.is_featured)
+          .filter((v) => {
+            if (featuredIds.has(v.id)) return false;
+            featuredIds.add(v.id);
+            return true;
+          })
+          .slice(0, 5);
 
-        setFeatured(featuredDeduped);
-        setTrending(items.filter(v => v.category === 'recitation' || !v.category).slice(0, 12));
-        setVideos(items.filter(v => activeCategory === 'all' || v.category === activeCategory).slice(0, 20));
+        setFeatured(featuredDeduped.length ? featuredDeduped : items.slice(0, 5));
+        setAllVideos(items);
         setQaris(scholarItems.slice(0, 8));
-        setGatherings(items.filter(v => v.category === 'gathering').slice(0, 8));
-        setCollections(collections.items || collections || []);
+        setCollections(cols.items || cols || []);
       } catch (err) {
         console.error("Home load error:", err);
       } finally {
@@ -80,380 +79,366 @@ export default function Home() {
     };
     loadData();
     return () => { mounted = false; };
-  }, [activeCategory]);
+  }, []);
 
-  const hero = useMemo(() => {
-    if (!featured.length) return null;
-    return featured[0];
-  }, [featured]);
+  const videos = useMemo(() => {
+    if (activeCategory === 'all') return allVideos.slice(0, 24);
+    if (activeCategory === 'live') return allVideos.filter((v) => v.is_live).slice(0, 24);
+    if (activeCategory === 'competition') {
+      return allVideos.filter((v) => v.is_competition || v.category === 'competition').slice(0, 24);
+    }
+    return allVideos.filter((v) => v.category === activeCategory).slice(0, 24);
+  }, [allVideos, activeCategory]);
 
-  const secondary = useMemo(() => featured.slice(1, 4), [featured]);
+  const hero = featured[0] || null;
+  const secondary = featured.slice(1, 5);
+  const liveVideos = useMemo(() => allVideos.filter((v) => v.is_live).slice(0, 4), [allVideos]);
+  const shorts = useMemo(() => {
+    const isShort = (v) => {
+      const tags = Array.isArray(v.tags) ? v.tags : String(v.tags || "");
+      if (v.category === "short" || (typeof tags === "string" ? tags.includes("شورت") : tags.includes("شورت") || tags.includes("کوتاه"))) {
+        return true;
+      }
+      // Parse Persian/Latin durations under ~90s as shorts
+      const d = String(v.duration || "");
+      const m = d.match(/(\d+)/g);
+      if (!m) return false;
+      if (d.includes(":") && m.length >= 2) {
+        const parts = m.map(Number);
+        const secs = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + parts[1];
+        return secs > 0 && secs <= 90;
+      }
+      return false;
+    };
+    return allVideos.filter(isShort).slice(0, 12);
+  }, [allVideos]);
+  const trending = useMemo(
+    () => [...allVideos].sort((a, b) => (b.views_count || 0) - (a.views_count || 0)).slice(0, 8),
+    [allVideos]
+  );
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-[1400px] py-8">
         <SkeletonPage />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* ── Hero Section ── */}
-      {hero && (
-        <section className="relative py-10 sm:py-14 lg:py-20 overflow-hidden">
-          <div className="container-quranic relative z-10">
-            {/* Primary Featured */}
-            <article className="relative group">
-              <Link
-                href={`/watch/${hero.id}`}
-                className="block rounded-2xl overflow-hidden bg-gradient-to-br from-quranic-emerald-dark/20 via-quranic-emerald/10 to-quranic-turquoise/20 border border-quranic-emerald/20 hover:border-quranic-emerald/40 transition-all duration-500 h-[320px] lg:h-[400px]"
+    <div className="mx-auto max-w-[1400px] space-y-8 sm:space-y-10">
+      {/* Topic chips — Aparat personalized tabs */}
+      <section className="sticky top-14 sm:top-16 z-20 -mx-3 sm:-mx-5 lg:-mx-6 px-3 sm:px-5 lg:px-6 py-3 bg-background/90 backdrop-blur-md border-b border-border/60">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          {CATEGORY_CHIPS.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = activeCategory === cat.key;
+            return (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border shrink-0 ${
+                  isActive
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                }`}
               >
-                <div className="absolute inset-0 z-0">
-                  {hero.thumbnail_url ? (
-                    <img
-                      src={hero.thumbnail_url}
-                      alt=""
-                      className="w-full h-full object-cover opacity-25 group-hover:opacity-35 transition-opacity duration-700"
-                      loading="eager"
-                      decoding="async"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-quranic-emerald-dark/30 to-quranic-turquoise/30" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                </div>
+                <Icon className="h-3.5 w-3.5" />
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
-                <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6 lg:p-8">
-                  {/* Badges */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {hero.is_live && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-quranic-saffron text-quranic-ink text-xs font-bold animate-[live-pulse_1.5s_infinite] shadow-saffron-glow">
-                        <span className="h-2 w-2 rounded-full bg-quranic-ink animate-[breathe_2s_infinite]" aria-hidden="true" />
-                        زنده
-                      </span>
-                    )}
-                    {hero.is_competition && (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-emerald text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-emerald/30">
-                        <Trophy className="h-3 w-3" aria-hidden="true" />
-                        <span>{hero.competition_year || 'مسابقه'}</span>
-                      </span>
-                    )}
-                  </div>
+      {/* Featured hero */}
+      {hero && (
+        <section className="grid gap-4 lg:grid-cols-12">
+          <Link
+            href={`/watch/${hero.id}`}
+            className="group relative lg:col-span-8 overflow-hidden rounded-2xl bg-muted aspect-video lg:aspect-auto lg:min-h-[360px]"
+          >
+            {hero.thumbnail_url ? (
+              <img
+                src={hero.thumbnail_url}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                loading="eager"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/20" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+            <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-7">
+              <div className="flex flex-wrap gap-2 mb-3">
+                {hero.is_live && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500 text-white text-xs font-bold">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                    زنده
+                  </span>
+                )}
+                {hero.is_competition && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary text-white text-xs font-bold">
+                    <Trophy className="h-3 w-3" />
+                    {hero.competition_year || 'مسابقه'}
+                  </span>
+                )}
+              </div>
+              <h1 className="font-rokh-bold text-xl sm:text-2xl lg:text-3xl text-white font-bold leading-snug line-clamp-2 mb-3">
+                {hero.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-3 text-sm text-white/80 mb-4">
+                {(hero.reciter_name || hero.scholar_name) && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <User className="h-4 w-4" />
+                    {hero.reciter_name || hero.scholar_name}
+                  </span>
+                )}
+                {hero.duration && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="h-4 w-4" />
+                    {hero.duration}
+                  </span>
+                )}
+                {!!hero.views_count && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Eye className="h-4 w-4" />
+                    {fa(hero.views_count)} بازدید
+                  </span>
+                )}
+              </div>
+              <span className="inline-flex w-fit items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-primary font-bold text-sm shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
+                <Play className="h-4 w-4" />
+                پخش ویدیو
+              </span>
+            </div>
+          </Link>
 
-                  <h1 className="font-rokh-bold font-bold text-2xl sm:text-3xl lg:text-4xl leading-tight text-white mb-4 line-clamp-2 group-hover:text-quranic-saffron transition-colors">
-                    {hero.title}
-                  </h1>
-
-                  <div className="flex flex-wrap items-center gap-3 text-sm sm:text-base text-white/80 mb-6">
-                    {hero.duration && (
-                      <span className="inline-flex items-center gap-1.5 font-medium">
-                        <Clock className="h-4 w-4 text-quranic-saffron" aria-hidden="true" />
-                        <span>{hero.duration}</span>
-                      </span>
-                    )}
-                    {hero.views_count && (
-                      <span className="inline-flex items-center gap-1.5 font-medium">
-                        <Eye className="h-4 w-4 text-quranic-saffron" aria-hidden="true" />
-                        <span>{fa(hero.views_count)} نمایش</span>
-                      </span>
-                    )}
-                    {(hero.reciter_name || hero.scholar_name) && (
-                      <span className="inline-flex items-center gap-1.5 font-medium">
-                        <User className="h-4 w-4 text-quranic-saffron" aria-hidden="true" />
-                        <span>{hero.reciter_name || hero.scholar_name}</span>
-                      </span>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => router.push(`/watch/${hero.id}`)}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-quranic-emerald font-rokh-bold font-bold hover:bg-quranic-saffron/10 transition-all shadow-xl group-hover:scale-105"
-                  >
-                    <Play className="h-5 w-5" aria-hidden="true" />
-                    <span>مشاهده و استماع</span>
-                  </button>
+          <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-3">
+            {secondary.map((item) => (
+              <Link
+                key={item.id}
+                href={`/watch/${item.id}`}
+                className="group relative overflow-hidden rounded-xl bg-muted aspect-video lg:aspect-auto lg:min-h-[84px]"
+              >
+                {item.thumbnail_url ? (
+                  <img
+                    src={item.thumbnail_url}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/15" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-3">
+                  <h3 className="text-white text-sm font-bold line-clamp-2 leading-snug">
+                    {item.title}
+                  </h3>
                 </div>
               </Link>
-            </article>
-
-            {/* Secondary Featured */}
-            {secondary.length > 0 && (
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {secondary.map((item) => (
-                  <article key={item.id} className="relative group">
-                    <Link
-                      href={`/watch/${item.id}`}
-                      className="group relative block rounded-xl overflow-hidden bg-gradient-to-br from-quranic-emerald-dark/20 to-quranic-turquoise/20 border border-border/60 hover:border-quranic-emerald/40 hover:shadow-xl transition-all duration-500 h-[140px] sm:h-[160px]"
-                    >
-                      <div className="absolute inset-0 z-0">
-                        {item.thumbnail_url ? (
-                          <img
-                            src={item.thumbnail_url}
-                            alt=""
-                            className="w-full h-full object-cover opacity-35 group-hover:opacity-45 group-hover:scale-105 transition-all duration-700"
-                            loading="lazy"
-                            decoding="async"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-quranic-emerald-dark/30 to-quranic-turquoise/30" />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                      </div>
-
-                      <div className="relative z-10 h-full flex flex-col justify-end p-4">
-                        <div className="flex flex-wrap gap-1 mb-2">
-                          {item.is_live && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-saffron text-quranic-ink text-[10px] font-bold animate-[live-pulse_1.5s_infinite]">
-                              <span className="h-1.5 w-1.5 rounded-full bg-quranic-ink animate-[breathe_2s_infinite]" aria-hidden="true" />
-                              زنده
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-rokh-bold font-bold text-base sm:text-lg leading-snug text-white line-clamp-2 group-hover:text-quranic-saffron transition-colors mb-2">
-                          {item.title}
-                        </h3>
-                        <div className="inline-flex items-center gap-1.5 text-xs text-white/70">
-                          <Play className="h-3.5 w-3.5 text-quranic-saffron" aria-hidden="true" />
-                          <span>مشاهده</span>
-                        </div>
-                      </div>
-                    </Link>
-                  </article>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
         </section>
       )}
 
-      {/* ── Category Filter Chips ── */}
-      <section className="py-6 sm:py-8 border-b border-border/50">
-        <div className="container-quranic">
-          <div className="flex flex-wrap gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-3">
-            {CATEGORY_CHIPS.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = activeCategory === cat.key;
-              return (
-                <button
-                  key={cat.key}
-                  onClick={() => setActiveCategory(cat.key)}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
-                    isActive
-                      ? 'bg-quranic-saffron text-quranic-ink border-quranic-saffron shadow-saffron-glow'
-                      : 'bg-transparent text-muted-foreground border-border/50 hover:bg-muted/50 hover:text-foreground hover:border-border'
-                  }`}
-                >
-                  <Icon className={`h-3 w-3 ${isActive ? 'text-quranic-ink' : 'text-muted-foreground/60'}`} />
-                  <span>{cat.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Main Video Grid ── */}
-      <section className="py-10 sm:py-12 lg:py-16">
-        <div className="container-quranic">
-          <div className="flex items-center justify-between mb-8 sm:mb-10">
-            <div>
-              <h2 className="font-rokh-bold font-bold text-2xl sm:text-3xl text-foreground">
-                ویدیوهای محبوب
-              </h2>
-              <p className="font-doran text-sm text-muted-foreground mt-1">
-                تلاوت‌ها، تفسیرها، محافل و مسابقات قرآنی
-              </p>
-            </div>
-            <Link
-              href="/explore"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow hidden sm:flex"
-            >
-              مشاهده همه <ChevronRight className="h-4 w-4" />
+      {/* Live strip — only real is_live rows (no placeholders) */}
+      {liveVideos.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-rokh-bold text-lg sm:text-xl font-bold flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+              پخش زنده
+            </h2>
+            <Link href="/live" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+              همه زنده‌ها <ChevronLeft className="h-4 w-4" />
             </Link>
           </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {liveVideos.map((item) => (
+              <VideoCard key={item.id} item={item} showCreator showMeta />
+            ))}
+          </div>
+        </section>
+      )}
 
-          {videos.length > 0 ? (
-            <div className="grid gap-6 sm:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {videos.map((item) => (
-                <VideoCard
-                  key={item.id}
-                  item={item}
-                  variant="default"
-                  showCreator
-                  showMeta
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyState type="videos" />
-          )}
+      {/* Shorts — real short-form recitations only */}
+      {shorts.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-rokh-bold text-lg sm:text-xl font-bold inline-flex items-center gap-2">
+              <Flame className="h-5 w-5 text-primary" />
+              شورت‌ها
+            </h2>
+            <Link href="/explore?sort=short" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+              همه شورت‌ها <ChevronLeft className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+            {shorts.map((item) => (
+              <Link
+                key={`short-${item.id}`}
+                href={`/watch/${item.id}`}
+                className="group shrink-0 w-[132px] sm:w-[148px]"
+              >
+                <div className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-muted border border-border isolate">
+                  {item.thumbnail_url ? (
+                    <img
+                      src={item.thumbnail_url}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover scale-[1.04] group-hover:scale-[1.08] transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-accent/20" />
+                  )}
+                  {/* Dim baked-in thumb labels; keep UI chrome to duration + hover play only */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/20 pointer-events-none" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="h-9 w-9 rounded-full bg-white/95 text-primary flex items-center justify-center shadow-sm">
+                      <Play className="h-3.5 w-3.5 ms-0.5" />
+                    </span>
+                  </div>
+                  {item.duration && (
+                    <span className="absolute top-2 end-2 z-10 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white leading-none">
+                      {item.duration}
+                    </span>
+                  )}
+                </div>
+                <h3 className="mt-2 px-0.5 text-xs font-semibold text-foreground line-clamp-2 leading-relaxed group-hover:text-primary transition-colors">
+                  {item.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Main feed */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="font-rokh-bold text-lg sm:text-xl font-bold">
+              {activeCategory === 'all' ? 'تازه‌ترین ویدیوها' : CATEGORY_CHIPS.find((c) => c.key === activeCategory)?.label}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              تلاوت، تفسیر، محافل و مسابقات قرآنی
+            </p>
+          </div>
+          <Link
+            href="/explore"
+            className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+          >
+            مشاهده همه <ChevronLeft className="h-4 w-4" />
+          </Link>
         </div>
+
+        {videos.length > 0 ? (
+          <div className="grid gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {videos.map((item) => (
+              <VideoCard key={item.id} item={item} showCreator showMeta />
+            ))}
+          </div>
+        ) : (
+          <EmptyState type="videos" />
+        )}
       </section>
 
-      {/* ── Qaris & Scholars ── */}
+      {/* Trending rail */}
+      {trending.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-rokh-bold text-lg sm:text-xl font-bold inline-flex items-center gap-2">
+              <Flame className="h-5 w-5 text-quranic-saffron" />
+              پرطرفدارها
+            </h2>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {trending.map((item) => (
+              <VideoCard key={`trend-${item.id}`} item={item} variant="horizontal" showCreator showMeta />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Channels / Scholars */}
       <ContentSection
-        title="قریهان و اساتید معتبر"
-        subtitle="شناسایی قریهان برجسته و اساتید تفسیر و معارف قرآنی"
+        title="کانال‌ها و اساتید"
+        subtitle="قاریان و اساتید برجسته را دنبال کنید"
         icon={Users}
         to="/scholars"
-        viewAllLabel="مشاهده همه اساتید"
-        sectionClassName="py-10 sm:py-12 lg:py-16"
+        viewAllLabel="همه کانال‌ها"
+        sectionClassName="py-2"
       >
         {qaris.length > 0 ? (
           qaris.map((item) => (
             <ScholarCard key={`scholar-${item.id}`} item={item} variant="default" />
           ))
         ) : (
-          <EmptyState type="general" title="استادی ثبت نشده است" subtitle="هیچ استاد یا قاری در سیستم ثبت نشده است." actionLabel="بازگشت به خانه" actionHref="/" />
+          <EmptyState
+            type="general"
+            title="کانالی ثبت نشده است"
+            subtitle="هنوز استاد یا قاری‌ای در سامانه نیست."
+            actionLabel="بازگشت"
+            actionHref="/"
+          />
         )}
       </ContentSection>
 
-      {/* ── Collections ── */}
-      <ContentSection
-        title="مجموعه‌های موضوعی"
-        subtitle="مجموعه‌های انتقادی از آیات و تلاوت‌ها بر اساس موضوع و مفهوم"
-        icon={Star}
-        to="/collections"
-        viewAllLabel="مشاهده همه مجموعه‌ها"
-        sectionClassName="py-10 sm:py-12 lg:py-16"
-      >
-        {collections.length > 0 ? (
-          collections.map((item) => (
-            <VideoCard key={`collection-${item.id}`} item={item} variant="default" showCreator showMeta />
-          ))
-        ) : (
-          <EmptyState type="general" title="مجموعه‌ای یافت نشد" subtitle="هیچ مجموعه موضوعی در این بخش ثبت نشده است." actionLabel="مشاهده همه مجموعه‌ها" actionHref="/collections" />
-        )}
-      </ContentSection>
-
-      {/* ── Shorts ── */}
-      <section className="py-10 sm:py-12 lg:py-16">
-        <div className="container-quranic">
-          <div className="flex items-center justify-between mb-8 sm:mb-10">
-            <div>
-              <h2 className="font-rokh-bold font-bold text-2xl sm:text-3xl text-foreground">
-                شارٹس
-              </h2>
-              <p className="font-doran text-sm text-muted-foreground mt-1">
-                ویدیوهای کوتاه قرآنی برای لحظه‌هایומי
-              </p>
-            </div>
-            <Link
-              href="/explore?category=shorts"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow hidden sm:flex"
-            >
-              مشاهده همه شارٹس <ChevronRight className="h-4 w-4" />
+      {/* Collections as playlists */}
+      {collections.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-rokh-bold text-lg sm:text-xl font-bold">لیست‌های پخش</h2>
+            <Link href="/collections" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
+              همه لیست‌ها <ChevronLeft className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid gap-4 sm:gap-6 lg:gap-8 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="relative group">
-                <div className="aspect-[9/16] rounded-xl overflow-hidden bg-muted/30 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-black/20" />
-                  <div className="relative z-10 h-14 w-14 rounded-full bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                    <Play className="h-7 w-7 ml-1" />
-                  </div>
-                  <div className="absolute bottom-2 right-2 rounded-full bg-black/80 text-white text-[10px] font-bold px-2 py-0.5">
-                    0:{i * 10 + 15}
-                  </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {collections.slice(0, 8).map((item) => (
+              <Link
+                key={item.id}
+                href={`/collections/${item.id}`}
+                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all"
+              >
+                <div className="h-28 rounded-lg bg-gradient-to-br from-primary/15 to-accent/10 mb-3 flex items-center justify-center">
+                  <Video className="h-8 w-8 text-primary/60 group-hover:scale-110 transition-transform" />
                 </div>
-                <h3 className="mt-2 font-rokh-bold font-bold text-sm leading-snug line-clamp-2 text-foreground group-hover:text-quranic-emerald transition-colors">
-                  شارٹ قرآنی {i}
+                <h3 className="font-bold text-sm line-clamp-2 group-hover:text-primary transition-colors">
+                  {item.title || item.name}
                 </h3>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                  <User className="h-3 w-3" />
-                  <span>قاری {i}</span>
-                  <span>•</span>
-                  <span>{fa(Math.floor(Math.random() * 10000))} نمایش</span>
-                </div>
-              </div>
+                {item.description && (
+                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{item.description}</p>
+                )}
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* ── Live ── */}
-      <section className="py-10 sm:py-12 lg:py-16">
-        <div className="container-quranic">
-          <div className="flex items-center justify-between mb-8 sm:mb-10">
-            <div>
-              <h2 className="font-rokh-bold font-bold text-2xl sm:text-3xl text-foreground">
-                زنده
-              </h2>
-              <p className="font-doran text-sm text-muted-foreground mt-1">
-                محافل زنده و تلاوت‌های زنده از سراسر جهان
-              </p>
-            </div>
-            <Link
-              href="/live"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-quranic-saffron text-white font-rokh-bold font-bold hover:bg-quranic-saffron-light transition-all shadow-saffron-glow hidden sm:flex"
-            >
-              مشاهده همه زنده‌ها <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="grid gap-6 sm:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="relative group">
-                <div className="aspect-video rounded-xl overflow-hidden bg-black flex items-center justify-center">
-                  <div className="absolute inset-0 bg-black/40" />
-                  <div className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold animate-pulse">
-                    <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-                    زنده
-                  </div>
-                  <div className="relative z-10 h-16 w-16 rounded-full bg-white text-red-500 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                    <Play className="h-7 w-7 ml-1" />
-                  </div>
-                  <div className="absolute bottom-2 right-2 rounded-full bg-black/80 text-white text-[10px] font-bold px-2 py-0.5">
-                    ۲:{i * 10 + 5}
-                  </div>
-                  <div className="absolute bottom-2 left-2 flex items-center gap-2 px-3 py-1 rounded-full bg-black/80 text-white">
-                    <span className="text-xs">{fa(1200 + i * 100)} نماینده</span>
-                    <Users className="h-3 w-3 text-white" />
-                  </div>
-                </div>
-                <h3 className="mt-2 font-rokh-bold font-bold text-sm leading-snug line-clamp-2 text-foreground group-hover:text-quranic-saffron transition-colors">
-                  محفل زنده قرآنی {i}
-                </h3>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                  <User className="h-3 w-3" />
-                  <span>استاد {i}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Creator CTA — video platform, not Quran portal */}
+      <section className="rounded-2xl border border-border bg-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+        <div>
+          <h2 className="font-rokh-bold text-xl sm:text-2xl font-bold">ویدیوی قرآنی خود را منتشر کنید</h2>
+          <p className="mt-1.5 text-sm text-muted-foreground max-w-xl">
+            تلاوت، تفسیر یا محفل خود را آپلود کنید و به مخاطبان آیه پلاس برسانید.
+          </p>
         </div>
-      </section>
-
-      {/* ── CTA ── */}
-      <section className="py-12 sm:py-14 lg:py-18 bg-quranic-emerald-dark/10 border-y border-border/50">
-        <div className="container-quranic text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="font-rokh-bold font-black text-3xl sm:text-4xl lg:text-5xl text-foreground leading-tight mb-4">
-              همه قرآن، در یک مکان
-            </h2>
-            <p className="font-doran text-lg text-muted-foreground mb-8 leading-relaxed">
-              تلاوت، تفسیر، تدبّر، محافل، مسابقات و جامعه قرآنی — تجربه‌ای یکپارچه برای دل‌های پیوسته به قرآن
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/quran"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow hover:shadow-[0_0_30px_-6px_hsl(var(--quranic-emerald)_/0.6)]"
-              >
-                <BookOpen className="h-5 w-5" aria-hidden="true" />
-                <span>شروع مطالعه قرآن</span>
-              </Link>
-              <Link
-                href="/upload"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-quranic-emerald text-quranic-emerald font-rokh-bold font-bold hover:bg-quranic-emerald/5 transition-all"
-              >
-                <Upload className="h-5 w-5" aria-hidden="true" />
-                <span>بارگذاری ویدیو</span>
-              </Link>
-            </div>
-          </div>
+        <div className="flex flex-wrap gap-3 shrink-0">
+          <button
+            onClick={() => router.push('/upload')}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
+          >
+            <Upload className="h-4 w-4" />
+            آپلود ویدیو
+          </button>
+          <Link
+            href="/creator"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-bold hover:bg-muted"
+          >
+            داشبورد سازنده
+          </Link>
         </div>
       </section>
     </div>

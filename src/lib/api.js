@@ -394,6 +394,39 @@ export const gamification = {
     request(`/gamification/leaderboard?type=${encodeURIComponent(type)}`),
 };
 
+// ── Competitions ──
+export const competitions = {
+  listEntries: (competitionId, params = {}) => {
+    const q = new URLSearchParams();
+    if (params.status) q.set("status", params.status);
+    if (params.sort) q.set("sort", params.sort);
+    if (params.limit) q.set("limit", String(params.limit));
+    const qs = q.toString() ? `?${q.toString()}` : "";
+    return request(`/competitions/${competitionId}/entries${qs}`);
+  },
+  vote: (competitionId, entryId, vote_type = "upvote") =>
+    request(`/competitions/${competitionId}/entries/${entryId}/vote`, {
+      method: "POST",
+      body: JSON.stringify({ vote_type }),
+    }),
+  results: (competitionId) => request(`/competitions/${competitionId}/results`),
+  judge: (entryId, data) =>
+    request(`/competitions/entries/${entryId}/judge`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+};
+
+// ── Khatm (atomic reserve / release / complete) ──
+export const khatm = {
+  reservePart: (partId) =>
+    request(`/khatm/parts/${partId}/reserve`, { method: "POST", body: "{}" }),
+  releasePart: (partId) =>
+    request(`/khatm/parts/${partId}/release`, { method: "POST", body: "{}" }),
+  completePart: (partId) =>
+    request(`/khatm/parts/${partId}/complete`, { method: "POST", body: "{}" }),
+};
+
 // Unified API object
 export const api = {
   auth,
@@ -402,6 +435,8 @@ export const api = {
   actors,
   socket,
   gamification,
+  competitions,
+  khatm,
 };
 
 export default api;

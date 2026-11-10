@@ -1,9 +1,29 @@
+import './loadEnv.js';
+
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
+
+import { assertDeliveryConfigured, isDeliveryRequired } from './lib/delivery/config.js';
+import { assertOtpSecretsConfigured } from './lib/delivery/otp.js';
+import { assertAuthRateLimitSafe } from './lib/delivery/rateLimit.js';
+import { prisma } from './db.js';
+import authRoutes from './routes/auth.js';
+import entitiesRoutes from './routes/entities.js';
+import uploadRoutes from './routes/upload.js';
+import aiRoutes from './routes/ai.js';
+import gamificationRoutes from './routes/gamification.js';
+import logsRoutes from './routes/logs.js';
+import videoRoutes from './routes/videos.js';
+import competitionRoutes from './routes/competitions.js';
+import moderationRoutes from './routes/moderation.js';
+import watchHistoryRoutes from './routes/watch-history.js';
+import khatmRoutes from './routes/khatm.js';
+import { initSocket } from './socket.js';
+import { initGlobalProcessLogging, logError } from './logger.js';
 
 // ── Simple in-memory rate limiter for production scaling ──
 const rateLimitWindows = new Map();
@@ -71,19 +91,18 @@ setInterval(() => {
   }
 }, 300000);
 
-dotenv.config();
-
-import authRoutes from './routes/auth.js';
-import entitiesRoutes from './routes/entities.js';
-import uploadRoutes from './routes/upload.js';
-import aiRoutes from './routes/ai.js';
-import gamificationRoutes from './routes/gamification.js';
-import logsRoutes from './routes/logs.js';
-import videoRoutes from './routes/videos.js';
-import competitionRoutes from './routes/competitions.js';
-import moderationRoutes from './routes/moderation.js';
-import { initSocket } from './socket.js';
-import { initGlobalProcessLogging, logError } from './logger.js';
+try {
+  assertAuthRateLimitSafe();
+  assertOtpSecretsConfigured();
+  const delivery = assertDeliveryConfigured();
+  console.log(`📬 Auth delivery providers: email=${delivery.email}, sms=${delivery.sms}`);
+} catch (err) {
+  console.error('❌ Auth delivery / security configuration error:', err?.message || err);
+  if (isDeliveryRequired() || process.env.NODE_ENV === 'production') {
+    process.exit(1);
+  }
+  console.warn('⚠️  Continuing without validated delivery providers (non-production only).');
+}
 
 // Setup global error logging for Node uncaught exceptions & rejections
 initGlobalProcessLogging();
@@ -98,6 +117,12 @@ const server = http.createServer(app);
 initSocket(server);
 
 // Middleware
+// When behind Nginx/Caddy, trust the first proxy hop so req.ip / rate limits
+// see the real client address from X-Forwarded-For.
+if (process.env.TRUST_PROXY === '1' || process.env.TRUST_PROXY === 'true' || process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', Number(process.env.TRUST_PROXY_HOPS || 1));
+}
+
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
   : ['http://localhost:5173', 'http://localhost:5000'];
@@ -113,14 +138,12 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Warn if the well-known default JWT secret is explicitly configured in
-// production. Missing secrets already abort startup in server/lib/jwt.js.
-if (process.env.NODE_ENV === 'production' && process.env.JWT_SECRET === 'ayeh_default_secret_2026') {
-  console.warn('⚠️  WARNING: Using the default JWT_SECRET in production. Set a unique JWT_SECRET in .env');
+// Serve static uploaded files — must match upload.js / transcode.js
+// (repo-root /uploads), not server/uploads.
+const uploadDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
-
-// Serve static uploaded files
-const uploadDir = path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadDir));
 
 // Compatibility endpoint for Base44 public-settings check in legacy AuthContext
@@ -149,10 +172,25 @@ app.use('/api/logs', logsRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/competitions', competitionRoutes);
 app.use('/api/moderation', moderationRoutes);
+app.use('/api/watch-history', watchHistoryRoutes);
+app.use('/api/khatm', khatmRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date().toISOString() });
+// Health check — includes a lightweight DB ping for staging/ops probes.
+app.get('/api/health', async (req, res) => {
+  const payload = {
+    status: 'ok',
+    time: new Date().toISOString(),
+    database: 'unknown',
+  };
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    payload.database = 'ok';
+    return res.json(payload);
+  } catch {
+    payload.status = 'degraded';
+    payload.database = 'error';
+    return res.status(503).json(payload);
+  }
 });
 
 // Express Centralized Error Handling Middleware
@@ -202,3 +240,32 @@ server.listen(PORT, () => {
   console.log(`📡 Socket.io ready on /socket.io`);
   console.log(`📁 Uploads served from /uploads`);
 });
+
+// Graceful shutdown for container orchestration (SIGTERM/SIGINT).
+let shuttingDown = false;
+async function gracefulShutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`⏹  ${signal} received — closing HTTP server…`);
+  const forceTimer = setTimeout(() => {
+    console.error('❌ Forced exit after shutdown timeout');
+    process.exit(1);
+  }, Number(process.env.SHUTDOWN_TIMEOUT_MS || 15000));
+  forceTimer.unref?.();
+
+  server.close(async (err) => {
+    if (err) {
+      console.error('❌ Error while closing HTTP server:', err);
+    }
+    try {
+      await prisma.$disconnect();
+    } catch (disconnectErr) {
+      console.error('❌ Prisma disconnect error:', disconnectErr?.message || disconnectErr);
+    }
+    clearTimeout(forceTimer);
+    process.exit(err ? 1 : 0);
+  });
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

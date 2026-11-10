@@ -67,14 +67,14 @@ export default function Admin() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in">
+    <div className="page-shell animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-3.5 mb-8">
         <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent/25 to-primary/15 text-accent flex items-center justify-center ring-1 ring-accent/20 shrink-0">
           <Shield className="h-5 w-5" />
         </div>
         <div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl tracking-tight">پنل مدیریت</h1>
+          <h1 className="font-rokh-bold font-extrabold text-3xl sm:text-4xl tracking-tight">پنل مدیریت</h1>
           <p className="text-muted-foreground text-sm mt-1">مدیریت کامل محتوا — بدون نیاز به کدنویسی.</p>
         </div>
       </div>
@@ -113,7 +113,7 @@ export default function Admin() {
         {/* Content */}
         <section className="min-w-0">
           <div className="mb-5">
-            <h2 className="font-display font-bold text-xl sm:text-2xl">{title[0]}</h2>
+            <h2 className="font-rokh-bold font-bold text-xl sm:text-2xl">{title[0]}</h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{title[1]}</p>
           </div>
 

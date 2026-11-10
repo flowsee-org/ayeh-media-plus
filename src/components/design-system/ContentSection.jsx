@@ -19,22 +19,22 @@ export default function ContentSection({
   noScrollbar = true,
 }) {
   return (
-    <section className={`py-12 sm:py-16 lg:py-20 ${sectionClassName}`}>
-      <div className="container-quranic">
+    <section className={`py-2 ${sectionClassName}`}>
+      <div>
         {title || subtitle || to ? (
-          <div className="flex items-center justify-between mb-8 sm:mb-10 pb-4 border-b border-border/60">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
               {Icon && (
-                <div className="h-9 w-9 rounded-xl bg-quranic-emerald/10 flex items-center justify-center text-quranic-emerald shrink-0">
-                  <Icon className="h-5 w-5" />
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <Icon className="h-4 w-4" />
                 </div>
               )}
               <div>
-                <h2 className="font-rokh-bold font-bold text-xl sm:text-2xl text-foreground leading-tight">
+                <h2 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground leading-tight">
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="font-doran text-xs sm:text-sm text-muted-foreground mt-0.5">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                     {subtitle}
                   </p>
                 )}
@@ -43,15 +43,15 @@ export default function ContentSection({
             {to && (
               <Link
                 href={to}
-                className="inline-flex items-center gap-1.5 font-ui text-xs sm:text-sm font-semibold text-quranic-emerald hover:text-quranic-turquoise hover:underline transition-colors"
+                className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-primary hover:underline"
               >
-                {viewAllLabel} <ChevronRight className="h-3.5 w-3.5" />
+                {viewAllLabel} <ChevronRight className="h-3.5 w-3.5 rotate-180" />
               </Link>
             )}
           </div>
         ) : null}
 
-        <div className={`flex gap-4 sm:gap-6 overflow-x-auto ${noScrollbar ? 'no-scrollbar' : ''} pb-2 ${className}`}>
+        <div className={`flex gap-4 overflow-x-auto ${noScrollbar ? 'no-scrollbar' : ''} pb-2 ${className}`}>
           {children}
         </div>
       </div>

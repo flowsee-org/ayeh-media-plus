@@ -97,20 +97,20 @@ export default function CreatorDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background font-doran">
-      <div className="container-quranic py-6">
+    <div className="font-doran">
+      <div className="page-shell">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
           <div>
             <h1 className="font-rokh-bold font-black text-2xl sm:text-3xl text-foreground mb-1">داشبورد تولیدکننده</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground font-editorial">
               مدیریت محتوای خود، نمایش آنالیтика و پاسخ به نظرات
             </p>
           </div>
           <button
             onClick={handleUpload}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 shadow-emerald-glow transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 shadow-sm transition-all"
           >
-            <Upload className="h-4 w-4 mr-2" /> بارگذاری محتوای جدید
+            <Upload className="h-4 w-4" /> بارگذاری محتوای جدید
           </button>
         </div>
 
@@ -142,7 +142,7 @@ export default function CreatorDashboard() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab.key
                   ? "bg-emerald-600 text-white shadow-emerald-glow"
                   : "bg-transparent text-muted-foreground hover:bg-muted/50"
@@ -154,81 +154,126 @@ export default function CreatorDashboard() {
           ))}
         </div>
 
-        {/* Content: Videos List */}
-        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
-            <h3 className="font-rokh-bold font-bold text-lg text-foreground">محتوای آپلود شده</h3>
-            {videos.length === 0 && (
-              <button onClick={handleUpload} className="text-sm text-emerald-600 hover:underline font-medium">
-                بارگذاری اولین محتوا
-              </button>
-            )}
+        {/* Analytics tab — measured from uploaded videos */}
+        {activeTab === "analytics" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="font-rokh-bold font-bold text-lg mb-4">عملکرد محتوا</h3>
+              <div className="space-y-3">
+                {[
+                  { label: "میانگین بازدید", value: fa(stats?.total_videos ? Math.round((stats.total_views || 0) / stats.total_videos) : 0) },
+                  { label: "نسبت لایک به بازدید", value: `${fa(stats?.total_views ? Math.round(((stats.total_likes || 0) / stats.total_views) * 100) : 0)}٪` },
+                  { label: "منتشر شده", value: fa(stats?.published || 0) },
+                  { label: "در انتظار بررسی", value: fa(stats?.pending || 0) },
+                ].map((row) => (
+                  <div key={row.label} className="flex items-center justify-between text-sm border-b border-border/40 pb-2">
+                    <span className="text-muted-foreground">{row.label}</span>
+                    <span className="font-ui font-bold">{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <h3 className="font-rokh-bold font-bold text-lg mb-4">پربازدیدترین‌ها</h3>
+              <div className="space-y-3">
+                {[...videos]
+                  .sort((a, b) => (b.views_count || 0) - (a.views_count || 0))
+                  .slice(0, 5)
+                  .map((v) => (
+                    <button
+                      key={v.id}
+                      onClick={() => navigate(`/watch/${v.id}`)}
+                      className="w-full text-right flex items-center justify-between gap-3 text-sm hover:bg-muted/30 rounded-xl px-2 py-2 transition-colors"
+                    >
+                      <span className="truncate font-medium">{v.title}</span>
+                      <span className="shrink-0 text-muted-foreground font-ui">{fa(v.views_count || 0)}</span>
+                    </button>
+                  ))}
+                {videos.length === 0 && (
+                  <p className="text-sm text-muted-foreground">هنوز داده‌ای برای آنالیز وجود ندارد.</p>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="divide-y divide-border/50">
-            {videos.length > 0 ? (
-              videos.map((video) => (
-                <div key={video.id} className="px-6 py-4 flex items-center justify-between group hover:bg-muted/20 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-900/30 to-emerald-900/50 overflow-hidden">
-                      {video.thumbnail_url ? (
-                        <img src={video.thumbnail_url} className="w-full h-full object-cover" alt="" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-emerald-400">
-                          <VideoIcon className="h-6 w-6" />
+        )}
+
+        {/* Content: Videos List (overview + videos tabs) */}
+        {(activeTab === "overview" || activeTab === "videos") && (
+          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
+              <h3 className="font-rokh-bold font-bold text-lg text-foreground">محتوای آپلود شده</h3>
+              {videos.length === 0 && (
+                <button onClick={handleUpload} className="text-sm text-emerald-600 hover:underline font-medium">
+                  بارگذاری اولین محتوا
+                </button>
+              )}
+            </div>
+            <div className="divide-y divide-border/50">
+              {videos.length > 0 ? (
+                videos.map((video) => (
+                  <div key={video.id} className="px-6 py-4 flex items-center justify-between group hover:bg-muted/20 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-900/30 to-emerald-900/50 overflow-hidden">
+                        {video.thumbnail_url ? (
+                          <img src={video.thumbnail_url} className="w-full h-full object-cover" alt="" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-emerald-400">
+                            <VideoIcon className="h-6 w-6" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-rokh-bold font-semibold text-sm text-foreground truncate">{video.title}</div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                          <span>{video.category}</span>
+                          <span>•</span>
+                          <span>{fa(video.views_count || 0)} بازدید</span>
                         </div>
-                      )}
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-rokh-bold font-semibold text-sm text-foreground truncate">{video.title}</div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                        <span>{video.category}</span>
-                        <span>•</span>
-                        <span>{fa(video.views_count || 0)} بازدید</span>
+                    <div className="flex items-center gap-3">
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold border ${statusConfig(video.status).color}`}>
+                        {statusConfig(video.status).label}
+                      </span>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => navigate(`/watch/${video.id}`)}
+                          className="p-2 text-muted-foreground hover:text-emerald-600 transition-colors"
+                          title="مشاهده"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => navigate(`/edit-video/${video.id}`)}
+                          className="p-2 text-muted-foreground hover:text-emerald-600 transition-colors"
+                          title="ویرایش"
+                        >
+                          <Edit3 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(video.id)}
+                          className="p-2 text-muted-foreground hover:text-red-600 transition-colors"
+                          title="حذف"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-bold border ${statusConfig(video.status).color}`}>
-                      {statusConfig(video.status).label}
-                    </span>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => navigate(`/video/${video.id}`)}
-                        className="p-2 text-muted-foreground hover:text-emerald-600 transition-colors"
-                        title="مشاهده"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => navigate(`/edit-video/${video.id}`)}
-                        className="p-2 text-muted-foreground hover:text-emerald-600 transition-colors"
-                        title="ویرایش"
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(video.id)}
-                        className="p-2 text-muted-foreground hover:text-red-600 transition-colors"
-                        title="حذف"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
+                ))
+              ) : (
+                <div className="px-6 py-12 text-center">
+                  <Video className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                  <h3 className="font-rokh-bold font-bold text-lg text-foreground mb-2">هنوز محتوایی آپلود نکرده‌اید</h3>
+                  <p className="text-sm text-muted-foreground mb-6">محتوای قرآنی خود را بارگذاری کنید و با جامعه به اشتراک بگذارید.</p>
+                  <button onClick={handleUpload} className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-colors">
+                    بارگذاری محتوای جدید
+                  </button>
                 </div>
-              ))
-            ) : (
-              <div className="px-6 py-12 text-center">
-                <Video className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                <h3 className="font-rokh-bold font-bold text-lg text-foreground mb-2">هنوز محتوایی آپلود نکرده‌اید</h3>
-                <p className="text-sm text-muted-foreground mb-6">محتوای قرآنی خود را بارگذاری کنید و با جامعه به اشتراک بگذارید.</p>
-                <button onClick={handleUpload} className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors">
-                  بارگذاری محتوای جدید
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -16,9 +16,12 @@
 
 import { execFileSync } from 'child_process';
 import { existsSync, mkdirSync, writeFileSync, rmSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-const UPLOAD_DIR = join(process.cwd(), 'uploads');
+// Resolve from this file (server/lib) → repo-root /uploads. Do not use
+// process.cwd(); static serving in server/index.js is also __dirname-based.
+const UPLOAD_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'uploads');
 const HLS_DIR = join(UPLOAD_DIR, 'hls');
 const THUMB_DIR = join(UPLOAD_DIR, 'thumbs');
 
@@ -138,7 +141,7 @@ export function generateThumbnail(filePath, videoId) {
     }
   }
 
-  return existsSync(thumbPath) ? `/thumbs/${videoId}.jpg` : null;
+  return existsSync(thumbPath) ? `/uploads/thumbs/${videoId}.jpg` : null;
 }
 
 /**
@@ -217,7 +220,7 @@ export function transcodeVideo(filePath, videoId) {
 
     qualities.push({
       name: rendition.name,
-      url: `/hls/${videoId}/${rendition.name}/index.m3u8`,
+      url: `/uploads/hls/${videoId}/${rendition.name}/index.m3u8`,
       height: rendition.height,
       width: rendition.width,
       bitrate: rendition.videoBitrate,
@@ -233,7 +236,7 @@ export function transcodeVideo(filePath, videoId) {
   const thumbnailUrl = generateThumbnail(filePath, videoId);
 
   return {
-    hlsUrl: `/hls/${videoId}/index.m3u8`,
+    hlsUrl: `/uploads/hls/${videoId}/index.m3u8`,
     qualities,
     thumbnailUrl,
     duration: Math.round(duration || 0),

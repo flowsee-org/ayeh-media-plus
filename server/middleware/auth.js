@@ -52,7 +52,7 @@ export const authenticate = (options = { required: true }) => {
       next();
     } catch (err) {
       if (options.required) {
-        return res.status(401).json({ message: 'Invalid or expired token', error: err.message });
+        return res.status(401).json({ message: 'Invalid or expired token' });
       }
       req.user = null;
       next();

@@ -23,13 +23,28 @@ const router = Router();
 router.use(authenticate({ required: false }));
 
 // ── Helper: serialize video for API response ──
+// Tolerate legacy plain-string data (e.g. comma-separated tags written by the
+// Aparat import script) instead of throwing on JSON.parse and 500-ing the list.
+function parseJsonArray(value, { splitCommas = false } = {}) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [parsed];
+  } catch {
+    return splitCommas
+      ? String(value).split(',').map((s) => s.trim()).filter(Boolean)
+      : [];
+  }
+}
+
 function serializeVideo(v) {
   return {
     ...v,
-    tags: v.tags ? JSON.parse(v.tags) : [],
-    chapters: v.chapters ? JSON.parse(v.chapters) : [],
-    liked_by: v.liked_by ? JSON.parse(v.liked_by) : [],
-    qualities: v.qualities ? JSON.parse(v.qualities) : [],
+    tags: parseJsonArray(v.tags, { splitCommas: true }),
+    chapters: parseJsonArray(v.chapters),
+    liked_by: parseJsonArray(v.liked_by),
+    qualities: parseJsonArray(v.qualities),
   };
 }
 
@@ -402,19 +417,13 @@ router.get(
         });
       }
 
-      const [
-        likes,
-        comments,
-        bookmarks,
-        dailyViews,
-      ] = await Promise.all([
+      const [likes, comments, bookmarks] = await Promise.all([
         prisma.like.count({ where: { video_id: req.params.id } }),
         prisma.comment.count({ where: { video_id: req.params.id } }),
         prisma.bookmark.count({ where: { video_id: req.params.id } }),
-        // Mock daily views for now (would come from analytics table in production)
-        Promise.resolve([{ date: new Date().toISOString().split('T')[0], count: video.views_count }]),
       ]);
 
+      // Only return measured aggregates — no fabricated daily series.
       res.json({
         video_id: video.id,
         title: video.title,
@@ -424,7 +433,6 @@ router.get(
         likes,
         comments,
         bookmarks,
-        daily_views: dailyViews,
         engagement_rate:
           video.views_count > 0
             ? ((likes + comments + bookmarks) / video.views_count) * 100

@@ -1,8 +1,8 @@
 /* ── Aparat-Inspired Quranic Design System ──
    Video-first platform dedicated to Quranic videos, recitations, and competitions
-   RTL Persian layout • Deep Emerald/Turquoise • Saffron/Amber accents
-   Cream light mode • Deep charcoal midnight dark mode
-   Doran typography • Islamic geometric patterns
+   RTL Persian layout • Light mode primary (Aparat cool neutrals)
+   Brand: Deep Emerald / Turquoise • Saffron accents for live & highlights
+   Typography: Doran (UI/body) · Rokh (headings) · Falsafeh (editorial) · Tajrid (Arabic)
 */
 
 /* ── 4-Font System: Doran, Rokh, Tajrid, Falsafeh — All Weights ── */
@@ -197,36 +197,36 @@
 /* ── Design Tokens ── */
 @layer base {
   :root {
-    /* ── Dark Mode by Default — Aparat Style ── */
-    --background: 25 15% 6%;             /* #0b0f19 deep obsidian */
-    --foreground: 45 15% 96%;            /* warm cream */
-    --card: 25 15% 9%;                   /* elevated dark */
-    --card-foreground: 45 15% 96%;
-    --popover: 25 15% 9%;
-    --popover-foreground: 45 15% 96%;
+    /* ── Light Mode Primary — Aparat cool neutrals + Quranic brand ── */
+    --background: 240 25% 97%;           /* #F5F5F9 Aparat off-white */
+    --foreground: 234 11% 18%;           /* #292A33 cool charcoal */
+    --card: 0 0% 100%;
+    --card-foreground: 234 11% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 234 11% 18%;
 
-    /* Primary — Quranic Emerald */
+    /* Primary — Quranic Emerald (brand, not Aparat blue) */
     --primary: 166 63% 25%;
     --primary-foreground: 0 0% 100%;
     --primary-glow: 166 63% 35%;
-    --primary-muted: 166 40% 15%;
+    --primary-muted: 166 40% 92%;
 
-    /* Secondary — Saffron/Amber */
-    --secondary: 45 70% 50%;
-    --secondary-foreground: 25 25% 12%;
+    /* Secondary — soft cool surface */
+    --secondary: 233 22% 94%;
+    --secondary-foreground: 234 11% 18%;
 
     /* Accent — Turquoise */
     --accent: 174 72% 38%;
     --accent-foreground: 0 0% 100%;
     --accent-glow: 174 72% 48%;
-    --accent-muted: 174 50% 15%;
+    --accent-muted: 174 50% 92%;
 
-    --muted: 25 15% 12%;
-    --muted-foreground: 45 10% 65%;
+    --muted: 233 22% 94%;
+    --muted-foreground: 232 9% 48%;     /* #6F7285 */
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 25 15% 18%;
-    --input: 25 15% 18%;
+    --border: 233 22% 92%;              /* #E6E7EF */
+    --input: 233 22% 92%;
     --ring: 166 63% 25%;
     --radius: 0.75rem;
 
@@ -239,10 +239,10 @@
     --quranic-saffron: 45 70% 50%;
     --quranic-saffron-light: 45 70% 62%;
     --quranic-saffron-dark: 45 75% 35%;
-    --quranic-parchment: 25 15% 9%;
-    --quranic-ink: 45 15% 96%;
-    --quranic-sand: 25 15% 14%;
-    --quranic-clay: 25 35% 55%;
+    --quranic-parchment: 240 25% 97%;
+    --quranic-ink: 234 11% 18%;
+    --quranic-sand: 233 22% 94%;
+    --quranic-clay: 232 9% 48%;
     --quranic-midnight: 25 15% 6%;
 
     /* Typography — 4 Font System */
@@ -255,43 +255,52 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
     /* Sidebar */
-    --sidebar-background: 25 15% 6%;
-    --sidebar-foreground: 45 15% 96%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 234 11% 18%;
     --sidebar-primary: 166 63% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 45 70% 50%;
-    --sidebar-accent-foreground: 25 25% 12%;
-    --sidebar-border: 25 15% 18%;
+    --sidebar-accent: 166 40% 94%;
+    --sidebar-accent-foreground: 166 63% 25%;
+    --sidebar-border: 233 22% 92%;
     --sidebar-ring: 166 63% 25%;
   }
 
-  .light {
-    /* ── Light Mode Override ── */
-    --background: 45 25% 97%;
-    --foreground: 25 25% 12%;
-    --card: 0 0% 100%;
-    --card-foreground: 25 25% 12%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 25 25% 12%;
-    --primary: 166 63% 25%;
+  .dark {
+    /* ── Dark Mode Override ── */
+    --background: 25 15% 6%;
+    --foreground: 240 20% 96%;
+    --card: 25 15% 9%;
+    --card-foreground: 240 20% 96%;
+    --popover: 25 15% 9%;
+    --popover-foreground: 240 20% 96%;
+    --primary: 166 55% 38%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 45 20% 92%;
-    --secondary-foreground: 25 30% 20%;
-    --accent: 174 72% 38%;
+    --primary-glow: 166 63% 45%;
+    --primary-muted: 166 40% 15%;
+    --secondary: 25 15% 14%;
+    --secondary-foreground: 240 20% 96%;
+    --accent: 174 65% 42%;
     --accent-foreground: 0 0% 100%;
-    --muted: 45 15% 88%;
-    --muted-foreground: 25 15% 45%;
-    --border: 45 15% 82%;
-    --input: 45 15% 82%;
-    --ring: 166 63% 25%;
-    --sidebar-background: 45 25% 97%;
-    --sidebar-foreground: 25 25% 12%;
-    --sidebar-primary: 166 63% 25%;
+    --accent-glow: 174 72% 52%;
+    --accent-muted: 174 50% 15%;
+    --muted: 25 15% 12%;
+    --muted-foreground: 232 10% 65%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 25 15% 18%;
+    --input: 25 15% 18%;
+    --ring: 166 55% 38%;
+    --quranic-parchment: 25 15% 9%;
+    --quranic-ink: 240 20% 96%;
+    --quranic-sand: 25 15% 14%;
+    --sidebar-background: 25 15% 7%;
+    --sidebar-foreground: 240 20% 96%;
+    --sidebar-primary: 166 55% 38%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 45 70% 50%;
-    --sidebar-accent-foreground: 25 25% 12%;
-    --sidebar-border: 45 15% 82%;
-    --sidebar-ring: 166 63% 25%;
+    --sidebar-accent: 25 15% 14%;
+    --sidebar-accent-foreground: 240 20% 96%;
+    --sidebar-border: 25 15% 18%;
+    --sidebar-ring: 166 55% 38%;
   }
 }
 
@@ -349,16 +358,23 @@
     line-height: 2.8;
   }
 
-  .font-doran { font-family: 'Doran', sans-serif !important; }
-  .font-doran-bold { font-family: 'Doran', sans-serif !important; font-weight: 700 !important; }
-  .font-doran-extrabold { font-family: 'Doran', sans-serif !important; font-weight: 800 !important; }
-  .font-rokh { font-family: 'Rokh', sans-serif !important; }
-  .font-rokh-bold { font-family: 'Rokh', sans-serif !important; font-weight: 700 !important; }
-  .font-rokh-extrabold { font-family: 'Rokh', sans-serif !important; font-weight: 800 !important; }
-  .font-tajrid { font-family: 'Tajrid', serif !important; }
-  .font-tajrid-bold { font-family: 'Tajrid', serif !important; font-weight: 700 !important; }
-  .font-falsafeh { font-family: 'Falsafeh', sans-serif !important; }
-  .font-falsafeh-bold { font-family: 'Falsafeh', sans-serif !important; font-weight: 700 !important; }
+  .font-doran { font-family: 'Doran', system-ui, sans-serif !important; }
+  .font-doran-bold { font-family: 'Doran', system-ui, sans-serif !important; font-weight: 700 !important; }
+  .font-doran-extrabold { font-family: 'Doran', system-ui, sans-serif !important; font-weight: 800 !important; }
+  .font-rokh { font-family: 'Rokh', 'Doran', sans-serif !important; }
+  .font-rokh-bold { font-family: 'Rokh', 'Doran', sans-serif !important; font-weight: 700 !important; }
+  .font-rokh-extrabold { font-family: 'Rokh', 'Doran', sans-serif !important; font-weight: 800 !important; }
+  .font-tajrid { font-family: 'Tajrid', 'Noto Naskh Arabic', serif !important; }
+  .font-tajrid-bold { font-family: 'Tajrid', 'Noto Naskh Arabic', serif !important; font-weight: 700 !important; }
+  .font-falsafeh { font-family: 'Falsafeh', 'Doran', sans-serif !important; }
+  .font-falsafeh-bold { font-family: 'Falsafeh', 'Doran', sans-serif !important; font-weight: 700 !important; }
+  /* Editorial intros / reflections / explanatory copy */
+  .font-editorial {
+    font-family: var(--font-falsafeh) !important;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    line-height: 1.9;
+  }
   .font-arabic { font-family: var(--font-arabic) !important; }
 
   ::selection {
@@ -642,8 +658,10 @@
   }
 
   .translation-text {
-    @apply font-body text-muted-foreground leading-[2.2] italic;
+    font-family: var(--font-falsafeh);
+    @apply text-muted-foreground leading-[2.2];
     font-size: clamp(1rem, 2vw, 1.125rem);
+    font-weight: 300;
   }
 
   .transliteration-text {
@@ -658,8 +676,18 @@
   .waqf-mark-gold { @apply waqf-mark text-quranic-saffron; }
 
   /* Layout Utilities */
+  /* Page shell — pad comes from MainLayout; avoid double horizontal padding */
   .container-quranic {
-    @apply mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 xl:px-10;
+    @apply mx-auto max-w-[1400px];
+  }
+  .page-shell {
+    @apply mx-auto max-w-[1400px];
+  }
+  .page-shell-narrow {
+    @apply mx-auto max-w-3xl;
+  }
+  .page-shell-reading {
+    @apply mx-auto max-w-5xl;
   }
   .section-space { @apply py-12 sm:py-16 lg:py-20 xl:py-24; }
   .section-space-sm { @apply py-8 sm:py-10 lg:py-12; }
