@@ -17,10 +17,15 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 export default function AppHeader({ onMenuToggle, className = '' }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user: authUser, openAuthModal } = useAuth();
   const { toggleTheme, theme } = useTheme();
   const router = useRouter();
-  const ThemeIcon = theme === 'dark' ? Sun : Moon;
+  const ThemeIcon = mounted ? (theme === 'dark' ? Sun : Moon) : Moon;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
