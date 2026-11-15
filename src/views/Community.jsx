@@ -156,7 +156,7 @@ export default function Community() {
               avatar={currentUser?.avatar || currentUser?.avatar_url}
               className="ring-2 ring-primary/20"
             />
-            <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium">
+            <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium font-doran">
               آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">

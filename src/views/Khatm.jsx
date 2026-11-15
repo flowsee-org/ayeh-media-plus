@@ -315,8 +315,8 @@ export default function Khatm() {
         ) : filteredSessions.length === 0 ? (
           <div className="text-center py-16 px-4 rounded-3xl border border-dashed border-border/70 bg-card/30">
             <BookMarked className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
-            <h3 className="text-lg font-bold text-foreground mb-1">دوره‌ای یافت نشد</h3>
-            <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-5">
+            <h3 className="font-rokh-bold font-bold text-lg text-foreground mb-1">دوره‌ای یافت نشد</h3>
+            <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-5 font-doran">
               هیچ دوره ختمی با این مشخصات ثبت نشده است. می‌توانید خودتان اولین دوره را ایجاد کنید!
             </p>
             <button
@@ -343,7 +343,7 @@ export default function Khatm() {
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-bold text-foreground">ایجاد دوره جدید ختم قرآن</h2>
+                <h2 className="font-rokh-bold font-bold text-lg text-foreground">ایجاد دوره جدید ختم قرآن</h2>
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -471,7 +471,7 @@ export default function Khatm() {
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="flex items-center gap-2">
                 <Lock className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-bold text-foreground">ورود به دوره با کد دعوت</h2>
+                <h2 className="font-rokh-bold font-bold text-lg text-foreground">ورود به دوره با کد دعوت</h2>
               </div>
               <button
                 onClick={() => setShowJoinModal(false)}

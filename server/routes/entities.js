@@ -481,9 +481,14 @@ router.get('/:entity', async (req, res) => {
 
     const parsedItems = items.map(deserializeRecord);
 
-    // Public User profiles only expose approved fields (API3:2023)
+    // Public User profiles only expose approved fields (API3:2023).
+    // Admins additionally see the role field so the AdminPanel can manage roles.
     const publicItems = entityName === 'User'
-      ? parsedItems.map(projectPublicUser)
+      ? parsedItems.map(item => {
+          const projected = projectPublicUser(item);
+          if (isAdmin(req)) projected.role = item.role;
+          return projected;
+        })
       : parsedItems;
 
     // Provide both array behavior and pagination metadata
@@ -525,9 +530,14 @@ router.post('/:entity/filter', async (req, res) => {
 
     const parsedItems = items.map(deserializeRecord);
 
-    // Public User profiles only expose approved fields (API3:2023)
+    // Public User profiles only expose approved fields (API3:2023).
+    // Admins additionally see the role field so the AdminPanel can manage roles.
     const publicItems = entityName === 'User'
-      ? parsedItems.map(projectPublicUser)
+      ? parsedItems.map(item => {
+          const projected = projectPublicUser(item);
+          if (isAdmin(req)) projected.role = item.role;
+          return projected;
+        })
       : parsedItems;
 
     res.json({
@@ -555,9 +565,12 @@ router.get('/:entity/:id', async (req, res) => {
 
     if (!(await ensurePrivateRecordReadable(req, res, entityName, item))) return;
 
-    // Public User profiles only expose approved fields (API3:2023)
+    // Public User profiles only expose approved fields (API3:2023).
+    // Admins additionally see the role field.
     if (entityName === 'User') {
-      return res.json(projectPublicUser(item));
+      const projected = projectPublicUser(item);
+      if (isAdmin(req)) projected.role = item.role;
+      return res.json(projected);
     }
 
     res.json(deserializeRecord(item));

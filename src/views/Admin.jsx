@@ -10,6 +10,8 @@ import VerseForm from "@/components/admin/VerseForm";
 import ErrorDoctor from "@/components/admin/ErrorDoctor";
 import { Field, Modal, EmptyState, inputCls } from "@/components/admin/shared";
 import SelectInput from "@/components/admin/SelectInput";
+import RoleGuard from "@/components/RoleGuard";
+import { PERMISSIONS } from "@/lib/rbac";
 
 const NAV = [
   { id: "dashboard", label: "نمای کلی", icon: LayoutDashboard },
@@ -46,16 +48,19 @@ export default function Admin() {
     );
   }
 
-  if (!user || user.role !== "admin") {
-    return (
+  return (
+    <RoleGuard requiredPermission={PERMISSIONS.SYSTEM_CONFIG} fallback={
       <div className="mx-auto max-w-md py-24 px-4 text-center font-doran" dir="rtl">
         <div className="h-16 w-16 mx-auto mb-4 rounded-3xl bg-amber-500/10 border border-amber-500/25 text-amber-500 flex items-center justify-center">
           <Lock className="h-8 w-8" />
         </div>
         <h2 className="text-xl font-bold font-rokh-bold mb-2">دسترسی اختصاصی مدیریت</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mb-6 leading-relaxed">
+        <p className="text-xs sm:text-sm text-muted-foreground mb-6 leading-relaxed font-doran">
           برای مدیریت آیات، تفاسیر و دسترسی به پنل ادمین، لطفاً با حساب کاربری مدیر سامانه وارد شوید.
         </p>
+        {user ? (
+          <p className="text-xs text-muted-foreground mb-4 font-doran">نقش شما: {user.role || "کاربر"}</p>
+        ) : null}
         <button
           onClick={() => openAuthModal()}
           className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-primary text-primary-foreground text-xs font-bold shadow-md hover:shadow-lg transition-all"
@@ -63,11 +68,8 @@ export default function Admin() {
           ورود با حساب مدیر
         </button>
       </div>
-    );
-  }
-
-  return (
-    <div className="page-shell animate-fade-in">
+    }>
+      <div className="page-shell animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-3.5 mb-8">
         <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent/25 to-primary/15 text-accent flex items-center justify-center ring-1 ring-accent/20 shrink-0">
@@ -75,7 +77,7 @@ export default function Admin() {
         </div>
         <div>
           <h1 className="font-rokh-bold font-extrabold text-3xl sm:text-4xl tracking-tight">پنل مدیریت</h1>
-          <p className="text-muted-foreground text-sm mt-1">مدیریت کامل محتوا — بدون نیاز به کدنویسی.</p>
+          <p className="text-muted-foreground text-sm mt-1 font-doran">مدیریت کامل محتوا — بدون نیاز به کدنویسی.</p>
         </div>
       </div>
 
@@ -114,7 +116,7 @@ export default function Admin() {
         <section className="min-w-0">
           <div className="mb-5">
             <h2 className="font-rokh-bold font-bold text-xl sm:text-2xl">{title[0]}</h2>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{title[1]}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 font-doran">{title[1]}</p>
           </div>
 
           {tab === "dashboard" && <Dashboard onNavigate={setTab} />}
@@ -128,6 +130,7 @@ export default function Admin() {
         </section>
       </div>
     </div>
+    </RoleGuard>
   );
 }
 
@@ -149,7 +152,7 @@ function VersesAdmin() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{items.length} آیه ثبت شده</p>
+        <p className="text-sm text-muted-foreground font-doran">{items.length} آیه ثبت شده</p>
         <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> آیه جدید
         </button>
@@ -163,8 +166,8 @@ function VersesAdmin() {
             <div key={v.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
               <div className="h-9 w-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-medium">{v.surah_number}</div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium">{v.surah_name_english} · {v.verse_key}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1">{v.translation}</p>
+                <div className="text-sm font-medium font-doran">{v.surah_name_english} · {v.verse_key}</div>
+                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{v.translation}</p>
               </div>
               <button onClick={() => setForm(v)} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition" title="ویرایش">
                 <Pencil className="h-4 w-4" />
@@ -196,7 +199,7 @@ function ScholarsAdmin() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{items.length} عالم</p>
+        <p className="text-sm text-muted-foreground font-doran">{items.length} عالم</p>
         <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> عالم جدید
         </button>
@@ -209,8 +212,8 @@ function ScholarsAdmin() {
             <div key={s.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
               <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name ? s.name[0] : "?"}</div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium">{s.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1">{s.title} · {s.bio?.slice(0, 30) || ""}</p>
+                <div className="text-sm font-medium font-doran">{s.name}</div>
+                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{s.title} · {s.bio?.slice(0, 30) || ""}</p>
               </div>
               <button onClick={async () => { await api.entities.Scholar.delete(s.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
@@ -277,8 +280,8 @@ function CollectionsAdmin() {
             <div key={c.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
               <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${c.theme_color || "#10b981"}22`, color: c.theme_color || "#10b981" }}><FolderHeart className="h-4 w-4" /></div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium">{c.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1">{c.description}</p>
+                <div className="text-sm font-medium font-doran">{c.name}</div>
+                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{c.description}</p>
               </div>
               <button onClick={async () => { await api.entities.Collection.delete(c.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
@@ -363,7 +366,7 @@ function TopicsAdmin() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">{items.length} موضوع</p>
+        <p className="text-sm text-muted-foreground font-doran">{items.length} موضوع</p>
         <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> موضوع جدید
         </button>
@@ -376,8 +379,8 @@ function TopicsAdmin() {
             <div key={t.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
               <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${t.theme_color || "#0B6E4F"}22`, color: t.theme_color || "#0B6E4F" }}><Compass className="h-4 w-4" /></div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium">{t.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1">{t.description} · {(t.verse_keys || []).length} آیه</p>
+                <div className="text-sm font-medium font-doran">{t.name}</div>
+                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{t.description} · {(t.verse_keys || []).length} آیه</p>
               </div>
               <button onClick={async () => { await api.entities.Topic.delete(t.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />

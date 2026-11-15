@@ -260,7 +260,7 @@ export default function VideoWatchPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-        <p className="mt-4 text-muted-foreground text-sm">در حال بارگذاری...</p>
+        <p className="mt-4 text-muted-foreground text-sm font-doran">در حال بارگذاری...</p>
       </div>
     );
   }
@@ -269,8 +269,8 @@ export default function VideoWatchPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
         <BookOpen className="h-12 w-12 text-muted-foreground/30 mb-4" />
-        <h2 className="font-bold text-xl text-foreground mb-2">{error || "ویدیو یافت نشد"}</h2>
-        <button onClick={loadVideo} className="mt-4 px-6 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90">
+        <h2 className="font-rokh-bold font-bold text-xl text-foreground mb-2">{error || "ویدیو یافت نشد"}</h2>
+        <button onClick={loadVideo} className="mt-4 px-6 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium font-doran hover:opacity-90">
           تلاش مجدد
         </button>
       </div>
@@ -284,7 +284,7 @@ export default function VideoWatchPage() {
       {/* Compact watch header */}
       <div className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-md px-3 sm:px-5 h-12 flex items-center gap-3">
         <BackButton />
-        <span className="text-sm font-medium text-foreground/80 truncate">{video.title}</span>
+        <span className="text-sm font-medium text-foreground/80 truncate font-doran">{video.title}</span>
       </div>
 
       <div className={`mx-auto ${theaterMode ? 'max-w-[1600px]' : 'max-w-[1400px]'} px-0 sm:px-4 lg:px-5 py-0 sm:py-4`}>
@@ -435,7 +435,7 @@ export default function VideoWatchPage() {
                 {video.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground font-doran">
                 <span className="inline-flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{fa(video.views_count || 0)} بازدید</span>
                 {video.duration && (
                   <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{video.duration}</span>
@@ -455,8 +455,8 @@ export default function VideoWatchPage() {
                     {channelName.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-bold text-sm truncate">{channelName}</div>
-                    <div className="text-[11px] text-muted-foreground">کانال آیه پلاس</div>
+                    <div className="font-bold text-sm truncate font-doran">{channelName}</div>
+                    <div className="text-[11px] text-muted-foreground font-doran">کانال آیه پلاس</div>
                   </div>
                 </Link>
                 {video.download_enabled && video.download_url && (
@@ -487,7 +487,7 @@ export default function VideoWatchPage() {
                   {video.description && video.description.length > 120 && (
                     <button
                       onClick={() => setDescriptionExpanded((v) => !v)}
-                      className="mt-2 text-xs font-bold text-primary"
+                      className="mt-2 text-xs font-bold text-primary font-doran"
                     >
                       {descriptionExpanded ? 'بستن' : 'ادامه مطلب'}
                     </button>
@@ -495,7 +495,7 @@ export default function VideoWatchPage() {
                   {video.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {video.tags.map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-md bg-card border border-border text-[11px] text-muted-foreground">
+                        <span key={i} className="px-2 py-0.5 rounded-md bg-card border border-border text-[11px] text-muted-foreground font-doran">
                           #{tag}
                         </span>
                       ))}
@@ -509,7 +509,7 @@ export default function VideoWatchPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <BookOpen className="h-4 w-4 text-primary" />
-                    <span className="font-bold text-sm">فصل‌ها</span>
+                    <span className="font-bold text-sm font-doran">فصل‌ها</span>
                   </div>
                   <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                     {chapterMarkers.map((chapter, i) => (
@@ -535,11 +535,11 @@ export default function VideoWatchPage() {
               {/* Comments */}
               <section className="space-y-4 pt-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-base inline-flex items-center gap-2">
+                  <h3 className="font-rokh-bold font-bold text-base inline-flex items-center gap-2">
                     <Users className="h-4 w-4 text-primary" />
                     نظرات ({fa(comments.length)})
                   </h3>
-                  <button onClick={() => setShowComments((v) => !v)} className="text-xs font-medium text-primary">
+                  <button onClick={() => setShowComments((v) => !v)} className="text-xs font-medium text-primary font-doran">
                     {showComments ? 'مخفی' : 'نمایش'}
                   </button>
                 </div>
@@ -549,8 +549,8 @@ export default function VideoWatchPage() {
                     <form onSubmit={handleComment} className="rounded-xl border border-border bg-card p-3 space-y-3">
                       {replyTo && (
                         <div className="flex items-start justify-between gap-2 rounded-lg bg-muted p-2.5 text-xs">
-                          <p className="text-muted-foreground line-clamp-2">پاسخ به: {replyTo.content}</p>
-                          <button type="button" onClick={() => setReplyTo(null)} className="text-primary font-medium shrink-0">لغو</button>
+                          <p className="text-muted-foreground line-clamp-2 font-doran">پاسخ به: {replyTo.content}</p>
+                          <button type="button" onClick={() => setReplyTo(null)} className="text-primary font-medium font-doran shrink-0">لغو</button>
                         </div>
                       )}
                       <textarea
@@ -580,7 +580,7 @@ export default function VideoWatchPage() {
                         />
                       ))}
                       {comments.length === 0 && (
-                        <p className="text-center py-6 text-sm text-muted-foreground">هنوز نظری ثبت نشده است.</p>
+                        <p className="text-center py-6 text-sm text-muted-foreground font-doran">هنوز نظری ثبت نشده است.</p>
                       )}
                     </div>
                   </div>
@@ -592,7 +592,7 @@ export default function VideoWatchPage() {
           {/* Related sidebar */}
           {!theaterMode && (
             <aside className="lg:col-span-4 px-3 sm:px-0">
-              <h3 className="font-bold text-sm mb-3 text-foreground">ویدیوهای مرتبط</h3>
+              <h3 className="font-rokh-bold font-bold text-sm mb-3 text-foreground">ویدیوهای مرتبط</h3>
               <RelatedVideos videoId={id} category={video.category || "recitation"} limit={8} />
             </aside>
           )}
@@ -607,17 +607,17 @@ function CommentThread({ comment, onReply }) {
 
   return (
     <div className="flex gap-3">
-      <div className="shrink-0 h-9 w-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-xs font-bold border border-border">
+      <div className="shrink-0 h-9 w-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-xs font-bold font-doran border border-border">
         {(comment.author_name || 'ک').charAt(0)}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-sm">{comment.author_name}</span>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="font-semibold text-sm font-doran">{comment.author_name}</span>
+          <span className="text-[10px] text-muted-foreground font-doran">
             {comment.created_date ? new Date(comment.created_date).toLocaleDateString("fa-IR") : ''}
           </span>
         </div>
-        <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line mt-1">{comment.content}</p>
+        <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line mt-1 font-doran">{comment.content}</p>
         <div className="flex items-center gap-3 pt-1.5">
           <button
             onClick={() => setLikeState(!likeState)}

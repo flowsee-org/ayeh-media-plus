@@ -21,7 +21,7 @@ export default function Leaderboard() {
         const map = {};
         entries.forEach((e) => {
           const key = e.author_id || e.author_name;
-          if (!map[key]) map[key] = { name: e.author_name, votes: 0, entries: 0, wins: 0 };
+          if (!map[key]) map[key] = { id: key, name: e.author_name, votes: 0, entries: 0, wins: 0 };
           map[key].votes += e.votes_count || 0;
           map[key].entries += 1;
           if (e.is_winner) map[key].wins += 1;
@@ -63,19 +63,19 @@ export default function Leaderboard() {
             const rank = RANKS[i];
             return (
               <div
-                key={r.name}
+                key={r.id}
                 className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-3.5 transition-colors ${rank ? `${rank.ring} ${rank.glow}` : "border-border/40 bg-card/40"}`}
               >
-                <span className={`h-8 w-8 shrink-0 rounded-xl flex items-center justify-center text-sm font-extrabold ${rank ? rank.chip : "bg-muted/60 text-muted-foreground"}`}>
+                <span className={`h-8 w-8 shrink-0 rounded-xl flex items-center justify-center text-sm font-extrabold font-rokh-bold ${rank ? rank.chip : "bg-muted/60 text-muted-foreground"}`}>
                   {(i + 1).toLocaleString("fa-IR")}
                 </span>
                 <Avatar name={r.name} size={36} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold flex items-center gap-1.5 truncate">
+                  <div className="text-sm font-bold font-doran flex items-center gap-1.5 truncate">
                     {r.name}
                     {r.wins > 0 && <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />}
                   </div>
-                  <div className="text-xs text-muted-foreground">{fa(r.entries)} اثر ثبت‌شده</div>
+                  <div className="text-xs text-muted-foreground font-doran">{fa(r.entries)} اثر ثبت‌شده</div>
                 </div>
                 <div className="text-left shrink-0">
                   <div className="font-display font-extrabold text-accent">{fa(r.votes)}</div>

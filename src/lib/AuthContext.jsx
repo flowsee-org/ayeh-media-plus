@@ -1,6 +1,7 @@
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import api from "@/lib/api";
+import { hasPermission, getPermissionsForRole, ROLE_LABELS, ROLE_HIERARCHY } from "@/lib/rbac";
 import { setStorageScope } from "@/lib/storageScope";
 import AuthModal from '@/components/auth/AuthModal';
 
@@ -21,6 +22,30 @@ export const AuthProvider = ({ children }) => {
     id: 'ayeh-app',
     public_settings: { auth_required: false },
   });
+
+  // ── Computed permissions for the current user ──
+  const userPermissions = useMemo(() => {
+    if (!user) return getPermissionsForRole('anonymous');
+    return getPermissionsForRole(user.role || 'user');
+  }, [user]);
+
+  const userRole = useMemo(() => (user ? user.role : 'anonymous'), [user]);
+
+  /**
+   * Check if the current user has a specific permission.
+   */
+  const hasPermission = (permission) => {
+    return userPermissions.has(permission);
+  };
+
+  /**
+   * Check if the current user has at least the given role level.
+   */
+  const hasRole = (minRole) => {
+    const idx = ROLE_HIERARCHY.indexOf(userRole);
+    const minIdx = ROLE_HIERARCHY.indexOf(minRole);
+    return idx !== -1 && minIdx !== -1 && idx >= minIdx;
+  };
 
   useEffect(() => {
     checkAppState();
@@ -107,6 +132,8 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        userRole,
+        userPermissions,
         isAuthenticated,
         isLoadingAuth,
         isLoadingPublicSettings,
@@ -120,6 +147,8 @@ export const AuthProvider = ({ children }) => {
         navigateToLogin,
         checkUserAuth,
         checkAppState,
+        hasPermission,
+        hasRole,
       }}
     >
       {children}

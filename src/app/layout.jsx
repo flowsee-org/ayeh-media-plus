@@ -30,10 +30,10 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:ital,wght@0,400;0,700;1,400&family=Scheherazade+New:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="preload" href="/fonts/doran/Doran-Regular.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/rokh/Rokh-Regular.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/tajrid/Tajrid-Regular.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="preload" href="/fonts/falsafeh/Falsafeh-Bold.woff" as="font" type="font/woff" crossorigin />
       </head>
       <body className="bg-background text-foreground font-body antialiased selection:bg-accent/20 selection:text-accent min-h-screen">
         <Providers>

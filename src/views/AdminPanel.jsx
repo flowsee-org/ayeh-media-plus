@@ -4,13 +4,16 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import { usePermissions } from "@/lib/usePermissions";
 import { toast } from "react-hot-toast";
 import {
   ShieldCheck, Video, Settings, Layout, BarChart3,
   Loader2, AlertCircle, Check, X, Edit3,
   Trophy, Users, ExternalLink, Eye, ThumbsUp, MessageSquare,
+  Lock, ShieldAlert,
 } from "lucide-react";
 import { fa } from "@/lib/utils";
+import { PERMISSIONS } from "@/lib/rbac";
 
 /**
  * Ayeh Media Plus — Admin Panel
@@ -48,6 +51,7 @@ function loadFlags() {
 export default function AdminPanel() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { can } = usePermissions();
   const [activeSection, setActiveSection] = useState("users");
   const [users, setUsers] = useState([]);
   const [videos, setVideos] = useState([]);
@@ -59,7 +63,11 @@ export default function AdminPanel() {
   const [sectionLoading, setSectionLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [roleModal, setRoleModal] = useState(false);
+  const [roleConfirmModal, setRoleConfirmModal] = useState(false);
   const [userQuery, setUserQuery] = useState("");
+  const [pendingRoleChange, setPendingRoleChange] = useState(null);
+
+  const canManageRoles = can(PERMISSIONS.USER_ROLE_ASSIGN);
 
   useEffect(() => {
     setFlags(loadFlags());
@@ -165,14 +173,45 @@ export default function AdminPanel() {
   };
 
   const handleRoleChange = async (userId, newRole) => {
+    const targetUser = users.find((u) => u.id === userId);
+
+    // Safety: cannot demote yourself
+    if (userId === user?.id) {
+      toast.error("نمی‌توانید نقش خود را تغییر دهید");
+      return;
+    }
+
+    // Safety: cannot remove the last admin
+    if (newRole !== 'admin') {
+      const adminCount = users.filter((u) => u.role === 'admin').length;
+      if (targetUser?.role === 'admin' && adminCount <= 1) {
+        toast.error("نمی‌توانید آخرین مدیر سیستم را داون‌گراد کنید");
+        return;
+      }
+    }
+
+    // Safety: cannot assign admin unless you are admin
+    if (newRole === 'admin' && user?.role !== 'admin') {
+      toast.error("فقط مدیر سیستم می‌تواند نقش مدیر تخصیص دهد");
+      return;
+    }
+
+    setPendingRoleChange({ userId, newRole });
+    setRoleModal(false);
+    setRoleConfirmModal(true);
+  };
+
+  const confirmRoleChange = async () => {
+    if (!pendingRoleChange) return;
     try {
-      await api.entities.User.update(userId, { role: newRole });
+      await api.entities.User.update(pendingRoleChange.userId, { role: pendingRoleChange.newRole });
       toast.success("نقش کاربر با موفقیت تغییر کرد");
-      setRoleModal(false);
-      setSelectedUser(null);
+      setPendingRoleChange(null);
+      setRoleConfirmModal(false);
       loadUsers();
     } catch {
       toast.error("خطا در تغییر نقش");
+      setRoleConfirmModal(false);
     }
   };
 
@@ -361,13 +400,16 @@ export default function AdminPanel() {
                       </td>
                       <td className="px-6 py-4 text-left">
                         <div className="flex gap-1 justify-end">
-                          <button
-                            onClick={() => { setSelectedUser(u); setRoleModal(true); }}
-                            className="p-2 text-muted-foreground hover:text-emerald-600"
-                            title="تغییر نقش"
-                          >
-                            <Edit3 className="h-4 w-4" />
-                          </button>
+                          {canManageRoles && (
+                            <button
+                              onClick={() => { setSelectedUser(u); setRoleModal(true); }}
+                              className="p-2 text-muted-foreground hover:text-emerald-600"
+                              title="تغییر نقش"
+                              disabled={u.id === user?.id}
+                            >
+                              <Edit3 className="h-4 w-4" />
+                            </button>
+                          )}
                           <button
                             onClick={() => handleBan(u.id, !u.is_banned)}
                             className="p-2 text-muted-foreground hover:text-red-600"
@@ -560,6 +602,7 @@ export default function AdminPanel() {
                 <button onClick={() => setRoleModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
               </div>
               <p className="text-sm text-muted-foreground mb-6">{selectedUser.full_name}</p>
+              <p className="text-xs text-muted-foreground mb-4">نقش فعلی: {roleLabels[selectedUser.role || "user"]}</p>
               <div className="space-y-3">
                 {["admin", "moderator", "creator", "user"].map((role) => (
                   <button
@@ -569,11 +612,42 @@ export default function AdminPanel() {
                       selectedUser.role === role
                         ? "bg-emerald-600 text-white border-emerald-600"
                         : "bg-transparent text-muted-foreground border-border hover:bg-muted/50"
-                    }`}
+                    }` +
+                    (selectedUser.id === user?.id ? " opacity-50 cursor-not-allowed" : "")}
+                    disabled={selectedUser.id === user?.id}
                   >
                     {roleLabels[role]}
+                    {selectedUser.id === user?.id && <span className="ml-2 text-xs">(شما)</span>}
                   </button>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {roleConfirmModal && pendingRoleChange && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setRoleConfirmModal(false)}>
+            <div className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-rokh-bold font-bold text-lg text-foreground">تأیید تغییر نقش</h3>
+                <button onClick={() => setRoleConfirmModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+              </div>
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">آیا از تغییر نقش به <span className="font-bold">{roleLabels[pendingRoleChange.newRole]}</span> مطمئن هستید؟</p>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setRoleConfirmModal(false)}
+                    className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground hover:bg-muted/50 transition-colors"
+                  >
+                    انصراف
+                  </button>
+                  <button
+                    onClick={confirmRoleChange}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
+                  >
+                    تایید و ذخیره
+                  </button>
+                </div>
               </div>
             </div>
           </div>
