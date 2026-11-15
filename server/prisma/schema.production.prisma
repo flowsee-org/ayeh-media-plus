@@ -22,7 +22,7 @@ model User {
   email           String?  @unique
   password        String?
   full_name       String?
-  role            String   @default("user") // admin | moderator | creator | user | anonymous
+  role            String   @default("user") // anonymous | user | creator | moderator | scholar | master | admin
   is_scholar      Boolean  @default(false)
   avatar_url      String?
   avatar_config   String?  // JSON: avatar character config
@@ -51,7 +51,6 @@ model User {
   collections     Collection[] @relation("CollectionOwner")
   bookmarks       Bookmark[]   @relation("BookmarkAuthor")
   follows         Follow[]     @relation("FollowRelations")
-  followedBy      Follow[]     @relation("FollowedUser")
   competitionEntries CompetitionEntry[] @relation("CompetitionEntryAuthor")
   organizedCompetitions Competition[] @relation("CompetitionOrganizer")
   notifications   Notification[] @relation("NotificationRecipient")
@@ -367,7 +366,7 @@ model Follow {
   created_date  DateTime @default(now())
 
   follower      User?    @relation("FollowRelations", fields: [follower_id], references: [id])
-  followed      User?    @relation("FollowedUser", fields: [followed_id], references: [id])
+  followed      Scholar? @relation("FollowedScholar", fields: [followed_id], references: [id])
 
   @@unique([follower_id, followed_id])
   @@index([follower_id])
@@ -524,6 +523,7 @@ model Scholar {
   verified     Boolean  @default(false)
   books        String?
   sources      String?
+  followers    Follow[]   @relation("FollowedScholar")
   created_date DateTime @default(now())
 }
 
