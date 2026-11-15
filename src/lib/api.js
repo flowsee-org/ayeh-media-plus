@@ -4,6 +4,13 @@ import { io } from "socket.io-client";
 
 const API_BASE = "/api";
 
+// Socket.io connects directly to the Express backend (port 5000), not through
+// Next.js dev proxy — Next.js dev rewrites don't forward WebSocket upgrades.
+const SOCKET_URL =
+  typeof window !== "undefined" && window.NEXT_PUBLIC_SOCKET_URL
+    ? window.NEXT_PUBLIC_SOCKET_URL
+    : process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000";
+
 function getStoredToken() {
   if (typeof window === "undefined") return null;
   return (
@@ -321,7 +328,7 @@ function getSocket() {
   if (typeof window === "undefined") return null;
   if (!globalSocket) {
     const token = getStoredToken();
-    globalSocket = io({
+    globalSocket = io(SOCKET_URL, {
       path: "/socket.io",
       transports: ["websocket", "polling"],
       autoConnect: true,
@@ -335,7 +342,7 @@ export const actors = {
   LiveRoom: (roomId) => ({
     connect: ({ id }) => {
       const token = getStoredToken();
-      const socket = io({
+      const socket = io(SOCKET_URL, {
         path: "/socket.io",
         query: { connId: id, ...(token ? { token } : {}) },
         transports: ["websocket", "polling"],
