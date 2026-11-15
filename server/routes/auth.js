@@ -388,6 +388,22 @@ router.post('/complete-profile', authenticate({ required: true }), async (req, r
 });
 
 // POST /api/auth/register
+//
+// Identity verification & access-level determination:
+//   1. Client submits email + password + optional full_name.
+//   2. Server creates the User row with role='user' (default, schema-enforced)
+//      and is_scholar=false. Role is NEVER accepted from the client — only an
+//      admin can promote a user to scholar/master/admin via
+//      PATCH /api/entities/User/:id (role field, admin-only).
+//   3. An OTP is sent to the email address; the client must POST it back to
+//      /api/auth/verify-otp before the account is marked email_verified.
+//   4. On verify-otp success, a JWT is issued containing { id, email, role,
+//      phone, is_scholar, ...}. The JWT is the source of truth for the user's
+//      access level on subsequent requests (authenticate() middleware re-reads
+//      the role from the DB on each request).
+//
+// Tafsir/tadbir publication (tafsir:publish / tadbir:publish) is restricted to
+// role admin | scholar | master in server/routes/videos.js.
 router.post('/register', async (req, res) => {
   try {
     const validation = validateBody(res, registerSchema, req.body);

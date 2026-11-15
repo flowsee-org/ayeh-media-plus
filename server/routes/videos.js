@@ -16,7 +16,7 @@ import {
   requireOwnershipOrPermission,
   loadResource,
 } from '../middleware/rbac/index.js';
-import { PERMISSIONS } from '../middleware/rbac/permissions.js';
+import { PERMISSIONS, hasPermission } from '../middleware/rbac/permissions.js';
 
 const router = Router();
 
@@ -239,6 +239,18 @@ router.post(
       const isStaff = req.user.role === 'admin' || req.user.role === 'moderator';
       const initialStatus = isStaff ? 'published' : 'pending_review';
 
+      // Religious content (tafsir / tadbir) may only be published by
+      // super-admin, 'Ulama (scholar), or asatid (master).
+      const isReligiousContent = category === 'tafsir';
+      if (isReligiousContent && !hasPermission(req.user.role, PERMISSIONS.TAFSIR_PUBLISH)) {
+        return res.status(403).json({
+          message: 'انتشار تفسیر و تدبیر فقط برای مدیر، العالم و استاد مجاز است',
+          code: 'RELIGIOUS_CONTENT_FORBIDDEN',
+          required_permission: PERMISSIONS.TAFSIR_PUBLISH,
+          user_role: req.user.role,
+        });
+      }
+
       const qualitiesValue =
         qualities == null
           ? undefined
@@ -326,6 +338,17 @@ router.put(
       if (!isOwner && !hasPerm) {
         return res.status(403).json({
           message: 'شما مجاز به ویرایش این ویدیو نیستید',
+        });
+      }
+
+      // Prevent changing category to religious content (tafsir) without
+      // the TAFSIR_PUBLISH permission (admin / scholar / master only).
+      if (category === 'tafsir' && video.category !== 'tafsir' && !hasPermission(req.user.role, PERMISSIONS.TAFSIR_PUBLISH)) {
+        return res.status(403).json({
+          message: 'تغییر دسته‌بندی به تفسیر فقط برای مدیر، العالم و استاد مجاز است',
+          code: 'RELIGIOUS_CONTENT_FORBIDDEN',
+          required_permission: PERMISSIONS.TAFSIR_PUBLISH,
+          user_role: req.user.role,
         });
       }
 
