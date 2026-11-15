@@ -15,6 +15,7 @@
     "test:delivery": "node server/test-delivery-otp.js",
     "test:delivery:live": "node scripts/live-delivery-verify.mjs",
     "test:critical": "pnpm test:schema && pnpm test:delivery && node server/test-functional-critical.js",
+    "test:creator": "node server/test-creator-videos.js",
     "doctor": "node scripts/error-doctor.js",
     "dev": "concurrently -n \"server,client\" -c \"cyan,magenta\" \"node server/index.js\" \"next dev -p 5173\"",
     "server": "node server/index.js",

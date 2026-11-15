@@ -14,6 +14,7 @@ import {
   requirePermission,
   requireRole,
   requireOwnershipOrPermission,
+  loadResource,
 } from '../middleware/rbac/index.js';
 import { PERMISSIONS } from '../middleware/rbac/permissions.js';
 
@@ -21,6 +22,8 @@ const router = Router();
 
 // All routes require authentication for writes; reads are public
 router.use(authenticate({ required: false }));
+
+const PUBLIC_VIDEO_STATUSES = new Set(['published', 'verified']);
 
 // ── Helper: serialize video for API response ──
 // Tolerate legacy plain-string data (e.g. comma-separated tags written by the
@@ -55,6 +58,8 @@ router.get('/', async (req, res) => {
       status,
       category,
       reciter_name,
+      reciter_id,
+      mine,
       competition_id,
       verse_key,
       is_live,
@@ -67,14 +72,43 @@ router.get('/', async (req, res) => {
 
     const isAdmin = req.user?.role === 'admin';
     const isModerator = req.user?.role === 'moderator';
+    const isStaff = isAdmin || isModerator;
+    const wantMine = mine === 'true' || mine === '1';
 
     const where = {};
 
-    // Status filtering: non-staff only see published/verified
-    if (status) {
-      where.status = status;
-    } else if (!isAdmin && !isModerator) {
-      where.status = { in: ['published', 'verified'] };
+    if (wantMine) {
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentication required' });
+      }
+      where.reciter_id = req.user.id;
+      if (status) where.status = status;
+      // Own library: all statuses when status omitted
+    } else if (reciter_id) {
+      where.reciter_id = String(reciter_id);
+      const viewingOwn =
+        !!req.user && String(reciter_id) === String(req.user.id);
+      if (viewingOwn) {
+        if (status) where.status = status;
+      } else if (isStaff) {
+        if (status) where.status = status;
+      } else if (status && PUBLIC_VIDEO_STATUSES.has(status)) {
+        where.status = status;
+      } else {
+        where.status = { in: [...PUBLIC_VIDEO_STATUSES] };
+      }
+    } else if (status) {
+      if (isStaff || PUBLIC_VIDEO_STATUSES.has(status)) {
+        where.status = status;
+      } else if (req.user) {
+        // Non-public status for non-staff: only the caller's own rows
+        where.status = status;
+        where.reciter_id = req.user.id;
+      } else {
+        where.status = { in: [...PUBLIC_VIDEO_STATUSES] };
+      }
+    } else if (!isStaff) {
+      where.status = { in: [...PUBLIC_VIDEO_STATUSES] };
     }
 
     if (category) where.category = category;
@@ -178,7 +212,6 @@ router.post(
         transliteration,
         tafsir,
         reciter_name,
-        reciter_bio,
         scholar_name,
         competition_id,
         is_live = false,
@@ -189,6 +222,11 @@ router.post(
         audio_only_url,
         chapters = [],
         download_enabled = false,
+        hls_url,
+        qualities,
+        source_width,
+        source_height,
+        source_duration,
       } = req.body;
 
       if (!title || !media_url) {
@@ -197,10 +235,18 @@ router.post(
         });
       }
 
-      // Determine initial status based on role
+      // Determine initial status based on role — never trust client status.
       const isStaff = req.user.role === 'admin' || req.user.role === 'moderator';
       const initialStatus = isStaff ? 'published' : 'pending_review';
 
+      const qualitiesValue =
+        qualities == null
+          ? undefined
+          : typeof qualities === 'string'
+            ? qualities
+            : JSON.stringify(qualities);
+
+      // Ownership always comes from the session — never trust client reciter_id.
       const video = await prisma.video.create({
         data: {
           title,
@@ -209,7 +255,7 @@ router.post(
           media_url,
           media_type,
           thumbnail_url,
-          duration,
+          duration: duration ?? source_duration ?? undefined,
           verse_key,
           verse_arabic,
           translation,
@@ -229,6 +275,11 @@ router.post(
           audio_only_url,
           chapters: chapters.length ? JSON.stringify(chapters) : null,
           download_enabled,
+          hls_url: hls_url || undefined,
+          qualities: qualitiesValue,
+          source_width: source_width ?? undefined,
+          source_height: source_height ?? undefined,
+          source_duration: source_duration ?? duration ?? undefined,
           views_count: 0,
           likes_count: 0,
           dislikes_count: 0,
@@ -258,28 +309,19 @@ router.post(
 router.put(
   '/:id',
   authenticate({ required: true }),
+  loadResource('Video', 'reciter_id'),
   requireOwnershipOrPermission('reciter_id', PERMISSIONS.VIDEO_UPDATE_ANY),
   async (req, res) => {
     try {
-      const video = await prisma.video.findUnique({
-        where: { id: req.params.id },
-      });
-
+      const video = req.resource;
       if (!video) {
         return res.status(404).json({ message: 'Video not found' });
       }
 
-      // Verify ownership or permission
+      // Verify ownership or permission (DB-backed; never trust body.reciter_id)
       const isOwner = video.reciter_id === req.user.id;
-      const hasPerm = (() => {
-        switch (req.user.role) {
-          case 'admin':
-          case 'moderator':
-            return true;
-          default:
-            return false;
-        }
-      })();
+      const hasPerm =
+        req.user.role === 'admin' || req.user.role === 'moderator';
 
       if (!isOwner && !hasPerm) {
         return res.status(403).json({
@@ -291,6 +333,7 @@ router.put(
         title, description, category, media_url, thumbnail_url, duration,
         verse_key, verse_arabic, translation, transliteration, tafsir,
         tags, language, quality, audio_only_url, chapters, download_enabled,
+        hls_url, qualities, source_width, source_height, source_duration,
       } = req.body;
 
       const updateData = {};
@@ -313,6 +356,21 @@ router.put(
         updateData.chapters = chapters.length ? JSON.stringify(chapters) : null;
       if (download_enabled !== undefined)
         updateData.download_enabled = download_enabled;
+      if (hls_url !== undefined) updateData.hls_url = hls_url;
+      if (qualities !== undefined) {
+        updateData.qualities =
+          qualities == null
+            ? null
+            : typeof qualities === 'string'
+              ? qualities
+              : JSON.stringify(qualities);
+      }
+      if (source_width !== undefined) updateData.source_width = source_width;
+      if (source_height !== undefined) updateData.source_height = source_height;
+      if (source_duration !== undefined) updateData.source_duration = source_duration;
+
+      // Never allow clients to reassign ownership or force publish via this route.
+      // Staff status changes belong on moderation endpoints.
 
       // If non-staff edits, reset to pending_review
       if (!hasPerm && video.status === 'published') {
@@ -338,13 +396,11 @@ router.put(
 router.delete(
   '/:id',
   authenticate({ required: true }),
+  loadResource('Video', 'reciter_id'),
   requireOwnershipOrPermission('reciter_id', PERMISSIONS.VIDEO_DELETE_ANY),
   async (req, res) => {
     try {
-      const video = await prisma.video.findUnique({
-        where: { id: req.params.id },
-      });
-
+      const video = req.resource;
       if (!video) {
         return res.status(404).json({ message: 'Video not found' });
       }

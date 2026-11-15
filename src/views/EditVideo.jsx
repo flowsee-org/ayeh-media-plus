@@ -44,7 +44,7 @@ export default function EditVideoPage({ videoId }) {
   const loadVideo = useCallback(async () => {
     try {
       setLoading(true);
-      const vid = await api.entities.Video.get(videoId);
+      const vid = await api.videos.get(videoId);
       if (!vid) {
         toast.error("ویدیو یافت نشد.");
         navigate("/creator");
@@ -125,19 +125,22 @@ export default function EditVideoPage({ videoId }) {
 
     setSaving(true);
     try {
-      const updated = await api.entities.Video.update(videoId, {
+      const updated = await api.videos.update(videoId, {
         title: form.title.trim(),
         description: form.description.trim(),
         category: form.category,
         tags: form.tags,
         verse_key: form.verse_key.trim() || undefined,
         verse_arabic: form.verse_arabic.trim() || undefined,
-        is_competition: form.is_competition,
       });
 
-      toast.success("محتوا با موفقیت به‌روزرسانی شد.");
+      if (updated?.status === "pending_review") {
+        toast.success("ذخیره شد و برای بررسی مجدد ارسال گردید.");
+      } else {
+        toast.success("محتوا با موفقیت به‌روزرسانی شد.");
+      }
       setVideo(prev => ({ ...prev, ...updated }));
-      navigate(`/watch/${videoId}`);
+      navigate(updated?.status === "pending_review" ? "/creator" : `/watch/${videoId}`);
     } catch (err) {
       toast.error("خطا در به‌روزرسانی محتوا: " + (err.message || "خطای نامشخص"));
     } finally {
@@ -149,7 +152,7 @@ export default function EditVideoPage({ videoId }) {
     if (!confirm("آیا از حذف این محتوا اطمینان دارید؟ این操作 ن قابل بازگشت نیست.")) return;
     setDeleting(true);
     try {
-      await api.entities.Video.delete(videoId);
+      await api.videos.delete(videoId);
       toast.success("محتوا حذف شد.");
       navigate("/creator");
     } catch (err) {

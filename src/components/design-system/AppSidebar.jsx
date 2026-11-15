@@ -32,8 +32,8 @@ const libraryItems = [
 ];
 
 const creatorItems = [
-  { to: '/upload', label: 'آپلود ویدیو', icon: Upload, roles: ['creator', 'moderator', 'admin'] },
-  { to: '/creator', label: 'داشبورد سازنده', icon: BarChart3, roles: ['creator', 'moderator', 'admin'] },
+  { to: '/upload', label: 'آپلود ویدیو', icon: Upload, roles: ['user', 'creator', 'moderator', 'admin'] },
+  { to: '/creator', label: 'داشبورد سازنده', icon: BarChart3, roles: ['user', 'creator', 'moderator', 'admin'] },
 ];
 
 const staffItems = [

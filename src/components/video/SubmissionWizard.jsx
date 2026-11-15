@@ -122,9 +122,9 @@ export default function SubmissionWizard({ competitionId, onComplete }) {
       }
 
       const isStaff = authUser.role === "admin" || authUser.role === "moderator";
-      const initialStatus = isStaff ? "published" : "pending_review";
 
-      await api.entities.Video.create({
+      // Canonical create path — ownership/status assigned server-side from session.
+      await api.videos.create({
         title: form.title,
         description: form.description,
         category: form.category,
@@ -135,20 +135,19 @@ export default function SubmissionWizard({ competitionId, onComplete }) {
         competition_id: form.competition_id || undefined,
         is_competition: form.is_competition,
         tags: form.tags,
-        status: initialStatus,
-        reciter_id: authUser.id,
         reciter_name: authUser.full_name || "کاربر آیه",
-        hls_url: hlsUrl,
-        qualities: qualities ? JSON.stringify(qualities) : undefined,
         thumbnail_url: thumbnailUrl || undefined,
-        source_duration: duration,
-        source_width: sourceWidth,
-        source_height: sourceHeight,
+        duration: duration || undefined,
+        hls_url: hlsUrl || undefined,
+        qualities: qualities || undefined,
+        source_width: sourceWidth || undefined,
+        source_height: sourceHeight || undefined,
+        source_duration: duration || undefined,
       });
 
       toast.success(isStaff ? "محتوای شما منتشر شد!" : "محتوای شما برای بررسی ارسال شد.");
       if (onComplete) onComplete();
-      navigate("/");
+      navigate("/creator");
     } catch (err) {
       toast.error(err.message || "خطا در ارسال محتوا");
     } finally { setSubmitting(false); }

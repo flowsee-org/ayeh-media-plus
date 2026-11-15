@@ -394,6 +394,61 @@ export const gamification = {
     request(`/gamification/leaderboard?type=${encodeURIComponent(type)}`),
 };
 
+// ── Videos (canonical /api/videos — ownership via session reciter_id) ──
+export const videos = {
+  list: (params = {}) => {
+    const q = new URLSearchParams();
+    if (params.status) q.set("status", params.status);
+    if (params.category) q.set("category", params.category);
+    if (params.reciter_id) q.set("reciter_id", params.reciter_id);
+    if (params.reciter_name) q.set("reciter_name", params.reciter_name);
+    if (params.mine === true || params.mine === 1 || params.mine === "1") {
+      q.set("mine", "1");
+    }
+    if (params.competition_id) q.set("competition_id", params.competition_id);
+    if (params.verse_key) q.set("verse_key", params.verse_key);
+    if (params.is_live !== undefined) q.set("is_live", String(params.is_live));
+    if (params.is_competition !== undefined) {
+      q.set("is_competition", String(params.is_competition));
+    }
+    if (params.featured !== undefined) q.set("featured", String(params.featured));
+    if (params.sort) q.set("sort", params.sort);
+    if (params.limit !== undefined) q.set("limit", String(params.limit));
+    if (params.skip !== undefined) q.set("skip", String(params.skip));
+    const qs = q.toString() ? `?${q.toString()}` : "";
+    return request(`/videos${qs}`).then((res) =>
+      makeResultArray(res.items || [], res)
+    );
+  },
+
+  get: (id) => request(`/videos/${id}`),
+
+  create: (payload) =>
+    request("/videos", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  update: (id, payload) =>
+    request(`/videos/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+
+  delete: (id) =>
+    request(`/videos/${id}`, {
+      method: "DELETE",
+    }),
+
+  recordView: (id, data = {}) =>
+    request(`/videos/${id}/view`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  analytics: (id) => request(`/videos/${id}/analytics`),
+};
+
 // ── Competitions ──
 export const competitions = {
   listEntries: (competitionId, params = {}) => {
@@ -435,6 +490,7 @@ export const api = {
   actors,
   socket,
   gamification,
+  videos,
   competitions,
   khatm,
 };
