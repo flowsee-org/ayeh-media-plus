@@ -3,6 +3,8 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../db.js';
 import { io } from '../socket.js';
 import { authenticate } from '../middleware/auth.js';
+import { hasPermission } from '../middleware/rbac/permissions.js';
+import { PERMISSIONS } from '../middleware/rbac/permissions.js';
 
 const router = Router();
 
@@ -691,6 +693,16 @@ router.post('/:entity', async (req, res) => {
       if (existing) {
         return res.status(409).json({ message: 'Already following this user' });
       }
+    }
+
+    // Live streaming: only moderator, scholar, master, admin may create sessions
+    if (entityName === 'LiveSession' && !hasPermission(req.user.role, PERMISSIONS.LIVE_STREAM)) {
+      return res.status(403).json({
+        message: 'اشتراک زنده فقط برای مدیر، العالم و استاد مجاز است',
+        code: 'LIVE_STREAM_FORBIDDEN',
+        required_permission: PERMISSIONS.LIVE_STREAM,
+        user_role: req.user.role,
+      });
     }
 
     if (entityName === 'KhatmPart') {

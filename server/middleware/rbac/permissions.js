@@ -40,6 +40,9 @@ export const PERMISSIONS = {
   TAFSIR_PUBLISH: 'tafsir:publish',
   TADBIR_PUBLISH: 'tadbir:publish',
 
+  // Live streaming — restricted to moderator, scholar, master, admin
+  LIVE_STREAM: 'live:stream',
+
   // Competition
   COMPETITION_READ: 'competition:read',
   COMPETITION_CREATE: 'competition:create',
@@ -206,6 +209,8 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.NOTIFICATION_READ_ALL,
     PERMISSIONS.ANALYTICS_READ_OWN,
     PERMISSIONS.ANALYTICS_READ,
+    // Live streaming (content supervisor+)
+    PERMISSIONS.LIVE_STREAM,
   ]),
 
   scholar: new Set([
@@ -256,6 +261,8 @@ export const ROLE_PERMISSIONS = {
     // Religious publication rights
     PERMISSIONS.TAFSIR_PUBLISH,
     PERMISSIONS.TADBIR_PUBLISH,
+    // Live streaming (inherited from moderator)
+    PERMISSIONS.LIVE_STREAM,
   ]),
 
   master: new Set([
@@ -307,6 +314,8 @@ export const ROLE_PERMISSIONS = {
     // Religious publication rights
     PERMISSIONS.TAFSIR_PUBLISH,
     PERMISSIONS.TADBIR_PUBLISH,
+    // Live streaming (inherited from scholar)
+    PERMISSIONS.LIVE_STREAM,
   ]),
 
   admin: new Set([
