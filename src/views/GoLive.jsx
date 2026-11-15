@@ -39,8 +39,6 @@ export default function GoLive() {
  const [previewVerse, setPreviewVerse] = useState(null);
  const [loadingVerse, setLoadingVerse] = useState(false);
 
- const { can } = usePermissions();
-
  const videoRef = useRef(null);
  const coHostVideoRef = useRef(null);
  const connRef = useRef(null);
