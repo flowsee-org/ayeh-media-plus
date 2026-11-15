@@ -54,7 +54,7 @@ const sidebarItems = [
 const secondaryItems = [
   { to: "/achievements", label: "مأموریت‌ها", icon: Flame, badge: null, roles: ["user", "creator", "moderator", "admin"] },
   { to: "/bookmarks", label: "نشان‌شده‌ها", icon: User, badge: null, roles: ["user", "creator", "moderator", "admin"] },
-  { to: "/studio", label: "استودیو کارت", icon: PaletteIcon, badge: null, roles: ["user", "creator", "moderator", "admin"] },
+  { to: "/assistants", label: "دستیاران قرآنی", icon: PaletteIcon, badge: null, roles: ["user", "creator", "moderator", "admin"] },
   { to: "/profile", label: "پروفایل من", icon: User, badge: null, roles: ["user", "creator", "moderator", "admin"] },
 ];
 

@@ -157,6 +157,22 @@ export async function getSurah(n) {
   }
 }
 
+/* ── All verses of a surah, shaped for search results ── */
+export async function getSurahVerses(n) {
+  const surah = await getSurah(n);
+  return {
+    surah: surah.number,
+    verses: surah.ayahs.map((a) => ({
+      verse_key: `${surah.number}:${a.numberInSurah}`,
+      surah: surah.number,
+      text_arabic: a.arabic,
+      translation: a.translation || "",
+      number: a.numberInSurah,
+      audio: a.audio,
+    })),
+  };
+}
+
 /* ── Single ayah ── */
 export async function getAyah(surah, ayah) {
   const cacheKey = `ayah:${surah}:${ayah}`;

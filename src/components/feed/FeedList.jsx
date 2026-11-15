@@ -8,8 +8,7 @@ import CreatePost from "@/components/community/CreatePost";
 import { Avatar } from "@/components/community/shared";
 import ActivePrizeStrip from "@/components/community/ActivePrizeStrip";
 import CompanionBanner from "@/components/feed/CompanionBanner";
-import VerseCardStudio from "@/components/cards/VerseCardStudio";
-import { Loader2, Plus, ImageIcon, Sparkles, Palette, BookOpen } from "lucide-react";
+import { Loader2, Plus, ImageIcon, Sparkles, BookOpen } from "lucide-react";
 
 const PAGE_SIZE = 4;
 
@@ -23,7 +22,6 @@ export default function FeedList() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
-  const [showStudio, setShowStudio] = useState(false);
   const sentinelRef = useRef(null);
 
   const user = authUser || localUser;
@@ -134,12 +132,6 @@ export default function FeedList() {
         </button>
         <div className="mt-3 flex gap-2 border-t border-border/50 pt-2.5">
           <button
-            onClick={() => (user ? setShowStudio(true) : openAuthModal(() => setShowStudio(true)))}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent/10 py-2 text-xs font-medium text-accent transition-colors hover:bg-accent/20"
-          >
-            <Palette className="h-3.5 w-3.5" /> ساخت کارت آیه
-          </button>
-          <button
             onClick={() => (user ? setShowCreate(true) : openAuthModal(() => setShowCreate(true)))}
             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-muted/50 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
@@ -202,18 +194,6 @@ export default function FeedList() {
           onClose={() => setShowCreate(false)}
           onPosted={(created) => {
             setShowCreate(false);
-            if (created) setPosts((prev) => [created, ...prev]);
-            else reset();
-          }}
-        />
-      )}
-
-      {showStudio && user && (
-        <VerseCardStudio
-          user={user}
-          onClose={() => setShowStudio(false)}
-          onPosted={(created) => {
-            setShowStudio(false);
             if (created) setPosts((prev) => [created, ...prev]);
             else reset();
           }}

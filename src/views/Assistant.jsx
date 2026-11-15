@@ -5,96 +5,101 @@ import api from "@/lib/api";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import { getAudioUrl } from "@/lib/quranApi";
 import { getSurahByNumber } from "@/lib/surahData";
+import { cn } from "@/lib/utils";
 import {
   Sparkles, Send, Loader2, BookOpen, Play, Pause,
   Compass, Heart, CheckCircle2, RotateCcw,
-  ExternalLink, Waves,
-  Sun, Moon, Shield,
+  ExternalLink, Waves, Sun, Moon, Shield, User, Users, Wand2,
 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
-const SYSTEM_FRAMING = `You are a compassionate Quranic reflection companion (همدم قرآنی و تدبّر). Respond in authentic Persian.
-A user shares their spiritual state, emotion, or life question. Your purpose is to listen with deep empathy, guide them to authentic Quranic verses that speak directly to their heart, and offer concrete daily actions.
-Return a structured JSON with:
-- empathy: A warm, heartfelt 2-3 sentence Persian message acknowledging their feeling without judgment.
-- verses: Array of 1 to 3 relevant real verses, each containing:
-  • verse_key: "surah:ayah" numeric (e.g. "13:28")
-  • arabic: exact Arabic text of the verse with diacritics
-  • translation: clear, heartwarming Persian translation
-  • why: 2 sentences explaining why this verse addresses their exact feeling
-  • action: one practical step, reflection, or dhikr for today
-- closing: a brief spiritual du'a or encouraging closing thought.`;
-
-const MOODS = [
+/**
+ * Quranic Assistant Personas
+ * Each persona has a distinct framing, tone, and purpose.
+ */
+const ASSISTANTS = [
   {
-    id: "anxiety",
-    label: "اضطراب و بی‌قراری",
-    icon: Waves,
-    color: "from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400",
-    prompt: "دل‌ام پر از اضطراب و نگرانی است، به دنبال آیه‌ای برای آرامش هستم.",
-  },
-  {
-    id: "hope",
-    label: "ناامیدی و طلب امید",
-    icon: Sun,
-    color: "from-amber-500/20 to-orange-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400",
-    prompt: "ناامید شده‌ام و راه‌ها بسته به نظر می‌رسد، قرآنی می‌خواهم که امید دهد.",
-  },
-  {
-    id: "loneliness",
-    label: "تنهایی و دلتنگی",
-    icon: Moon,
-    color: "from-indigo-500/20 to-purple-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400",
-    prompt: "تنها و غربت‌گرفته‌ام، می‌خواهم نزدیکی خداوند را در قرآن بیابم.",
-  },
-  {
-    id: "gratitude",
-    label: "شکرگزاری و شادی",
-    icon: Sparkles,
-    color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
-    prompt: "دلم شکرگزار است، آیات شکر و طمأنینه می‌خواهم.",
-  },
-  {
-    id: "decision",
-    label: "تردید و دوراهی",
+    id: "reflection",
+    name: "همدم تدبّر",
+    nameEnglish: "Reflection Companion",
     icon: Compass,
-    color: "from-violet-500/20 to-fuchsia-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400",
-    prompt: "بر سر دوراهی مهمی هستم، راهنمایی قرآنی و توکل می‌خواهم.",
+    color: "bg-gradient-to-br from-emerald-500/20 to-turquoise-500/10 border-emerald-500/30 text-emerald-600",
+    avatarBg: "bg-emerald-500/15",
+    avatarColor: "text-emerald-600",
+    shortDesc: "تأمل در معانی و پیوند با دل",
+    framing: `You are a compassionate Quranic reflection companion (همدم تدبّر). Respond in authentic Persian.
+Help the user reflect deeply on Quranic verses relevant to their emotional or spiritual state.
+Return structured JSON:
+- empathy: warm 2-3 sentence Persian message acknowledging their feeling
+- verses: 1-3 real verses with verse_key, arabic, translation, why (2 sentences), action (one practical step)
+- closing: brief spiritual du'a or encouraging thought`,
   },
   {
-    id: "grief",
-    label: "غم و داغ‌دیدگی",
+    id: "tafsir",
+    name: "مفسر",
+    nameEnglish: "Tafsir Guide",
+    icon: BookOpen,
+    color: "bg-gradient-to-br from-blue-500/20 to-indigo-500/10 border-blue-500/30 text-blue-600",
+    avatarBg: "bg-blue-500/15",
+    avatarColor: "text-blue-600",
+    shortDesc: "تفسیر، شان نزول و مفاهیم",
+    framing: `You are a knowledgeable Quranic tafsir assistant (مفسر قرآنی). Respond in authentic Persian.
+Provide verse context, sha'n nuzul (occasion of revelation), and clear explanation of meaning.
+Return structured JSON:
+- empathy: warm 2-3 sentence Persian introduction
+- verses: 1-3 real verses with verse_key, arabic, translation, why (explanation of meaning/context), action (reflection step)
+- closing: brief concluding thought`,
+  },
+  {
+    id: "comfort",
+    name: "تسلی‌بخش",
+    nameEnglish: "Comfort Giver",
     icon: Heart,
-    color: "from-rose-500/20 to-pink-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400",
-    prompt: "غم سنگینی بر دل نشسته، کلمات صبر و تسلی الهی می‌خواهم.",
+    color: "bg-gradient-to-br from-rose-500/20 to-pink-500/10 border-rose-500/30 text-rose-600",
+    avatarBg: "bg-rose-500/15",
+    avatarColor: "text-rose-600",
+    shortDesc: "کلمات صبر و آرامش برای دل",
+    framing: `You are a gentle Quranic comfort assistant (تسلی‌بخش). Respond in authentic Persian.
+Offer soothing Quranic verses and gentle words for grief, anxiety, loneliness, or hardship.
+Return structured JSON:
+- empathy: warm, tender 2-3 sentence Persian message
+- verses: 1-3 comforting real verses with verse_key, arabic, translation, why (why it comforts), action (dhikr or small step)
+- closing: a brief spiritual du'a`,
   },
   {
-    id: "anger",
-    label: "خشم و رنجش",
-    icon: Shield,
-    color: "from-red-500/20 to-orange-500/10 border-red-500/30 text-red-600 dark:text-red-400",
-    prompt: "عصبانی و رنجیده‌ام، راه حلم و بخشش در قرآن می‌گردم.",
+    id: "guidance",
+    name: "راهنمای قرآنی",
+    nameEnglish: "Guidance Assistant",
+    icon: Users,
+    color: "bg-gradient-to-br from-amber-500/20 to-orange-500/10 border-amber-500/30 text-amber-600",
+    avatarBg: "bg-amber-500/15",
+    avatarColor: "text-amber-600",
+    shortDesc: "راهنمایی در تصمیم‌گیری و دوراهی‌ها",
+    framing: `You are a Quranic guidance assistant (راهنمای قرآنی). Respond in authentic Persian.
+Help the user with decisions, crossroads, and life direction using Quranic wisdom and tawakkul.
+Return structured JSON:
+- empathy: warm 2-3 sentence Persian message acknowledging their situation
+- verses: 1-3 guiding real verses with verse_key, arabic, translation, why (how it guides), action (practical step)
+- closing: brief encouraging thought or du'a`,
   },
 ];
 
-export default function Assistant() {
+export default function AssistantsRoute() {
   const [searchParams] = useSearchParams();
-  const [messages, setMessages] = useState([
-    {
-      role: "assistant",
-      content: {
-        empathy:
-          "سلام بر شما. من همدم قرآنی‌ام — اینجا تا با شما در κάθε حالتی باشم، آیه‌ای بیابم که دل‌تان را آغوش بگیرد، و گامی کوچک برای امروز پیشنهاد دهم. حال دل‌تان الان چطور است؟ از گزینه‌های بالا یکی را بزنید یا هم‌جور دل‌تان می‌خواهد بنویسید.",
-      },
-    },
-  ]);
+  const [selectedAssistantId, setSelectedAssistantId] = useState("reflection");
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
   const queryHandledRef = useRef(false);
+  const [initialized, setInitialized] = useState(false);
 
-  // Audio Player hook
+  const assistant = useMemo(() => ASSISTANTS.find((a) => a.id === selectedAssistantId) || ASSISTANTS[0], [selectedAssistantId]);
+
   const { playTrack, track: currentTrack, isPlaying, togglePlay } = useAudioPlayer();
 
   useEffect(() => {
@@ -102,12 +107,22 @@ export default function Assistant() {
   }, [messages, loading]);
 
   useEffect(() => {
-    const q = searchParams.get("q");
-    if (q && q.trim() && !queryHandledRef.current) {
+    if (!initialized) {
+      setInitialized(true);
+      setMessages([
+        {
+          role: "assistant",
+          assistantId: assistant.id,
+          content: {
+            empathy: `سلام. من ${assistant.name} هستم — ${assistant.shortDesc}. حال دل‌تان چطور است؟`,
+          },
+        },
+      ]);
+    } else if (searchParams.get("q") && !queryHandledRef.current) {
       queryHandledRef.current = true;
-      send(q.trim());
+      send(searchParams.get("q").trim());
     }
-  }, [searchParams]);
+  }, [initialized, assistant.id, searchParams]);
 
   const send = async (textToSend) => {
     const text = (typeof textToSend === "string" ? textToSend : input).trim();
@@ -120,7 +135,7 @@ export default function Assistant() {
 
     try {
       const res = await api.integrations.Core.InvokeLLM({
-        prompt: `${SYSTEM_FRAMING}\n\nپیام یا حال روحی کاربر:\n"""${text}"""`,
+        prompt: `${assistant.framing}\n\nپیام کاربر:\n"""${text}"""\nپاسخ را به زبان فارسی و به صورت JSON معتبر بازگردانید.`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -136,22 +151,27 @@ export default function Assistant() {
                   why: { type: "string" },
                   action: { type: "string" },
                 },
+                required: ["verse_key", "arabic", "translation", "why", "action"],
               },
             },
             closing: { type: "string" },
           },
+          required: ["empathy", "verses", "closing"],
         },
       });
 
-      setMessages((m) => [...m, { role: "assistant", content: res, structured: true }]);
+      setMessages((m) => [
+        ...m,
+        { role: "assistant", assistantId: assistant.id, content: res, structured: true },
+      ]);
     } catch {
       setMessages((m) => [
         ...m,
         {
           role: "assistant",
+          assistantId: assistant.id,
           content: {
-            empathy:
-              "متأسفانه در دریافت پاسخ مشکلی پیش آمد. اما بدانید درهای رحمت الهی همواره بازند. لطفاً دوباره تلاش کنید یا پرسش‌تان را وначе بنویسید.",
+            empathy: "متأسفانه در دریافت پاسخ مشکلی پیش آمد. لطفاً دوباره تلاش کنید.",
           },
         },
       ]);
@@ -159,66 +179,76 @@ export default function Assistant() {
     setLoading(false);
   };
 
+  const handleSwitchAssistant = (id) => {
+    setSelectedAssistantId(id);
+    setMessages([
+      {
+        role: "assistant",
+        assistantId: id,
+        content: {
+          empathy: `سلام. من ${ASSISTANTS.find((a) => a.id === id)?.name} هستم. چگونه می‌توانم کمکتان کنم؟`,
+        },
+      },
+    ]);
+  };
+
   const handleClearChat = () => {
     setMessages([
       {
         role: "assistant",
+        assistantId: selectedAssistantId,
         content: {
-          empathy:
-            "گفتگوی تازه آغاز شد. حال دل‌تان را با انتخاب یکی از گزینه‌ها یا نوشتن پیامی به اشتراک بگذارید تا آیات روشنگر متناسب را با هم مرور کنیم.",
+          empathy: `گفتگوی تازه با ${assistant.name} آغاز شد. حال دل‌تان را بگویید.`,
         },
       },
     ]);
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col h-[calc(100vh-8.5rem)] md:h-[calc(100vh-6.5rem)] animate-fade-in font-doran">
-      {/* Header Banner */}
-      <div className="flex items-center justify-between gap-3 mb-3 p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card/95 shadow-soft">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-accent/20 to-primary/20 text-accent border border-accent/30 flex items-center justify-center shrink-0 shadow-xs">
-            <Sparkles className="h-5 w-5" />
+    <div
+      className="mx-auto max-w-5xl px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col h-[calc(100vh-8.5rem)] md:h-[calc(100vh-6.5rem)] animate-fade-in font-doran"
+      dir="rtl"
+    >
+      {/* Header: Assistant Selection + Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card/95 backdrop-blur-sm shadow-soft">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5 rounded-xl p-1.5 border border-border/60 bg-secondary/40">
+            {ASSISTANTS.map((a) => (
+              <button
+                key={a.id}
+                onClick={() => handleSwitchAssistant(a.id)}
+                className={cn(
+                  "h-8 w-8 rounded-full flex items-center justify-center transition-all",
+                  selectedAssistantId === a.id
+                    ? `${a.color} shadow-md`
+                    : "bg-background/50 text-muted-foreground hover:bg-muted/50 border-transparent"
+                )}
+                title={a.name}
+              >
+                <a.icon className={`h-4 w-4 fill-current`} />
+              </button>
+            ))}
           </div>
           <div>
-            <h1 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground">
-              همدم قرآنی
+            <h1 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground leading-tight">
+              {assistant.name}
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              با حال دل‌تان باشید، آیه‌ی راه بیابید، تلاوت کنید
+            <p className="text-xs text-muted-foreground mt-0.5 font-doran">
+              {assistant.shortDesc}
             </p>
           </div>
         </div>
 
-        <button
-          onClick={handleClearChat}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border/70 bg-secondary/60 hover:bg-secondary text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors font-ui"
-          title="شروع گفتگوی جدید"
-        >
-          <RotateCcw className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">شروع دوباره</span>
-        </button>
-      </div>
-
-      {/* Mood Selector Horizontal Bar */}
-      <div className="mb-3 overflow-x-auto no-scrollbar py-1">
-        <div className="flex items-center gap-2 px-1">
-          <span className="text-[11px] font-bold text-muted-foreground shrink-0 font-ui ml-1">
-            حال درونی شما:
-          </span>
-          {MOODS.map((mood) => {
-            const Icon = mood.icon;
-            return (
-              <button
-                key={mood.id}
-                onClick={() => send(mood.prompt)}
-                disabled={loading}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold font-ui border transition-all hover:scale-105 active:scale-95 disabled:opacity-50 bg-gradient-to-r ${mood.color}`}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                <span>{mood.label}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleClearChat}
+            variant="outline"
+            size="icon-sm"
+            className="px-2 font-ui"
+            title="شروع گفتگوی جدید"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+          </Button>
         </div>
       </div>
 
@@ -235,21 +265,36 @@ export default function Assistant() {
             } animate-fade-in-up`}
           >
             {m.role === "assistant" ? (
-              <div className="h-8 w-8 rounded-full bg-accent/15 text-accent border border-accent/30 flex items-center justify-center shrink-0 mt-1 shadow-xs">
-                <BookOpen className="h-4 w-4" />
-              </div>
+              <Avatar
+                className={cn(
+                  "h-8 w-8 mt-1 shadow-xs",
+                  m.assistantId
+                    ? ASSISTANTS.find((a) => a.id === m.assistantId)?.avatarBg ||
+                        "bg-accent/15"
+                    : "bg-accent/15",
+                  m.assistantId
+                    ? ASSISTANTS.find((a) => a.id === m.assistantId)?.avatarColor ||
+                        "text-accent"
+                    : "text-accent"
+                )}
+              >
+                <AvatarFallback>
+                  <BookOpen className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
             ) : (
-              <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground border border-primary/20 flex items-center justify-center shrink-0 mt-1 font-bold text-xs font-ui">
-                شما
-              </div>
+              <Avatar className="h-8 w-8 bg-primary text-primary-foreground border border-primary/20 mt-1 font-bold text-xs font-ui">
+                <AvatarFallback>شما</AvatarFallback>
+              </Avatar>
             )}
 
-            <div
-              className={`max-w-[92%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 text-sm leading-relaxed transition-all ${
+            <Card
+              className={cn(
+                "max-w-[92%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 text-sm leading-relaxed transition-all shadow-sm",
                 m.role === "user"
-                  ? "bg-primary text-primary-foreground font-medium rounded-tr-xs shadow-soft"
-                  : "bg-card border border-border/80 rounded-tl-xs text-foreground shadow-soft"
-              }`}
+                  ? "bg-primary text-primary-foreground font-medium rounded-tr-xs border-none"
+                  : "bg-card border border-border/80 rounded-tl-xs text-foreground"
+              )}
             >
               {typeof m.content === "string" ? (
                 <div className="whitespace-pre-line">{m.content}</div>
@@ -262,19 +307,19 @@ export default function Assistant() {
                   togglePlay={togglePlay}
                 />
               )}
-            </div>
+            </Card>
           </div>
         ))}
 
         {loading && (
           <div className="flex items-center gap-3 animate-fade-in">
-            <div className="h-8 w-8 rounded-full bg-accent/15 text-accent border border-accent/30 flex items-center justify-center shrink-0">
+            <Avatar className="h-8 w-8 bg-accent/15 text-accent border border-accent/30">
               <Loader2 className="h-4 w-4 animate-spin" />
-            </div>
-            <div className="rounded-2xl bg-card border border-border/70 px-4 py-3 text-xs text-muted-foreground flex items-center gap-2 shadow-xs">
+            </Avatar>
+            <Card className="rounded-2xl bg-card border border-border/70 px-4 py-3 text-xs text-muted-foreground flex items-center gap-2 shadow-xs border-none">
               <Sparkles className="h-3.5 w-3.5 text-accent animate-pulse" />
-              <span>در حال یافتن آیات برای دل‌تان...</span>
-            </div>
+              <span>در حال پاسخ‌گویی...</span>
+            </Card>
           </div>
         )}
       </div>
@@ -291,14 +336,16 @@ export default function Assistant() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="حال درونی، دغدغه یا سوالی که داری..."
+          placeholder={`سوال یا حال را برای ${assistant.name} بنویسید...`}
           disabled={loading}
           className="flex-1 py-3.5 pr-4 pl-12 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 font-doran text-xs sm:text-sm shadow-soft transition-all disabled:opacity-50"
         />
-        <button
+        <Button
           type="submit"
           disabled={!input.trim() || loading}
-          className="absolute left-2.5 top-1/2 -translate-y-1/2 h-9 w-9 rounded-xl bg-accent text-accent-foreground flex items-center justify-center disabled:opacity-40 transition-all hover:scale-105 active:scale-95 shadow-soft"
+          variant="accent"
+          size="icon-sm"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 h-9 w-9 px-0 shadow-soft"
           aria-label="ارسال"
         >
           {loading ? (
@@ -306,39 +353,37 @@ export default function Assistant() {
           ) : (
             <Send className="h-4 w-4 rotate-180" />
           )}
-        </button>
+        </Button>
       </form>
     </div>
   );
 }
 
-/**
- * Renders the structured companion message with empathy box, interactive verse cards and audio player
- */
 function AssistantStructuredResponse({ content, playTrack, currentTrack, isPlaying, togglePlay }) {
   const { empathy, verses = [], closing } = content || {};
 
   return (
     <div className="space-y-4">
-      {/* Empathy Box */}
       {empathy && (
-        <div className="rounded-xl border border-accent/20 bg-accent/5 p-3.5 sm:p-4 text-xs sm:text-sm leading-relaxed text-foreground/90 font-medium">
-          <div className="flex items-center gap-1.5 text-accent font-bold mb-1 font-rokh-bold">
-            <Heart className="h-3.5 w-3.5 fill-current" />
-            <span>همدلی:</span>
-          </div>
-          <p className="whitespace-pre-line">{empathy}</p>
-        </div>
+        <Card className="rounded-xl border border-accent/20 bg-accent/5 shadow-sm">
+          <CardContent className="p-3.5 sm:p-4">
+            <div className="flex items-center gap-1.5 text-accent font-bold mb-1 font-rokh-bold">
+              <Heart className="h-3.5 w-3.5 fill-current" />
+              <span>همدلی:</span>
+            </div>
+            <p className="whitespace-pre-line text-xs sm:text-sm leading-relaxed text-foreground/90 font-medium">
+              {empathy}
+            </p>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Recommended Verse Cards */}
       {verses.length > 0 && (
         <div className="space-y-3 pt-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground font-rokh-bold">
             <BookOpen className="h-4 w-4 text-primary" />
-            <span>آیات برای دل‌تان:</span>
+            <span>آیات:</span>
           </div>
-
           {verses.map((v, idx) => (
             <CompanionVerseCard
               key={idx}
@@ -352,7 +397,6 @@ function AssistantStructuredResponse({ content, playTrack, currentTrack, isPlayi
         </div>
       )}
 
-      {/* Closing Thought */}
       {closing && (
         <div className="pt-2 border-t border-border/50 text-xs sm:text-[13px] text-muted-foreground/90 italic font-doran leading-relaxed">
           {closing}
@@ -362,13 +406,9 @@ function AssistantStructuredResponse({ content, playTrack, currentTrack, isPlayi
   );
 }
 
-/**
- * Individual interactive verse card with audio player, calligraphy and action step
- */
 function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, togglePlay }) {
   const { verse_key, arabic, translation, why, action } = verse || {};
 
-  // Surah parsing
   const meta = useMemo(() => {
     if (!verse_key) return null;
     const parts = verse_key.split(":").map(Number);
@@ -383,13 +423,11 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
     };
   }, [verse_key]);
 
-  const isThisVersePlaying =
-    isPlaying && currentTrack?.verseKey === verse_key;
+  const isThisVersePlaying = isPlaying && currentTrack?.verseKey === verse_key;
 
   const handleAudio = (e) => {
     e.preventDefault();
     if (!meta) return;
-
     if (isThisVersePlaying) {
       togglePlay();
     } else {
@@ -406,8 +444,10 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
   };
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-gradient-to-b from-card via-primary/5 to-secondary/30 p-4 sm:p-5 shadow-xs transition-all hover:border-primary/40">
-      {/* Header: Surah Name Badge + Play Recitation Button */}
+    <Card
+      variant="interactive"
+      className="rounded-2xl border-primary/20 bg-gradient-to-b from-card via-primary/5 to-secondary/30 p-4 sm:p-5 shadow-xs transition-all hover:border-primary/40"
+    >
       <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-2.5">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border/80">
           <BookOpen className="h-3 w-3 text-accent" />
@@ -417,13 +457,16 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
         </div>
 
         {meta && (
-          <button
+          <Button
             onClick={handleAudio}
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold font-ui transition-all shadow-xs ${
+            variant={isThisVersePlaying ? "accent" : "outline"}
+            size="icon-sm"
+            className={cn(
+              "inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold font-ui transition-all shadow-xs",
               isThisVersePlaying
                 ? "bg-amber-500 text-amber-950 ring-2 ring-amber-500/40 animate-pulse"
                 : "bg-secondary text-primary hover:bg-accent/15 hover:text-accent border border-border/60"
-            }`}
+            )}
             title={isThisVersePlaying ? "توقف تلاوت" : "پخش تلاوت ترتیل آیه"}
           >
             {isThisVersePlaying ? (
@@ -437,14 +480,13 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
                 <span>تلاوت آیه</span>
               </>
             )}
-          </button>
+          </Button>
         )}
       </div>
 
-      {/* Arabic Calligraphy */}
       {arabic && (
         <div
-          className="my-3 font-arabic text-lg sm:text-xl leading-[2.3] text-foreground text-center font-bold tracking-wide select-text"
+          className="my-3 text-lg sm:text-xl leading-[2.3] text-foreground text-center font-bold tracking-wide select-text"
           dir="rtl"
           lang="ar"
         >
@@ -452,22 +494,23 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
         </div>
       )}
 
-      {/* Translation */}
       {translation && (
         <p className="font-doran text-xs sm:text-sm leading-relaxed text-muted-foreground text-center font-medium my-2">
           «{translation}»
         </p>
       )}
 
-      {/* Why this verse */}
       {why && (
-        <div className="mt-3 rounded-xl bg-card/70 border border-border/40 p-2.5 text-xs text-foreground/85 leading-relaxed font-doran">
-          <span className="font-bold text-accent ml-1 font-rokh-bold">نکته تدبّری:</span>
-          <span>{why}</span>
-        </div>
+        <Card className="mt-3 rounded-xl bg-card/70 border border-border/40 shadow-sm border-none">
+          <CardContent className="p-2.5">
+            <div className="flex items-center gap-1 text-xs text-foreground/85 leading-relaxed font-doran">
+              <span className="font-bold text-accent font-rokh-bold">نکته تدبّری:</span>
+              <span>{why}</span>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Action item */}
       {action && (
         <div className="mt-2 flex items-start gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed font-doran font-medium">
           <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
@@ -478,7 +521,6 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
         </div>
       )}
 
-      {/* Link to Verse in Quran */}
       {meta && (
         <div className="mt-3 flex justify-end">
           <Link
@@ -490,6 +532,6 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
           </Link>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

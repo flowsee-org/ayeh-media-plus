@@ -250,7 +250,6 @@
     --font-body: 'Doran', system-ui, sans-serif;
     --font-heading: 'Rokh', 'Doran', sans-serif;
     --font-display: 'Rokh', 'Doran', sans-serif;
-    --font-arabic: 'Tajrid', 'Noto Naskh Arabic', 'Amiri Quran', serif;
     --font-falsafeh: 'Falsafeh', 'Doran', sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
@@ -341,23 +340,6 @@
     font-family: var(--font-ui);
   }
 
-  /* Quranic Arabic Script Enhancement */
-  .font-arabic {
-    font-family: var(--font-arabic) !important;
-    font-feature-settings: "calt", "liga", "mset", "medi", "init", "fina", "isol";
-    line-height: 2.6;
-    word-spacing: 0.18em;
-    text-align: justify;
-    text-justify: inter-word;
-    font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures contextual;
-  }
-
-  .font-arabic-large {
-    @apply font-arabic;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    line-height: 2.8;
-  }
-
   .font-doran { font-family: 'Doran', system-ui, sans-serif !important; }
   .font-doran-bold { font-family: 'Doran', system-ui, sans-serif !important; font-weight: 700 !important; }
   .font-doran-extrabold { font-family: 'Doran', system-ui, sans-serif !important; font-weight: 800 !important; }
@@ -375,8 +357,6 @@
     letter-spacing: 0.01em;
     line-height: 1.9;
   }
-  .font-arabic { font-family: var(--font-arabic) !important; }
-
   ::selection {
     background-color: hsl(var(--primary) / 0.25);
     color: hsl(var(--primary-foreground));
@@ -544,7 +524,7 @@
   .divider-ornamental::after {
     content: '۞';
     @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-           text-primary/60 text-xl font-arabic
+           text-primary/60 text-xl
            bg-background px-3;
   }
 
@@ -642,7 +622,7 @@
 
   /* Quranic Typography */
   .quran-text {
-    @apply font-arabic text-foreground/95 leading-[2.6] text-justify;
+    @apply text-foreground/95 leading-[2.6] text-justify;
     font-size: clamp(1.25rem, 3vw, 1.75rem);
   }
   .quran-text-large {
