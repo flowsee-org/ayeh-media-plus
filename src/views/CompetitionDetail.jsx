@@ -145,7 +145,7 @@ export default function CompetitionDetail() {
         ) : (
           <div className="h-32 bg-gradient-to-br from-accent/15 to-primary/10" />
         )}
-        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pb-6 text-center -mt-24">
+        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pb-8 text-center -mt-24">
           <div className="inline-flex items-center gap-1.5 mb-3 px-3.5 py-1 rounded-full bg-card/90 backdrop-blur-md border border-accent/25 text-xs text-accent font-bold font-ui shadow-soft">
             <Trophy className="h-3.5 w-3.5 text-accent" />
             <span>{COMPETITION_TYPE_LABELS[comp.type] || "مسابقه قرآنی"}</span>
@@ -200,7 +200,7 @@ export default function CompetitionDetail() {
         </div>
 
         {/* Competition Meta Cards */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
           <MetaCard icon={Users} label="شرکت‌کنندگان" value={fa(comp.participants_count || 0)} />
           <MetaCard icon={Calendar} label="آغاز مسابقه" value={comp.start_date || "—"} />
           <MetaCard icon={Calendar} label="پایان مهلت" value={comp.end_date || "—"} />
@@ -317,10 +317,10 @@ export default function CompetitionDetail() {
 
 function MetaCard({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-3.5 text-center shadow-xs">
-      <Icon className="h-4 w-4 text-accent mx-auto mb-1" />
-      <div className="text-sm font-bold text-foreground font-ui">{value}</div>
-      <div className="text-[11px] text-muted-foreground mt-0.5">{label}</div>
+    <div className="rounded-2xl border border-border/80 bg-card p-3.5 sm:p-4 text-center shadow-xs">
+      <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent mx-auto mb-1.5" />
+      <div className="text-sm sm:text-base font-bold text-foreground font-ui">{value}</div>
+      <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{label}</div>
     </div>
   );
 }
@@ -668,7 +668,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg rounded-3xl border border-border/80 bg-card p-6 shadow-2xl overflow-hidden font-doran max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-lg sm:max-w-xl rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-2xl overflow-hidden font-doran max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -700,7 +700,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
         )}
 
         {/* Mode Selector Tabs */}
-        <div className="mt-4 flex rounded-xl bg-secondary p-1 border border-border/60">
+        <div className="mt-4 flex rounded-xl bg-secondary p-1 border border-border/60 sm:px-1">
           <button
             type="button"
             onClick={() => {
@@ -734,23 +734,23 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
+        <div className="flex-1 overflow-y-auto py-4 sm:py-6 space-y-4 sm:space-y-6 pr-1 sm:pr-2">
           {tab === "record" ? (
             /* Live Recording Section */
-            <div className="rounded-2xl border border-border/80 bg-secondary/30 p-5 text-center">
+            <div className="rounded-2xl border border-border/80 bg-secondary/30 p-4 sm:p-6 text-center">
               {!recordedUrl ? (
                 <div className="space-y-4">
                   <div className="flex justify-center">
                     <button
                       type="button"
                       onClick={isRecording ? stopRecording : startRecording}
-                      className={`relative h-20 w-20 rounded-full flex items-center justify-center transition-all ${
+                      className={`relative h-20 w-20 sm:h-24 sm:w-24 rounded-full flex items-center justify-center transition-all ${
                         isRecording
                           ? "bg-red-500 text-white ring-8 ring-red-500/25 animate-pulse"
                           : "bg-accent text-accent-foreground hover:scale-105 shadow-glow"
                       }`}
                     >
-                      <Mic className="h-9 w-9" />
+                      <Mic className="h-9 w-9 sm:h-12 sm:w-12" />
                     </button>
                   </div>
 
@@ -758,7 +758,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                     <div className="font-rokh-bold font-bold text-base text-foreground">
                       {isRecording ? "در حال ضبط تلاوت شما..." : "آماده ضبط تلاوت"}
                     </div>
-                    <div className="font-mono text-lg font-bold text-accent mt-1">
+                    <div className="font-mono text-lg sm:text-xl font-bold text-accent mt-1">
                       {formatTime(recordingSeconds)}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -793,7 +793,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
             </div>
           ) : (
             /* Upload File Section */
-            <div className="rounded-2xl border border-dashed border-border/80 bg-secondary/20 p-5 text-center">
+            <div className="rounded-2xl border border-dashed border-border/80 bg-secondary/20 p-4 sm:p-6 text-center">
               <input
                 type="file"
                 accept="audio/*,video/*"
@@ -825,7 +825,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
 
           {/* Form Fields */}
           <div>
-            <label className="block text-xs font-bold text-foreground mb-1.5 font-ui">
+            <label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
               عنوان اثر یا نام سوره:
             </label>
             <input
@@ -833,12 +833,12 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: تلاوت مجلسی سوره شمس"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-doran"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-doran"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-foreground mb-1.5 font-ui">
+            <label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
               شماره یا مشخصات آیه شریفه:
             </label>
             <input
@@ -846,12 +846,12 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               value={verseKey}
               onChange={(e) => setVerseKey(e.target.value)}
               placeholder="مثال: 91:1 یا 2:255"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-ui"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-ui"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-foreground mb-1.5 font-ui">
+            <label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
               یادداشت یا نکته تدبّری پیرامون تلاوت:
             </label>
             <textarea
@@ -859,18 +859,18 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               onChange={(e) => setContent(e.target.value)}
               rows={3}
               placeholder="توضیح کوتاهی درباره حس‌وحال، مقام تلاوت یا پیام آیه بنویسید..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs font-doran leading-relaxed"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-doran leading-relaxed"
             />
           </div>
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-3 border-t border-border/60 flex items-center justify-end gap-2">
+        <div className="pt-4 sm:pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-end gap-2 sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="px-4 py-2 rounded-xl border border-border text-xs font-bold font-ui text-muted-foreground hover:text-foreground transition-colors"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl border border-border text-xs sm:text-sm font-bold font-ui text-muted-foreground hover:text-foreground transition-colors"
           >
             انصراف
           </button>
@@ -878,7 +878,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
             type="button"
             onClick={submit}
             disabled={saving || isRecording}
-            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-bold font-ui shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 sm:py-2 rounded-xl bg-accent text-accent-foreground text-xs sm:text-sm font-bold font-ui shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
           >
             {saving ? (
               <>
@@ -887,7 +887,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               </>
             ) : (
               <>
-                <Send className="h-3.5 w-3.5" />
+                <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span>ارسال نهایی اثر</span>
               </>
             )}

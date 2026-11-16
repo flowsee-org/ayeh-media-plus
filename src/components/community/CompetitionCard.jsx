@@ -1,51 +1,102 @@
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
+import { useNavigate } from "@/lib/router-compat";
 import { Image } from "@/components/ui/image";
-import { Trophy, Users, Clock, Gift } from "lucide-react";
-import { COMPETITION_TYPE_LABELS, STATUS_LABELS, STATUS_COLORS } from "./shared";
+import { Trophy, Clock, Users, Gift } from "lucide-react";
+import {
+  COMPETITION_TYPE_LABELS,
+  STATUS_LABELS,
+  STATUS_COLORS,
+} from "./shared";
 
-export default function CompetitionCard({ comp }) {
+const fa = (n) => (n || 0).toLocaleString("fa-IR");
+
+/**
+ * Competition Card — aligned with the design system (CollectionCard / ScholarCard pattern).
+ * Clean, minimal chrome; consistent spacing; responsive across screen sizes.
+ */
+export default function CompetitionCard({ comp, className = "" }) {
+  const navigate = useNavigate();
   const status = comp.status || "active";
+  const id = comp.id || "";
+  const href = `/competitions/${id}`;
+
+  const typeLabel = COMPETITION_TYPE_LABELS[comp.type] || "مسابقه";
+  const statusLabel = STATUS_LABELS[status] || "فعال";
+  const statusColor = STATUS_COLORS[status] || "text-primary bg-primary/10";
+
   return (
     <Link
-      to={`/competitions/${comp.id}`}
-      className="group block rounded-2xl border border-accent/15 bg-card/60 overflow-hidden hover:shadow-premium hover:border-accent/30 transition-all duration-300"
+      href={href}
+      onClick={(e) => {
+        e.preventDefault();
+        navigate(href);
+      }}
+      className={`group block rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
     >
-      <div className="relative h-32 flex items-center justify-center overflow-hidden">
+      {/* Image / hero area */}
+      <div className="relative h-48 sm:h-56 overflow-hidden bg-gradient-to-br from-accent/15 to-primary/10">
         {comp.image_url ? (
-          <Image src={comp.image_url} className="w-full h-full" fittingType="fill" />
+          <Image
+            src={comp.image_url}
+            alt={comp.title}
+            className="w-full h-full object-cover opacity-95 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+            loading="lazy"
+          />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-accent/15 to-primary/10" />
+          <div className="w-full h-full flex items-center justify-center">
+            <Trophy className="h-12 w-12 text-accent/20 shrink-0" />
+          </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        <Trophy className="h-10 w-10 text-white/90 relative z-10 drop-shadow-lg" />
-        <span className={`absolute top-3 left-3 text-xs px-2.5 py-1 rounded-full font-medium backdrop-blur-sm ${STATUS_COLORS[status]}`}>
-          {STATUS_LABELS[status]}
+        {/* Status badge — top right */}
+        <span
+          className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium font-ui backdrop-blur-sm ${statusColor}`}
+        >
+          {statusLabel}
         </span>
       </div>
 
-      <div className="p-4">
-        <div className="text-xs text-accent font-medium mb-1">{COMPETITION_TYPE_LABELS[comp.type] || "مسابقه"}</div>
-        <h3 className="font-display font-bold text-lg leading-tight mb-2 group-hover:text-accent transition-colors">{comp.title}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-3">{comp.description}</p>
-
-        <div className="mb-3 flex items-center gap-2.5 rounded-xl border border-accent/30 bg-gradient-to-l from-accent/20 to-accent/5 p-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
-            <Gift className="h-4 w-4" />
+      <div className="p-4 sm:p-5 flex-1 flex flex-col">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-bold tracking-wider text-accent font-ui uppercase">
+            {typeLabel}
           </span>
-          <div className="min-w-0">
-            <p className="text-[11px] text-muted-foreground">جایزه</p>
-            <p className="truncate font-display text-sm font-bold text-accent">{comp.prize_title}</p>
-          </div>
-          {comp.prize_value && (
-            <span className="mr-auto shrink-0 rounded-full bg-accent/15 px-2 py-1 text-[11px] font-medium text-accent">
-              {comp.prize_value}
+        </div>
+        <h3
+          className="font-rokh-bold font-bold text-base sm:text-lg leading-snug line-clamp-2 text-foreground group-hover:text-primary transition-colors mb-3"
+        >
+          {comp.title}
+        </h3>
+        {comp.description && (
+          <p className="text-xs sm:text-sm text-muted-foreground/80 line-clamp-2 leading-relaxed mb-4">
+            {comp.description}
+          </p>
+        )}
+
+        {/* Prize row */}
+        <div className="mt-auto pt-3 border-t border-border/60 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Gift className="h-3.5 w-3.5 text-accent shrink-0" />
+            <span className="text-xs font-bold font-ui text-foreground">
+              {comp.prize_title || "جایزه"}
             </span>
-          )}
+          </div>
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-ui">
+            <Users className="h-3 w-3 shrink-0" />
+            <span>{fa(comp.participants_count || 0)} نفر</span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {(comp.participants_count || 0).toLocaleString("fa-IR")} نفر</span>
-          {comp.end_date && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> تا {comp.end_date}</span>}
+        {/* Bottom meta: deadline + CTA */}
+        <div className="mt-4 flex items-center justify-between gap-2">
+          {comp.end_date && (
+            <span className="flex items-center gap-1 text-[10px] text-muted-foreground font-ui">
+              <Clock className="h-3 w-3 shrink-0" />
+              <span>مهلت تا {comp.end_date}</span>
+            </span>
+          )}
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-primary/20 text-primary text-xs font-bold font-ui hover:bg-primary/5 transition-colors">
+            شرکت کنید
+          </span>
         </div>
       </div>
     </Link>

@@ -86,6 +86,7 @@ export default function RoleGuard({ children, allowedRoles, requiredPermission, 
 }
 
 function AccessDeniedFallback({ userRole, reason, allowedRoles, requiredPermission, missing }) {
+  const router = useRouter();
   const labels = {
     admin: "مدیر سیستم",
     moderator: "ناظر محتوا",

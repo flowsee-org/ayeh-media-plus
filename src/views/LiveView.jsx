@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
-import { Loader2, Users, Send, Radio, Lock, Hand, Mic, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause } from "lucide-react";
+import { Loader2, Users, Send, Radio, Lock, Hand, Mic, Video, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import FollowButton from "@/components/live/FollowButton";
 import CharacterAvatar from "@/components/CharacterAvatar";
@@ -27,6 +27,7 @@ export default function LiveView() {
   const [loading, setLoading] = useState(true);
   const [access, setAccess] = useState(null);
   const [ended, setEnded] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [viewerCount, setViewerCount] = useState(0);
   const [chat, setChat] = useState([]);
   const [chatInput, setChatInput] = useState("");
@@ -63,6 +64,7 @@ export default function LiveView() {
       setSession(s);
       if (!s) {
         setLoading(false);
+        setNotFound(true);
         return;
       }
 
@@ -309,6 +311,23 @@ export default function LiveView() {
           <Loader2 className="h-10 w-10 animate-spin text-accent" />
           <p className="text-sm text-white/60 font-doran">در حال اتصال به جلسه زنده...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card variant="default" className="w-full max-w-md p-8 text-center">
+          <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+          <h2 className="font-rokh-bold font-bold text-lg text-foreground">جلسه یافت نشد</h2>
+          <p className="text-xs text-muted-foreground mt-1 mb-4 font-doran">
+            جلسه زنده با این شناسه وجود ندارد یا به پایان رسیده است.
+          </p>
+          <Link to="/live" className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-ui font-medium">
+            <ChevronRight className="h-4 w-4" /> بازگشت به جلسات زنده
+          </Link>
+        </Card>
       </div>
     );
   }
@@ -613,9 +632,7 @@ export default function LiveView() {
                         </TabsTrigger>
                       )}
                     </TabsList>
-                  </Tabs>
-
-                  <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 p-0">
+                    <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 p-0">
                     <ScrollArea className="flex-1 p-4 space-y-3">
                       {chat.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-center text-white/40 py-12">
@@ -723,6 +740,7 @@ export default function LiveView() {
                       ))}
                     </div>
                   </TabsContent>
+                </Tabs>
                 </Card>
               </div>
             </div>

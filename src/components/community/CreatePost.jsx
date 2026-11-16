@@ -48,6 +48,11 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
 
  const submit = async () => {
  if (!content.trim() && !imageUrl && !videoUrl && !verseKey.trim()) return;
+ // Tadabbur (reflection) authoring is restricted to scholars & admins.
+ if (type === "reflection" && !isScholar) {
+   setErr("نوشتن تدبّر réservé به اساتید و مدیریت است.");
+   return;
+ }
  setSaving(true);
  setErr(null);
  try {

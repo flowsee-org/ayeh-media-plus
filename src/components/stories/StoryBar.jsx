@@ -23,7 +23,7 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
 
   return (
     <>
-      <div className="sticky top-16 z-30 border-b border-border bg-card">
+      <div className="sticky top-16 sm:top-20 z-30 border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-3 sm:px-4">
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-3">
             {/* My Story / Add Story */}

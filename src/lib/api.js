@@ -1,8 +1,21 @@
 // Direct API client — replaces base44Client.
-// All calls go straight to the Express backend on /api/* (proxied by next.config.mjs in dev).
+// All calls go straight to the Express backend. In dev, NEXT_PUBLIC_API_BASE
+// (http://localhost:5000) bypasses the Next.js dev proxy which has a ~5MB body
+// size limit for proxied requests; otherwise falls back to /api (proxied).
+// When NEXT_PUBLIC_API_BASE is an absolute URL, /api is appended since Express
+// mounts all API routes under /api.
 import { io } from "socket.io-client";
 
-const API_BASE = "/api";
+const API_BASE = (() => {
+  const base =
+    typeof window !== "undefined" && window.NEXT_PUBLIC_API_BASE
+      ? window.NEXT_PUBLIC_API_BASE
+      : process.env.NEXT_PUBLIC_API_BASE || "/api";
+  if (base === "/api" || !base) return base;
+  // Absolute URL: ensure it ends with /api
+  return base.endsWith("/api") ? base : `${base.replace(/\/+$/, "")}/api`;
+})();
+
 
 // Socket.io connects directly to the Express backend (port 5000), not through
 // Next.js dev proxy — Next.js dev rewrites don't forward WebSocket upgrades.

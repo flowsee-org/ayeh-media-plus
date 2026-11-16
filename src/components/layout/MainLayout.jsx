@@ -61,7 +61,11 @@ export default function MainLayout({ children }) {
 
         <div className="flex-1 flex flex-col min-w-0">
           {!hideChrome && (
-            <AppHeader onMenuToggle={() => setMenuOpen(true)} />
+            <>
+              <AppHeader onMenuToggle={() => setMenuOpen(true)} />
+              {/* Stories bar — floating, pinned to the top of the screen just under the header */}
+              <StoryBarProvider />
+            </>
           )}
 
           <main
@@ -101,7 +105,6 @@ export default function MainLayout({ children }) {
       )}
 
       <LiveNotifications />
-      <StoryBarProvider />
       <PwaInstallBanner />
     </div>
   );

@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import { isScholarUser } from "@/lib/scholarAccess";
 import { togglePostLike } from "@/lib/social";
 import { toast } from "react-hot-toast";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -34,6 +35,7 @@ export default function Community() {
   const [selectedChip, setSelectedChip] = useState("all");
 
   const currentUser = authUser || user;
+  const isScholar = isScholarUser(currentUser);
 
   useEffect(() => {
     if (!authUser) {
@@ -213,8 +215,12 @@ export default function Community() {
                 : "در این دسته‌بندی تدبّری یافت نشد"
             }
             subtitle="نخستین نفری باشید که آیه‌ای را به زندگی خود متصل می‌کند و با دیگران به اشتراک می‌گذارد"
-            actionLabel="تدبّر خود را بنویسید"
-            onAction={handleOpenCreate}
+            {...(isScholar
+              ? {
+                  actionLabel: "تدبّر خود را بنویسید",
+                  onAction: handleOpenCreate,
+                }
+              : {})}
           />
         )}
 

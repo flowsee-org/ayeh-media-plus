@@ -290,7 +290,8 @@ function SurahView({ n, onBack }) {
 
  // Reciter & Continuous Playback state
  const [selectedReciter, setSelectedReciter] = useState(() => {
- return localStorage.getItem("ayeh-preferred-reciter") || "ar.alafasy";
+   if (typeof window === "undefined") return "ar.alafasy";
+   return localStorage.getItem("ayeh-preferred-reciter") || "ar.alafasy";
  });
  const [autoScroll, setAutoScroll] = useState(true);
  const [reciterDropdownOpen, setReciterDropdownOpen] = useState(false);
