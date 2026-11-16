@@ -55,12 +55,12 @@ export default function CreateStory({ user, onPosted, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-md rounded-2xl bg-card border border-accent/20 shadow-premium overflow-hidden">
+      <div className="relative w-full max-w-md rounded bg-card border border-accent/20 shadow-premium overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-accent/10">
           <h3 className="font-display font-bold text-base">استوری جدید</h3>
           <button
             onClick={onClose}
-            className="h-8 w-8 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground"
+            className="h-8 w-8 rounded hover:bg-muted flex items-center justify-center text-muted-foreground"
           >
             <X className="h-4 w-4" />
           </button>
@@ -69,7 +69,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
         <div className="p-4 space-y-4">
           {/* Media preview */}
           {mediaUrl ? (
-            <div className="relative rounded-xl overflow-hidden border border-accent/10">
+            <div className="relative rounded overflow-hidden border border-accent/10">
               {mediaType === "video" ? (
                 <video src={mediaUrl} className="w-full max-h-64 object-contain bg-black" controls />
               ) : (
@@ -79,7 +79,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
                 onClick={() => {
                   setMediaUrl("");
                 }}
-                className="absolute top-2 left-2 h-8 w-8 rounded-full bg-black/50 text-white flex items-center justify-center"
+                className="absolute top-2 left-2 h-8 w-8 rounded bg-black/50 text-white flex items-center justify-center"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -87,7 +87,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
           ) : (
             <button
               onClick={() => fileRef.current?.click()}
-              className="w-full rounded-xl border-2 border-dashed border-accent/20 p-8 flex flex-col items-center gap-2 text-muted-foreground hover:border-accent/40 hover:text-accent transition-colors"
+              className="w-full rounded border-2 border-dashed border-accent/20 p-8 flex flex-col items-center gap-2 text-muted-foreground hover:border-accent/40 hover:text-accent transition-colors"
             >
               {uploading ? (
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -115,20 +115,20 @@ export default function CreateStory({ user, onPosted, onClose }) {
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="متن استوری..."
                 rows={2}
-                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm resize-none focus:border-accent/40 focus:outline-none"
+                className="w-full rounded border border-border bg-background px-3 py-2 text-sm resize-none focus:border-accent/40 focus:outline-none"
               />
               <div className="grid grid-cols-2 gap-2">
                 <input
                   value={verseKey}
                   onChange={(e) => setVerseKey(e.target.value)}
                   placeholder="کلید آیه (مثلاً ۲:٢٥٥)"
-                  className="rounded-xl border border-border bg-background px-3 py-2 text-sm focus:border-accent/40 focus:outline-none"
+                  className="rounded border border-border bg-background px-3 py-2 text-sm focus:border-accent/40 focus:outline-none"
                 />
                 <input
                   value={verseText}
                   onChange={(e) => setVerseText(e.target.value)}
                   placeholder="متن آیه (اختیاری)"
-                  className="rounded-xl border border-border bg-background px-3 py-2 text-sm focus:border-accent/40 focus:outline-none"
+                  className="rounded border border-border bg-background px-3 py-2 text-sm focus:border-accent/40 focus:outline-none"
                 />
               </div>
             </>
@@ -139,7 +139,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
           <button
             onClick={handlePost}
             disabled={!mediaUrl || posting}
-            className="w-full rounded-xl bg-primary text-primary-foreground py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+            className="w-full rounded bg-primary text-primary-foreground py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
           >
             {posting ? "در حال انتشار..." : "انتشار استوری"}
           </button>

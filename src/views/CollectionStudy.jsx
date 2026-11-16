@@ -150,7 +150,7 @@ export default function CollectionStudy() {
  <div className="mx-auto max-w-4xl px-4 sm:px-6 py-4">
  <BackButton to={`/collections/${id}`} label="صفحه مجموعه" className="mb-3" />
  <div className="flex items-center gap-3">
- <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}18`, color }}>
+ <div className="h-10 w-10 rounded flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}18`, color }}>
  <BookOpen className="h-5 w-5" />
  </div>
  <div className="min-w-0">
@@ -172,7 +172,7 @@ export default function CollectionStudy() {
  <button
  key={v.id || i}
  onClick={() => selectVerse(i)}
- className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium border transition-all ${
+ className={`shrink-0 rounded px-4 py-2 text-sm font-medium border transition-all ${
  isActive
  ? "text-accent-foreground shadow-soft"
  : "border-border/40 text-muted-foreground hover:text-foreground hover:border-accent/30"
@@ -180,7 +180,7 @@ export default function CollectionStudy() {
  style={isActive ? { backgroundColor: color, borderColor: color } : {}}
  >
  {s}:{a}
- {v._enriched ? <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-accent" /> : null}
+ {v._enriched ? <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded bg-accent" /> : null}
  </button>
  );
  })}
@@ -197,7 +197,7 @@ export default function CollectionStudy() {
  ) : (
  <div className="mx-auto max-w-4xl px-4 sm:px-6 py-6">
  {/* Verse card */}
- <div className="rounded-2xl border border-accent/15 bg-card/50 p-6 mb-6">
+ <div className="rounded border border-accent/15 bg-card/50 p-6 mb-6">
  <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
  <span className="font-medium">
  {verse.surah_name_arabic || surah?.name || `سوره ${verse.surah_number}`} {verse.verse_key}
@@ -227,7 +227,7 @@ export default function CollectionStudy() {
  <div className="flex items-center gap-2.5 flex-1 min-w-[200px]">
  <button
  onClick={toggleAudio}
- className="h-10 w-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center shrink-0 hover:shadow-glow transition-all"
+ className="h-10 w-10 rounded bg-accent text-accent-foreground flex items-center justify-center shrink-0 hover:shadow-glow transition-all"
  title={playing ? "توقف تلاوت" : "پخش تلاوت"}
  >
  {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 mr-0.5" />}
@@ -247,7 +247,7 @@ export default function CollectionStudy() {
  {/* Mark as read toggle button */}
  <button
  onClick={() => toggleMarkRead(verse)}
- className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-ui font-bold border transition-all ${
+ className={`inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-ui font-bold border transition-all ${
  readVerses[verse.verse_key]
  ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-600 dark:text-emerald-400"
  : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -268,7 +268,7 @@ export default function CollectionStudy() {
  <button
  key={t.id}
  onClick={() => setTab(t.id)}
- className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+ className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded text-sm font-medium border transition-all ${
  isActive
  ? "border-accent/40 bg-accent/10 text-accent"
  : "border-border/40 text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -297,7 +297,7 @@ export default function CollectionStudy() {
  <button
  onClick={goPrev}
  disabled={selectedIdx === 0}
- className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+ className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
  >
  <ChevronRight className="h-4 w-4" />
  آیه قبلی
@@ -308,7 +308,7 @@ export default function CollectionStudy() {
  <button
  onClick={goNext}
  disabled={selectedIdx === verses.length - 1}
- className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+ className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
  >
  آیه بعدی
  <ChevronLeft className="h-4 w-4" />
@@ -331,12 +331,12 @@ function LinguisticTab({ verse, color }) {
  <div className="space-y-5">
  <SectionTitle icon={Languages} title="ترجمه و آوانگاری" color={color} />
  {verse.transliteration ? (
- <p className="text-sm text-muted-foreground leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4" dir="ltr">
+ <p className="text-sm text-muted-foreground leading-relaxed rounded border border-border/40 bg-card/30 p-4" dir="ltr">
  {verse.transliteration}
  </p>
  ) : null}
  {verse.translation ? (
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-border/40 bg-card/30 p-4">
  {verse.translation}
  </p>
  ) : (
@@ -353,7 +353,7 @@ function LinguisticTab({ verse, color }) {
  <SectionTitle icon={Languages} title="تحلیل کلمات" color={color} />
  <div className="space-y-2">
  {verse.word_analysis.map((w, i) => (
- <div key={i} className="flex items-start gap-3 rounded-xl border border-border/40 bg-card/30 p-3">
+ <div key={i} className="flex items-start gap-3 rounded border border-border/40 bg-card/30 p-3">
  <span className=" text-lg text-right min-w-[80px]" dir="rtl">{w.word}</span>
  <div className="flex-1">
  <p className="text-sm text-muted-foreground">{w.transliteration}</p>
@@ -371,7 +371,7 @@ function LinguisticTab({ verse, color }) {
  <SectionTitle icon={Tag} title="ریشه‌ها" color={color} />
  <div className="grid sm:grid-cols-2 gap-3">
  {verse.root_words.map((r, i) => (
- <div key={i} className="rounded-xl border border-border/40 bg-card/30 p-4">
+ <div key={i} className="rounded border border-border/40 bg-card/30 p-4">
  <p className=" text-xl text-center mb-2" dir="rtl">{r.root}</p>
  <p className="text-sm text-foreground/80 mb-1">{r.meaning}</p>
  {r.occurrences ? (
@@ -387,7 +387,7 @@ function LinguisticTab({ verse, color }) {
  {verse.grammar_breakdown ? (
  <section>
  <SectionTitle icon={Compass} title="تجزیه گرامری" color={color} />
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-border/40 bg-card/30 p-4">
  {verse.grammar_breakdown}
  </p>
  </section>
@@ -410,9 +410,9 @@ function CommentaryTab({ verse, scholars, color }) {
  const name = scholar?.name || "نامشخص";
  const title = scholar?.title || "";
  return (
- <div key={i} className="rounded-2xl border border-border/40 bg-card/40 p-5">
+ <div key={i} className="rounded border border-border/40 bg-card/40 p-5">
  <div className="flex items-center gap-3 mb-3">
- <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent font-bold shrink-0">
+ <div className="h-10 w-10 rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent font-bold shrink-0">
  {name[0]}
  </div>
  <div className="min-w-0">
@@ -439,7 +439,7 @@ function TafsirTab({ verse, color }) {
  return (
  <div className="space-y-5">
  <SectionTitle icon={Compass} title="معنای آیه" color={color} />
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-border/40 bg-card/30 p-4">
  {verse.translation}
  </p>
  <p className="text-xs text-muted-foreground">
@@ -455,7 +455,7 @@ function TafsirTab({ verse, color }) {
  {verse.classical_tafsir ? (
  <section>
  <SectionTitle icon={Compass} title="تفسیر کلاسیک" color={color} />
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-border/40 bg-card/30 p-4">
  {verse.classical_tafsir}
  </p>
  </section>
@@ -463,7 +463,7 @@ function TafsirTab({ verse, color }) {
  {verse.asbab_al_nuzul ? (
  <section>
  <SectionTitle icon={BookOpen} title="اسباب نزول" color={color} />
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-border/40 bg-card/30 p-4">
  {verse.asbab_al_nuzul}
  </p>
  </section>
@@ -471,7 +471,7 @@ function TafsirTab({ verse, color }) {
  {verse.historical_context ? (
  <section>
  <SectionTitle icon={Clock} title="بستر تاریخی" color={color} />
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-border/40 bg-card/30 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-border/40 bg-card/30 p-4">
  {verse.historical_context}
  </p>
  </section>
@@ -494,7 +494,7 @@ function ReflectionTab({ verse, color }) {
  {verse.tadabbur ? (
  <section>
  <SectionTitle icon={Sparkles} title="تدبّر" color={color} />
- <p className="text-sm text-foreground/80 leading-relaxed rounded-xl border border-accent/15 bg-accent/5 p-4">
+ <p className="text-sm text-foreground/80 leading-relaxed rounded border border-accent/15 bg-accent/5 p-4">
  {verse.tadabbur}
  </p>
  </section>
@@ -505,7 +505,7 @@ function ReflectionTab({ verse, color }) {
  <ul className="space-y-2">
  {verse.life_lessons.map((l, i) => (
  <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
- <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+ <span className="mt-1.5 h-1.5 w-1.5 rounded shrink-0" style={{ backgroundColor: color }} />
  {l}
  </li>
  ))}
@@ -518,7 +518,7 @@ function ReflectionTab({ verse, color }) {
  <ul className="space-y-2">
  {verse.practical_applications.map((p, i) => (
  <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
- <span className="mt-1.5 h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+ <span className="mt-1.5 h-1.5 w-1.5 rounded shrink-0" style={{ backgroundColor: color }} />
  {p}
  </li>
  ))}
@@ -545,7 +545,7 @@ function ReflectionTab({ verse, color }) {
 function SectionTitle({ icon: Icon, title, color }) {
  return (
  <div className="flex items-center gap-2.5 mb-3">
- <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${color}18`, color }}>
+ <div className="h-8 w-8 rounded flex items-center justify-center" style={{ backgroundColor: `${color}18`, color }}>
  <Icon className="h-4 w-4" />
  </div>
  <h3 className="font-rokh-bold font-bold text-base">{title}</h3>

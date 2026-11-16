@@ -167,7 +167,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  : (post.content || "").slice(0, 220) + "...";
 
  return (
- <article className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/95 backdrop-blur-sm shadow-soft transition-all duration-300 hover:border-primary/40 hover:shadow-card-hover group mb-4">
+ <article className="relative overflow-hidden rounded border border-border/70 bg-card/95 backdrop-blur-sm shadow-soft transition-all duration-300 hover:border-primary/40 hover:shadow-card-hover group mb-4">
  {/* Author Header */}
  <div className="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-border/40">
  <div className="flex items-center gap-3 min-w-0">
@@ -177,7 +177,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  <span className="truncate text-sm font-bold text-foreground font-rokh-bold tracking-wide">
  {post.author_name}
  </span>
- <span className="inline-flex items-center gap-1 rounded-full bg-secondary/80 px-2 py-0.5 text-xs font-medium text-accent border border-border/40">
+ <span className="inline-flex items-center gap-1 rounded bg-secondary/80 px-2 py-0.5 text-xs font-medium text-accent border border-border/40">
  <TypeIcon className="h-2.5 w-2.5 text-accent" />
  {POST_TYPE_LABELS[post.type] || "پست"}
  </span>
@@ -192,7 +192,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  <div className="relative">
  <button
  onClick={() => setShowMenu(!showMenu)}
- className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+ className="flex h-8 w-8 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
  aria-label="گزینه‌ها"
  >
  <MoreHorizontal className="h-4 w-4" />
@@ -201,13 +201,13 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {showMenu && (
  <>
  <div className="fixed inset-0 z-30" onClick={() => setShowMenu(false)} />
- <div className="absolute left-0 top-9 z-40 w-44 rounded-xl border border-border bg-popover/95 p-1.5 shadow-lg backdrop-blur-md animate-scale-in font-ui text-xs">
+ <div className="absolute left-0 top-9 z-40 w-44 rounded border border-border bg-popover/95 p-1.5 shadow-lg backdrop-blur-md animate-scale-in font-ui text-xs">
  <button
  onClick={() => {
  handleShare();
  setShowMenu(false);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-foreground transition-colors hover:bg-secondary"
+ className="flex w-full items-center gap-2 rounded px-2.5 py-2 text-foreground transition-colors hover:bg-secondary"
  >
  <Copy className="h-3.5 w-3.5 text-muted-foreground" />
  <span>رونوشت پیوند</span>
@@ -215,7 +215,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
 
  <Link
  to={`/community/${post.id}`}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-foreground transition-colors hover:bg-secondary"
+ className="flex w-full items-center gap-2 rounded px-2.5 py-2 text-foreground transition-colors hover:bg-secondary"
  onClick={() => setShowMenu(false)}
  >
  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
@@ -228,7 +228,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  setShowMenu(false);
  onDelete(post);
  }}
- className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-destructive transition-colors hover:bg-destructive/10"
+ className="flex w-full items-center gap-2 rounded px-2.5 py-2 text-destructive transition-colors hover:bg-destructive/10"
  >
  <Trash2 className="h-3.5 w-3.5" />
  <span>حذف پست</span>
@@ -245,7 +245,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Heart Pop Animation Overlay */}
  {heartPop && (
  <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none animate-scale-in">
- <div className="rounded-full bg-background/60 p-5 backdrop-blur-md shadow-2xl border border-white/20">
+ <div className="rounded bg-background/60 p-5 backdrop-blur-md shadow-2xl border border-white/20">
  <Heart className="h-16 w-16 fill-red-500 text-red-500 drop-shadow-md animate-bounce" />
  </div>
  </div>
@@ -277,12 +277,12 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Quranic Verse Embed (Islamic Arch Frame) */}
  {post.verse_key && (
  <div className="p-3.5 sm:p-4">
- <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-b from-card via-primary/5 to-secondary/30 p-4 sm:p-5 shadow-sm transition-all hover:border-primary/45 group/verse">
+ <div className="relative overflow-hidden rounded border border-primary/25 bg-gradient-to-b from-card via-primary/5 to-secondary/30 p-4 sm:p-5 shadow-sm transition-all hover:border-primary/45 group/verse">
  {/* Top Header of Verse: Surah Name Badge + Audio Recitation Button */}
  <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-3">
  <Link
  to={`/verse/${post.verse_key.replace(":", "/")}`}
- className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border shadow-xs hover:border-accent transition-colors"
+ className="inline-flex items-center gap-1.5 rounded bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border shadow-xs hover:border-accent transition-colors"
  >
  <BookOpen className="h-3.5 w-3.5 text-accent" />
  <span>
@@ -294,7 +294,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {verseInfo && (
  <button
  onClick={handleToggleAudio}
- className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold font-ui transition-all shadow-xs ${
+ className={`inline-flex items-center gap-1.5 rounded px-3 py-1 text-xs font-semibold font-ui transition-all shadow-xs ${
  isThisVersePlaying
  ? "bg-accent text-accent-foreground ring-2 ring-accent/30 animate-pulse"
  : "bg-secondary text-primary hover:bg-accent/15 hover:text-accent border border-border/60"
@@ -356,7 +356,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  <button
  onClick={handleLike}
  disabled={liking}
- className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full transition-transform active:scale-80 ${
+ className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded transition-transform active:scale-80 ${
  isLiked ? "text-red-500" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
  }`}
  aria-label={isLiked ? "حذف لایک" : "پسندیدن"}
@@ -371,7 +371,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Comment Button */}
  <button
  onClick={toggleComments}
- className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
+ className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
  aria-label="نظرات"
  >
  <MessageCircle className="h-[21px] w-[21px]" />
@@ -380,7 +380,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Share Button */}
  <button
  onClick={handleShare}
- className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
+ className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
  aria-label="اشتراک‌گذاری"
  >
  <Send className="h-[20px] w-[20px]" />
@@ -390,7 +390,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Bookmark Button */}
  <button
  onClick={handleSave}
- className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full transition-colors ${
+ className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded transition-colors ${
  savedPost ? "text-accent" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
  }`}
  aria-label={savedPost ? "حذف از نشان‌ها" : "ذخیره"}
@@ -428,7 +428,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {post.tags.map((t) => (
  <span
  key={t}
- className="inline-block rounded-md bg-secondary/60 px-2 py-0.5 text-xs font-medium text-accent border border-border/30 font-ui"
+ className="inline-block rounded bg-secondary/60 px-2 py-0.5 text-xs font-medium text-accent border border-border/30 font-ui"
  >
  #{t}
  </span>

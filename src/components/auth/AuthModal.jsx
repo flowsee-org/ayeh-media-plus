@@ -211,22 +211,22 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
       dir="rtl"
     >
-      <div className="relative w-full max-w-md bg-card border border-border/80 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-md bg-card border border-border/80 rounded p-6 sm:p-8 shadow-2xl overflow-hidden">
         {/* Decorative background glow */}
-        <div className="absolute -top-16 -right-16 w-36 h-36 bg-accent/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-16 -right-16 w-36 h-36 bg-accent/15 rounded blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-amber-500/10 rounded blur-3xl pointer-events-none" />
 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute left-4 top-4 w-8 h-8 rounded-full hover:bg-accent/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+          className="absolute left-4 top-4 w-8 h-8 rounded hover:bg-accent/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Modal Header */}
         <div className="text-center space-y-2 mb-6">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-accent/10 text-accent flex items-center justify-center font-bold shadow-inner">
+          <div className="w-12 h-12 mx-auto rounded bg-accent/10 text-accent flex items-center justify-center font-bold shadow-inner">
             <Sparkles className="w-6 h-6" />
           </div>
           <h2 className="text-xl sm:text-2xl font-bold font-rokh-bold text-foreground">
@@ -262,7 +262,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="مثال: ۰۹۱۲۳۴۵۶۷۸۹"
-                  className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-background border border-border/70 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all placeholder:text-muted-foreground/60 text-right"
+                  className="w-full pr-10 pl-4 py-2.5 rounded bg-background border border-border/70 text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all placeholder:text-muted-foreground/60 text-right"
                 />
               </div>
             </div>
@@ -275,7 +275,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
               <div className="flex items-center gap-2">
                 {/* Captcha Image Container */}
                 <div
-                  className="rounded-xl border border-border/80 overflow-hidden shrink-0 flex items-center justify-center bg-muted/30 h-[46px] w-[140px]"
+                  className="rounded border border-border/80 overflow-hidden shrink-0 flex items-center justify-center bg-muted/30 h-[46px] w-[140px]"
                   dangerouslySetInnerHTML={{ __html: captchaData.svg || "" }}
                 />
 
@@ -285,7 +285,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                   onClick={loadCaptcha}
                   disabled={loadingCaptcha}
                   title="تصویر جدید"
-                  className="p-2.5 rounded-xl bg-background border border-border/70 hover:border-accent hover:bg-accent/5 text-muted-foreground hover:text-accent transition-all shrink-0"
+                  className="p-2.5 rounded bg-background border border-border/70 hover:border-accent hover:bg-accent/5 text-muted-foreground hover:text-accent transition-all shrink-0"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingCaptcha ? "animate-spin" : ""}`} />
                 </button>
@@ -298,7 +298,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                   value={captchaAnswer}
                   onChange={(e) => setCaptchaAnswer(e.target.value)}
                   placeholder="کد تصویر"
-                  className="flex-1 px-3 py-2.5 rounded-xl bg-background border border-border/70 text-sm text-center font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+                  className="flex-1 px-3 py-2.5 rounded bg-background border border-border/70 text-sm text-center font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
                 />
               </div>
             </div>
@@ -307,7 +307,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             <button
               type="submit"
               disabled={sendingOtp || !phone.trim() || !captchaAnswer.trim()}
-              className="w-full mt-4 py-3 rounded-xl bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full mt-4 py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>{sendingOtp ? "در حال ارسال کد..." : "دریافت کد تایید پیامکی"}</span>
@@ -320,7 +320,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
           <form onSubmit={handleVerifyOtp} className="space-y-5">
             {/* Dev hint badge if available */}
             {devOtpHint && (
-              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs text-center font-mono">
+              <div className="p-2.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs text-center font-mono">
                 کد یکبارمصرف آزمایشی: <span className="font-bold tracking-widest text-sm">{devOtpHint}</span>
               </div>
             )}
@@ -338,7 +338,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 placeholder="— — — — —"
-                className="w-full text-center tracking-[0.5em] text-2xl font-mono px-4 py-3 rounded-xl bg-background border border-border/70 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                className="w-full text-center tracking-[0.5em] text-2xl font-mono px-4 py-3 rounded bg-background border border-border/70 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
               />
             </div>
 
@@ -372,7 +372,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             <button
               type="submit"
               disabled={verifyingOtp || !otp.trim()}
-              className="w-full py-3 rounded-xl bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{verifyingOtp ? "در حال اعتبارسنجی..." : "تایید و ورود"}</span>
@@ -395,7 +395,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="مثال: علی رضایی"
-                  className="w-full pr-10 pl-4 py-2.5 rounded-xl bg-background border border-border/70 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+                  className="w-full pr-10 pl-4 py-2.5 rounded bg-background border border-border/70 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
                 />
               </div>
               <p className="text-[11px] text-muted-foreground">
@@ -408,14 +408,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                 type="button"
                 disabled={savingProfile}
                 onClick={() => handleSaveProfile(false)}
-                className="w-full py-2.5 rounded-xl bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all"
+                className="w-full py-2.5 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all"
               >
                 {savingProfile ? "در حال ثبت..." : "ذخیره و ورود به سامانه"}
               </button>
               <button
                 type="button"
                 onClick={() => handleSaveProfile(true)}
-                className="w-full py-2 rounded-xl text-xs text-muted-foreground hover:text-foreground font-medium"
+                className="w-full py-2 rounded text-xs text-muted-foreground hover:text-foreground font-medium"
               >
                 بعداً تکمیل می‌کنم (ورود)
               </button>

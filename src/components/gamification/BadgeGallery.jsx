@@ -59,12 +59,12 @@ export default function BadgeGallery({ badges = [] }) {
   const unlockedCount = badges.filter((b) => b.unlocked).length;
 
   return (
-    <div className="rounded-3xl bg-card/90 border border-emerald-900/30 p-5 sm:p-7 shadow-xl backdrop-blur-md">
+    <div className="rounded bg-card/90 border border-emerald-900/30 p-5 sm:p-7 shadow-xl backdrop-blur-md">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-700 text-white shadow-sm">
+            <span className="p-1.5 rounded bg-gradient-to-br from-yellow-500 to-amber-700 text-white shadow-sm">
               <Award className="w-4 h-4" />
             </span>
             <h3 className="text-lg font-bold font-rokh-bold text-foreground">
@@ -76,7 +76,7 @@ export default function BadgeGallery({ badges = [] }) {
           </p>
         </div>
 
-        <div className="text-xs font-bold font-rokh-bold text-primary bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20 shrink-0 self-start sm:self-auto">
+        <div className="text-xs font-bold font-rokh-bold text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20 shrink-0 self-start sm:self-auto">
           {unlockedCount} از {badges.length} نشان آزاد شده
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function BadgeGallery({ badges = [] }) {
           return (
             <div
               key={badge.badge_id}
-              className={`relative rounded-2xl p-4 border transition-all duration-300 flex flex-col justify-between ${
+              className={`relative rounded p-4 border transition-all duration-300 flex flex-col justify-between ${
                 isUnlocked
                   ? `${tier.border} ${tier.bg} shadow-md ${tier.glow} hover:-translate-y-1`
                   : "border-border/60 bg-muted/20 opacity-60 grayscale hover:grayscale-0"
@@ -100,7 +100,7 @@ export default function BadgeGallery({ badges = [] }) {
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-rokh-bold font-bold border ${tier.textColor} ${tier.border} bg-background/60`}
+                    className={`text-[10px] px-2 py-0.5 rounded font-rokh-bold font-bold border ${tier.textColor} ${tier.border} bg-background/60`}
                   >
                     سطح {tier.label}
                   </span>
@@ -121,7 +121,7 @@ export default function BadgeGallery({ badges = [] }) {
                 {/* Badge Icon Medallion */}
                 <div className="flex justify-center my-2">
                   <div
-                    className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform ${
+                    className={`w-14 h-14 rounded flex items-center justify-center text-white shadow-lg transition-transform ${
                       isUnlocked
                         ? `bg-gradient-to-br ${tier.badgeBg} ${tier.glow} scale-100 hover:scale-105`
                         : "bg-muted-foreground/30 text-muted-foreground scale-95"

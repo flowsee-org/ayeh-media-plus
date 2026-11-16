@@ -18,7 +18,6 @@ import {
  Bookmark,
  Home as HomeIcon,
  Flame,
- Palette,
 } from "lucide-react";
 import api from "@/lib/api";
 import { useScholar } from "@/lib/scholarAccess";
@@ -35,6 +34,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IslamicStar } from "./IslamicOrnaments";
 import { useAuth } from "@/lib/AuthContext";
 import PwaInstallBanner from "./pwa/PwaInstallBanner";
+import FloatingAssistantChat from "./assistant/FloatingAssistantChat";
 
 const desktopNav = [
  { to: "/", label: "خانه", icon: HomeIcon },
@@ -101,8 +101,8 @@ export default function Layout({ children }) {
  <div className="relative min-h-screen bg-background text-foreground flex flex-col font-body selection:bg-accent/20" dir="rtl">
  {/* Subtle geometric pattern & Orsi stained-glass ambient atmosphere */}
  <div className="fixed inset-0 pattern-islamic pointer-events-none opacity-30 z-0" />
- <div className="fixed top-0 -right-40 w-96 h-96 bg-gradient-to-br from-amber-500/10 via-emerald-500/5 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
- <div className="fixed bottom-0 -left-40 w-96 h-96 bg-gradient-to-tr from-rose-500/8 via-cyan-500/6 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
+ <div className="fixed top-0 -right-40 w-96 h-96 bg-gradient-to-br from-amber-500/10 via-emerald-500/5 to-transparent rounded blur-3xl pointer-events-none z-0" />
+ <div className="fixed bottom-0 -left-40 w-96 h-96 bg-gradient-to-tr from-rose-500/8 via-cyan-500/6 to-transparent rounded blur-3xl pointer-events-none z-0" />
 
  {/* Top Header */}
  <header
@@ -116,7 +116,7 @@ export default function Layout({ children }) {
  <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
  {/* Brand Logo */}
  <Link to="/" className="flex shrink-0 items-center gap-2.5 group">
- <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-700 to-teal-950 text-white shadow-emerald-glow transition-transform group-hover:scale-105 border border-amber-400/40">
+ <div className="relative flex h-10 w-10 items-center justify-center rounded bg-gradient-to-br from-emerald-700 to-teal-950 text-white shadow-emerald-glow transition-transform group-hover:scale-105 border border-amber-400/40">
  <BookOpen className="h-5 w-5 text-orange-300" strokeWidth={2.2} />
  <div className="absolute -top-1 -right-1">
  <IslamicStar size={12} className="text-orange-400 animate-pulse" />
@@ -140,7 +140,7 @@ export default function Layout({ children }) {
  <Link
  key={to}
  to={to}
- className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all duration-200 ${
+ className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-all duration-200 ${
  active
  ? "bg-primary/10 text-primary font-bold shadow-soft border border-primary/20 dark:bg-primary/20"
  : "text-muted-foreground hover:text-foreground hover:bg-secondary/70 font-medium"
@@ -157,19 +157,19 @@ export default function Layout({ children }) {
  <div className="hidden md:flex items-center gap-2">
  {/* Online Presence Pill */}
  <div
- className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-xs font-medium"
+ className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-xs font-medium"
  title="کاربران آنلاین هم‌اکنون در سامانه"
  >
  <span className="relative flex h-2 w-2">
- <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
- <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+ <span className="animate-ping absolute inline-flex h-full w-full rounded bg-emerald-400 opacity-75" />
+ <span className="relative inline-flex rounded h-2 w-2 bg-emerald-500" />
  </span>
  <span>{onlineCount.toLocaleString("fa-IR")} آنلاین</span>
  </div>
 
  <Link
  to="/search"
- className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+ className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
  aria-label="جستجو"
  title="جستجو در قرآن"
  >
@@ -183,7 +183,7 @@ export default function Layout({ children }) {
  {isScholar && (
  <Link
  to="/assistants"
- className="flex h-9 w-9 items-center justify-center rounded-xl text-accent hover:bg-accent/15 transition-colors"
+ className="flex h-9 w-9 items-center justify-center rounded text-accent hover:bg-accent/15 transition-colors"
  aria-label="دستیار علمی"
  title="دستیار علمی اساتید"
  >
@@ -194,9 +194,9 @@ export default function Layout({ children }) {
  {activeUser ? (
  <Link
  to="/profile"
- className="flex items-center gap-2 pr-1.5 pl-3 py-1 rounded-full bg-secondary/80 hover:bg-secondary border border-border text-xs font-medium transition-all"
+ className="flex items-center gap-2 pr-1.5 pl-3 py-1 rounded bg-secondary/80 hover:bg-secondary border border-border text-xs font-medium transition-all"
  >
- <div className="h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0">
+ <div className="h-7 w-7 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0">
  {(activeUser.full_name || activeUser.phone || activeUser.email || "؟").charAt(0)}
  </div>
  <span className="truncate max-w-[90px]">{activeUser.full_name || "کاربر"}</span>
@@ -205,7 +205,7 @@ export default function Layout({ children }) {
  <button
  type="button"
  onClick={() => openAuthModal()}
- className="px-4 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:shadow-emerald-glow transition-all"
+ className="px-4 py-1.5 rounded bg-primary text-primary-foreground text-xs font-semibold hover:shadow-emerald-glow transition-all"
  >
  ورود / ثبت‌نام
  </button>
@@ -213,7 +213,7 @@ export default function Layout({ children }) {
 
  <button
  onClick={() => setMenuOpen(true)}
- className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+ className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
  aria-label="منوی بیشتر"
  >
  <Menu className="h-4 w-4" />
@@ -225,7 +225,7 @@ export default function Layout({ children }) {
  <StreakBadge compact />
  <Link
  to="/search"
- className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground"
+ className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:text-foreground"
  aria-label="جستجو"
  >
  <Search className="h-4 w-4" />
@@ -234,7 +234,7 @@ export default function Layout({ children }) {
  <NotificationBell />
  <button
  onClick={() => setMenuOpen(true)}
- className="flex h-9 w-9 items-center justify-center rounded-lg text-foreground hover:bg-secondary"
+ className="flex h-9 w-9 items-center justify-center rounded text-foreground hover:bg-secondary"
  aria-label="منوی جانبی"
  >
  <Menu className="h-5 w-5" />
@@ -261,16 +261,16 @@ export default function Layout({ children }) {
  </span>
  </div>
  <div className="flex items-center gap-2">
- <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-medium">
+ <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-[11px] font-medium">
  <span className="relative flex h-1.5 w-1.5">
- <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
- <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+ <span className="animate-ping absolute inline-flex h-full w-full rounded bg-emerald-400 opacity-75" />
+ <span className="relative inline-flex rounded h-1.5 w-1.5 bg-emerald-500" />
  </span>
  <span>{onlineCount.toLocaleString("fa-IR")}</span>
  </span>
  <button
  onClick={() => setMenuOpen(false)}
- className="h-8 w-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground"
+ className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground"
  >
  <X className="h-4 w-4" />
  </button>
@@ -279,9 +279,9 @@ export default function Layout({ children }) {
 
  {/* User badge in drawer */}
  {activeUser ? (
- <div className="relative mx-4 mt-4 rounded-xl border border-accent/25 bg-gradient-to-br from-accent/10 to-primary/10 p-3 shadow-soft">
+ <div className="relative mx-4 mt-4 rounded border border-accent/25 bg-gradient-to-br from-accent/10 to-primary/10 p-3 shadow-soft">
  <div className="flex items-center gap-3">
- <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">
+ <div className="h-10 w-10 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">
  {(activeUser.full_name || activeUser.phone || activeUser.email || "؟").charAt(0)}
  </div>
  <div className="min-w-0">
@@ -298,7 +298,7 @@ export default function Layout({ children }) {
  </Link>
  </div>
  ) : (
- <div className="relative mx-4 mt-4 p-3 rounded-xl border border-dashed border-border text-center">
+ <div className="relative mx-4 mt-4 p-3 rounded border border-dashed border-border text-center">
  <p className="text-xs text-muted-foreground mb-2">برای استفاده کامل از امکانات وارد شوید</p>
  <button
  type="button"
@@ -306,7 +306,7 @@ export default function Layout({ children }) {
  setMenuOpen(false);
  openAuthModal();
  }}
- className="inline-block w-full py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-all"
+ className="inline-block w-full py-2 rounded bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-all"
  >
  ورود به حساب
  </button>
@@ -327,7 +327,7 @@ export default function Layout({ children }) {
  key={to}
  to={to}
  onClick={() => setMenuOpen(false)}
- className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+ className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition-all ${
  active
  ? "bg-primary text-primary-foreground font-semibold shadow-soft"
  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -353,7 +353,7 @@ export default function Layout({ children }) {
  key={to}
  to={to}
  onClick={() => setMenuOpen(false)}
- className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+ className={`flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition-all ${
  active
  ? "bg-accent/20 text-accent font-semibold"
  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -407,7 +407,7 @@ export default function Layout({ children }) {
  <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
  <div className="flex flex-col items-center gap-4 text-center">
  <div className="flex items-center gap-2.5">
- <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-emerald-glow border border-accent/40">
+ <div className="h-8 w-8 rounded bg-primary flex items-center justify-center shadow-emerald-glow border border-accent/40">
  <BookOpen className="h-4 w-4 text-accent" />
  </div>
  <span className="font-display font-bold text-lg tracking-tight text-foreground">
@@ -442,6 +442,7 @@ export default function Layout({ children }) {
  </footer>
  </div>
  <PwaInstallBanner />
+ <FloatingAssistantChat />
  </TabNavProvider>
  );
 }

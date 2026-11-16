@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate } from "@/lib/router-compat";
+import { useSearchParams } from 'next/navigation';
 import api from "@/lib/api";
 import { Compass, Search, Flame, Clock, TrendingUp } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -35,12 +36,12 @@ function isShortVideo(v) {
 
 export default function Explore() {
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [videos, setVideos] = useState([]);
   const [scholars, setScholars] = useState([]);
   const [chip, setChip] = useState(() => {
-    if (typeof window === "undefined") return "all";
-    const sort = new URLSearchParams(window.location.search).get("sort");
+    const sort = searchParams.get("sort");
     return sort === "short" ? "short" : "all";
   });
   const [query, setQuery] = useState("");
@@ -105,7 +106,7 @@ export default function Explore() {
           </div>
           <button
             onClick={() => navigate("/search")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card text-sm font-medium hover:bg-muted"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded border border-border bg-card text-sm font-medium hover:bg-muted"
           >
             <Search className="h-4 w-4" />
             جستجوی پیشرفته
@@ -118,7 +119,7 @@ export default function Explore() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="جستجو در کاوش..."
-            className="w-full h-11 pe-10 ps-4 rounded-xl bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className="w-full h-11 pe-10 ps-4 rounded bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
           />
         </div>
 
@@ -130,7 +131,7 @@ export default function Explore() {
               <button
                 key={c.id}
                 onClick={() => setChip(c.id)}
-                className={`inline-flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                className={`inline-flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded text-sm font-medium border transition-colors ${
                   active
                     ? "bg-foreground text-background border-foreground"
                     : "bg-card text-foreground/80 border-border hover:bg-muted"

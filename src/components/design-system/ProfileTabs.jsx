@@ -58,7 +58,7 @@ export default function ProfileTabs({ tabs, className = '', onTabChange }) {
               key={tab.id}
               href={tab.href}
               onClick={(e) => handleTabClick(tab.id, tab.href, e)}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${
+              className={`inline-flex items-center gap-2 px-5 py-2.5 rounded text-sm font-medium transition-colors border ${
                 isActive
                   ? 'bg-quranic-emerald text-white border-quranic-emerald shadow-quranic-glow'
                   : 'text-muted-foreground hover:text-foreground border-transparent hover:bg-muted/50'
@@ -67,7 +67,7 @@ export default function ProfileTabs({ tabs, className = '', onTabChange }) {
               {Icon && <Icon className="w-4 h-4" />}
               {tab.label}
               {tab.count !== undefined && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold border border-current opacity-70">
+                <span className="ml-1 px-1.5 py-0.5 rounded text-[10px] font-bold border border-current opacity-70">
                   {tab.count}
                 </span>
               )}

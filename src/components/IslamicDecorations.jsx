@@ -70,7 +70,7 @@ export function VerseMarker({ number, size = 40 }) {
 // ── Surah header banner ──
 export function SurahHeader({ name, number, metadata, className = "" }) {
  return (
- <div className={`relative overflow-hidden rounded-3xl border border-accent/15 bg-card/60 p-8 sm:p-12 text-center shadow-premium ${className}`}>
+ <div className={`relative overflow-hidden rounded border border-accent/15 bg-card/60 p-8 sm:p-12 text-center shadow-premium ${className}`}>
  {/* Background pattern */}
  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
  <defs>
@@ -189,7 +189,7 @@ export function CollectionCover({ color = "#c5a059", pattern = "stars", classNam
 // ── Decorative background panel ──
 export function IslamicPanel({ children, className = "", pattern = true }) {
  return (
- <div className={`relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 ${className}`}>
+ <div className={`relative overflow-hidden rounded border border-border/40 bg-card/40 ${className}`}>
  {pattern && (
  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
  <defs>

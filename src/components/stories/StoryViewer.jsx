@@ -133,10 +133,10 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  {currentGroup.stories.map((_, i) => (
  <div
  key={i}
- className="flex-1 h-0.5 rounded-full bg-white/30 overflow-hidden"
+ className="flex-1 h-0.5 rounded bg-white/30 overflow-hidden"
  >
  <div
- className="h-full bg-white rounded-full"
+ className="h-full bg-white rounded"
  style={{
  width: i < storyIndex ? "100%" : i === storyIndex ? `${progress * 100}%` : "0%",
  }}
@@ -147,8 +147,8 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
 
  {/* Header: author info + close */}
  <div className="absolute top-6 left-0 right-0 z-20 flex items-center gap-3 px-4">
- <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-accent to-primary p-[2px]">
- <div className="h-full w-full rounded-full bg-background overflow-hidden flex items-center justify-center">
+ <div className="h-9 w-9 rounded bg-gradient-to-tr from-accent to-primary p-[2px]">
+ <div className="h-full w-full rounded bg-background overflow-hidden flex items-center justify-center">
  {currentGroup.authorAvatar ? (
  <img src={currentGroup.authorAvatar} alt="" className="h-full w-full object-cover" />
  ) : (
@@ -164,7 +164,7 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  </div>
  <button
  onClick={onClose}
- className="h-9 w-9 rounded-full bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20"
+ className="h-9 w-9 rounded bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20"
  >
  <X className="h-5 w-5" />
  </button>
@@ -174,7 +174,7 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  {(currentStory.caption || currentStory.verse_text) && (
  <div className="absolute bottom-20 left-0 right-0 z-20 px-4">
  {currentStory.verse_text && (
- <div className="rounded-xl bg-black/50 backdrop-blur-sm p-3 mb-2">
+ <div className="rounded bg-black/50 backdrop-blur-sm p-3 mb-2">
  <p className=" text-base text-white/95 text-center leading-[2.2]" dir="rtl">
  {currentStory.verse_text}
  </p>
@@ -201,7 +201,7 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  {user && (
  <div className="absolute bottom-4 left-0 right-0 z-20 px-4">
  {showReply ? (
- <div className="flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-3 py-2">
+ <div className="flex items-center gap-2 rounded bg-white/10 backdrop-blur-md border border-white/20 px-3 py-2">
  <input
  value={reply}
  onChange={(e) => setReply(e.target.value)}
@@ -222,7 +222,7 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  ) : (
  <button
  onClick={() => setShowReply(true)}
- className="w-full rounded-full bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 text-sm text-white/60 text-center hover:bg-white/15"
+ className="w-full rounded bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 text-sm text-white/60 text-center hover:bg-white/15"
  >
  پاسخ به {currentGroup.authorName}...
  </button>

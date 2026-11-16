@@ -25,7 +25,7 @@ export default function ContentSection({
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
               {Icon && (
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center text-primary shrink-0">
                   <Icon className="h-4 w-4" />
                 </div>
               )}
@@ -92,7 +92,7 @@ export function FeaturedContentSection({
           <div className="mt-12 text-center">
             <Link
               href={to}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow hover:shadow-[0_0_30px_-6px_hsl(var(--quranic-emerald)_/0.6)]"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded bg-quranic-emerald text-white font-rokh-bold font-bold hover:bg-quranic-turquoise transition-all shadow-quranic-glow hover:shadow-[0_0_30px_-6px_hsl(var(--quranic-emerald)_/0.6)]"
             >
               نمایش همه <ChevronRight className="h-4 w-4" />
             </Link>

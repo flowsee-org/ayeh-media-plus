@@ -38,7 +38,7 @@ export default function RelatedVideos({ videoId, category, limit = 8 }) {
       <div className="space-y-3">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex gap-3 animate-pulse">
-            <div className="w-[150px] aspect-video rounded-lg bg-muted shrink-0" />
+            <div className="w-[150px] aspect-video rounded bg-muted shrink-0" />
             <div className="flex-1 space-y-2 py-1">
               <div className="h-3.5 bg-muted rounded w-full" />
               <div className="h-3 bg-muted rounded w-2/3" />
@@ -70,9 +70,9 @@ export default function RelatedVideos({ videoId, category, limit = 8 }) {
           <Link
             key={item.id}
             href={`/watch/${item.id}`}
-            className="group flex gap-3 rounded-lg p-1 hover:bg-muted/70 transition-colors"
+            className="group flex gap-3 rounded p-1 hover:bg-muted/70 transition-colors"
           >
-            <div className="relative w-[150px] sm:w-[168px] aspect-video rounded-lg overflow-hidden bg-muted shrink-0">
+            <div className="relative w-[150px] sm:w-[168px] aspect-video rounded overflow-hidden bg-muted shrink-0">
               {imageUrl ? (
                 <img
                   src={imageUrl}

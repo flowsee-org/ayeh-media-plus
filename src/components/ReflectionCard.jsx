@@ -52,17 +52,17 @@ export default function ReflectionCard({ reflection, scholarName }) {
   const badge = BADGE_CLASSES[color] || BADGE_CLASSES.primary;
 
   return (
-    <div className="group relative rounded-2xl border border-border/40 bg-card/50 overflow-hidden transition-all duration-300 hover:border-border/60 hover:shadow-soft">
+    <div className="group relative rounded border border-border/40 bg-card/50 overflow-hidden transition-all duration-300 hover:border-border/60 hover:shadow-soft">
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-start gap-4 p-5 text-right"
       >
-        <div className={`shrink-0 mt-0.5 h-10 w-10 rounded-xl ring-1 ${badge} flex items-center justify-center transition-transform group-hover:scale-105`}>
+        <div className={`shrink-0 mt-0.5 h-10 w-10 rounded ring-1 ${badge} flex items-center justify-center transition-transform group-hover:scale-105`}>
           <Quote className="h-4 w-4" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-2">
-            <span className={`text-xs uppercase tracking-[0.12em] font-medium px-2.5 py-0.5 rounded-full ring-1 ${badge}`}>
+            <span className={`text-xs uppercase tracking-[0.12em] font-medium px-2.5 py-0.5 rounded ring-1 ${badge}`}>
               {reflection.type}
             </span>
             {scholarName && (

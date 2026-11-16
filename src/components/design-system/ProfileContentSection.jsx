@@ -2,6 +2,7 @@
 
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 /**
  * Shared profile content section.
@@ -20,6 +21,7 @@ export default function ProfileContentSection({
   children,
   className = '',
 }) {
+  const router = useRouter();
   if (loading) {
     return (
       <div className={`flex flex-col items-center justify-center py-20 ${className}`}>
@@ -31,12 +33,12 @@ export default function ProfileContentSection({
 
   if (error) {
     return (
-      <div className={`rounded-2xl border border-destructive/30 bg-destructive/[0.03] p-8 text-center ${className}`}>
+      <div className={`rounded border border-destructive/30 bg-destructive/[0.03] p-8 text-center ${className}`}>
         <p className="text-sm text-destructive">{error}</p>
         {emptyActionHref && (
           <button
-            onClick={() => window.location.assign(emptyActionHref)}
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-destructive text-white text-sm font-medium hover:bg-destructive/90 transition-all"
+            onClick={() => router.push(emptyActionHref)}
+            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded bg-destructive text-white text-sm font-medium hover:bg-destructive/90 transition-all"
           >
             تلاش مجدد
           </button>
@@ -47,7 +49,7 @@ export default function ProfileContentSection({
 
   if (empty) {
     return (
-      <div className={`rounded-2xl border border-dashed border-border/60 p-16 text-center ${className}`}>
+      <div className={`rounded border border-dashed border-border/60 p-16 text-center ${className}`}>
         {Icon && <Icon className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />}
         <h3 className="font-semibold text-foreground mb-2">{emptyTitle || 'محتوایی یافت نشد'}</h3>
         <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto mb-6">
@@ -56,7 +58,7 @@ export default function ProfileContentSection({
         {emptyActionLabel && emptyActionHref && (
           <Link
             href={emptyActionHref}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
           >
             {emptyActionLabel}
           </Link>

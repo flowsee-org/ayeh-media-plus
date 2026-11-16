@@ -97,7 +97,7 @@ export default function PostDetail() {
 
       <PostCard post={post} currentUser={user} onLike={handleLike} onDelete={handleDelete} />
 
-      <div className="mt-8 rounded-2xl border border-accent/15 bg-card/60 overflow-hidden">
+      <div className="mt-8 rounded border border-accent/15 bg-card/60 overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-3 border-b border-accent/10 bg-accent/[0.02]">
           <MessageCircle className="h-5 w-5 text-accent" />
           <h2 className="font-display font-bold text-lg">

@@ -88,22 +88,22 @@ export default function WatchHistoryPage() {
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <div className="rounded border border-border bg-card p-6 shadow-soft">
           <div className="text-xs text-muted-foreground font-ui mb-1">ویدیوهای تماشای شده</div>
           <div className="text-2xl font-rokh-bold font-bold text-foreground">{watchCount}</div>
         </div>
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <div className="rounded border border-border bg-card p-6 shadow-soft">
           <div className="text-xs text-muted-foreground font-ui mb-1">زمان کل تماشا</div>
           <div className="text-2xl font-rokh-bold font-bold text-foreground">{formatDuration(totalWatchTime)}</div>
         </div>
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <div className="rounded border border-border bg-card p-6 shadow-soft">
           <div className="text-xs text-muted-foreground font-ui mb-1">تاریخچه فعلی</div>
           <div className="text-2xl font-rokh-bold font-bold text-foreground">{history.length}</div>
         </div>
       </div>
 
       {/* History list */}
-      <div className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
+      <div className="rounded border border-border bg-card shadow-soft overflow-hidden">
         <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
           <h3 className="font-rokh-bold font-bold text-lg text-foreground">تاریخچه تماشا</h3>
           <button
@@ -117,7 +117,7 @@ export default function WatchHistoryPage() {
           {history.map((entry) => (
             <div key={entry.video_id} className="px-6 py-5 flex items-center justify-between group hover:bg-muted/20 transition-colors">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-xl bg-muted overflow-hidden flex-shrink-0">
+                <div className="h-12 w-12 rounded bg-muted overflow-hidden flex-shrink-0">
                   {entry.thumbnail_url ? (
                     <img src={entry.thumbnail_url} alt="" className="w-full h-full object-cover" />
                   ) : (

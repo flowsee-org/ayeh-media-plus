@@ -228,7 +228,7 @@
     --border: 233 22% 92%;              /* #E6E7EF */
     --input: 233 22% 92%;
     --ring: 166 63% 25%;
-    --radius: 0.75rem;
+    --radius: 0.25rem; /* 4px */
 
     /* Quranic Color Variables */
     --quranic-emerald: 166 63% 25%;
@@ -367,7 +367,7 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 9999px;
+    border-radius: 4px;
     border: 2px solid transparent;
     background-clip: content-box;
   }
@@ -383,7 +383,7 @@
 @layer components {
   /* Buttons — Aparat Style */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 font-ui font-semibold rounded-xl
+    @apply inline-flex items-center justify-center gap-2 font-ui font-semibold rounded
            transition-all duration-200 ease-out
            focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed
@@ -427,7 +427,7 @@
 
   /* Cards — Video-First */
   .card {
-    @apply bg-card/95 backdrop-blur-sm border border-border rounded-2xl
+    @apply bg-card/95 backdrop-blur-sm border border-border rounded
            shadow-sm hover:shadow-md transition-all duration-300;
   }
 
@@ -437,12 +437,12 @@
   }
 
   .card-glass {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl shadow-xl;
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded shadow-xl;
   }
 
   /* Video Card — Immersive */
   .video-card {
-    @apply relative block rounded-2xl border border-border bg-card overflow-hidden
+    @apply relative block rounded border border-border bg-card overflow-hidden
            transition-all duration-300 hover:border-quranic-turquoise/50 hover:shadow-card-hover;
   }
 
@@ -466,7 +466,7 @@
   /* Inputs — Aparat Style */
   .input {
     @apply w-full bg-background border border-input text-foreground
-           rounded-xl px-4 py-3 text-sm sm:text-base
+           rounded px-4 py-3 text-sm sm:text-base
            placeholder:text-muted-foreground/60
            focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 focus:border-ring
            transition-all duration-200
@@ -479,7 +479,7 @@
 
   /* Badges */
   .badge {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1
+    @apply inline-flex items-center gap-1.5 rounded px-3 py-1
            text-xs font-semibold font-ui transition-all;
   }
 
@@ -494,7 +494,7 @@
 
   /* Tabs */
   .tabs-trigger {
-    @apply inline-flex items-center gap-2 rounded-xl px-4 py-2.5
+    @apply inline-flex items-center gap-2 rounded px-4 py-2.5
            text-sm font-semibold font-ui transition-all duration-200
            focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
            data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
@@ -504,12 +504,12 @@
 
   /* Avatar */
   .avatar {
-    @apply relative inline-flex shrink-0 overflow-hidden rounded-full
+    @apply relative inline-flex shrink-0 overflow-hidden rounded
            bg-muted border-2 border-border;
   }
 
   .avatar-image { @apply aspect-square h-full w-full object-cover; }
-  .avatar-fallback { @apply flex h-full w-full items-center justify-center rounded-full font-ui font-semibold; }
+  .avatar-fallback { @apply flex h-full w-full items-center justify-center rounded font-ui font-semibold; }
 
   /* Divider — Islamic Ornamental */
   .divider-ornamental {
@@ -532,13 +532,13 @@
   .skeleton {
     @apply animate-pulse bg-muted rounded;
   }
-  .skeleton-text { @apply skeleton h-4 w-full rounded-lg; }
-  .skeleton-circle { @apply skeleton rounded-full; }
-  .skeleton-rect { @apply skeleton rounded-xl; }
+  .skeleton-text { @apply skeleton h-4 w-full rounded; }
+  .skeleton-circle { @apply skeleton rounded; }
+  .skeleton-rect { @apply skeleton rounded; }
 
   /* Tags/Chips */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1
+    @apply inline-flex items-center gap-1.5 rounded px-3 py-1
            text-xs font-medium font-ui border border-border/50
            bg-card hover:bg-muted transition-all duration-200;
   }
@@ -686,31 +686,31 @@
   }
 
   .video-play-button {
-    @apply h-16 w-16 rounded-full bg-quranic-emerald/95 backdrop-blur-md
+    @apply h-16 w-16 rounded bg-quranic-emerald/95 backdrop-blur-md
            flex items-center justify-center text-white shadow-2xl shadow-quranic-glow
            transform group-hover:scale-110 transition-transform duration-300;
   }
 
   .video-play-button-saffron {
-    @apply h-16 w-16 rounded-full bg-quranic-saffron/95 backdrop-blur-md
+    @apply h-16 w-16 rounded bg-quranic-saffron/95 backdrop-blur-md
            flex items-center justify-center text-quranic-ink shadow-xl shadow-saffron-glow
            transform group-hover:scale-110 transition-transform duration-300;
   }
 
   .video-duration-badge {
     @apply absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-1
-           rounded-full bg-black/80 text-white text-[11px] font-bold
+           rounded bg-black/80 text-white text-[11px] font-bold
            backdrop-blur-sm border border-white/20;
   }
 
   .video-verse-badge {
     @apply absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-1
-           rounded-full bg-quranic-saffron/90 text-quranic-ink text-[11px] font-bold
+           rounded bg-quranic-saffron/90 text-quranic-ink text-[11px] font-bold
            backdrop-blur-sm border border-quranic-saffron/30;
   }
 
   .video-badge-live {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded
            bg-quranic-saffron text-quranic-ink text-xs font-bold
            animate-[live-pulse_1.5s_infinite];
   }

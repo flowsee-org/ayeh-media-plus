@@ -86,7 +86,7 @@ export default function SidebarNav({ className = "" }) {
       <div className="flex flex-col h-full">
         {/* Brand */}
         <div className="flex items-center gap-2 px-4 py-5 border-b border-border/50 bg-background/80 backdrop-blur-md z-10">
-          <div className="h-9 w-9 rounded-2xl bg-gradient-to-br from-quranic-emerald to-quranic-turquoise flex items-center justify-center text-white shadow-quranic-glow">
+          <div className="h-9 w-9 rounded bg-gradient-to-br from-quranic-emerald to-quranic-turquoise flex items-center justify-center text-white shadow-quranic-glow">
             <BookOpen className="h-5 w-5" />
           </div>
           <div className="hidden lg:block">
@@ -95,7 +95,7 @@ export default function SidebarNav({ className = "" }) {
           </div>
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="lg:hidden ml-auto p-2 rounded-lg hover:bg-muted/50 text-foreground/70"
+            className="lg:hidden ml-auto p-2 rounded hover:bg-muted/50 text-foreground/70"
             aria-label="بستن منو"
           >
             <X className="h-5 w-5" />
@@ -115,7 +115,7 @@ export default function SidebarNav({ className = "" }) {
                 <Link
                   key={item.to}
                   href={item.to}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded text-sm transition-all duration-200 ${
                     active
                       ? "bg-quranic-saffron/15 border border-quranic-saffron/30 text-quranic-saffron-dark shadow-lg shadow-saffron-glow/20"
                       : "text-foreground/70 hover:bg-secondary/40 hover:text-foreground"
@@ -128,7 +128,7 @@ export default function SidebarNav({ className = "" }) {
                     {item.label}
                   </span>
                   {item.badge && (
-                    <span className="ml-auto h-6 min-w-6 rounded-full bg-quranic-saffron text-quranic-ink text-[10px] font-bold flex items-center justify-center">
+                    <span className="ml-auto h-6 min-w-6 rounded bg-quranic-saffron text-quranic-ink text-[10px] font-bold flex items-center justify-center">
                       {item.badge}
                     </span>
                   )}
@@ -152,7 +152,7 @@ export default function SidebarNav({ className = "" }) {
                       <Link
                         key={item.to}
                         href={item.to}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded text-sm transition-all duration-200 ${
                           active
                             ? "bg-quranic-emerald/15 border border-quranic-emerald/30 text-quranic-emerald-dark shadow-lg shadow-quranic-glow/20"
                             : "text-foreground/70 hover:bg-secondary/40 hover:text-foreground"
@@ -182,7 +182,7 @@ export default function SidebarNav({ className = "" }) {
                       <Link
                         key={item.to}
                         href={item.to}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded text-sm transition-all duration-200 ${
                           active
                             ? "bg-quranic-saffron/15 border border-quranic-saffron/30 text-quranic-saffron-dark shadow-lg shadow-saffron-glow/20"
                             : "text-foreground/70 hover:bg-secondary/40 hover:text-foreground"
@@ -212,7 +212,7 @@ export default function SidebarNav({ className = "" }) {
                       <Link
                         key={item.to}
                         href={item.to}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 ${
+                        className={`flex items-center gap-3 px-4 py-3 rounded text-sm transition-all duration-200 ${
                           active
                             ? "bg-red-500/15 border border-red-500/30 text-red-700 shadow-lg shadow-red-500/20"
                             : "text-foreground/70 hover:bg-secondary/40 hover:text-foreground"
@@ -246,7 +246,7 @@ export default function SidebarNav({ className = "" }) {
                 <Link
                   key={item.to}
                   href={item.to}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-200 ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded text-sm transition-all duration-200 ${
                     active
                       ? "bg-quranic-saffron/15 border border-quranic-saffron/30 text-quranic-saffron-dark shadow-lg shadow-saffron-glow/20"
                       : "text-foreground/70 hover:bg-secondary/40 hover:text-foreground"
@@ -268,8 +268,8 @@ export default function SidebarNav({ className = "" }) {
       <div className="p-4 border-t border-border/50 bg-background/80 backdrop-blur-md">
         {authUser ? (
           <div className="space-y-3">
-            <div className="flex items-center gap-3 px-2 py-3 rounded-xl bg-secondary/30 border border-border/40">
-              <div className="h-9 w-9 rounded-full bg-quranic-emerald/20 text-quranic-emerald flex items-center justify-center font-bold border border-quranic-emerald/30">
+            <div className="flex items-center gap-3 px-2 py-3 rounded bg-secondary/30 border border-border/40">
+              <div className="h-9 w-9 rounded bg-quranic-emerald/20 text-quranic-emerald flex items-center justify-center font-bold border border-quranic-emerald/30">
                 {(authUser.full_name || "ک").charAt(0)}
               </div>
               <div className="min-w-0">
@@ -281,13 +281,13 @@ export default function SidebarNav({ className = "" }) {
             </div>
             <Link
               href="/profile"
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-quranic-emerald hover:bg-quranic-emerald/5 transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs font-medium text-quranic-emerald hover:bg-quranic-emerald/5 transition-colors"
             >
               <User className="h-4 w-4" /> پروفایل کاربری
             </Link>
             <button
               onClick={() => openAuthModal()}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-white bg-gradient-to-r from-quranic-emerald to-quranic-turquoise shadow-quranic-glow hover:opacity-90 transition-all"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-xs font-medium text-white bg-gradient-to-r from-quranic-emerald to-quranic-turquoise shadow-quranic-glow hover:opacity-90 transition-all"
             >
               <Play className="h-3.5 w-3.5" /> ورود به حساب
             </button>
@@ -295,7 +295,7 @@ export default function SidebarNav({ className = "" }) {
         ) : (
           <button
             onClick={() => openAuthModal()}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-quranic-emerald to-quranic-turquoise shadow-quranic-glow hover:opacity-90 transition-all"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded text-xs font-bold text-white bg-gradient-to-r from-quranic-emerald to-quranic-turquoise shadow-quranic-glow hover:opacity-90 transition-all"
           >
             <User className="h-4 w-4" /> ورود / ثبت‌نام
           </button>

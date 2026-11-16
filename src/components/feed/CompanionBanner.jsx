@@ -6,9 +6,9 @@ export default function CompanionBanner() {
   return (
     <Link
       to="/guide"
-      className="mx-3.5 mb-4 flex items-center gap-3 rounded-lg border border-border bg-card p-3.5 transition-colors hover:border-accent/40 sm:mx-0"
+      className="mx-3.5 mb-4 flex items-center gap-3 rounded border border-border bg-card p-3.5 transition-colors hover:border-accent/40 sm:mx-0"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-accent/10 text-accent">
         <Compass className="h-5 w-5" strokeWidth={1.8} />
       </span>
       <span className="min-w-0 flex-1">

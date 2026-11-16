@@ -39,7 +39,7 @@ export default function CollectionCard({
   return (
     <Link
       href={`/collections/${id}`}
-      className={`group block rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-${colors.border}/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
+      className={`group block rounded border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-${colors.border}/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
     >
       <div className="relative h-48 lg:h-56 overflow-hidden bg-gradient-to-br from-quranic-emerald-dark/15 to-quranic-turquoise-dark/15 flex items-center justify-center">
         {coverImage ? (
@@ -53,7 +53,7 @@ export default function CollectionCard({
           <div className="w-full h-full flex items-center justify-center">
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 bg-black/20" />
-              <div className="relative z-10 h-20 w-20 rounded-full bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform">
+              <div className="relative z-10 h-20 w-20 rounded bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform">
                 <FolderHeart className="h-10 w-10" aria-hidden="true" />
               </div>
             </div>
@@ -64,7 +64,7 @@ export default function CollectionCard({
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-current to-transparent" style={{ backgroundColor: `var(--${themeColor})` }} aria-hidden="true" />
 
         {/* Item count badge */}
-        <div className="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/70 text-white text-[10px] font-bold backdrop-blur-sm border border-white/20">
+        <div className="absolute top-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded bg-black/70 text-white text-[10px] font-bold backdrop-blur-sm border border-white/20">
           <BookOpen className="h-3 w-3" style={{ color: `var(--${colors.text})` }} aria-hidden="true" />
           <span>{fa(itemCount)} مورد</span>
         </div>

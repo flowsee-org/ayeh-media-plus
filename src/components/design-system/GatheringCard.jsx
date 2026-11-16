@@ -31,7 +31,7 @@ export default function GatheringCard({
   return (
     <Link
       href={watchUrl}
-      className={`group block rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-quranic-saffron/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
+      className={`group block rounded border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-quranic-saffron/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
     >
       <div className="relative h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-quranic-saffron/20 to-quranic-emerald/20 flex items-center justify-center">
         {imageUrl ? (
@@ -45,7 +45,7 @@ export default function GatheringCard({
           <div className="w-full h-full flex items-center justify-center">
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 bg-black/30" />
-              <div className="relative z-10 h-16 w-16 rounded-full bg-white text-quranic-saffron flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+              <div className="relative z-10 h-16 w-16 rounded bg-white text-quranic-saffron flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
                 <Users className="h-8 w-8" aria-hidden="true" />
               </div>
             </div>
@@ -54,7 +54,7 @@ export default function GatheringCard({
 
         {/* Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="h-16 w-16 rounded-full bg-quranic-saffron/95 backdrop-blur-md flex items-center justify-center text-quranic-ink shadow-xl shadow-saffron-glow transform group-hover:scale-110 transition-transform">
+          <div className="h-16 w-16 rounded bg-quranic-saffron/95 backdrop-blur-md flex items-center justify-center text-quranic-ink shadow-xl shadow-saffron-glow transform group-hover:scale-110 transition-transform">
             <Play className="h-8 w-8 ml-1" aria-hidden="true" />
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function GatheringCard({
         <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-1.5 justify-between">
           <div className="flex flex-wrap gap-1.5">
             {date && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/80 text-white text-[10px] font-bold backdrop-blur-sm border border-white/20">
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-black/80 text-white text-[10px] font-bold backdrop-blur-sm border border-white/20">
                 <Calendar className="h-3 w-3 text-quranic-saffron" aria-hidden="true" />
                 <span>{new Date(date).toLocaleDateString('fa-IR', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
               </span>
@@ -71,7 +71,7 @@ export default function GatheringCard({
           </div>
           <div className="flex flex-wrap gap-1.5 justify-end">
             {isVideo && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-emerald text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-emerald/30">
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-quranic-emerald text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-emerald/30">
                 <Trophy className="h-3 w-3" aria-hidden="true" />
                 <span>ویدیو</span>
               </span>
@@ -81,7 +81,7 @@ export default function GatheringCard({
 
         {/* Duration - bottom right */}
         {duration && (
-          <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
+          <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
             <Clock className="h-3 w-3 text-quranic-saffron" aria-hidden="true" />
             <span>{duration}</span>
           </div>
@@ -89,7 +89,7 @@ export default function GatheringCard({
 
         {/* Views - bottom left */}
         {views > 0 && (
-          <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/60 text-white text-[10px] font-bold backdrop-blur-md border border-white/20">
+          <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded bg-black/60 text-white text-[10px] font-bold backdrop-blur-md border border-white/20">
             <Award className="h-3 w-3 text-quranic-saffron" aria-hidden="true" />
             <span>{fa(views)}</span>
           </div>

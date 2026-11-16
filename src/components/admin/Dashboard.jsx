@@ -40,8 +40,8 @@ export default function Dashboard({ onNavigate }) {
   return (
     <div>
       {/* Welcome banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-accent/15 bg-gradient-to-br from-card via-card/70 to-accent/[0.08] p-6 sm:p-8 mb-6 shadow-soft">
-        <div className="absolute -top-12 -left-12 h-40 w-40 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded border border-accent/15 bg-gradient-to-br from-card via-card/70 to-accent/[0.08] p-6 sm:p-8 mb-6 shadow-soft">
+        <div className="absolute -top-12 -left-12 h-40 w-40 rounded bg-accent/10 blur-3xl pointer-events-none" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
             <h3 className="font-display font-extrabold text-xl sm:text-2xl">خوش آمدید 👋</h3>
@@ -64,9 +64,9 @@ export default function Dashboard({ onNavigate }) {
               <button
                 key={c.label}
                 onClick={clickable ? () => onNavigate(c.id) : undefined}
-                className={`group text-right rounded-2xl border border-border/40 bg-card/50 p-4 sm:p-5 transition-all ${clickable ? "hover:border-accent/30 hover:shadow-premium cursor-pointer" : "cursor-default"}`}
+                className={`group text-right rounded border border-border/40 bg-card/50 p-4 sm:p-5 transition-all ${clickable ? "hover:border-accent/30 hover:shadow-premium cursor-pointer" : "cursor-default"}`}
               >
-                <div className={`h-10 w-10 rounded-xl flex items-center justify-center ring-1 mb-3 ${c.color}`}>
+                <div className={`h-10 w-10 rounded flex items-center justify-center ring-1 mb-3 ${c.color}`}>
                   <Icon className="h-5 w-5" />
                 </div>
                 <div className="font-display font-extrabold text-2xl">{fa(countFor(c))}</div>

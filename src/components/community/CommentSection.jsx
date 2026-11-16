@@ -96,13 +96,13 @@ export default function CommentSection({ postId, post, currentUser, comments: in
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && submit()}
               placeholder="نظر خود را بنویسید…"
-              className="flex-1 bg-muted/30 rounded-full border border-accent/15 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/30 transition-all"
+              className="flex-1 bg-muted/30 rounded border border-accent/15 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/30 transition-all"
               dir="rtl"
             />
             <button
               onClick={submit}
               disabled={posting || !text.trim()}
-              className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-accent/80 text-accent-foreground flex items-center justify-center hover:shadow-glow transition-all disabled:opacity-50 shrink-0"
+              className="h-10 w-10 rounded bg-gradient-to-br from-accent to-accent/80 text-accent-foreground flex items-center justify-center hover:shadow-glow transition-all disabled:opacity-50 shrink-0"
             >
               {posting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </button>
@@ -128,7 +128,7 @@ export default function CommentSection({ postId, post, currentUser, comments: in
             <div key={c.id} className="flex items-start gap-3 animate-fade-in">
               <Avatar name={c.author_name} size={32} />
               <div className="flex-1 min-w-0">
-                <div className="rounded-2xl bg-accent/[0.04] border border-accent/10 px-4 py-2.5">
+                <div className="rounded bg-accent/[0.04] border border-accent/10 px-4 py-2.5">
                   <div className="flex items-center gap-2 mb-0.5">
                     <span className="text-sm font-medium text-accent">{c.author_name}</span>
                     <span className="text-xs text-muted-foreground/70">{timeAgo(c.created_date)}</span>

@@ -140,7 +140,7 @@ export default function Topics() {
  </button>
 
  <div className="text-center mb-10">
- <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/20 bg-accent/5 text-accent text-xs font-medium mb-4">
+ <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded border border-accent/20 bg-accent/5 text-accent text-xs font-medium mb-4">
  <Compass className="h-3.5 w-3.5" /> موضوع
  </div>
  <h1 className="font-rokh-bold font-extrabold text-3xl sm:text-4xl tracking-tight">{selectedTopic}</h1>
@@ -157,7 +157,7 @@ export default function Topics() {
  <Link
  key={v.id || v.verse_key}
  to={verseKeyToPath(v.verse_key)}
- className="group block rounded-xl border border-accent/10 bg-card/40 p-4 sm:p-6 hover:border-accent/30 hover:shadow-premium transition-all duration-300 animate-fade-in-up will-animate"
+ className="group block rounded border border-accent/10 bg-card/40 p-4 sm:p-6 hover:border-accent/30 hover:shadow-premium transition-all duration-300 animate-fade-in-up will-animate"
  style={{ animationDelay: `${i * 0.05}s` }}
  >
  <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
@@ -177,7 +177,7 @@ export default function Topics() {
  ))}
  </div>
  ) : (
- <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
+ <div className="rounded border border-dashed border-border/60 p-12 text-center">
  <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground">
  هنوز آیه‌ای برای موضوع «{selectedTopic}» ثبت نشده است.
@@ -193,7 +193,7 @@ export default function Topics() {
  return (
  <PullToRefresh onRefresh={loadTopics}>
  <div className="page-shell animate-fade-in">
- <div className="relative overflow-hidden rounded-3xl border border-amber-400/30 bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
+ <div className="relative overflow-hidden rounded border border-amber-400/30 bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
  <div className="absolute inset-0 pointer-events-none z-0">
  <img
  src="/images/art/nasir_vault_ceiling.webp"
@@ -204,7 +204,7 @@ export default function Topics() {
  </div>
 
  <div className="relative z-10">
- <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
+ <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-accent/15 border border-accent/30 text-accent font-ui text-xs font-semibold mb-3">
  <Compass className="h-3.5 w-3.5" /> کاوش موضوعی و معنایی آیات
  </div>
  <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
@@ -217,7 +217,7 @@ export default function Topics() {
  <div className="flex flex-wrap justify-center gap-2 mt-6 font-ui">
  <button
  onClick={() => setParams({})}
- className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+ className={`px-4 py-2 rounded text-xs sm:text-sm font-bold transition-all ${
  !catFilter
  ? "bg-primary text-primary-foreground shadow-sm"
  : "bg-card/80 text-muted-foreground hover:text-foreground border border-border/80 backdrop-blur-sm"
@@ -229,7 +229,7 @@ export default function Topics() {
  <button
  key={cat.id}
  onClick={() => setParams({ cat: cat.id })}
- className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+ className={`px-4 py-2 rounded text-xs sm:text-sm font-bold transition-all ${
  catFilter === cat.id
  ? "bg-primary text-primary-foreground shadow-sm"
  : "bg-card/80 text-muted-foreground hover:text-foreground border border-border/80 backdrop-blur-sm"
@@ -247,7 +247,7 @@ export default function Topics() {
  <div key={cat.id}>
  <div className="flex items-center gap-3 mb-6">
  <div
- className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl flex items-center justify-center ring-1 ring-border/40"
+ className="h-9 w-9 sm:h-10 sm:w-10 rounded flex items-center justify-center ring-1 ring-border/40"
  style={{ backgroundColor: `${cat.color}18`, color: cat.color }}
  >
  <Compass className="h-5 w-5" />
@@ -262,7 +262,7 @@ export default function Topics() {
  <button
  key={topic.name}
  onClick={() => setParams({ topic: topic.name })}
- className="text-right rounded-2xl border border-border/60 bg-card/60 p-4 hover:border-accent/30 hover:shadow-soft transition-all animate-fade-in-up will-animate"
+ className="text-right rounded border border-border/60 bg-card/60 p-4 hover:border-accent/30 hover:shadow-soft transition-all animate-fade-in-up will-animate"
  style={{ animationDelay: `${i * 0.03}s` }}
  >
  <div className="font-rokh-bold font-bold text-sm mb-1">{topic.name}</div>

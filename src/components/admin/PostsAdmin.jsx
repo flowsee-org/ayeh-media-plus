@@ -32,7 +32,7 @@ export default function PostsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">{(items.length || 0).toLocaleString("fa-IR")} پست</p>
-        <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
+        <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> پست جدید
         </button>
       </div>
@@ -42,18 +42,18 @@ export default function PostsAdmin() {
       ) : (
         <div className="space-y-2">
           {items.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm shrink-0">
+            <div key={p.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="h-9 w-9 rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm shrink-0">
                 {p.author_name?.[0]}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium">{p.author_name} · {TYPES.find((t) => t.id === p.type)?.label || p.type}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1">{p.content}</p>
               </div>
-              <button onClick={() => setForm(p)} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition shrink-0" title="ویرایش">
+              <button onClick={() => setForm(p)} className="h-11 w-11 rounded text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition shrink-0" title="ویرایش">
                 <Pencil className="h-4 w-4" />
               </button>
-              <button onClick={async () => { await api.entities.Post.delete(p.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition shrink-0" title="حذف">
+              <button onClick={async () => { await api.entities.Post.delete(p.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition shrink-0" title="حذف">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -148,8 +148,8 @@ function PostForm({ initial, onClose, onSaved }) {
 
       {err && <p className="text-sm text-destructive">{err}</p>}
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded-full text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded-full text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
+        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
+        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
           {saving ? "در حال ذخیره…" : "ذخیره"}
         </button>
       </div>

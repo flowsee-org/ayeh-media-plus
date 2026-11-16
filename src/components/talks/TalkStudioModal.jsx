@@ -129,7 +129,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-xl rounded-3xl border border-accent/40 bg-card/95 backdrop-blur-xl shadow-premium p-6 sm:p-8 overflow-hidden text-right max-h-[90vh] flex flex-col"
+        className="relative w-full max-w-xl rounded border border-accent/40 bg-card/95 backdrop-blur-xl shadow-premium p-6 sm:p-8 overflow-hidden text-right max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="pattern-islamic absolute inset-0 opacity-10 pointer-events-none" />
@@ -137,7 +137,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
         {/* Modal Header */}
         <div className="relative flex items-center justify-between pb-4 border-b border-border/60">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-accent/15 border border-accent/30 text-accent flex items-center justify-center">
+            <div className="h-9 w-9 rounded bg-accent/15 border border-accent/30 text-accent flex items-center justify-center">
               <Mic className="h-5 w-5" />
             </div>
             <div>
@@ -151,21 +151,21 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
           </div>
           <button
             onClick={onClose}
-            className="h-8 w-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
+            className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Steps Indicator */}
-        <div className="relative flex items-center justify-between px-4 py-3 my-2 bg-secondary/50 rounded-2xl border border-border/40 text-xs font-bold">
+        <div className="relative flex items-center justify-between px-4 py-3 my-2 bg-secondary/50 rounded border border-border/40 text-xs font-bold">
           <button
             onClick={() => setStep(1)}
             className={`flex items-center gap-1.5 transition-colors ${
               step === 1 ? "text-accent" : "text-muted-foreground"
             }`}
           >
-            <span className="h-5 w-5 rounded-full bg-accent/20 flex items-center justify-center text-[11px]">
+            <span className="h-5 w-5 rounded bg-accent/20 flex items-center justify-center text-[11px]">
               ۱
             </span>
             <span>مشخصات گفتار</span>
@@ -177,7 +177,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               step === 2 ? "text-accent" : "text-muted-foreground"
             }`}
           >
-            <span className="h-5 w-5 rounded-full bg-accent/20 flex items-center justify-center text-[11px]">
+            <span className="h-5 w-5 rounded bg-accent/20 flex items-center justify-center text-[11px]">
               ۲
             </span>
             <span>فصل‌بندی زمانی</span>
@@ -189,7 +189,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               step === 3 ? "text-accent" : "text-muted-foreground"
             }`}
           >
-            <span className="h-5 w-5 rounded-full bg-accent/20 flex items-center justify-center text-[11px]">
+            <span className="h-5 w-5 rounded bg-accent/20 flex items-center justify-center text-[11px]">
               ۳
             </span>
             <span>آیات و انتشار</span>
@@ -209,7 +209,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="مثال: شرح و تدبر در آیه الکرسی — توحید و ولایت الهی"
-                  className="w-full px-4 py-2.5 rounded-xl border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent"
+                  className="w-full px-4 py-2.5 rounded border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -222,7 +222,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="خلاصه‌ای از مباحث ارائه شده در این درس تفسیری..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent"
+                  className="w-full px-4 py-2.5 rounded border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -237,10 +237,10 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                     value={audioUrl}
                     onChange={(e) => setAudioUrl(e.target.value)}
                     placeholder="https://... یا بارگذاری مستقیم فایل"
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-border bg-secondary/50 text-foreground text-xs focus:outline-none focus:border-accent font-mono"
+                    className="flex-1 px-4 py-2.5 rounded border border-border bg-secondary/50 text-foreground text-xs focus:outline-none focus:border-accent font-mono"
                     dir="ltr"
                   />
-                  <label className="cursor-pointer px-4 py-2.5 rounded-xl bg-accent text-stone-950 text-xs font-bold flex items-center gap-1.5 hover:bg-accent/90 transition-all shrink-0">
+                  <label className="cursor-pointer px-4 py-2.5 rounded bg-accent text-stone-950 text-xs font-bold flex items-center gap-1.5 hover:bg-accent/90 transition-all shrink-0">
                     {uploadingAudio ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
@@ -268,7 +268,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
                     placeholder="مثال: ۱۸:۴۰"
-                    className="w-full px-4 py-2 rounded-xl border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent"
+                    className="w-full px-4 py-2 rounded border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
@@ -280,7 +280,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                     value={coverUrl}
                     onChange={(e) => setCoverUrl(e.target.value)}
                     placeholder="/images/... یا لینک مستقیم"
-                    className="w-full px-4 py-2 rounded-xl border border-border bg-secondary/50 text-foreground text-xs focus:outline-none focus:border-accent"
+                    className="w-full px-4 py-2 rounded border border-border bg-secondary/50 text-foreground text-xs focus:outline-none focus:border-accent"
                     dir="ltr"
                   />
                 </div>
@@ -301,7 +301,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                 </div>
                 <button
                   onClick={handleAddChapter}
-                  className="px-3 py-1.5 rounded-xl bg-secondary hover:bg-secondary/80 text-accent text-xs font-bold flex items-center gap-1 transition-colors"
+                  className="px-3 py-1.5 rounded bg-secondary hover:bg-secondary/80 text-accent text-xs font-bold flex items-center gap-1 transition-colors"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   افزودن فصل
@@ -312,9 +312,9 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                 {chapters.map((ch, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 p-2.5 rounded-2xl border border-border/70 bg-secondary/30"
+                    className="flex items-center gap-2 p-2.5 rounded border border-border/70 bg-secondary/30"
                   >
-                    <span className="h-6 w-6 rounded-lg bg-secondary text-muted-foreground flex items-center justify-center text-xs font-bold shrink-0">
+                    <span className="h-6 w-6 rounded bg-secondary text-muted-foreground flex items-center justify-center text-xs font-bold shrink-0">
                       {(idx + 1).toLocaleString("fa-IR")}
                     </span>
                     <input
@@ -322,20 +322,20 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                       value={ch.title}
                       onChange={(e) => handleUpdateChapter(idx, "title", e.target.value)}
                       placeholder="عنوان این سرفصل..."
-                      className="flex-1 px-3 py-1.5 rounded-xl border border-border bg-card text-foreground text-xs focus:outline-none focus:border-accent"
+                      className="flex-1 px-3 py-1.5 rounded border border-border bg-card text-foreground text-xs focus:outline-none focus:border-accent"
                     />
                     <input
                       type="text"
                       value={ch.timestamp}
                       onChange={(e) => handleUpdateChapter(idx, "timestamp", e.target.value)}
                       placeholder="00:00"
-                      className="w-20 px-2.5 py-1.5 rounded-xl border border-border bg-card text-foreground text-xs font-mono text-center focus:outline-none focus:border-accent"
+                      className="w-20 px-2.5 py-1.5 rounded border border-border bg-card text-foreground text-xs font-mono text-center focus:outline-none focus:border-accent"
                       dir="ltr"
                     />
                     {chapters.length > 1 && (
                       <button
                         onClick={() => handleRemoveChapter(idx)}
-                        className="h-8 w-8 rounded-lg hover:bg-destructive/15 text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors shrink-0"
+                        className="h-8 w-8 rounded hover:bg-destructive/15 text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors shrink-0"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -357,7 +357,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                   value={verseKeyInput}
                   onChange={(e) => setVerseKeyInput(e.target.value)}
                   placeholder="مثال: 2:255, 1:1, 1:6"
-                  className="w-full px-4 py-2.5 rounded-xl border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent font-mono"
+                  className="w-full px-4 py-2.5 rounded border border-border bg-secondary/50 text-foreground text-sm focus:outline-none focus:border-accent font-mono"
                   dir="ltr"
                 />
                 <p className="text-[11px] text-muted-foreground mt-1">
@@ -366,7 +366,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               </div>
 
               {/* Review card summary */}
-              <div className="p-4 rounded-2xl border border-accent/30 bg-accent/5 space-y-2">
+              <div className="p-4 rounded border border-accent/30 bg-accent/5 space-y-2">
                 <div className="flex items-center gap-2">
                   <IslamicStar size={14} className="text-accent" />
                   <span className="font-display font-bold text-xs text-foreground">
@@ -388,7 +388,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
           {step > 1 ? (
             <button
               onClick={() => setStep(step - 1)}
-              className="px-4 py-2 rounded-xl bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold transition-colors"
+              className="px-4 py-2 rounded bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold transition-colors"
             >
               مرحله قبل
             </button>
@@ -399,7 +399,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
           {step < 3 ? (
             <button
               onClick={() => setStep(step + 1)}
-              className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold transition-all hover:shadow-emerald-glow"
+              className="px-5 py-2 rounded bg-primary text-primary-foreground text-xs font-bold transition-all hover:shadow-emerald-glow"
             >
               گام بعدی ←
             </button>
@@ -407,7 +407,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent to-yellow-500 hover:from-accent/90 text-stone-950 text-xs font-bold shadow-gold-glow flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+              className="px-6 py-2.5 rounded bg-gradient-to-r from-accent to-yellow-500 hover:from-accent/90 text-stone-950 text-xs font-bold shadow-gold-glow flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

@@ -44,7 +44,7 @@ export default function CharacterAvatar({ config, size = 40, className = "" }) {
 
   return (
     <div
-      className={`rounded-full overflow-hidden bg-muted/30 shrink-0 ${className}`}
+      className={`rounded overflow-hidden bg-muted/30 shrink-0 ${className}`}
       style={{ width: size, height: size }}
       aria-hidden="true"
     >

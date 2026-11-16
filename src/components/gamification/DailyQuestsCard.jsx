@@ -153,10 +153,10 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  if (loading) {
  return (
- <div className="p-6 rounded-3xl bg-card border border-border animate-pulse flex flex-col gap-4">
- <div className="h-6 w-48 bg-muted rounded-lg"></div>
- <div className="h-20 bg-muted rounded-2xl"></div>
- <div className="h-20 bg-muted rounded-2xl"></div>
+ <div className="p-6 rounded bg-card border border-border animate-pulse flex flex-col gap-4">
+ <div className="h-6 w-48 bg-muted rounded"></div>
+ <div className="h-20 bg-muted rounded"></div>
+ <div className="h-20 bg-muted rounded"></div>
  </div>
  );
  }
@@ -166,15 +166,15 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  const progressPercent = Math.round((completedCount / 3) * 100);
 
  return (
- <div className="rounded-3xl bg-card/90 border border-emerald-900/30 p-5 sm:p-7 shadow-xl backdrop-blur-md relative overflow-hidden">
+ <div className="rounded bg-card/90 border border-emerald-900/30 p-5 sm:p-7 shadow-xl backdrop-blur-md relative overflow-hidden">
  {/* Background Islamic Ambient glow */}
- <div className="absolute top-0 -left-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+ <div className="absolute top-0 -left-20 w-72 h-72 bg-emerald-500/10 rounded blur-3xl pointer-events-none"></div>
 
  {/* Header with progress */}
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-border/60">
  <div>
  <div className="flex items-center gap-2">
- <span className="p-1.5 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-900 text-white shadow-sm">
+ <span className="p-1.5 rounded bg-gradient-to-br from-emerald-600 to-teal-900 text-white shadow-sm">
  <Sparkles className="w-4 h-4 text-amber-300" />
  </span>
  <h3 className="text-lg font-bold font-rokh-bold text-foreground">
@@ -187,7 +187,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  </div>
 
  {/* Progress pill */}
- <div className="flex items-center gap-3 bg-muted/60 px-4 py-2 rounded-2xl border border-border shrink-0">
+ <div className="flex items-center gap-3 bg-muted/60 px-4 py-2 rounded border border-border shrink-0">
  <div className="text-right">
  <div className="text-xs font-bold font-rokh-bold text-foreground">
  {completedCount} از ۳ تکمیل شده
@@ -196,7 +196,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  {progressPercent === 100 ? "استریک امروز تثبیت شد 🎉" : "در حال پیشرفت"}
  </div>
  </div>
- <div className="w-12 h-12 rounded-full bg-emerald-950/20 border-2 border-emerald-600/40 flex items-center justify-center font-bold text-xs text-primary font-mono">
+ <div className="w-12 h-12 rounded bg-emerald-950/20 border-2 border-emerald-600/40 flex items-center justify-center font-bold text-xs text-primary font-mono">
  {progressPercent}%
  </div>
  </div>
@@ -206,7 +206,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <div className="grid grid-cols-1 gap-4 mt-5">
  {/* Quest 1: Reading / Listening */}
  <div
- className={`p-4 rounded-2xl border transition-all duration-300 ${
+ className={`p-4 rounded border transition-all duration-300 ${
  quests[0]?.is_completed
  ? "bg-emerald-500/5 border-emerald-500/30"
  : "bg-muted/30 border-border/70 hover:border-emerald-600/40"
@@ -215,7 +215,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3">
  <div
- className={`p-2.5 rounded-xl shrink-0 ${
+ className={`p-2.5 rounded shrink-0 ${
  quests[0]?.is_completed
  ? "bg-emerald-600 text-white"
  : "bg-primary/10 text-primary"
@@ -232,7 +232,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <span className="text-sm font-bold font-rokh-bold text-foreground">
  {quests[0]?.title || "تلاوت و استماع آیه روز"}
  </span>
- <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
+ <span className="text-[11px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
  +50 XP
  </span>
  </div>
@@ -242,7 +242,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  {/* Today's Featured Verse snippet */}
  {dailyContent?.featured_verse && (
- <div className="mt-3 p-3 rounded-xl bg-card border border-emerald-900/20 text-xs">
+ <div className="mt-3 p-3 rounded bg-card border border-emerald-900/20 text-xs">
  <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1.5 font-mono">
  <span>آیه منتخب امروز: {dailyContent.featured_verse.verse_key}</span>
  <button
@@ -266,13 +266,13 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  <div className="shrink-0 self-center">
  {quests[0]?.is_completed ? (
- <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-rokh-bold font-bold">
+ <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-rokh-bold font-bold">
  انجام شد
  </span>
  ) : (
  <Link
  to="/quran"
- className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-rokh-bold font-bold transition-transform active:scale-95"
+ className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-rokh-bold font-bold transition-transform active:scale-95"
  >
  ورود به قرآن
  <ArrowRight className="w-3.5 h-3.5 rotate-180" />
@@ -284,7 +284,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  {/* Quest 2: Interactive Conceptual Quiz */}
  <div
- className={`p-4 rounded-2xl border transition-all duration-300 ${
+ className={`p-4 rounded border transition-all duration-300 ${
  quests[1]?.is_completed
  ? "bg-emerald-500/5 border-emerald-500/30"
  : "bg-muted/30 border-border/70 hover:border-emerald-600/40"
@@ -293,7 +293,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3 w-full">
  <div
- className={`p-2.5 rounded-xl shrink-0 ${
+ className={`p-2.5 rounded shrink-0 ${
  quests[1]?.is_completed
  ? "bg-emerald-600 text-white"
  : "bg-primary/10 text-primary"
@@ -310,7 +310,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <span className="text-sm font-bold font-rokh-bold text-foreground">
  {quests[1]?.title || "تدبر مفهومی و کوییز آیه روز"}
  </span>
- <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
+ <span className="text-[11px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
  +40 XP
  </span>
  </div>
@@ -320,7 +320,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  {/* The Quiz Box */}
  {dailyContent?.quiz && (
- <div className="mt-3 p-3.5 rounded-xl bg-card border border-primary/20">
+ <div className="mt-3 p-3.5 rounded bg-card border border-primary/20">
  <div className="flex items-center gap-1.5 text-xs font-bold font-rokh-bold text-primary mb-1.5">
  <HelpCircle className="w-3.5 h-3.5" />
  موضوع: {dailyContent.quiz.theme}
@@ -336,14 +336,14 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <button
  key={idx}
  onClick={() => setSelectedOption(idx)}
- className={`w-full text-right p-2.5 rounded-xl text-xs transition-all border flex items-center justify-between ${
+ className={`w-full text-right p-2.5 rounded text-xs transition-all border flex items-center justify-between ${
  selectedOption === idx
  ? "bg-primary/15 border-primary text-foreground font-bold shadow-sm"
  : "bg-muted/40 border-border hover:bg-muted/80 text-foreground/80"
  }`}
  >
  <span>{opt}</span>
- <span className="w-4 h-4 rounded-full border border-primary/40 flex items-center justify-center text-[10px] font-mono shrink-0">
+ <span className="w-4 h-4 rounded border border-primary/40 flex items-center justify-center text-[10px] font-mono shrink-0">
  {idx + 1}
  </span>
  </button>
@@ -353,14 +353,14 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <button
  onClick={handleQuizSubmit}
  disabled={selectedOption === null || submittingQuiz}
- className="px-4 py-1.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-rokh-bold disabled:opacity-50 transition-all flex items-center gap-1.5"
+ className="px-4 py-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-rokh-bold disabled:opacity-50 transition-all flex items-center gap-1.5"
  >
  {submittingQuiz ? "در حال ثبت..." : "ثبت پاسخ و تدبر"}
  </button>
  </div>
  </div>
  ) : (
- <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-200">
+ <div className="p-3 rounded bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-800 dark:text-emerald-200">
  <div className="font-bold flex items-center gap-1.5 mb-1 font-rokh-bold">
  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
  پاسخ شما با موفقیت ثبت شد
@@ -379,7 +379,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  {/* Quest 3: Social & Khatm Contribution */}
  <div
- className={`p-4 rounded-2xl border transition-all duration-300 ${
+ className={`p-4 rounded border transition-all duration-300 ${
  quests[2]?.is_completed
  ? "bg-emerald-500/5 border-emerald-500/30"
  : "bg-muted/30 border-border/70 hover:border-emerald-600/40"
@@ -388,7 +388,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-start gap-3">
  <div
- className={`p-2.5 rounded-xl shrink-0 ${
+ className={`p-2.5 rounded shrink-0 ${
  quests[2]?.is_completed
  ? "bg-emerald-600 text-white"
  : "bg-primary/10 text-primary"
@@ -405,7 +405,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <span className="text-sm font-bold font-rokh-bold text-foreground">
  {quests[2]?.title || "مشارکت معنوی در ختم یا جامعه"}
  </span>
- <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
+ <span className="text-[11px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-300 font-mono font-bold">
  +30 XP
  </span>
  </div>
@@ -417,14 +417,14 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
 
  <div className="shrink-0 self-center">
  {quests[2]?.is_completed ? (
- <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-rokh-bold font-bold">
+ <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-rokh-bold font-bold">
  انجام شد
  </span>
  ) : (
  <button
  onClick={handleQuickSalawat}
  disabled={submittingSocial}
- className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-600 text-white hover:bg-amber-700 text-xs font-rokh-bold font-bold transition-transform active:scale-95 disabled:opacity-50 shadow-sm"
+ className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-600 text-white hover:bg-amber-700 text-xs font-rokh-bold font-bold transition-transform active:scale-95 disabled:opacity-50 shadow-sm"
  >
  <Sparkles className="w-3.5 h-3.5" />
  {submittingSocial ? "در حال ثبت..." : "نذر صلوات روز"}

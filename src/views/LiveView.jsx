@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "@/lib/router-compat";
 import api from "@/lib/api";
-import { Loader2, Users, Send, Radio, Lock, Hand, Mic, Video, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause } from "lucide-react";
+import { Loader2, Users, Send, Radio, Lock, Hand, Mic, Video, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, ChevronRight, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause, BookOpen } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import FollowButton from "@/components/live/FollowButton";
 import CharacterAvatar from "@/components/CharacterAvatar";
@@ -341,7 +341,7 @@ export default function LiveView() {
             {cfg ? (
               <CharacterAvatar config={cfg} size={80} />
             ) : (
-              <div className="h-20 w-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
+              <div className="h-20 w-20 rounded bg-primary/10 border border-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
                 {session?.scholar_name?.[0]}
               </div>
             )}
@@ -355,7 +355,7 @@ export default function LiveView() {
             <FollowButton scholarId={session?.scholar_id} scholarName={session?.scholar_name} />
             <Link
               to={`/scholars/${session?.scholar_id}`}
-              className="px-4 py-2 rounded-xl text-xs font-bold border border-border text-muted-foreground hover:text-foreground transition-colors"
+              className="px-4 py-2 rounded text-xs font-bold border border-border text-muted-foreground hover:text-foreground transition-colors"
             >
               پروفایل استاد
             </Link>
@@ -401,7 +401,7 @@ export default function LiveView() {
 
           <div className="flex items-center gap-2">
             <Badge variant="accent" className="flex items-center gap-1.5 animate-pulse">
-              <span className="h-2 w-2 rounded-full bg-white" />
+              <span className="h-2 w-2 rounded bg-white" />
               زنده
             </Badge>
             <Badge variant="outline" className="flex items-center gap-1.5">
@@ -468,7 +468,7 @@ export default function LiveView() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid lg:grid-cols-[1fr_380px] gap-4 h-[calc(100vh-80px)]">
             <div className="lg:col-span-1 relative h-full min-h-0">
-              <div className="relative w-full h-full min-h-0 rounded-2xl overflow-hidden bg-black">
+              <div className="relative w-full h-full min-h-0 rounded overflow-hidden bg-black">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -483,7 +483,7 @@ export default function LiveView() {
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Badge variant="accent" className="flex items-center gap-1.5 animate-pulse">
-                      <span className="h-2 w-2 rounded-full bg-white" />
+                      <span className="h-2 w-2 rounded bg-white" />
                       زنده
                     </Badge>
                     <span className="text-xs font-medium bg-black/50 px-2 py-1 rounded">HD</span>
@@ -536,7 +536,7 @@ export default function LiveView() {
                 </div>
 
                 {(activeSpeaker || isSpeaking) && (
-                  <div className="absolute bottom-4 right-4 w-64 h-36 sm:w-80 sm:h-45 rounded-xl overflow-hidden bg-neutral-900 border border-primary/30 animate-scale-in z-20">
+                  <div className="absolute bottom-4 right-4 w-64 h-36 sm:w-80 sm:h-45 rounded overflow-hidden bg-neutral-900 border border-primary/30 animate-scale-in z-20">
                     <video
                       ref={isSpeaking ? localCoHostVideoRef : coHostVideoRef}
                       autoPlay
@@ -544,14 +544,14 @@ export default function LiveView() {
                       muted={isSpeaking}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-2 right-2 rounded-full bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5">
+                    <div className="absolute bottom-2 right-2 rounded bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5">
                       <Mic className="h-3 w-3 animate-pulse" />
                       <span>{isSpeaking ? "شما (روی آنتن زنده)" : `مهمان: ${activeSpeaker?.name || "مهمان"}`}</span>
                     </div>
                     {isSpeaking && (
                       <button
                         onClick={handleSpeakerKicked}
-                        className="absolute top-2 left-2 rounded-full bg-destructive/90 text-white px-2 py-1 text-xs font-bold flex items-center gap-1"
+                        className="absolute top-2 left-2 rounded bg-destructive/90 text-white px-2 py-1 text-xs font-bold flex items-center gap-1"
                       >
                         <VideoOff className="h-3 w-3" /> خروج
                       </button>
@@ -693,7 +693,7 @@ export default function LiveView() {
                         <p className="text-center text-white/40 py-8">هیچ بیننده‌ای متصل نیست</p>
                       ) : (
                         viewers.map((v, i) => (
-                          <div key={v.id || i} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
+                          <div key={v.id || i} className="flex items-center gap-3 p-2 rounded hover:bg-white/5 transition-colors">
                             <Avatar className="h-9 w-9">
                               <AvatarFallback className="text-sm font-bold text-accent bg-accent/10">
                                 {v.name?.[0] || v.id?.toString()[0]}
@@ -714,7 +714,7 @@ export default function LiveView() {
                   <TabsContent value="hands" className="p-4">
                     <div className="space-y-2">
                       {raisedHands.map((h, i) => (
-                        <div key={h.id || i} className="flex items-center gap-3 p-3 rounded-xl bg-accent/5 border border-accent/20 animate-pulse">
+                        <div key={h.id || i} className="flex items-center gap-3 p-3 rounded bg-accent/5 border border-accent/20 animate-pulse">
                           <Avatar className="h-10 w-10">
                             <AvatarFallback className="text-base font-bold text-accent bg-accent/10">
                               {h.name?.[0] || "؟"}

@@ -146,7 +146,7 @@ export default function CompetitionDetail() {
           <div className="h-32 bg-gradient-to-br from-accent/15 to-primary/10" />
         )}
         <div className="relative mx-auto max-w-3xl px-4 sm:px-6 pb-8 text-center -mt-24">
-          <div className="inline-flex items-center gap-1.5 mb-3 px-3.5 py-1 rounded-full bg-card/90 backdrop-blur-md border border-accent/25 text-xs text-accent font-bold font-ui shadow-soft">
+          <div className="inline-flex items-center gap-1.5 mb-3 px-3.5 py-1 rounded bg-card/90 backdrop-blur-md border border-accent/25 text-xs text-accent font-bold font-ui shadow-soft">
             <Trophy className="h-3.5 w-3.5 text-accent" />
             <span>{COMPETITION_TYPE_LABELS[comp.type] || "مسابقه قرآنی"}</span>
           </div>
@@ -154,7 +154,7 @@ export default function CompetitionDetail() {
             {comp.title}
           </h1>
           <span
-            className={`inline-block text-xs px-3 py-1 rounded-full font-bold font-ui ${STATUS_COLORS[status]}`}
+            className={`inline-block text-xs px-3 py-1 rounded font-bold font-ui ${STATUS_COLORS[status]}`}
           >
             {STATUS_LABELS[status]}
           </span>
@@ -169,10 +169,10 @@ export default function CompetitionDetail() {
 
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6">
         {/* Prize Showcase Card */}
-        <div className="relative rounded-3xl overflow-hidden border border-accent/25 mb-8 shadow-soft bg-card">
+        <div className="relative rounded overflow-hidden border border-accent/25 mb-8 shadow-soft bg-card">
           <div className="absolute inset-0 bg-gradient-to-br from-accent/12 to-primary/6 pointer-events-none" />
           <div className="relative grid sm:grid-cols-[auto_1fr] gap-6 p-6 items-center">
-            <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded-2xl overflow-hidden shrink-0 mx-auto sm:mx-0 shadow-soft ring-2 ring-accent/30">
+            <div className="relative h-24 w-24 sm:h-28 sm:w-28 rounded overflow-hidden shrink-0 mx-auto sm:mx-0 shadow-soft ring-2 ring-accent/30">
               <Image src={MEDAL_IMAGE} className="w-full h-full" fittingType="fill" />
             </div>
             <div>
@@ -191,7 +191,7 @@ export default function CompetitionDetail() {
                 </p>
               )}
               {comp.prize_value && (
-                <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-accent/15 text-accent text-xs font-bold font-ui">
+                <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded bg-accent/15 text-accent text-xs font-bold font-ui">
                   <Award className="h-3.5 w-3.5" /> ارزش: {comp.prize_value}
                 </div>
               )}
@@ -208,7 +208,7 @@ export default function CompetitionDetail() {
 
         {/* Competition Rules */}
         {comp.rules?.length > 0 && (
-          <div className="mb-8 rounded-2xl border border-border/80 bg-card p-5 shadow-xs">
+          <div className="mb-8 rounded border border-border/80 bg-card p-5 shadow-xs">
             <h3 className="font-rokh-bold font-bold text-base mb-3 flex items-center gap-2 text-foreground">
               <BookOpen className="h-4 w-4 text-accent" />
               <span>قوانین و شرایط شرکت در مسابقه</span>
@@ -217,9 +217,9 @@ export default function CompetitionDetail() {
               {comp.rules.map((r, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-2.5 rounded-xl border border-border/40 bg-secondary/30 p-3 text-xs leading-relaxed text-muted-foreground"
+                  className="flex items-start gap-2.5 rounded border border-border/40 bg-secondary/30 p-3 text-xs leading-relaxed text-muted-foreground"
                 >
-                  <span className="shrink-0 h-5 w-5 rounded-md bg-accent/10 text-accent flex items-center justify-center font-bold text-[11px] font-ui">
+                  <span className="shrink-0 h-5 w-5 rounded bg-accent/10 text-accent flex items-center justify-center font-bold text-[11px] font-ui">
                     {fa(i + 1)}
                   </span>
                   <span>{r}</span>
@@ -242,7 +242,7 @@ export default function CompetitionDetail() {
           {canSubmit ? (
             <button
               onClick={() => setShowSubmit(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-bold shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 font-ui"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-accent text-accent-foreground text-xs font-bold shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 font-ui"
             >
               <Mic className="h-4 w-4" />
               <span>ثبت تلاوت / اثر</span>
@@ -250,7 +250,7 @@ export default function CompetitionDetail() {
           ) : !user && status === "active" ? (
             <button
               onClick={() => openAuthModal(() => setShowSubmit(true))}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent/15 border border-accent/30 text-accent text-xs font-bold hover:bg-accent/25 transition-all font-ui"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-accent/15 border border-accent/30 text-accent text-xs font-bold hover:bg-accent/25 transition-all font-ui"
             >
               <Send className="h-4 w-4" />
               <span>ورود و ثبت اثر</span>
@@ -272,7 +272,7 @@ export default function CompetitionDetail() {
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-border/80 bg-card/60 p-12 text-center">
+          <div className="rounded border border-dashed border-border/80 bg-card/60 p-12 text-center">
             <Award className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground mb-4 font-medium">
               هنوز اثری در این مسابقه ثبت نشده است. {canSubmit ? "اولین شرکت‌کننده شما باشید!" : ""}
@@ -280,7 +280,7 @@ export default function CompetitionDetail() {
             {canSubmit && (
               <button
                 onClick={() => setShowSubmit(true)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-accent-foreground text-xs font-bold shadow-soft font-ui"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-accent text-accent-foreground text-xs font-bold shadow-soft font-ui"
               >
                 <Mic className="h-4 w-4" />
                 <span>ضبط و ارسال تلاوت</span>
@@ -317,7 +317,7 @@ export default function CompetitionDetail() {
 
 function MetaCard({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-3.5 sm:p-4 text-center shadow-xs">
+    <div className="rounded border border-border/80 bg-card p-3.5 sm:p-4 text-center shadow-xs">
       <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-accent mx-auto mb-1.5" />
       <div className="text-sm sm:text-base font-bold text-foreground font-ui">{value}</div>
       <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{label}</div>
@@ -372,7 +372,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
 
   return (
     <div
-      className={`rounded-2xl border bg-card/95 p-4 sm:p-5 shadow-soft transition-all ${
+      className={`rounded border bg-card/95 p-4 sm:p-5 shadow-soft transition-all ${
         entry.is_winner
           ? "border-accent/50 shadow-glow ring-2 ring-accent/20"
           : "border-border/80 hover:border-primary/40"
@@ -382,7 +382,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
       <div className="flex items-center justify-between gap-3 mb-3">
         <div className="flex items-center gap-3">
           {entry.is_winner ? (
-            <div className="h-10 w-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center shrink-0 border border-accent/40 shadow-xs">
+            <div className="h-10 w-10 rounded bg-accent/20 text-accent flex items-center justify-center shrink-0 border border-accent/40 shadow-xs">
               <Crown className="h-5 w-5" />
             </div>
           ) : (
@@ -394,7 +394,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
                 {entry.author_name}
               </span>
               {entry.is_winner && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/20 text-accent font-bold font-ui">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-accent/20 text-accent font-bold font-ui">
                   رتبه برتر
                 </span>
               )}
@@ -405,7 +405,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
           </div>
         </div>
 
-        <div className="text-xs font-bold text-muted-foreground font-ui bg-secondary px-2.5 py-1 rounded-lg border border-border/50">
+        <div className="text-xs font-bold text-muted-foreground font-ui bg-secondary px-2.5 py-1 rounded border border-border/50">
           رتبه {fa(rank)}
         </div>
       </div>
@@ -420,7 +420,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
       {mediaUrl && (
         <div className="my-3">
           {isVideo && !isAudio ? (
-            <div className="overflow-hidden rounded-xl bg-black/90 border border-border/60">
+            <div className="overflow-hidden rounded bg-black/90 border border-border/60">
               <video
                 src={mediaUrl}
                 controls
@@ -431,12 +431,12 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
             </div>
           ) : (
             /* Luxury Quranic Audio Player Card */
-            <div className="rounded-xl border border-primary/25 bg-gradient-to-r from-card via-primary/5 to-secondary/30 p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-xs">
+            <div className="rounded border border-primary/25 bg-gradient-to-r from-card via-primary/5 to-secondary/30 p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={handleAudioPlay}
-                  className={`h-11 w-11 rounded-2xl flex items-center justify-center transition-all shadow-soft transform active:scale-90 shrink-0 ${
+                  className={`h-11 w-11 rounded flex items-center justify-center transition-all shadow-soft transform active:scale-90 shrink-0 ${
                     isThisPlaying
                       ? "bg-amber-500 text-amber-950 ring-4 ring-amber-500/20"
                       : "bg-primary text-primary-foreground hover:opacity-90"
@@ -457,9 +457,9 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
                     </span>
                     {isThisPlaying && (
                       <span className="flex items-center gap-0.5 text-amber-500">
-                        <span className="w-1 h-3 bg-amber-500 rounded-full animate-pulse" />
-                        <span className="w-1 h-4 bg-amber-500 rounded-full animate-pulse delay-75" />
-                        <span className="w-1 h-2 bg-amber-500 rounded-full animate-pulse delay-150" />
+                        <span className="w-1 h-3 bg-amber-500 rounded animate-pulse" />
+                        <span className="w-1 h-4 bg-amber-500 rounded animate-pulse delay-75" />
+                        <span className="w-1 h-2 bg-amber-500 rounded animate-pulse delay-150" />
                       </span>
                     )}
                   </div>
@@ -472,7 +472,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
               {entry.verse_key && (
                 <Link
                   to={`/verse/${entry.verse_key.replace(":", "/")}`}
-                  className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-background/80 border border-border/80 text-[11px] font-bold text-accent font-ui hover:border-accent"
+                  className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded bg-background/80 border border-border/80 text-[11px] font-bold text-accent font-ui hover:border-accent"
                 >
                   <BookOpen className="h-3 w-3" />
                   <span>آیه {entry.verse_key}</span>
@@ -506,7 +506,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
         <button
           onClick={() => onVote(entry)}
           disabled={!currentUser}
-          className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold font-ui transition-all ${
+          className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded text-xs font-bold font-ui transition-all ${
             hasVoted
               ? "bg-accent text-accent-foreground shadow-soft scale-105"
               : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80 border border-border/60"
@@ -668,13 +668,13 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg sm:max-w-xl rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-2xl overflow-hidden font-doran max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-lg sm:max-w-xl rounded border border-border/80 bg-card p-6 sm:p-8 shadow-2xl overflow-hidden font-doran max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between pb-3.5 border-b border-border/60">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center">
+            <div className="h-8 w-8 rounded bg-accent/15 text-accent flex items-center justify-center">
               <Mic className="h-4 w-4" />
             </div>
             <div>
@@ -686,28 +686,28 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
           </div>
           <button
             onClick={onClose}
-            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-secondary"
+            className="h-8 w-8 rounded flex items-center justify-center text-muted-foreground hover:bg-secondary"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {err && (
-          <div className="mt-3 flex items-center gap-2 rounded-xl bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive font-medium">
+          <div className="mt-3 flex items-center gap-2 rounded bg-destructive/10 border border-destructive/20 p-3 text-xs text-destructive font-medium">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{err}</span>
           </div>
         )}
 
         {/* Mode Selector Tabs */}
-        <div className="mt-4 flex rounded-xl bg-secondary p-1 border border-border/60 sm:px-1">
+        <div className="mt-4 flex rounded bg-secondary p-1 border border-border/60 sm:px-1">
           <button
             type="button"
             onClick={() => {
               setTab("record");
               setErr(null);
             }}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold font-ui transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded text-xs font-bold font-ui transition-all ${
               tab === "record"
                 ? "bg-card text-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -722,7 +722,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               setTab("upload");
               setErr(null);
             }}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold font-ui transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded text-xs font-bold font-ui transition-all ${
               tab === "upload"
                 ? "bg-card text-foreground shadow-xs"
                 : "text-muted-foreground hover:text-foreground"
@@ -737,14 +737,14 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
         <div className="flex-1 overflow-y-auto py-4 sm:py-6 space-y-4 sm:space-y-6 pr-1 sm:pr-2">
           {tab === "record" ? (
             /* Live Recording Section */
-            <div className="rounded-2xl border border-border/80 bg-secondary/30 p-4 sm:p-6 text-center">
+            <div className="rounded border border-border/80 bg-secondary/30 p-4 sm:p-6 text-center">
               {!recordedUrl ? (
                 <div className="space-y-4">
                   <div className="flex justify-center">
                     <button
                       type="button"
                       onClick={isRecording ? stopRecording : startRecording}
-                      className={`relative h-20 w-20 sm:h-24 sm:w-24 rounded-full flex items-center justify-center transition-all ${
+                      className={`relative h-20 w-20 sm:h-24 sm:w-24 rounded flex items-center justify-center transition-all ${
                         isRecording
                           ? "bg-red-500 text-white ring-8 ring-red-500/25 animate-pulse"
                           : "bg-accent text-accent-foreground hover:scale-105 shadow-glow"
@@ -771,7 +771,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               ) : (
                 /* Recorded Audio Preview */
                 <div className="space-y-3">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
                     <Check className="h-3.5 w-3.5" />
                     <span>تلاوت شما با موفقیت ضبط شد ({formatTime(recordingSeconds)})</span>
                   </div>
@@ -782,7 +782,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                     <button
                       type="button"
                       onClick={resetRecording}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-secondary text-xs text-muted-foreground hover:text-foreground font-ui"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-card hover:bg-secondary text-xs text-muted-foreground hover:text-foreground font-ui"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                       <span>ضبط مجدد</span>
@@ -793,7 +793,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
             </div>
           ) : (
             /* Upload File Section */
-            <div className="rounded-2xl border border-dashed border-border/80 bg-secondary/20 p-4 sm:p-6 text-center">
+            <div className="rounded border border-dashed border-border/80 bg-secondary/20 p-4 sm:p-6 text-center">
               <input
                 type="file"
                 accept="audio/*,video/*"
@@ -805,7 +805,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                 htmlFor="comp-file-upload"
                 className="cursor-pointer flex flex-col items-center gap-2"
               >
-                <div className="h-12 w-12 rounded-2xl bg-accent/15 text-accent flex items-center justify-center">
+                <div className="h-12 w-12 rounded bg-accent/15 text-accent flex items-center justify-center">
                   <FileAudio className="h-6 w-6" />
                 </div>
                 <div className="font-rokh-bold font-bold text-sm text-foreground">
@@ -833,7 +833,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: تلاوت مجلسی سوره شمس"
-              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-doran"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-doran"
             />
           </div>
 
@@ -846,7 +846,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               value={verseKey}
               onChange={(e) => setVerseKey(e.target.value)}
               placeholder="مثال: 91:1 یا 2:255"
-              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-ui"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-ui"
             />
           </div>
 
@@ -859,7 +859,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               onChange={(e) => setContent(e.target.value)}
               rows={3}
               placeholder="توضیح کوتاهی درباره حس‌وحال، مقام تلاوت یا پیام آیه بنویسید..."
-              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-doran leading-relaxed"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 rounded bg-secondary/50 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 text-xs sm:text-sm font-doran leading-relaxed"
             />
           </div>
         </div>
@@ -870,7 +870,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl border border-border text-xs sm:text-sm font-bold font-ui text-muted-foreground hover:text-foreground transition-colors"
+            className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded border border-border text-xs sm:text-sm font-bold font-ui text-muted-foreground hover:text-foreground transition-colors"
           >
             انصراف
           </button>
@@ -878,7 +878,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
             type="button"
             onClick={submit}
             disabled={saving || isRecording}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 sm:py-2 rounded-xl bg-accent text-accent-foreground text-xs sm:text-sm font-bold font-ui shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 sm:py-2 rounded bg-accent text-accent-foreground text-xs sm:text-sm font-bold font-ui shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
           >
             {saving ? (
               <>

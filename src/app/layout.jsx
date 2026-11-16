@@ -2,8 +2,6 @@ import { Suspense } from 'react';
 import '@/index.css';
 import Providers from './providers';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata = {
   title: 'آیه مدیا پلاس — تدبّر در قرآن کریم',
   description: 'مجتمع قرآنی: مصحف، تلاوت، تفسیر، تدبّر، هنر، جامعه و دستیار هوشمند — همه در یکجا',

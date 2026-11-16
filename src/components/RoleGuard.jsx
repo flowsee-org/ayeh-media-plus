@@ -51,7 +51,7 @@ export default function RoleGuard({ children, allowedRoles, requiredPermission, 
         </p>
         <button
           onClick={() => openAuthModal()}
-          className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
+          className="px-8 py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
         >
           ورود / ثبت‌نام
         </button>
@@ -113,7 +113,7 @@ function AccessDeniedFallback({ userRole, reason, allowedRoles, requiredPermissi
       {userRole === "user" && (
         <button
           onClick={() => router.push("/profile")}
-          className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
+          className="px-8 py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
         >
           برو به پروفایل
         </button>

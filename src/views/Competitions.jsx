@@ -39,8 +39,8 @@ export default function Competitions() {
     <PullToRefresh onRefresh={load}>
       <div className="page-shell animate-fade-in font-doran space-y-10">
         {/* Page Header */}
-        <section className="rounded-3xl border border-border bg-card p-6 sm:p-10 mb-6 text-center shadow-soft">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-secondary border border-border text-foreground text-xs font-bold mb-3">
+        <section className="rounded border border-border bg-card p-6 sm:p-10 mb-6 text-center shadow-soft">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary border border-border text-foreground text-xs font-bold mb-3">
             <Trophy className="h-3.5 w-3.5 text-accent" /> مسابقات و پویش‌های قرآنی
           </div>
           <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
@@ -63,7 +63,7 @@ export default function Competitions() {
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-4 py-2 rounded-xl text-sm sm:text-base font-medium transition-all border ${filter === f.id
+              className={`px-4 py-2 rounded text-sm sm:text-base font-medium transition-all border ${filter === f.id
                 ? "bg-primary text-primary-foreground border-primary shadow-soft"
                 : "bg-card border-border text-muted-foreground hover:text-foreground hover:border-border/60"
               }`}
@@ -76,7 +76,7 @@ export default function Competitions() {
         {/* Competitions Grid */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <div className="h-8 w-8 rounded border-2 border-primary border-t-transparent animate-spin" />
           </div>
         ) : filtered.length > 0 ? (
           <div

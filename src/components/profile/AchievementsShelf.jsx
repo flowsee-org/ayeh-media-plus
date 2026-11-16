@@ -104,17 +104,17 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
   return (
     <div className="space-y-6 mb-8 font-doran animate-fade-in">
       {/* ── Level & Streak Master Card ── */}
-      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-card to-secondary/30 p-5 sm:p-7 shadow-soft">
+      <div className="relative overflow-hidden rounded border border-border/80 bg-gradient-to-br from-card via-card to-secondary/30 p-5 sm:p-7 shadow-soft">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-5 border-b border-border/50">
           {/* Level Info */}
           <div className="flex items-center gap-3.5">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-accent/25 to-primary/20 border border-accent/35 flex items-center justify-center text-accent shadow-xs shrink-0">
+            <div className="h-14 w-14 rounded bg-gradient-to-tr from-accent/25 to-primary/20 border border-accent/35 flex items-center justify-center text-accent shadow-xs shrink-0">
               <Award className="h-7 w-7" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold font-ui text-muted-foreground">رتبه معنوی شما:</span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/25 text-xs font-bold font-rokh-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-accent/15 text-accent border border-accent/25 text-xs font-bold font-rokh-bold">
                   <Bookmark className="h-3 w-3 fill-current" />
                   {level.name}
                 </span>
@@ -126,8 +126,8 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
           </div>
 
           {/* Daily Streak Indicator */}
-          <div className="flex items-center gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 shrink-0">
-            <div className="h-10 w-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-500 animate-pulse">
+          <div className="flex items-center gap-3 rounded border border-amber-500/30 bg-amber-500/10 px-4 py-3 shrink-0">
+            <div className="h-10 w-10 rounded bg-amber-500/20 flex items-center justify-center text-amber-500 animate-pulse">
               <Flame className="h-6 w-6 fill-current" />
             </div>
             <div>
@@ -154,9 +154,9 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
               {fa(xp)} / {fa(nextLevelMin)} امتیاز
             </span>
           </div>
-          <div className="h-2.5 w-full rounded-full bg-secondary/80 overflow-hidden p-0.5 border border-border/50">
+          <div className="h-2.5 w-full rounded bg-secondary/80 overflow-hidden p-0.5 border border-border/50">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-primary via-accent to-amber-500 transition-all duration-700 shadow-xs"
+              className="h-full rounded bg-gradient-to-r from-primary via-accent to-amber-500 transition-all duration-700 shadow-xs"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -164,10 +164,10 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
       </div>
 
       {/* ── Badges Showcase Shelf ── */}
-      <div className="rounded-3xl border border-border/80 bg-card p-5 sm:p-7 shadow-soft">
+      <div className="rounded border border-border/80 bg-card p-5 sm:p-7 shadow-soft">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center">
               <Crown className="h-5 w-5" />
             </div>
             <div>
@@ -179,7 +179,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
               </p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary text-xs font-bold font-ui text-foreground border border-border/60">
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded bg-secondary text-xs font-bold font-ui text-foreground border border-border/60">
             {fa(unlockedCount)} از {fa(BADGES.length)} باز شده
           </span>
         </div>
@@ -191,7 +191,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
             return (
               <div
                 key={b.id}
-                className={`relative flex flex-col items-center text-center p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 ${
+                className={`relative flex flex-col items-center text-center p-3.5 sm:p-4 rounded border transition-all duration-300 ${
                   b.unlocked
                     ? `bg-gradient-to-b ${b.color} shadow-xs hover:scale-105`
                     : "bg-secondary/30 border-border/40 opacity-55 grayscale"
@@ -199,7 +199,7 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
               >
                 {/* Badge Icon */}
                 <div
-                  className={`h-12 w-12 rounded-2xl flex items-center justify-center mb-2.5 shadow-xs ${
+                  className={`h-12 w-12 rounded flex items-center justify-center mb-2.5 shadow-xs ${
                     b.unlocked
                       ? "bg-card border border-current"
                       : "bg-muted text-muted-foreground/60 border border-border/40"

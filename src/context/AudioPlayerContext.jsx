@@ -8,6 +8,7 @@ export function AudioPlayerProvider({ children }) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRateState] = useState(1);
+  const [audioError, setAudioError] = useState(null);
   const [sleepTimerMinutes, setSleepTimerMinutes] = useState(null);
   const [sleepTimeRemaining, setSleepTimeRemaining] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -40,14 +41,24 @@ export function AudioPlayerProvider({ children }) {
       }
     };
 
-    const handlePlay = () => setIsPlaying(true);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setAudioError(null);
+    };
     const handlePause = () => setIsPlaying(false);
+
+    const handleError = () => {
+      const err = audioRef.current?.error;
+      setAudioError(err?.message || "خطا در بارگذاری فایل صوتی");
+      setIsPlaying(false);
+    };
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
+    audio.addEventListener("error", handleError);
 
     return () => {
       audio.pause();
@@ -56,6 +67,7 @@ export function AudioPlayerProvider({ children }) {
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("error", handleError);
     };
   }, []);
 
@@ -114,6 +126,7 @@ export function AudioPlayerProvider({ children }) {
       trackRef.current = newTrack;
       setCurrentTime(0);
       setDuration(0);
+      setAudioError(null);
 
       audio.src = newTrack.audioUrl;
       audio.playbackRate = playbackRate;
@@ -192,6 +205,7 @@ export function AudioPlayerProvider({ children }) {
         sleepTimerMinutes,
         sleepTimeRemaining,
         isExpanded,
+        audioError,
         playTrack,
         togglePlay,
         seek,

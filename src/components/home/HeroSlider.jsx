@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Play, Clock, Trophy, Users, Mic } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from 'next/navigation';
 
 export default function HeroSlider({ competitions, liveVideos }) {
+  const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
   const [interval, setInterval] = useState(null);
 
@@ -35,7 +37,7 @@ export default function HeroSlider({ competitions, liveVideos }) {
   const duration = item.duration || "";
 
   return (
-    <section className="relative overflow-hidden rounded-3xl section-space-sm">
+    <section className="relative overflow-hidden rounded section-space-sm">
       {/* Ambient background */}
       <div className="absolute inset-0 bg-gradient-quranic-mesh-dark opacity-70" />
       <div className="absolute inset-0 from-black/50 via-black/30 to-black/10" />
@@ -54,13 +56,13 @@ export default function HeroSlider({ competitions, liveVideos }) {
           <div className="flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-12">
             <div className="flex items-center gap-2 mb-4">
               {isLive && (
-                <div className="h-2.5 w-2.5 rounded-full bg-quranic-saffron animate-[live-pulse_1.5s_infinite]" />
+                <div className="h-2.5 w-2.5 rounded bg-quranic-saffron animate-[live-pulse_1.5s_infinite]" />
               )}
               <span className="font-rokh-bold font-bold text-xs sm:text-sm text-quranic-saffron tracking-wider uppercase">
                 {isLive ? "مسابقه قرآنی زنده" : "آیینه پرور قرآنی"}
               </span>
               {item.competition_year || item.year && (
-                <span className="px-2 py-0.5 rounded-full bg-quranic-emerald/20 text-quranic-emerald text-[10px] font-bold border border-quranic-emerald/30">
+                <span className="px-2 py-0.5 rounded bg-quranic-emerald/20 text-quranic-emerald text-[10px] font-bold border border-quranic-emerald/30">
                   {item.competition_year || item.year}
                 </span>
               )}
@@ -76,19 +78,19 @@ export default function HeroSlider({ competitions, liveVideos }) {
 
             <div className="flex flex-wrap gap-3 mb-6">
               {item.date && (
-                <span className="px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-sm">
+                <span className="px-3 py-1.5 rounded bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-sm">
                   <Clock className="h-3 w-3 mr-1.5" />
                   {item.date}
                 </span>
               )}
               {item.venue && (
-                <span className="px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-sm">
+                <span className="px-3 py-1.5 rounded bg-white/10 text-white text-xs font-medium border border-white/20 backdrop-blur-sm">
                   <Users className="h-3 w-3 mr-1.5" />
                   {item.venue}
                 </span>
               )}
               {isLive && (
-                <span className="px-3 py-1.5 rounded-full bg-quranic-saffron text-quranic-ink text-xs font-bold">
+                <span className="px-3 py-1.5 rounded bg-quranic-saffron text-quranic-ink text-xs font-bold">
                   <Mic className="h-3 w-3 mr-1.5" />
                   زنده
                 </span>
@@ -99,16 +101,16 @@ export default function HeroSlider({ competitions, liveVideos }) {
               <button
                 onClick={() => {
                   if (item.id) {
-                    window.location.href = isCompetition ? `/competition/${item.id}` : `/watch/${item.id}`;
+                    router.push(isCompetition ? `/competition/${item.id}` : `/watch/${item.id}`);
                   }
                 }}
-                className="flex-1 px-6 py-3 rounded-xl bg-white text-quranic-ink font-rokh-bold font-bold text-sm hover:bg-quranic-saffron hover:text-quranic-ink transition-all shadow-live-glow"
+                className="flex-1 px-6 py-3 rounded bg-white text-quranic-ink font-rokh-bold font-bold text-sm hover:bg-quranic-saffron hover:text-quranic-ink transition-all shadow-live-glow"
               >
                 مشاهده ویدیو
               </button>
               <Link
                 href="/competitions"
-                className="px-6 py-3 rounded-xl border border-white/30 text-white font-medium text-sm hover:bg-white/10 transition-all backdrop-blur-sm"
+                className="px-6 py-3 rounded border border-white/30 text-white font-medium text-sm hover:bg-white/10 transition-all backdrop-blur-sm"
               >
                 مشاهده همه مسابقات
               </Link>
@@ -117,7 +119,7 @@ export default function HeroSlider({ competitions, liveVideos }) {
 
           {/* Right: Live Thumbnail */}
           <div className="hidden lg:block w-80 flex-shrink-0">
-            <div className="relative h-full rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl group">
+            <div className="relative h-full rounded overflow-hidden border-2 border-white/20 shadow-2xl group">
               {imageUrl ? (
                 <img
                   src={imageUrl}
@@ -133,12 +135,12 @@ export default function HeroSlider({ competitions, liveVideos }) {
                   </div>
                 </div>
               )}
-              <div className="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
+              <div className="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
                 <Clock className="h-3 w-3 text-quranic-saffron" />
                 <span>زنده</span>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="h-20 w-20 rounded-full bg-quranic-saffron/95 backdrop-blur-md flex items-center justify-center text-quranic-ink shadow-xl transform group-hover:scale-110 transition-transform">
+                <div className="h-20 w-20 rounded bg-quranic-saffron/95 backdrop-blur-md flex items-center justify-center text-quranic-ink shadow-xl transform group-hover:scale-110 transition-transform">
                   <Play className="h-10 w-10 ml-1" />
                 </div>
               </div>
@@ -151,7 +153,7 @@ export default function HeroSlider({ competitions, liveVideos }) {
               <button
                 key={i}
                 onClick={() => setActiveIndex(i)}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
+                className={`w-2.5 h-2.5 rounded transition-all ${
                   activeIndex === i
                     ? "bg-quranic-saffron shadow-saffron-glow"
                     : "bg-white/30 hover:bg-white/50"

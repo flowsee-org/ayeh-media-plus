@@ -5,12 +5,13 @@ module.exports = {
   theme: {
     extend: {
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        xl: 'calc(var(--radius) + 4px)',
-        '2xl': 'calc(var(--radius) + 8px)',
-        '3xl': 'calc(var(--radius) + 16px)',
+        DEFAULT: '4px',
+        sm: '2px',
+        md: '4px',
+        lg: '6px',
+        xl: '8px',
+        '2xl': '12px',
+        '3xl': '16px',
         full: '9999px',
       },
       colors: {

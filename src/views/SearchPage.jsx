@@ -362,9 +362,9 @@ export default function SearchPage() {
  switch (type) {
  case 'surah':
  return (
- <div key={item.number} className="group flex items-center justify-between rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/25 hover:shadow-soft transition-all duration-300">
+ <div key={item.number} className="group flex items-center justify-between rounded border border-border/40 bg-card/40 p-3 hover:border-accent/25 hover:shadow-soft transition-all duration-300">
  <div className="flex items-center gap-3">
- <span className="h-9 w-9 rounded-lg bg-muted/50 flex items-center justify-center text-sm font-bold">{item.number}</span>
+ <span className="h-9 w-9 rounded bg-muted/50 flex items-center justify-center text-sm font-bold">{item.number}</span>
  <span className="text-sm font-medium">{item.persianName || item.englishName}</span>
  </div>
  <span className=" text-xl text-accent/40 group-hover:text-accent/60 transition-colors" dir="rtl">{item.name}</span>
@@ -372,7 +372,7 @@ export default function SearchPage() {
  );
  case 'ayah':
  return (
- <div key={item.id} className="group block rounded-2xl border border-border/40 bg-card/40 p-5 hover:border-accent/25 hover:shadow-premium transition-all duration-300">
+ <div key={item.id} className="group block rounded border border-border/40 bg-card/40 p-5 hover:border-accent/25 hover:shadow-premium transition-all duration-300">
  <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
  <span className="font-medium">{item.verse_key}</span>
  <ArrowLeft className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all" />
@@ -424,7 +424,7 @@ export default function SearchPage() {
  value={query}
  onChange={(e) => setQuery(e.target.value)}
  placeholder="عنوان ویدیو، نام قاری، سوره یا موضوع…"
- className="w-full h-12 pe-11 ps-4 rounded-xl border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 transition-all"
+ className="w-full h-12 pe-11 ps-4 rounded border border-border bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 transition-all"
  />
  </div>
 
@@ -437,7 +437,7 @@ export default function SearchPage() {
  <button
  key={filter.id}
  onClick={() => setActiveFilter(filter.id)}
- className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-sm font-medium transition-all border ${
+ className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-sm font-medium transition-all border ${
  isActive
  ? 'bg-primary text-primary-foreground border-primary'
  : 'bg-card text-foreground/80 border-border hover:bg-muted'

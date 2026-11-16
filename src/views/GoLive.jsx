@@ -209,9 +209,9 @@ export default function GoLive() {
   if (phase === "setup") {
     return (
       <div className="mx-auto max-w-lg px-4 py-8 animate-fade-in font-doran">
-        <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-soft">
+        <div className="rounded border border-border bg-card p-6 sm:p-8 shadow-soft">
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-10 w-10 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
+            <div className="h-10 w-10 rounded bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
               <Radio className="h-5 w-5" />
             </div>
             <div>
@@ -231,13 +231,13 @@ export default function GoLive() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="مثلاً: تدبّر در آیات نورانی سوره کهف"
-                className="w-full rounded-xl border border-border bg-secondary/50 px-3.5 py-2.5 text-sm focus:border-primary focus:outline-none font-doran"
+                className="w-full rounded border border-border bg-secondary/50 px-3.5 py-2.5 text-sm focus:border-primary focus:outline-none font-doran"
               />
             </div>
             <button
               onClick={startLive}
               disabled={!user}
-              className="w-full rounded-xl bg-primary text-primary-foreground py-3 text-sm font-bold flex items-center justify-center gap-2 shadow-soft hover:opacity-90 disabled:opacity-50 transition-all font-ui"
+              className="w-full rounded bg-primary text-primary-foreground py-3 text-sm font-bold flex items-center justify-center gap-2 shadow-soft hover:opacity-90 disabled:opacity-50 transition-all font-ui"
             >
               <Radio className="h-4 w-4" /> شروع پخش زنده
             </button>
@@ -249,7 +249,7 @@ export default function GoLive() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-4 animate-fade-in font-doran">
-      <div className="rounded-3xl overflow-hidden border border-border shadow-soft bg-black">
+      <div className="rounded overflow-hidden border border-border shadow-soft bg-black">
         {/* Main Video Stream Container — Split Screen when Co-Host is active */}
         <div
           className={`relative bg-neutral-950 p-2 ${
@@ -259,7 +259,7 @@ export default function GoLive() {
           }`}
         >
           {/* Broadcaster Video */}
-          <div className="relative w-full h-full rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+          <div className="relative w-full h-full rounded overflow-hidden bg-black flex items-center justify-center">
             <video
               ref={videoRef}
               autoPlay
@@ -268,14 +268,14 @@ export default function GoLive() {
               className="w-full h-full object-cover"
             />
 
-            <div className="absolute bottom-3 right-3 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1 text-xs text-white font-bold font-ui">
+            <div className="absolute bottom-3 right-3 rounded bg-black/60 backdrop-blur-sm px-3 py-1 text-xs text-white font-bold font-ui">
               استاد: {user?.full_name || "مفسر"}
             </div>
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-red-600 px-3 py-1 shadow-sm font-ui">
-              <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
+            <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded bg-red-600 px-3 py-1 shadow-sm font-ui">
+              <span className="h-2 w-2 rounded bg-white animate-pulse" />
               <span className="text-xs font-bold text-white">زنده</span>
             </div>
-            <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1 font-ui">
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded bg-black/60 backdrop-blur-sm px-3 py-1 font-ui">
               <Users className="h-3.5 w-3.5 text-white" />
               <span className="text-xs font-bold text-white">{fa(viewerCount)}</span>
             </div>
@@ -283,19 +283,19 @@ export default function GoLive() {
 
           {/* Co-Host Video (Split Screen) */}
           {activeSpeaker && (
-            <div className="relative w-full h-full rounded-2xl overflow-hidden bg-neutral-900 border border-primary/30 flex items-center justify-center animate-scale-in">
+            <div className="relative w-full h-full rounded overflow-hidden bg-neutral-900 border border-primary/30 flex items-center justify-center animate-scale-in">
               <video
                 ref={coHostVideoRef}
                 autoPlay
                 playsInline
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-3 right-3 rounded-full bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5 font-ui">
+              <div className="absolute bottom-3 right-3 rounded bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5 font-ui">
                 <span>مهمان برنامه: {activeSpeaker.name}</span>
               </div>
               <button
                 onClick={kickActiveSpeaker}
-                className="absolute top-3 left-3 rounded-full bg-destructive/90 hover:bg-destructive text-white px-2.5 py-1 text-xs font-bold flex items-center gap-1 transition-colors font-ui"
+                className="absolute top-3 left-3 rounded bg-destructive/90 hover:bg-destructive text-white px-2.5 py-1 text-xs font-bold flex items-center gap-1 transition-colors font-ui"
                 title="قطع ارتباط با مهمان"
               >
                 <MicOff className="h-3 w-3" /> پایان گفتگو
@@ -317,7 +317,7 @@ export default function GoLive() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowHandQueue(!showHandQueue)}
-                className={`relative inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border transition-all font-ui ${
+                className={`relative inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-bold border transition-all font-ui ${
                   raisedHands.length > 0
                     ? "bg-accent/15 border-accent text-accent animate-pulse"
                     : "bg-secondary border-border text-muted-foreground hover:text-foreground"
@@ -329,7 +329,7 @@ export default function GoLive() {
 
               <button
                 onClick={endLive}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-destructive text-destructive-foreground px-4 py-2 text-xs font-bold hover:opacity-90 transition-opacity font-ui"
+                className="inline-flex items-center gap-1.5 rounded bg-destructive text-destructive-foreground px-4 py-2 text-xs font-bold hover:opacity-90 transition-opacity font-ui"
               >
                 <VideoOff className="h-4 w-4" /> پایان پخش زنده
               </button>
@@ -338,7 +338,7 @@ export default function GoLive() {
 
           {/* Floating Queue Modal / Drawer for Raised Hands */}
           {showHandQueue && (
-            <div className="rounded-2xl border border-accent/25 bg-secondary/50 p-4 mb-4 animate-scale-in">
+            <div className="rounded border border-accent/25 bg-secondary/50 p-4 mb-4 animate-scale-in">
               <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
                 <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
                   <Hand className="h-4 w-4 text-accent" /> لیست انتظار پرسش و پاسخ صوتی/تصویری
@@ -360,10 +360,10 @@ export default function GoLive() {
                   {raisedHands.map((speaker) => (
                     <div
                       key={speaker.connId}
-                      className="flex items-center justify-between gap-3 bg-card p-2.5 rounded-xl border border-border"
+                      className="flex items-center justify-between gap-3 bg-card p-2.5 rounded border border-border"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                        <div className="h-8 w-8 rounded bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
                           {speaker.name?.[0]}
                         </div>
                         <span className="text-xs font-bold text-foreground">{speaker.name}</span>
@@ -371,13 +371,13 @@ export default function GoLive() {
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => acceptSpeaker(speaker)}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 font-ui"
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 font-ui"
                         >
                           <Check className="h-3 w-3" /> پذیرش دوطرفه
                         </button>
                         <button
                           onClick={() => rejectSpeaker(speaker)}
-                          className="inline-flex items-center px-2 py-1 rounded-lg bg-secondary text-muted-foreground hover:text-destructive text-xs"
+                          className="inline-flex items-center px-2 py-1 rounded bg-secondary text-muted-foreground hover:text-destructive text-xs"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -390,7 +390,7 @@ export default function GoLive() {
           )}
 
           {/* Chat box */}
-          <div className="rounded-2xl border border-border bg-secondary/30 max-h-48 overflow-y-auto p-3 mb-3 space-y-2">
+          <div className="rounded border border-border bg-secondary/30 max-h-48 overflow-y-auto p-3 mb-3 space-y-2">
             {chat.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-4">هنوز پیامی ارسال نشده است</p>
             ) : (
@@ -413,11 +413,11 @@ export default function GoLive() {
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendChat()}
               placeholder="ارسال پیام یا پاسخ در جلسه زنده…"
-              className="flex-1 rounded-xl border border-border bg-background px-3.5 py-2 text-xs focus:border-primary focus:outline-none font-doran"
+              className="flex-1 rounded border border-border bg-background px-3.5 py-2 text-xs focus:border-primary focus:outline-none font-doran"
             />
             <button
               onClick={sendChat}
-              className="h-9 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center gap-1 font-ui"
+              className="h-9 px-4 rounded bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center gap-1 font-ui"
             >
               <Send className="h-3.5 w-3.5" /> ارسال
             </button>

@@ -40,7 +40,7 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
           <BrandLogo variant="inline" />
           <button
             onClick={onClose}
-            className="h-9 w-9 rounded-xl hover:bg-muted flex items-center justify-center text-muted-foreground"
+            className="h-9 w-9 rounded hover:bg-muted flex items-center justify-center text-muted-foreground"
             aria-label="بستن"
           >
             <X className="h-4 w-4" />
@@ -50,7 +50,7 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
         <div className="p-4 border-b border-border">
           {authUser ? (
             <Link href="/profile" onClick={onClose} className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20">
+              <div className="h-11 w-11 rounded bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20">
                 {(authUser.full_name || 'ک').charAt(0)}
               </div>
               <div className="min-w-0">
@@ -65,7 +65,7 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
           ) : (
             <button
               onClick={() => { onClose(); openAuthModal(); }}
-              className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
+              className="w-full py-2.5 rounded bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
             >
               ورود / ثبت‌نام
             </button>
@@ -81,7 +81,7 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
                 key={item.to}
                 href={item.to}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium transition-colors ${
                   active
                     ? 'bg-primary/10 text-primary font-bold'
                     : 'text-foreground/80 hover:bg-muted'
@@ -96,16 +96,16 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
           {authUser && (
             <>
               <div className="px-3 pt-4 pb-1 text-[11px] font-bold text-muted-foreground">کتابخانه من</div>
-              <Link href="/watch-history" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground/80 hover:bg-muted">
+              <Link href="/watch-history" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-foreground/80 hover:bg-muted">
                 <Clock className="h-5 w-5 text-muted-foreground" /> تاریخچه تماشا
               </Link>
-              <Link href="/bookmarks" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground/80 hover:bg-muted">
+              <Link href="/bookmarks" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-foreground/80 hover:bg-muted">
                 <Bookmark className="h-5 w-5 text-muted-foreground" /> نشان‌شده‌ها
               </Link>
-              <Link href="/upload" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground/80 hover:bg-muted">
+              <Link href="/upload" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-foreground/80 hover:bg-muted">
                 <Upload className="h-5 w-5 text-muted-foreground" /> آپلود ویدیو
               </Link>
-              <Link href="/profile" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground/80 hover:bg-muted">
+              <Link href="/profile" onClick={onClose} className="flex items-center gap-3 px-3 py-2.5 rounded text-sm text-foreground/80 hover:bg-muted">
                 <User className="h-5 w-5 text-muted-foreground" /> پروفایل من
               </Link>
             </>

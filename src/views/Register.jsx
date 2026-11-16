@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "@/lib/router-compat";
+import { useSearchParams } from 'next/navigation';
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import BrandLogo from "@/components/design-system/BrandLogo";
 export default function Register() {
   const { checkUserAuth } = useAuth();
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,15 +26,13 @@ export default function Register() {
 
   // Login redirects unverified accounts here with ?email=&verify=1 after resendOtp.
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const pendingEmail = (params.get("email") || "").trim();
-    const verify = params.get("verify") === "1";
+    const pendingEmail = (searchParams.get("email") || "").trim();
+    const verify = searchParams.get("verify") === "1";
     if (pendingEmail && verify) {
       setEmail(pendingEmail);
       setShowOtp(true);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,8 +62,7 @@ export default function Register() {
     try {
       await api.auth.verifyOtp({ email, otpCode });
       await checkUserAuth();
-      const params = new URLSearchParams(window.location.search);
-      const returnTo = params.get("returnTo");
+      const returnTo = searchParams.get("returnTo");
       navigate(returnTo || "/");
     } catch (err) {
       setError(err.message || "کد تأیید نامعتبر است");
@@ -94,9 +93,9 @@ export default function Register() {
               کد ۶ رقمی برای <span className="text-primary font-medium">{email}</span> ارسال شد
             </p>
           </div>
-          <div className="bg-card rounded-2xl border border-border shadow-sm p-6 sm:p-8">
+          <div className="bg-card rounded border border-border shadow-sm p-6 sm:p-8">
             {error && (
-              <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
+              <div className="mb-4 p-3 rounded bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
                 {error}
               </div>
             )}
@@ -135,9 +134,9 @@ export default function Register() {
           </p>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border shadow-sm p-6 sm:p-8">
+        <div className="bg-card rounded border border-border shadow-sm p-6 sm:p-8">
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
+            <div className="mb-4 p-3 rounded bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
               {error}
             </div>
           )}

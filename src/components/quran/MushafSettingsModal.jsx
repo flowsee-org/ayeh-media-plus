@@ -41,7 +41,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-xl rounded-3xl border border-accent/40 bg-card/95 backdrop-blur-2xl shadow-2xl p-5 sm:p-7 overflow-hidden text-right max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-xl rounded border border-accent/40 bg-card/95 backdrop-blur-2xl shadow-2xl p-5 sm:p-7 overflow-hidden text-right max-h-[92vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="pattern-islamic absolute inset-0 opacity-10 pointer-events-none" />
@@ -49,7 +49,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
         {/* Modal Header */}
         <div className="relative flex items-center justify-between pb-3.5 border-b border-border/60">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shadow-soft">
+            <div className="h-9 w-9 rounded bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shadow-soft">
               <Type className="h-5 w-5" />
             </div>
             <div>
@@ -63,14 +63,14 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
           </div>
           <button
             onClick={onClose}
-            className="h-8 w-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
+            className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Live Preview Card */}
-        <div className="relative my-3 rounded-2xl border border-accent/30 bg-gradient-to-b from-card to-secondary/60 p-4 shadow-soft overflow-hidden">
+        <div className="relative my-3 rounded border border-accent/30 bg-gradient-to-b from-card to-secondary/60 p-4 shadow-soft overflow-hidden">
           <div className="flex items-center justify-between text-[11px] font-bold text-accent mb-2">
             <span className="flex items-center gap-1.5">
               <IslamicStar size={12} className="text-accent" />
@@ -162,7 +162,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                         fontId: font.id,
                       })
                     }
-                    className={`w-full flex items-center justify-between p-3.5 rounded-2xl border transition-all text-right ${
+                    className={`w-full flex items-center justify-between p-3.5 rounded border transition-all text-right ${
                       isSelected
                         ? "bg-accent/15 border-accent text-accent shadow-soft ring-1 ring-accent/40"
                         : "border-border/60 hover:bg-secondary/70 text-foreground"
@@ -174,7 +174,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                           {font.label}
                         </span>
                         {isSelected && (
-                          <span className="h-2 w-2 rounded-full bg-accent animate-pulse-soft" />
+                          <span className="h-2 w-2 rounded bg-accent animate-pulse-soft" />
                         )}
                       </div>
                       <p className="text-[11px] text-muted-foreground mb-2">
@@ -191,7 +191,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                     </div>
 
                     <div
-                      className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 mr-3 transition-colors ${
+                      className={`h-7 w-7 rounded flex items-center justify-center shrink-0 mr-3 transition-colors ${
                         isSelected
                           ? "bg-accent text-stone-950 font-bold"
                           : "border border-border text-transparent"
@@ -224,7 +224,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                             diacriticTheme: theme.id,
                           })
                         }
-                        className={`p-3 rounded-2xl border transition-all text-right flex flex-col justify-between ${
+                        className={`p-3 rounded border transition-all text-right flex flex-col justify-between ${
                           isSelected
                             ? "bg-accent/15 border-accent shadow-soft ring-1 ring-accent"
                             : "border-border/60 hover:bg-secondary/70"
@@ -235,7 +235,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                             {theme.label}
                           </span>
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${theme.badgeColor}`}
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold border ${theme.badgeColor}`}
                           >
                             نمونه رنگ
                           </span>
@@ -267,12 +267,12 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                         highlightWaqf: !prefs.highlightWaqf,
                       })
                     }
-                    className={`h-6 w-11 rounded-full transition-colors relative flex items-center px-0.5 ${
+                    className={`h-6 w-11 rounded transition-colors relative flex items-center px-0.5 ${
                       prefs.highlightWaqf !== false ? "bg-accent" : "bg-secondary"
                     }`}
                   >
                     <span
-                      className={`h-5 w-5 rounded-full bg-white transition-transform ${
+                      className={`h-5 w-5 rounded bg-white transition-transform ${
                         prefs.highlightWaqf !== false ? "-translate-x-5" : "translate-x-0"
                       }`}
                     />
@@ -306,7 +306,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                       textScale: parseFloat(e.target.value),
                     })
                   }
-                  className="w-full h-2 rounded-lg bg-secondary appearance-none cursor-pointer accent-accent"
+                  className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-accent"
                 />
                 <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                   <span>کوچک</span>
@@ -335,7 +335,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                       lineHeight: parseFloat(e.target.value),
                     })
                   }
-                  className="w-full h-2 rounded-lg bg-secondary appearance-none cursor-pointer accent-accent"
+                  className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-accent"
                 />
               </div>
 
@@ -359,12 +359,12 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                         showTranslation: !prefs.showTranslation,
                       })
                     }
-                    className={`h-6 w-11 rounded-full transition-colors relative flex items-center px-0.5 ${
+                    className={`h-6 w-11 rounded transition-colors relative flex items-center px-0.5 ${
                       prefs.showTranslation ? "bg-accent" : "bg-secondary"
                     }`}
                   >
                     <span
-                      className={`h-5 w-5 rounded-full bg-white transition-transform ${
+                      className={`h-5 w-5 rounded bg-white transition-transform ${
                         prefs.showTranslation ? "-translate-x-5" : "translate-x-0"
                       }`}
                     />
@@ -391,7 +391,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                           translationScale: parseFloat(e.target.value),
                         })
                       }
-                      className="w-full h-2 rounded-lg bg-secondary appearance-none cursor-pointer accent-accent"
+                      className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-accent"
                     />
                   </div>
                 )}
@@ -404,7 +404,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
         <div className="relative pt-3.5 border-t border-border/60 flex items-center justify-between">
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             <span>بازنشانی پیش‌فرض</span>
@@ -412,7 +412,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
 
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-soft hover:shadow-emerald-glow transition-all"
+            className="px-5 py-2 rounded bg-primary text-primary-foreground text-xs font-bold shadow-soft hover:shadow-emerald-glow transition-all"
           >
             تأیید و بازگشت به مصحف
           </button>

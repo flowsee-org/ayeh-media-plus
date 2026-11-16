@@ -6,7 +6,7 @@ const Card = React.forwardRef(({ className, variant = "default", ...props }, ref
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl border border-border bg-card/95 backdrop-blur-sm shadow-sm transition-all duration-300",
+      "rounded border border-border bg-card/95 backdrop-blur-sm shadow-sm transition-all duration-300",
       {
         "hover:shadow-md": variant === "default",
         "hover:shadow-lg hover:-translate-y-1 hover:border-primary/30 cursor-pointer": variant === "interactive",

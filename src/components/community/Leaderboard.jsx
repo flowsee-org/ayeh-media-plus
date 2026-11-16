@@ -34,21 +34,21 @@ export default function Leaderboard() {
   if (!rows) {
     return (
       <div className="flex justify-center py-10 mb-8">
-        <div className="h-6 w-6 rounded-full border-2 border-accent/20 border-t-accent animate-spin" />
+        <div className="h-6 w-6 rounded border-2 border-accent/20 border-t-accent animate-spin" />
       </div>
     );
   }
   if (rows.length === 0) return null;
 
   return (
-    <section className="relative rounded-3xl border border-accent/20 bg-gradient-to-br from-card via-card/80 to-accent/[0.06] p-5 sm:p-8 mb-10 shadow-premium overflow-hidden">
+    <section className="relative rounded border border-accent/20 bg-gradient-to-br from-card via-card/80 to-accent/[0.06] p-5 sm:p-8 mb-10 shadow-premium overflow-hidden">
       {/* Decorative glows */}
-      <div className="absolute -top-16 -left-16 h-48 w-48 rounded-full bg-amber-400/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-16 -right-16 h-48 w-48 rounded-full bg-accent/10 blur-3xl pointer-events-none" />
+      <div className="absolute -top-16 -left-16 h-48 w-48 rounded bg-amber-400/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-16 -right-16 h-48 w-48 rounded bg-accent/10 blur-3xl pointer-events-none" />
 
       <div className="relative">
         <div className="flex items-center gap-3 mb-6">
-          <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-amber-400/20 to-accent/10 text-amber-500 flex items-center justify-center ring-1 ring-amber-400/20 shrink-0">
+          <div className="h-11 w-11 rounded bg-gradient-to-br from-amber-400/20 to-accent/10 text-amber-500 flex items-center justify-center ring-1 ring-amber-400/20 shrink-0">
             <Trophy className="h-5 w-5" />
           </div>
           <div className="min-w-0">
@@ -64,9 +64,9 @@ export default function Leaderboard() {
             return (
               <div
                 key={r.id}
-                className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-3.5 transition-colors ${rank ? `${rank.ring} ${rank.glow}` : "border-border/40 bg-card/40"}`}
+                className={`flex items-center gap-3 rounded border p-3 sm:p-3.5 transition-colors ${rank ? `${rank.ring} ${rank.glow}` : "border-border/40 bg-card/40"}`}
               >
-                <span className={`h-8 w-8 shrink-0 rounded-xl flex items-center justify-center text-sm font-extrabold font-rokh-bold ${rank ? rank.chip : "bg-muted/60 text-muted-foreground"}`}>
+                <span className={`h-8 w-8 shrink-0 rounded flex items-center justify-center text-sm font-extrabold font-rokh-bold ${rank ? rank.chip : "bg-muted/60 text-muted-foreground"}`}>
                   {(i + 1).toLocaleString("fa-IR")}
                 </span>
                 <Avatar name={r.name} size={36} />

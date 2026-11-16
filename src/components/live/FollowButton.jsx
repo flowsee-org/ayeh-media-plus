@@ -76,7 +76,7 @@ export default function FollowButton({ scholarId, scholarName = "", className = 
     <button
       onClick={toggle}
       disabled={toggling}
-      className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all disabled:opacity-50 ${
+      className={`inline-flex items-center gap-1.5 rounded px-4 py-2 text-sm font-medium transition-all disabled:opacity-50 ${
         following
           ? "bg-secondary text-secondary-foreground border border-border"
           : "bg-primary text-primary-foreground shadow-soft"

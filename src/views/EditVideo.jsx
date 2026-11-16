@@ -182,7 +182,7 @@ export default function EditVideoPage({ videoId }) {
  <AlertCircle className="h-12 w-12 text-muted-foreground/30 mb-4" />
  <h2 className="font-rokh-bold font-bold text-xl text-foreground mb-2">دسترسی مجاز نیست</h2>
  <p className="text-muted-foreground mb-6">شما مجاز به ویرایش این محتوا نیستید.</p>
- <button onClick={() => navigate("/creator")} className="px-6 py-3 rounded-xl bg-quranic-emerald text-white text-sm font-medium hover:bg-quranic-emerald/90 transition-colors">
+ <button onClick={() => navigate("/creator")} className="px-6 py-3 rounded bg-quranic-emerald text-white text-sm font-medium hover:bg-quranic-emerald/90 transition-colors">
  بازگشت به داشبورد
  </button>
  </div>
@@ -197,9 +197,9 @@ export default function EditVideoPage({ videoId }) {
  </div>
 
  {/* Video info card */}
- <div className="rounded-2xl border border-border bg-card p-6 mb-8 shadow-soft">
+ <div className="rounded border border-border bg-card p-6 mb-8 shadow-soft">
  <div className="flex items-center gap-4 mb-4">
- <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center">
+ <div className="h-12 w-12 rounded bg-muted flex items-center justify-center">
  {video.media_type === 'audio' ? <Mic className="h-6 w-6 text-muted-foreground/60" /> : <VideoIcon className="h-6 w-6 text-muted-foreground/60" />}
  </div>
  <div className="flex-1 min-w-0">
@@ -208,7 +208,7 @@ export default function EditVideoPage({ videoId }) {
  {video.status} · {formattedDuration(video)} · {fa(video.views_count || 0)} بازدید
  </div>
  </div>
- <span className={`px-2 py-1 rounded-full text-xs font-bold border ${
+ <span className={`px-2 py-1 rounded text-xs font-bold border ${
  video.status === 'published' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
  video.status === 'pending_review' ? 'bg-amber-50 text-amber-700 border-amber-100' :
  'bg-muted/50 text-muted-foreground border-border'
@@ -222,7 +222,7 @@ export default function EditVideoPage({ videoId }) {
  <div className="text-xs font-medium text-muted-foreground mb-2">کیفیت‌های transcoding شده</div>
  <div className="flex flex-wrap gap-2">
  {video.qualities.map((q) => (
- <span key={q.name} className="px-3 py-1 rounded-full bg-quranic-emerald/10 text-quranic-emerald text-xs font-bold border border-quranic-emerald/20">
+ <span key={q.name} className="px-3 py-1 rounded bg-quranic-emerald/10 text-quranic-emerald text-xs font-bold border border-quranic-emerald/20">
  {q.name} ({q.bitrate}kbps)
  </span>
  ))}
@@ -241,7 +241,7 @@ export default function EditVideoPage({ videoId }) {
  value={form.title}
  onChange={(e) => handleInputChange('title', e.target.value)}
  placeholder="عنوان ویدیو را وارد کنید..."
- className="w-full px-4 py-3 rounded-xl bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+ className="w-full px-4 py-3 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
  />
  </div>
 
@@ -250,7 +250,7 @@ export default function EditVideoPage({ videoId }) {
  <select
  value={form.category}
  onChange={(e) => handleInputChange('category', e.target.value)}
- className="w-full px-4 py-3 rounded-xl bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+ className="w-full px-4 py-3 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
  >
  {CATEGORIES.map((cat) => (
  <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -265,7 +265,7 @@ export default function EditVideoPage({ videoId }) {
  onChange={(e) => handleInputChange('description', e.target.value)}
  rows={4}
  placeholder="توضیح کوتاه درباره محتوای..."
- className="w-full px-4 py-3 rounded-xl bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 resize-none"
+ className="w-full px-4 py-3 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 resize-none"
  />
  </div>
 
@@ -277,14 +277,14 @@ export default function EditVideoPage({ videoId }) {
  value={form.verse_key}
  onChange={(e) => handleInputChange('verse_key', e.target.value)}
  placeholder="مثلاً 2:255"
- className="flex-1 px-4 py-3 rounded-xl bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+ className="flex-1 px-4 py-3 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
  />
  <input
  type="text"
  value={form.verse_arabic}
  onChange={(e) => handleInputChange('verse_arabic', e.target.value)}
  placeholder="متن آیه..."
- className="flex-1 px-4 py-3 rounded-xl bg-background border border-input text-sm dir-rtl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
+ className="flex-1 px-4 py-3 rounded bg-background border border-input text-sm dir-rtl focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
  />
  </div>
  </div>
@@ -293,7 +293,7 @@ export default function EditVideoPage({ videoId }) {
  <label className="block text-xs font-bold text-foreground font-ui mb-1.5">تگ‌ها</label>
  <div className="flex flex-wrap gap-2">
  {form.tags.map((tag, i) => (
- <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">
+ <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">
  <span>{tag}</span>
  <button
  onClick={() => toggleTag(tag)}
@@ -307,7 +307,7 @@ export default function EditVideoPage({ videoId }) {
  type="text"
  onKeyDown={addTag}
  placeholder="افزودن تگ و Enter..."
- className="flex-1 px-4 py-3 rounded-xl bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 placeholder:text-muted-foreground/50"
+ className="flex-1 px-4 py-3 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 placeholder:text-muted-foreground/50"
  />
  </div>
  </div>
@@ -329,14 +329,14 @@ export default function EditVideoPage({ videoId }) {
  type="button"
  onClick={handleDelete}
  disabled={deleting}
- className="px-6 py-3 rounded-xl bg-transparent text-destructive border border-destructive/50 hover:bg-destructive/50 font-medium transition-all disabled:opacity-50"
+ className="px-6 py-3 rounded bg-transparent text-destructive border border-destructive/50 hover:bg-destructive/50 font-medium transition-all disabled:opacity-50"
  >
  {deleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />} حذف محتوا
  </button>
  <button
  type="submit"
  disabled={saving}
- className="px-8 py-3 rounded-xl bg-quranic-emerald text-white font-bold hover:bg-quranic-emerald/90 shadow-saffron-glow transition-all disabled:opacity-50 flex items-center gap-2"
+ className="px-8 py-3 rounded bg-quranic-emerald text-white font-bold hover:bg-quranic-emerald/90 shadow-saffron-glow transition-all disabled:opacity-50 flex items-center gap-2"
  >
  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} ذخیره تغییرات
  </button>
@@ -350,7 +350,7 @@ function LinkBack({ onClick, label }) {
  return (
  <button
  onClick={onClick}
- className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-muted text-muted-foreground font-medium hover:bg-muted/80 transition-colors"
+ className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 transition-colors"
  >
  <ArrowLeft className="h-4 w-4" />
  <span>{label}</span>

@@ -31,7 +31,7 @@ export default function CompetitionCard({ comp, className = "" }) {
         e.preventDefault();
         navigate(href);
       }}
-      className={`group block rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
+      className={`group block rounded border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
     >
       {/* Image / hero area */}
       <div className="relative h-48 sm:h-56 overflow-hidden bg-gradient-to-br from-accent/15 to-primary/10">
@@ -49,7 +49,7 @@ export default function CompetitionCard({ comp, className = "" }) {
         )}
         {/* Status badge — top right */}
         <span
-          className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium font-ui backdrop-blur-sm ${statusColor}`}
+          className={`absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium font-ui backdrop-blur-sm ${statusColor}`}
         >
           {statusLabel}
         </span>
@@ -94,7 +94,7 @@ export default function CompetitionCard({ comp, className = "" }) {
               <span>مهلت تا {comp.end_date}</span>
             </span>
           )}
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-primary/20 text-primary text-xs font-bold font-ui hover:bg-primary/5 transition-colors">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-primary/20 text-primary text-xs font-bold font-ui hover:bg-primary/5 transition-colors">
             شرکت کنید
           </span>
         </div>

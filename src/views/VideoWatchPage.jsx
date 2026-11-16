@@ -89,6 +89,11 @@ export default function VideoWatchPage() {
         setSelectedQuality(qualityNames[0]?.name || null);
       }
     });
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      console.error("HLS Error:", data);
+      setError("خطا در بارگذاری جریان ویدیو (HLS). لطفاً منبع ویدیو را بررسی کنید.");
+      setIsPlaying(false);
+    });
   }, [cleanupHls]);
 
   const loadVideo = async () => {
@@ -259,7 +264,7 @@ export default function VideoWatchPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+        <div className="h-10 w-10 border-4 border-primary/20 border-t-primary rounded animate-spin" />
         <p className="mt-4 text-muted-foreground text-sm font-doran">در حال بارگذاری...</p>
       </div>
     );
@@ -270,7 +275,7 @@ export default function VideoWatchPage() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
         <BookOpen className="h-12 w-12 text-muted-foreground/30 mb-4" />
         <h2 className="font-rokh-bold font-bold text-xl text-foreground mb-2">{error || "ویدیو یافت نشد"}</h2>
-        <button onClick={loadVideo} className="mt-4 px-6 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium font-doran hover:opacity-90">
+        <button onClick={loadVideo} className="mt-4 px-6 py-2 rounded bg-primary text-primary-foreground text-sm font-medium font-doran hover:opacity-90">
           تلاش مجدد
         </button>
       </div>
@@ -294,7 +299,7 @@ export default function VideoWatchPage() {
             {/* Player */}
             <div
               ref={containerRef}
-              className="relative bg-black aspect-video sm:rounded-xl overflow-hidden group"
+              className="relative bg-black aspect-video sm:rounded overflow-hidden group"
             >
               {video.media_url || video.hls_url ? (
                 isAparatUrl(video.media_url) ? (
@@ -316,6 +321,10 @@ export default function VideoWatchPage() {
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
                     onClick={togglePlayPause}
+                    onError={(e) => {
+                      setError("فایل ویدیو قابل پخش نیست یا منبع معتبری ندارد.");
+                      setIsPlaying(false);
+                    }}
                   />
                 )
               ) : (
@@ -349,16 +358,16 @@ export default function VideoWatchPage() {
                   />
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <button onClick={() => seekBy(-10)} className="p-2 rounded-lg text-white hover:bg-white/15" title="۱۰ ثانیه عقب">
+                      <button onClick={() => seekBy(-10)} className="p-2 rounded text-white hover:bg-white/15" title="۱۰ ثانیه عقب">
                         <RotateCcw className="h-4 w-4" />
                       </button>
-                      <button onClick={togglePlayPause} className="h-10 w-10 rounded-full bg-white text-foreground flex items-center justify-center hover:scale-105 transition-transform">
+                      <button onClick={togglePlayPause} className="h-10 w-10 rounded bg-white text-foreground flex items-center justify-center hover:scale-105 transition-transform">
                         {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ms-0.5" />}
                       </button>
-                      <button onClick={() => seekBy(10)} className="p-2 rounded-lg text-white hover:bg-white/15" title="۱۰ ثانیه جلو">
+                      <button onClick={() => seekBy(10)} className="p-2 rounded text-white hover:bg-white/15" title="۱۰ ثانیه جلو">
                         <RotateCw className="h-4 w-4" />
                       </button>
-                      <button onClick={toggleMute} className="p-2 rounded-lg text-white hover:bg-white/15">
+                      <button onClick={toggleMute} className="p-2 rounded text-white hover:bg-white/15">
                         {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                       </button>
                       <span className="text-[11px] text-white/80 font-mono tabular-nums hidden sm:inline">
@@ -373,7 +382,7 @@ export default function VideoWatchPage() {
                           setPlaybackRate(rate);
                           if (videoRef.current) videoRef.current.playbackRate = rate;
                         }}
-                        className="bg-black/50 border border-white/20 text-white text-[11px] rounded-lg px-2 py-1"
+                        className="bg-black/50 border border-white/20 text-white text-[11px] rounded px-2 py-1"
                       >
                         {[0.5, 1, 1.25, 1.5, 2].map((r) => (
                           <option key={r} value={r}>{r}×</option>
@@ -383,7 +392,7 @@ export default function VideoWatchPage() {
                         <select
                           value={selectedQuality || ''}
                           onChange={(e) => setHlsQuality(e.target.value)}
-                          className="bg-black/50 border border-white/20 text-white text-[11px] rounded-lg px-2 py-1"
+                          className="bg-black/50 border border-white/20 text-white text-[11px] rounded px-2 py-1"
                         >
                           {availableQualities.map((q) => {
                             const name = typeof q === 'string' ? q : q.name;
@@ -393,19 +402,19 @@ export default function VideoWatchPage() {
                       )}
                       <button
                         onClick={() => setIsAudioOnly((v) => !v)}
-                        className="p-2 rounded-lg text-white hover:bg-white/15"
+                        className="p-2 rounded text-white hover:bg-white/15"
                         title="حالت صوتی"
                       >
                         <Headphones className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setTheaterMode((v) => !v)}
-                        className="p-2 rounded-lg text-white hover:bg-white/15 hidden sm:inline-flex"
+                        className="p-2 rounded text-white hover:bg-white/15 hidden sm:inline-flex"
                         title="حالت تئاتر"
                       >
                         <Layout className="h-4 w-4" />
                       </button>
-                      <button onClick={toggleFullscreen} className="p-2 rounded-lg text-white hover:bg-white/15">
+                      <button onClick={toggleFullscreen} className="p-2 rounded text-white hover:bg-white/15">
                         {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
                       </button>
                     </div>
@@ -417,14 +426,14 @@ export default function VideoWatchPage() {
             {/* Title + meta (below player — Aparat pattern) */}
             <div className="px-3 sm:px-0 space-y-3">
               <div className="flex flex-wrap gap-2">
-                <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
+                <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
                   {statusConfig.label}
                 </span>
                 {video.is_live && (
-                  <span className="px-2 py-0.5 rounded-md bg-red-500 text-white text-[11px] font-bold">زنده</span>
+                  <span className="px-2 py-0.5 rounded bg-red-500 text-white text-[11px] font-bold">زنده</span>
                 )}
                 {video.is_competition && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[11px] font-bold border border-primary/20">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold border border-primary/20">
                     <Trophy className="h-3 w-3" />
                     {video.competition_year || 'مسابقه'}
                   </span>
@@ -451,7 +460,7 @@ export default function VideoWatchPage() {
                   href={channelId ? `/profile/${channelId}` : '/scholars'}
                   className="flex items-center gap-3 min-w-0 hover:opacity-90"
                 >
-                  <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 shrink-0">
+                  <div className="h-10 w-10 rounded bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 shrink-0">
                     {channelName.charAt(0)}
                   </div>
                   <div className="min-w-0">
@@ -463,7 +472,7 @@ export default function VideoWatchPage() {
                   <a
                     href={video.download_url}
                     download
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-border text-xs font-medium hover:bg-muted shrink-0"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded border border-border text-xs font-medium hover:bg-muted shrink-0"
                   >
                     <Download className="h-3.5 w-3.5" /> دانلود
                   </a>
@@ -480,7 +489,7 @@ export default function VideoWatchPage() {
 
               {/* Description */}
               {(video.description || (video.tags && video.tags.length > 0)) && (
-                <div className="rounded-xl bg-muted/50 p-4">
+                <div className="rounded bg-muted/50 p-4">
                   <p className={`text-sm text-foreground/90 leading-relaxed whitespace-pre-line ${descriptionExpanded ? '' : 'line-clamp-3'}`}>
                     {video.description}
                   </p>
@@ -495,7 +504,7 @@ export default function VideoWatchPage() {
                   {video.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {video.tags.map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-md bg-card border border-border text-[11px] text-muted-foreground font-doran">
+                        <span key={i} className="px-2 py-0.5 rounded bg-card border border-border text-[11px] text-muted-foreground font-doran">
                           #{tag}
                         </span>
                       ))}
@@ -519,7 +528,7 @@ export default function VideoWatchPage() {
                           if (videoRef.current) videoRef.current.currentTime = chapter.start_time || 0;
                           setActiveAyah(chapter.verse_key);
                         }}
-                        className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                        className={`shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-colors ${
                           activeAyah === chapter.verse_key
                             ? 'bg-primary text-primary-foreground border-primary'
                             : 'bg-card text-foreground border-border hover:bg-muted'
@@ -546,9 +555,9 @@ export default function VideoWatchPage() {
 
                 {showComments && (
                   <div className="space-y-4">
-                    <form onSubmit={handleComment} className="rounded-xl border border-border bg-card p-3 space-y-3">
+                    <form onSubmit={handleComment} className="rounded border border-border bg-card p-3 space-y-3">
                       {replyTo && (
-                        <div className="flex items-start justify-between gap-2 rounded-lg bg-muted p-2.5 text-xs">
+                        <div className="flex items-start justify-between gap-2 rounded bg-muted p-2.5 text-xs">
                           <p className="text-muted-foreground line-clamp-2 font-doran">پاسخ به: {replyTo.content}</p>
                           <button type="button" onClick={() => setReplyTo(null)} className="text-primary font-medium font-doran shrink-0">لغو</button>
                         </div>
@@ -558,13 +567,13 @@ export default function VideoWatchPage() {
                         onChange={(e) => setCommentText(e.target.value)}
                         placeholder="نظر خود را بنویسید..."
                         rows={3}
-                        className="w-full px-3 py-2 rounded-xl bg-background border border-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        className="w-full px-3 py-2 rounded bg-background border border-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
                       />
                       <div className="flex justify-end">
                         <button
                           type="submit"
                           disabled={submittingComment || !commentText.trim()}
-                          className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold disabled:opacity-50"
+                          className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-bold disabled:opacity-50"
                         >
                           {submittingComment ? '...' : 'ارسال'}
                         </button>
@@ -607,7 +616,7 @@ function CommentThread({ comment, onReply }) {
 
   return (
     <div className="flex gap-3">
-      <div className="shrink-0 h-9 w-9 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-xs font-bold font-doran border border-border">
+      <div className="shrink-0 h-9 w-9 rounded bg-muted flex items-center justify-center text-muted-foreground text-xs font-bold font-doran border border-border">
         {(comment.author_name || 'ک').charAt(0)}
       </div>
       <div className="flex-1 min-w-0">

@@ -4,6 +4,7 @@ import { appParams } from "@/lib/app-params";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 // App-side OAuth consent page for the app's MCP server. The platform redirects
 // AI clients here (see base44/mcp/config.json `consent_path`) with an opaque
@@ -13,7 +14,10 @@ import AuthLayout from "@/components/AuthLayout";
 // Do not change the fetch calls, headers, or the `ctx` handle handling — styling
 // and copy are safe to edit.
 export default function OAuthConsent() {
-  const ctx = new URLSearchParams(window.location.search).get("ctx");
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const ctx = searchParams.get("ctx");
   const [info, setInfo] = useState(null);
   const [checking, setChecking] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -64,11 +68,12 @@ export default function OAuthConsent() {
           // round-trip and app-params.js would persist them into the freshly
           // authenticated session.
           const returnTo =
-            window.location.pathname + "?ctx=" + encodeURIComponent(ctx);
+            pathname + "?ctx=" + encodeURIComponent(ctx);
           const encoded = encodeURIComponent(returnTo);
           redirecting = true; // keep the spinner while the browser navigates
-          window.location.href =
-            (data.login_path || "/login") + "?returnTo=" + encoded + "&from_url=" + encoded;
+          router.push(
+            (data.login_path || "/login") + "?returnTo=" + encoded + "&from_url=" + encoded,
+          );
           return;
         }
         setInfo(data);
@@ -101,10 +106,11 @@ export default function OAuthConsent() {
         // redirect the initial signed-out path uses — so they can return and
         // approve the still-valid handle.
         if (res.status === 401) {
-          const returnTo = window.location.pathname + "?ctx=" + encodeURIComponent(ctx);
+          const returnTo = pathname + "?ctx=" + encodeURIComponent(ctx);
           const encoded = encodeURIComponent(returnTo);
-          window.location.href =
-            ((info && info.login_path) || "/login") + "?returnTo=" + encoded + "&from_url=" + encoded;
+          router.push(
+            ((info && info.login_path) || "/login") + "?returnTo=" + encoded + "&from_url=" + encoded,
+          );
           return;
         }
         // These all come AFTER the single-use handle is atomically consumed
@@ -121,7 +127,7 @@ export default function OAuthConsent() {
         throw new Error("Could not complete authorization. Please try again.");
       }
       const data = await res.json();
-      window.location.href = data.redirect_url;
+      router.push(data.redirect_url);
       if (!/^https?:/i.test(data.redirect_url)) {
         // Custom-scheme redirect (native AI clients, e.g. cursor://): browsers
         // may block or not visibly navigate, so show a terminal state instead
@@ -165,7 +171,7 @@ export default function OAuthConsent() {
   if (reconnect) {
     return (
       <AuthLayout icon={ShieldCheck} title="Reconnect required">
-        <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="p-3 rounded bg-destructive/10 text-destructive text-sm">
           {reconnect}
         </div>
       </AuthLayout>
@@ -178,7 +184,7 @@ export default function OAuthConsent() {
   if (error && !info) {
     return (
       <AuthLayout icon={ShieldCheck} title="Authorize access">
-        <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="p-3 rounded bg-destructive/10 text-destructive text-sm">
           {error}
         </div>
       </AuthLayout>
@@ -194,7 +200,7 @@ export default function OAuthConsent() {
       subtitle={`${client} wants to access ${appName} on your behalf`}
     >
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded bg-destructive/10 text-destructive text-sm">
           {error}
         </div>
       )}

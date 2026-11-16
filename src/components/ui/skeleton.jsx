@@ -4,7 +4,7 @@ function Skeleton({ className, variant = "default", ...props }) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-xl",
+        "animate-pulse rounded",
         {
           "bg-muted": variant === "default",
           "bg-gradient-to-r from-muted via-muted/50 to-muted": variant === "shimmer",

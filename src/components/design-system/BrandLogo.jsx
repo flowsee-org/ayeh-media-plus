@@ -15,7 +15,7 @@ export default function BrandLogo({ variant = 'inline', className = '' }) {
       aria-label="صفحه اصلی آیه مدیا پلاس"
     >
       <div
-        className={`rounded-xl bg-gradient-to-br from-quranic-emerald to-quranic-turquoise flex items-center justify-center text-white shadow-sm group-hover:shadow-quranic-glow transition-shadow ${
+        className={`rounded bg-gradient-to-br from-quranic-emerald to-quranic-turquoise flex items-center justify-center text-white shadow-sm group-hover:shadow-quranic-glow transition-shadow ${
           iconOnly ? 'h-10 w-10' : 'h-9 w-9'
         }`}
       >

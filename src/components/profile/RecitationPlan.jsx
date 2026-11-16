@@ -72,7 +72,7 @@ export default function RecitationPlan() {
       key={n}
       type="button"
       onClick={() => setDays(n)}
-      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+      className={`flex-1 py-2 rounded text-sm font-medium transition-all ${
         days === n ? "bg-accent text-accent-foreground" : "bg-muted/40 text-muted-foreground hover:bg-muted"
       }`}
     >
@@ -81,7 +81,7 @@ export default function RecitationPlan() {
   );
 
   return (
-    <div className="rounded-xl border border-accent/15 bg-card/40 p-6 mb-8 shadow-soft">
+    <div className="rounded border border-accent/15 bg-card/40 p-6 mb-8 shadow-soft">
       <h2 className="font-display font-bold text-lg mb-1 flex items-center gap-2">
         <CalendarClock className="h-5 w-5 text-accent" />
         برنامه تلاوت روزانه
@@ -97,7 +97,7 @@ export default function RecitationPlan() {
             type="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="mt-1 w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+            className="mt-1 w-full h-10 rounded border border-border bg-background px-3 text-sm"
           />
         </label>
         <label className="text-xs text-muted-foreground">
@@ -108,7 +108,7 @@ export default function RecitationPlan() {
             max={120}
             value={minutes}
             onChange={(e) => setMinutes(Number(e.target.value) || 30)}
-            className="mt-1 w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+            className="mt-1 w-full h-10 rounded border border-border bg-background px-3 text-sm"
           />
         </label>
         <label className="text-xs text-muted-foreground">
@@ -119,7 +119,7 @@ export default function RecitationPlan() {
             max={120}
             value={reminder}
             onChange={(e) => setReminder(Number(e.target.value) || 0)}
-            className="mt-1 w-full h-10 rounded-lg border border-border bg-background px-3 text-sm"
+            className="mt-1 w-full h-10 rounded border border-border bg-background px-3 text-sm"
           />
         </label>
       </div>
@@ -136,7 +136,7 @@ export default function RecitationPlan() {
 
       <button
         onClick={download}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
       >
         <Download className="h-4 w-4" /> دانلود فایل تقویم (Google / iOS)
       </button>

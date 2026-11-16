@@ -72,7 +72,7 @@ export default function ProfileHeader({
   };
 
   return (
-    <div className={`relative w-full overflow-hidden rounded-2xl border border-border bg-card ${className}`}>
+    <div className={`relative w-full overflow-hidden rounded border border-border bg-card ${className}`}>
       <div className="h-36 sm:h-44 md:h-52 w-full bg-gradient-to-br from-primary/25 via-accent/15 to-muted relative overflow-hidden">
         {coverImage ? (
           <Image src={coverImage} alt="" className="w-full h-full object-cover" />
@@ -83,7 +83,7 @@ export default function ProfileHeader({
       <div className="px-4 sm:px-6 pb-5">
         <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12">
           <div className="relative shrink-0">
-            <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-full border-4 border-card shadow-md overflow-hidden bg-muted">
+            <div className="h-24 w-24 sm:h-28 sm:w-28 rounded border-4 border-card shadow-md overflow-hidden bg-muted">
               {profileImage ? (
                 <Image src={profileImage} alt={name || ''} className="w-full h-full object-cover" />
               ) : (
@@ -93,7 +93,7 @@ export default function ProfileHeader({
               )}
             </div>
             {verified && (
-              <div className="absolute bottom-1 end-1 h-7 w-7 rounded-full bg-primary text-primary-foreground border-2 border-card flex items-center justify-center">
+              <div className="absolute bottom-1 end-1 h-7 w-7 rounded bg-primary text-primary-foreground border-2 border-card flex items-center justify-center">
                 <ShieldCheck className="h-4 w-4" />
               </div>
             )}
@@ -103,7 +103,7 @@ export default function ProfileHeader({
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-bold text-foreground tracking-tight">{name}</h1>
               {verified && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold">
                   <ShieldCheck className="h-3 w-3" /> تایید شده
                 </span>
               )}
@@ -119,7 +119,7 @@ export default function ProfileHeader({
             <button
               onClick={handleFollow}
               disabled={isLoading}
-              className={`shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-50 ${
+              className={`shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded text-sm font-bold transition-all disabled:opacity-50 ${
                 isFollowing
                   ? 'bg-muted text-foreground border border-border hover:bg-muted/80'
                   : 'bg-primary text-primary-foreground hover:opacity-90'

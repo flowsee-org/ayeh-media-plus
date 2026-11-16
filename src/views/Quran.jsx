@@ -64,9 +64,9 @@ export default function Quran() {
  <div className="page-shell">
  {/* Pinned Khatm Recitation Floating Action Bar */}
  {khatmPartId && (
- <div className="sticky top-20 z-40 mb-6 p-4 rounded-2xl bg-card/95 backdrop-blur-md border border-accent/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4">
+ <div className="sticky top-20 z-40 mb-6 p-4 rounded bg-card/95 backdrop-blur-md border border-accent/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 animate-in fade-in slide-in-from-top-4">
  <div className="flex items-center gap-3">
- <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center font-bold shrink-0">
+ <div className="w-10 h-10 rounded bg-accent/15 text-accent flex items-center justify-center font-bold shrink-0">
  <Sparkles className="w-5 h-5" />
  </div>
  <div>
@@ -86,7 +86,7 @@ export default function Quran() {
  <button
  onClick={handleConfirmKhatmPart}
  disabled={completingKhatm}
- className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+ className="w-full sm:w-auto px-5 py-2.5 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
  >
  <Check className="w-4 h-4" />
  <span>{completingKhatm ? "در حال ثبت..." : "ثبت اتمام قرائت این جزء"}</span>
@@ -94,7 +94,7 @@ export default function Quran() {
  ) : (
  <Link
  to="/khatm"
- className="w-full sm:w-auto px-4 py-2 rounded-xl bg-accent text-accent-foreground font-semibold text-xs text-center shadow-sm"
+ className="w-full sm:w-auto px-4 py-2 rounded bg-accent text-accent-foreground font-semibold text-xs text-center shadow-sm"
  >
  بازگشت به دوره‌های ختم
  </Link>
@@ -155,8 +155,8 @@ function SurahList({ onPick, onPickJuz }) {
  may inject data-* attrs onto ancestors of text inputs before hydrate. */}
  <div className="animate-fade-in font-doran" suppressHydrationWarning>
  {/* Header section */}
- <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
- <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
+ <div className="rounded border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
+ <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
  <BookOpen className="h-3.5 w-3.5 text-primary" /> ۱۱۴ سوره مبارکه · ۳۰ جزء مصحف شریف
  </div>
  <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
@@ -182,17 +182,17 @@ function SurahList({ onPick, onPickJuz }) {
  value={query}
  onChange={(e) => setQuery(e.target.value)}
  placeholder="جستجوی نام سوره یا شماره جزء..."
- className="w-full pl-4 pr-10 py-3 rounded-2xl bg-secondary/60 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-ui text-sm shadow-xs transition-all"
+ className="w-full pl-4 pr-10 py-3 rounded bg-secondary/60 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-ui text-sm shadow-xs transition-all"
  />
  </div>
  </div>
 
  {/* Mode Switcher */}
  <div className="flex justify-center mb-8">
- <div className="inline-flex p-1 rounded-2xl bg-secondary border border-border">
+ <div className="inline-flex p-1 rounded bg-secondary border border-border">
  <button
  onClick={() => setMode("surah")}
- className={`px-6 py-2 rounded-xl text-xs font-bold font-ui transition-all ${
+ className={`px-6 py-2 rounded text-xs font-bold font-ui transition-all ${
  mode === "surah"
  ? "bg-card text-foreground shadow-xs scale-100"
  : "text-muted-foreground hover:text-foreground"
@@ -202,7 +202,7 @@ function SurahList({ onPick, onPickJuz }) {
  </button>
  <button
  onClick={() => setMode("juz")}
- className={`px-6 py-2 rounded-xl text-xs font-bold font-ui transition-all ${
+ className={`px-6 py-2 rounded text-xs font-bold font-ui transition-all ${
  mode === "juz"
  ? "bg-card text-foreground shadow-xs scale-100"
  : "text-muted-foreground hover:text-foreground"
@@ -223,10 +223,10 @@ function SurahList({ onPick, onPickJuz }) {
  <button
  key={s.number}
  onClick={() => onPick(s.number)}
- className="group relative flex items-center justify-between p-4 sm:p-5 rounded-2xl border border-border/80 bg-card hover:border-primary/50 hover:shadow-card-hover transition-all text-right"
+ className="group relative flex items-center justify-between p-4 sm:p-5 rounded border border-border/80 bg-card hover:border-primary/50 hover:shadow-card-hover transition-all text-right"
  >
  <div className="flex items-center gap-3.5 min-w-0">
- <div className="h-10 w-10 shrink-0 rounded-xl bg-secondary/80 border border-border flex items-center justify-center font-ui text-xs font-bold text-foreground group-hover:border-primary/40 transition-colors">
+ <div className="h-10 w-10 shrink-0 rounded bg-secondary/80 border border-border flex items-center justify-center font-ui text-xs font-bold text-foreground group-hover:border-primary/40 transition-colors">
  {s.number}
  </div>
  <div className="min-w-0">
@@ -253,10 +253,10 @@ function SurahList({ onPick, onPickJuz }) {
  <button
  key={juz.number}
  onClick={() => onPickJuz(juz.number)}
- className="group p-5 rounded-2xl border border-border/80 bg-card hover:border-primary/50 hover:shadow-card-hover transition-all text-right"
+ className="group p-5 rounded border border-border/80 bg-card hover:border-primary/50 hover:shadow-card-hover transition-all text-right"
  >
  <div className="flex items-center justify-between mb-3">
- <div className="h-9 w-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center font-ui text-xs font-bold text-accent">
+ <div className="h-9 w-9 rounded bg-accent/10 border border-accent/20 flex items-center justify-center font-ui text-xs font-bold text-accent">
  {juz.number}
  </div>
  <div className="text-2xl text-primary/70 group-hover:text-primary transition-colors" dir="rtl">
@@ -412,12 +412,12 @@ function SurahView({ n, onBack }) {
 
  if (error)
  return (
- <div className="rounded-xl border border-dashed border-accent/15 p-12 text-center max-w-md mx-auto">
+ <div className="rounded border border-dashed border-accent/15 p-12 text-center max-w-md mx-auto">
  <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground mb-4">{error}</p>
  <button
  onClick={() => setRetryKey((k) => k + 1)}
- className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
+ className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
  >
  <RotateCw className="h-4 w-4" /> تلاش مجدد
  </button>
@@ -433,7 +433,7 @@ function SurahView({ n, onBack }) {
  <BackButton onClick={onBack} label="همه سوره‌ها" className="mb-0" />
  <button
  onClick={() => setSettingsOpen(true)}
- className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-accent/30 bg-card/85 hover:bg-secondary text-xs font-bold text-foreground shadow-soft transition-all hover:scale-105 active:scale-95 font-ui"
+ className="inline-flex items-center gap-2 px-4 py-2 rounded border border-accent/30 bg-card/85 hover:bg-secondary text-xs font-bold text-foreground shadow-soft transition-all hover:scale-105 active:scale-95 font-ui"
  >
  <Type className="h-4 w-4 text-accent" />
  <span>تنظیمات خط و مصحف</span>
@@ -441,7 +441,7 @@ function SurahView({ n, onBack }) {
  </div>
 
  {/* Surah Banner Card with Authentic Persian Muqarnas Ceiling */}
- <div className="relative overflow-hidden rounded-3xl border border-amber-400/30 bg-card p-6 sm:p-12 mb-8 text-center shadow-xl">
+ <div className="relative overflow-hidden rounded border border-amber-400/30 bg-card p-6 sm:p-12 mb-8 text-center shadow-xl">
  <div className="absolute inset-0 z-0 pointer-events-none">
  <img
  src="/images/art/nasir_vault_ceiling.webp"
@@ -451,7 +451,7 @@ function SurahView({ n, onBack }) {
  <div className="absolute inset-0 bg-gradient-to-b from-card/90 via-card/80 to-card/95 backdrop-blur-[1px]" />
  </div>
  <div className="relative z-10">
- <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-secondary/80 backdrop-blur-md border border-amber-400/30 text-foreground font-ui text-xs font-bold mb-3">
+ <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary/80 backdrop-blur-md border border-amber-400/30 text-foreground font-ui text-xs font-bold mb-3">
  <span>سوره مبارکه شماره {data.number}</span>
  </div>
  <div
@@ -477,7 +477,7 @@ function SurahView({ n, onBack }) {
  playAyah(currentPlayingAyah || 1);
  }
  }}
- className={`inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-ui text-sm font-bold shadow-soft transition-all hover:scale-105 active:scale-95 ${
+ className={`inline-flex items-center gap-2.5 px-6 py-3 rounded font-ui text-sm font-bold shadow-soft transition-all hover:scale-105 active:scale-95 ${
  isPlayingThisSurah
  ? "bg-amber-500 text-amber-950 ring-4 ring-amber-500/20"
  : "bg-primary text-primary-foreground hover:opacity-90"
@@ -524,7 +524,7 @@ function SurahView({ n, onBack }) {
  key={a.number}
  id={`ayah-${n}-${a.numberInSurah}`}
  to={`/verse/${data.number}/${a.numberInSurah}`}
- className={`group relative block rounded-2xl border p-5 sm:p-7 transition-all duration-300 ${
+ className={`group relative block rounded border p-5 sm:p-7 transition-all duration-300 ${
  isAyahActive
  ? "border-amber-500/80 bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent shadow-[0_0_25px_rgba(245,158,11,0.22)] ring-2 ring-amber-500/40 scale-[1.01]"
  : "border-border bg-card hover:border-primary/40 hover:shadow-card-hover"
@@ -533,7 +533,7 @@ function SurahView({ n, onBack }) {
  <div className="flex items-start gap-4 sm:gap-6">
  <div className="flex flex-col items-center gap-2 shrink-0">
  <div
- className={`h-10 w-10 rounded-xl flex items-center justify-center font-ui text-xs font-bold transition-colors ${
+ className={`h-10 w-10 rounded flex items-center justify-center font-ui text-xs font-bold transition-colors ${
  isAyahActive
  ? "bg-amber-500 text-amber-950 shadow-xs"
  : "bg-secondary border border-border text-foreground"
@@ -546,7 +546,7 @@ function SurahView({ n, onBack }) {
  <button
  type="button"
  onClick={(e) => togglePlayAyah(e, a)}
- className={`h-9 w-9 rounded-xl flex items-center justify-center transition-all ${
+ className={`h-9 w-9 rounded flex items-center justify-center transition-all ${
  isAyahActive
  ? "bg-amber-500 text-amber-950 shadow-sm ring-2 ring-amber-500/50"
  : "bg-secondary/70 border border-border text-muted-foreground hover:text-primary hover:bg-secondary"
@@ -563,9 +563,9 @@ function SurahView({ n, onBack }) {
  {/* Equalizer animation indicator */}
  {isAyahActive && (
  <div className="flex items-center gap-0.5 mt-1 text-amber-500">
- <span className="w-1 h-3 bg-amber-500 rounded-full animate-bounce" />
- <span className="w-1 h-4 bg-amber-500 rounded-full animate-bounce [animation-delay:150ms]" />
- <span className="w-1 h-2 bg-amber-500 rounded-full animate-bounce [animation-delay:300ms]" />
+ <span className="w-1 h-3 bg-amber-500 rounded animate-bounce" />
+ <span className="w-1 h-4 bg-amber-500 rounded animate-bounce [animation-delay:150ms]" />
+ <span className="w-1 h-2 bg-amber-500 rounded animate-bounce [animation-delay:300ms]" />
  </div>
  )}
  </div>
@@ -630,13 +630,13 @@ function SurahView({ n, onBack }) {
 
  {/* Floating Recitation Dock */}
  <div className="fixed bottom-20 md:bottom-5 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-xl">
- <div className="relative rounded-2xl border border-border/80 bg-card/95 backdrop-blur-xl shadow-2xl p-3 sm:px-5 sm:py-3.5 transition-all">
+ <div className="relative rounded border border-border/80 bg-card/95 backdrop-blur-xl shadow-2xl p-3 sm:px-5 sm:py-3.5 transition-all">
  <div className="flex items-center justify-between gap-2">
  {/* Reciter Selector Trigger */}
  <div className="relative">
  <button
  onClick={() => setReciterDropdownOpen(!reciterDropdownOpen)}
- className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-secondary/80 hover:bg-secondary text-foreground text-xs font-bold border border-border/60 transition-colors font-ui"
+ className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-secondary/80 hover:bg-secondary text-foreground text-xs font-bold border border-border/60 transition-colors font-ui"
  title="انتخاب قاری"
  >
  <Volume2 className="h-3.5 w-3.5 text-accent" />
@@ -651,7 +651,7 @@ function SurahView({ n, onBack }) {
  className="fixed inset-0 z-30"
  onClick={() => setReciterDropdownOpen(false)}
  />
- <div className="absolute bottom-11 right-0 z-40 w-56 rounded-2xl border border-border bg-popover/95 p-1.5 shadow-2xl backdrop-blur-md animate-scale-in font-ui text-xs">
+ <div className="absolute bottom-11 right-0 z-40 w-56 rounded border border-border bg-popover/95 p-1.5 shadow-2xl backdrop-blur-md animate-scale-in font-ui text-xs">
  <div className="px-3 py-2 text-[11px] font-bold text-muted-foreground border-b border-border/50">
  انتخاب قاری ترتیل:
  </div>
@@ -661,7 +661,7 @@ function SurahView({ n, onBack }) {
  <button
  key={r.id}
  onClick={() => handleSelectReciter(r.id)}
- className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-right transition-colors ${
+ className={`flex w-full items-center justify-between rounded px-3 py-2 text-right transition-colors ${
  isChosen
  ? "bg-accent/15 text-accent font-bold"
  : "text-foreground hover:bg-secondary"
@@ -686,7 +686,7 @@ function SurahView({ n, onBack }) {
  <button
  onClick={handlePlayPrev}
  disabled={!currentPlayingAyah || currentPlayingAyah <= 1}
- className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 transition-colors"
+ className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 transition-colors"
  title="آیه قبلی"
  >
  <SkipForward className="h-4 w-4" />
@@ -701,7 +701,7 @@ function SurahView({ n, onBack }) {
  playAyah(currentPlayingAyah || 1);
  }
  }}
- className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-soft transition-all transform active:scale-90 ${
+ className={`flex h-11 w-11 items-center justify-center rounded shadow-soft transition-all transform active:scale-90 ${
  isPlayingThisSurah
  ? "bg-amber-500 text-amber-950 ring-4 ring-amber-500/25"
  : "bg-primary text-primary-foreground hover:opacity-90"
@@ -721,7 +721,7 @@ function SurahView({ n, onBack }) {
  disabled={
  !currentPlayingAyah || currentPlayingAyah >= data.numberOfAyahs
  }
- className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 transition-colors"
+ className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 transition-colors"
  title="آیه بعدی"
  >
  <SkipBack className="h-4 w-4" />
@@ -737,7 +737,7 @@ function SurahView({ n, onBack }) {
  {/* Auto Scroll Toggle */}
  <button
  onClick={() => setAutoScroll(!autoScroll)}
- className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-semibold font-ui transition-all ${
+ className={`flex items-center gap-1 px-2.5 py-1.5 rounded border text-xs font-semibold font-ui transition-all ${
  autoScroll
  ? "bg-accent/15 border-accent/40 text-accent"
  : "bg-secondary/60 border-border text-muted-foreground"
@@ -795,12 +795,12 @@ function JuzView({ n, onBack }) {
 
  if (error)
  return (
- <div className="rounded-xl border border-dashed border-accent/15 p-12 text-center max-w-md mx-auto">
+ <div className="rounded border border-dashed border-accent/15 p-12 text-center max-w-md mx-auto">
  <Layers className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground mb-4">{error}</p>
  <button
  onClick={() => setRetryKey((k) => k + 1)}
- className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
+ className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
  >
  <RotateCw className="h-4 w-4" /> تلاش مجدد
  </button>
@@ -828,7 +828,7 @@ function JuzView({ n, onBack }) {
  to={`/quran?surah=${g.surah}`}
  className="inline-flex items-center gap-2 mb-4 group"
  >
- <span className="h-8 w-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold ring-1 ring-accent/10">
+ <span className="h-8 w-8 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-bold ring-1 ring-accent/10">
  {g.surah}
  </span>
  <span
@@ -843,7 +843,7 @@ function JuzView({ n, onBack }) {
  <Link
  key={a.number}
  to={`/verse/${g.surah}/${a.numberInSurah}`}
- className="group flex items-start gap-4 rounded-xl border border-accent/10 bg-card/40 p-4 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
+ className="group flex items-start gap-4 rounded border border-accent/10 bg-card/40 p-4 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
  >
  <VerseMarker number={a.numberInSurah} size={36} />
  <div className="flex-1 min-w-0">
@@ -870,7 +870,7 @@ function JuzView({ n, onBack }) {
 
 function InfoBadge({ label }) {
  return (
- <span className="inline-flex items-center px-3 py-1 rounded-full bg-muted/50 text-xs text-muted-foreground font-medium ring-1 ring-border/30">
+ <span className="inline-flex items-center px-3 py-1 rounded bg-muted/50 text-xs text-muted-foreground font-medium ring-1 ring-border/30">
  {label}
  </span>
  );

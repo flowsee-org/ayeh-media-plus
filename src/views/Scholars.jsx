@@ -43,8 +43,8 @@ export default function Scholars() {
 
   return (
     <div className="page-shell animate-fade-in font-doran space-y-8">
-      <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
+      <div className="rounded border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
           <Users className="h-3.5 w-3.5 text-primary" /> اساتید و مفسران کلام‌الله
         </div>
         <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
@@ -73,13 +73,13 @@ export default function Scholars() {
                   return (
                     <div
                       key={s.id}
-                      className="rounded-2xl border border-border bg-card p-4 hover:border-primary/30 hover:shadow-soft transition-all"
+                      className="rounded border border-border bg-card p-4 hover:border-primary/30 hover:shadow-soft transition-all"
                     >
                       <div className="flex items-center gap-3">
                         {cfg ? (
                           <CharacterAvatar config={cfg} size={52} />
                         ) : (
-                          <div className="h-[52px] w-[52px] rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary shrink-0">
+                          <div className="h-[52px] w-[52px] rounded bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary shrink-0">
                             {s.name?.[0]}
                           </div>
                         )}
@@ -89,7 +89,7 @@ export default function Scholars() {
                             {s.sessions.toLocaleString("fa-IR")} جلسه
                             {s.live && (
                               <span className="inline-flex items-center gap-1 mr-2 text-red-600 font-medium">
-                                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" /> زنده
+                                <span className="h-1.5 w-1.5 rounded bg-red-500 animate-pulse" /> زنده
                               </span>
                             )}
                           </div>

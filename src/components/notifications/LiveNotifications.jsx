@@ -46,12 +46,12 @@ export default function LiveNotifications() {
                       navigate(`/community/${n.post_id}`);
                     }
                   }}
-                  className={`flex items-start gap-3 w-full max-w-sm mx-auto rounded-2xl border border-accent/40 bg-card/95 backdrop-blur-md shadow-premium px-4 py-3 text-right transition-all duration-300 hover:border-accent ${
+                  className={`flex items-start gap-3 w-full max-w-sm mx-auto rounded border border-accent/40 bg-card/95 backdrop-blur-md shadow-premium px-4 py-3 text-right transition-all duration-300 hover:border-accent ${
                     t.visible ? "animate-fade-in-up" : "opacity-0"
                   }`}
                 >
                   <span
-                    className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${
+                    className={`h-9 w-9 rounded flex items-center justify-center shrink-0 ${
                       isLive
                         ? "bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30"
                         : isLike
@@ -86,7 +86,7 @@ export default function LiveNotifications() {
                     </span>
                   </span>
                   <span
-                    className={`h-2.5 w-2.5 rounded-full shrink-0 mt-1.5 ${
+                    className={`h-2.5 w-2.5 rounded shrink-0 mt-1.5 ${
                       isLive ? "bg-red-500 animate-ping" : "bg-accent animate-pulse-soft"
                     }`}
                   />
@@ -110,19 +110,19 @@ export default function LiveNotifications() {
         toast.custom(
           (t) => (
             <div
-              className={`relative overflow-hidden w-full max-w-md mx-auto rounded-2xl border-2 border-red-500/40 bg-card/95 backdrop-blur-md shadow-2xl p-4 text-right transition-all duration-300 ${
+              className={`relative overflow-hidden w-full max-w-md mx-auto rounded border-2 border-red-500/40 bg-card/95 backdrop-blur-md shadow-2xl p-4 text-right transition-all duration-300 ${
                 t.visible ? "animate-fade-in-up" : "opacity-0"
               }`}
             >
               <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-red-600 via-accent to-red-600" />
               <div className="flex items-start gap-3">
-                <span className="h-10 w-10 rounded-xl bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                <span className="h-10 w-10 rounded bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
                   <Radio className="h-5 w-5 animate-pulse" />
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold">
-                      <span className="h-1.5 w-1.5 rounded-full bg-white animate-ping" />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500 text-white text-[10px] font-bold">
+                      <span className="h-1.5 w-1.5 rounded bg-white animate-ping" />
                       پخش زنده
                     </span>
                     <span className="text-xs font-bold text-accent">
@@ -138,14 +138,14 @@ export default function LiveNotifications() {
                         toast.dismiss(t.id);
                         navigate(`/live/${session.id}`);
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-md hover:shadow-red-500/20 flex items-center gap-1.5"
+                      className="px-3.5 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-md hover:shadow-red-500/20 flex items-center gap-1.5"
                     >
                       <Sparkles className="h-3.5 w-3.5 text-accent" />
                       ورود به جلسه
                     </button>
                     <button
                       onClick={() => toast.dismiss(t.id)}
-                      className="px-2.5 py-1.5 rounded-xl text-xs text-muted-foreground hover:bg-secondary transition-colors"
+                      className="px-2.5 py-1.5 rounded text-xs text-muted-foreground hover:bg-secondary transition-colors"
                     >
                       بعداً
                     </button>
@@ -175,12 +175,12 @@ export default function LiveNotifications() {
                 toast.dismiss(t.id);
                 if (data.post_id) navigate(`/community/${data.post_id}`);
               }}
-              className={`flex items-start gap-3 w-full max-w-sm mx-auto rounded-2xl border border-accent/40 bg-card/95 backdrop-blur-md shadow-premium px-4 py-3 text-right transition-all duration-300 ${
+              className={`flex items-start gap-3 w-full max-w-sm mx-auto rounded border border-accent/40 bg-card/95 backdrop-blur-md shadow-premium px-4 py-3 text-right transition-all duration-300 ${
                 t.visible ? "animate-fade-in-up" : "opacity-0"
               }`}
             >
               <span
-                className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${
+                className={`h-9 w-9 rounded flex items-center justify-center shrink-0 ${
                   isLike ? "bg-accent/15 text-accent border border-accent/30" : "bg-primary/15 text-primary border border-primary/30"
                 }`}
               >

@@ -40,9 +40,8 @@ export default function MainLayout({ children }) {
     setMenuOpen(false);
   }, [pathname]);
 
-  const isWatchPage = pathname?.startsWith('/watch/');
   const isLiveViewer = Boolean(pathname?.match(/^\/live\/[^/]+/));
-  const hideChrome = isWatchPage || isLiveViewer;
+  const hideChrome = isLiveViewer;
 
   return (
     <div
