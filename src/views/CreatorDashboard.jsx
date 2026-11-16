@@ -29,24 +29,26 @@ export default function CreatorDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
+    if (!user?.id) return;
     loadData();
-  }, []);
+  }, [user?.id]);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      const [userVideos, totalStats] = await Promise.all([
-        api.entities.Video.filter({ reciter_id: user?.id }, "-created_date", 50).catch(() => []),
-        api.entities.Video.list("-created_date", 100).catch(() => []),
-      ]);
 
-      setVideos(userVideos || []);
+      const userVideos = await api.videos
+        .list({ mine: true, sort: "-created_date", limit: 50 })
+        .catch(() => []);
+
+      const list = Array.isArray(userVideos) ? userVideos : userVideos?.items || [];
+      setVideos(list);
       setStats({
-        total_videos: userVideos.length,
-        total_views: (userVideos || []).reduce((sum, v) => sum + (v.views_count || 0), 0),
-        total_likes: (userVideos || []).reduce((sum, v) => sum + (v.likes_count || 0), 0),
-        published: (userVideos || []).filter((v) => v.status === "published").length,
-        pending: (userVideos || []).filter((v) => v.status === "pending_review").length,
+        total_videos: list.length,
+        total_views: list.reduce((sum, v) => sum + (v.views_count || 0), 0),
+        total_likes: list.reduce((sum, v) => sum + (v.likes_count || 0), 0),
+        published: list.filter((v) => v.status === "published").length,
+        pending: list.filter((v) => v.status === "pending_review").length,
       });
       setLoading(false);
     } catch (err) {
@@ -58,7 +60,7 @@ export default function CreatorDashboard() {
   const handleDelete = async (id) => {
     if (!confirm("آیا از حذف این محتوا اطمینان دارید؟")) return;
     try {
-      await api.entities.Video.delete(id);
+      await api.videos.delete(id);
       toast.success("محتوا حذف شد");
       loadData();
     } catch (err) {

@@ -138,14 +138,14 @@ export default function Profile() {
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
             <Link
               to="/talks"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-stone-950 text-xs font-bold shadow-gold-glow hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-stone-950 text-xs font-bold font-doran shadow-gold-glow hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
             >
               <Mic className="h-3.5 w-3.5" />
               <span>استودیوی گفتارها و پادکست‌ها</span>
             </Link>
             <Link
               to="/live"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold shadow-soft hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold font-doran shadow-soft hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
             >
               <Video className="h-3.5 w-3.5" />
               <span>پخش زنده تفسیری</span>

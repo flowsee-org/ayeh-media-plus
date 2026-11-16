@@ -9,11 +9,10 @@ import PullToRefresh from "@/components/PullToRefresh";
 import PostCard from "@/components/community/PostCard";
 import CreatePost from "@/components/community/CreatePost";
 import ActivePrizeStrip from "@/components/community/ActivePrizeStrip";
-import VerseCardStudio from "@/components/cards/VerseCardStudio";
 import { Avatar } from "@/components/community/shared";
 import EmptyState from "@/components/design-system/EmptyState";
 import {
-  Plus, Loader2, Sparkles, Trophy, Palette, BookOpen,
+  Plus, Loader2, Sparkles, Trophy, BookOpen,
   HelpCircle, Video, Compass,
 } from "lucide-react";
 
@@ -32,7 +31,6 @@ export default function Community() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [showStudio, setShowStudio] = useState(false);
   const [selectedChip, setSelectedChip] = useState("all");
 
   const currentUser = authUser || user;
@@ -62,17 +60,6 @@ export default function Community() {
       openAuthModal((loggedIn) => {
         setUser(loggedIn);
         setShowCreate(true);
-      });
-    }
-  };
-
-  const handleOpenStudio = () => {
-    if (currentUser) {
-      setShowStudio(true);
-    } else {
-      openAuthModal((loggedIn) => {
-        setUser(loggedIn);
-        setShowStudio(true);
       });
     }
   };
@@ -156,7 +143,7 @@ export default function Community() {
               avatar={currentUser?.avatar || currentUser?.avatar_url}
               className="ring-2 ring-primary/20"
             />
-            <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium">
+            <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium font-doran">
               آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
@@ -166,13 +153,6 @@ export default function Community() {
 
           {/* Quick Actions Row */}
           <div className="mt-3 flex items-center gap-2 border-t border-border/50 pt-2.5">
-            <button
-              onClick={handleOpenStudio}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary/10 py-1.5 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
-            >
-              <Palette className="h-3.5 w-3.5" />
-              <span>سازماندهی بصری آیه</span>
-            </button>
             <button
               onClick={handleOpenCreate}
               className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-secondary py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
@@ -245,18 +225,6 @@ export default function Community() {
             onClose={() => setShowCreate(false)}
             onPosted={() => {
               setShowCreate(false);
-              loadPosts();
-            }}
-          />
-        )}
-
-        {/* Verse Card Studio Modal */}
-        {showStudio && currentUser && (
-          <VerseCardStudio
-            user={currentUser}
-            onClose={() => setShowStudio(false)}
-            onPosted={() => {
-              setShowStudio(false);
               loadPosts();
             }}
           />

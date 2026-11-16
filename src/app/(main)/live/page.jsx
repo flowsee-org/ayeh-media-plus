@@ -1,5 +1,7 @@
 import { Suspense } from 'react';
+import RoleGuard from '@/components/RoleGuard';
 import GoLive from '@/views/GoLive';
+import { PERMISSIONS } from '@/lib/rbac';
 
 export const metadata = {
   title: 'پخش زنده قرآنی — آیه مدیا پلاس',
@@ -15,7 +17,9 @@ export default function LiveRoute() {
         </div>
       }
     >
-      <GoLive />
+      <RoleGuard requiredPermission={PERMISSIONS.LIVE_STREAM}>
+        <GoLive />
+      </RoleGuard>
     </Suspense>
   );
 }

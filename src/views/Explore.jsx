@@ -99,7 +99,7 @@ export default function Explore() {
               <Compass className="h-6 w-6 text-primary" />
               کاوش
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground mt-1 font-doran">
               کشف ویدیوهای قرآنی بر اساس موضوع و محبوبیت
             </p>
           </div>
@@ -146,7 +146,7 @@ export default function Explore() {
         {scholars.length > 0 && chip === "all" && !query && (
           <section>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-bold text-base inline-flex items-center gap-2">
+              <h2 className="font-rokh-bold font-bold text-base inline-flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-primary" />
                 کانال‌های پیشنهادی
               </h2>

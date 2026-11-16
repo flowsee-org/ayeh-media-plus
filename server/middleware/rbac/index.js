@@ -20,7 +20,7 @@ export function requirePermission(permission) {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
-        message: 'Authenticación erforderlich',
+        message: 'ورود به سیستم الزامی است',
         error: 'AUTH_REQUIRED',
         required_permission: permission,
       });
@@ -49,7 +49,7 @@ export function requireRole(minRole) {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
-        message: 'Authenticación erforderlich',
+        message: 'ورود به سیستم الزامی است',
         error: 'AUTH_REQUIRED',
         required_role: minRole,
       });
@@ -83,7 +83,7 @@ export function requireOwnershipOrPermission(ownerField, permission) {
   return async (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
-        message: 'Authenticación erforderlich',
+        message: 'ورود به سیستم الزامی است',
         error: 'AUTH_REQUIRED',
       });
     }

@@ -3,6 +3,8 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../db.js';
 import { io } from '../socket.js';
 import { authenticate } from '../middleware/auth.js';
+import { hasPermission } from '../middleware/rbac/permissions.js';
+import { PERMISSIONS } from '../middleware/rbac/permissions.js';
 
 const router = Router();
 
@@ -481,9 +483,14 @@ router.get('/:entity', async (req, res) => {
 
     const parsedItems = items.map(deserializeRecord);
 
-    // Public User profiles only expose approved fields (API3:2023)
+    // Public User profiles only expose approved fields (API3:2023).
+    // Admins additionally see the role field so the AdminPanel can manage roles.
     const publicItems = entityName === 'User'
-      ? parsedItems.map(projectPublicUser)
+      ? parsedItems.map(item => {
+          const projected = projectPublicUser(item);
+          if (isAdmin(req)) projected.role = item.role;
+          return projected;
+        })
       : parsedItems;
 
     // Provide both array behavior and pagination metadata
@@ -525,9 +532,14 @@ router.post('/:entity/filter', async (req, res) => {
 
     const parsedItems = items.map(deserializeRecord);
 
-    // Public User profiles only expose approved fields (API3:2023)
+    // Public User profiles only expose approved fields (API3:2023).
+    // Admins additionally see the role field so the AdminPanel can manage roles.
     const publicItems = entityName === 'User'
-      ? parsedItems.map(projectPublicUser)
+      ? parsedItems.map(item => {
+          const projected = projectPublicUser(item);
+          if (isAdmin(req)) projected.role = item.role;
+          return projected;
+        })
       : parsedItems;
 
     res.json({
@@ -555,9 +567,12 @@ router.get('/:entity/:id', async (req, res) => {
 
     if (!(await ensurePrivateRecordReadable(req, res, entityName, item))) return;
 
-    // Public User profiles only expose approved fields (API3:2023)
+    // Public User profiles only expose approved fields (API3:2023).
+    // Admins additionally see the role field.
     if (entityName === 'User') {
-      return res.json(projectPublicUser(item));
+      const projected = projectPublicUser(item);
+      if (isAdmin(req)) projected.role = item.role;
+      return res.json(projected);
     }
 
     res.json(deserializeRecord(item));
@@ -678,6 +693,16 @@ router.post('/:entity', async (req, res) => {
       if (existing) {
         return res.status(409).json({ message: 'Already following this user' });
       }
+    }
+
+    // Live streaming: only moderator, scholar, master, admin may create sessions
+    if (entityName === 'LiveSession' && !hasPermission(req.user.role, PERMISSIONS.LIVE_STREAM)) {
+      return res.status(403).json({
+        message: 'اشتراک زنده فقط برای مدیر، العالم و استاد مجاز است',
+        code: 'LIVE_STREAM_FORBIDDEN',
+        required_permission: PERMISSIONS.LIVE_STREAM,
+        user_role: req.user.role,
+      });
     }
 
     if (entityName === 'KhatmPart') {
