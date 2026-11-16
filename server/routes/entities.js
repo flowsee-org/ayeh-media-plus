@@ -21,7 +21,7 @@ if (Prisma?.dmmf?.datamodel?.models) {
   }
 }
 
-export function filterModelFields(entityName, payload) {
+export function filterModelFields(entityName, payload, isCreate = false) {
   if (!payload || typeof payload !== 'object') return payload;
   const modelName = entityName.charAt(0).toLowerCase() + entityName.slice(1);
   const allowed = modelFieldsMap.get(modelName);
@@ -73,15 +73,9 @@ export function filterModelFields(entityName, payload) {
     normalized.followed_id = normalized.scholar_id;
   }
 
-  // 4. Fallbacks for strictly non-null required fields
-  if (allowed.has('author_id') && !normalized.author_id) {
-    normalized.author_id = 'guest';
-  }
-  if (allowed.has('author_name') && !normalized.author_name) {
-    normalized.author_name = 'کاربر آیه';
-  }
-  if (allowed.has('content') && normalized.content === undefined) {
-    normalized.content = '';
+  // 4. Fallbacks for strictly non-null required fields (only on CREATE)
+  if (isCreate) {
+    applyCreateFallbacks(entityName, normalized);
   }
 
   const filtered = {};
@@ -137,6 +131,24 @@ function parseSort(sortParam) {
   const isDesc = sortParam.startsWith('-');
   const field = isDesc ? sortParam.slice(1) : sortParam;
   return { [field]: isDesc ? 'desc' : 'asc' };
+}
+
+// Fallbacks for strictly non-null required fields (only applied on CREATE)
+function applyCreateFallbacks(entityName, normalized) {
+  const modelName = entityName.charAt(0).toLowerCase() + entityName.slice(1);
+  const allowed = modelFieldsMap.get(modelName);
+  if (!allowed) return normalized;
+
+  if (allowed.has('author_id') && !normalized.author_id) {
+    normalized.author_id = 'guest';
+  }
+  if (allowed.has('author_name') && !normalized.author_name) {
+    normalized.author_name = 'کاربر آیه';
+  }
+  if (allowed.has('content') && normalized.content === undefined) {
+    normalized.content = '';
+  }
+  return normalized;
 }
 
 const IGNORED_FILTER_KEYS = new Set([
@@ -597,9 +609,9 @@ router.post('/follow', async (req, res) => {
       return res.status(400).json({ message: 'Cannot follow yourself' });
     }
 
-    // Validate target user exists
-    const targetUser = await prisma.user.findUnique({ where: { id: followed_id } });
-    if (!targetUser) {
+    // Validate target scholar exists
+    const targetScholar = await prisma.scholar.findUnique({ where: { id: followed_id } });
+    if (!targetScholar) {
       return res.status(404).json({ message: 'Target user not found' });
     }
 
@@ -615,7 +627,7 @@ router.post('/follow', async (req, res) => {
       data: {
         follower_id: req.user.id,
         followed_id,
-        followed_name: targetUser.full_name || req.body.scholar_name || req.body.followed_name || 'کاربر آیه',
+        followed_name: targetScholar.name || req.body.scholar_name || req.body.followed_name || 'کاربر آیه',
       },
     });
 
@@ -676,15 +688,16 @@ router.post('/:entity', async (req, res) => {
     const payload = applyCreatePolicy(
       req,
       entityName,
-      filterModelFields(entityName, serializePayload(req.body))
+      filterModelFields(entityName, serializePayload(req.body), true)
     );
     // Follow-specific security: prevent self-follow and duplicates via generic route too
     if (entityName === 'Follow') {
       if (payload.follower_id === payload.followed_id) {
         return res.status(400).json({ message: 'Cannot follow yourself' });
       }
-      const targetUser = await prisma.user.findUnique({ where: { id: payload.followed_id } });
-      if (!targetUser) {
+      // followed_id references Scholar.id, not User.id
+      const targetScholar = await prisma.scholar.findUnique({ where: { id: payload.followed_id } });
+      if (!targetScholar) {
         return res.status(404).json({ message: 'Target user not found' });
       }
       const existing = await prisma.follow.findFirst({
@@ -748,7 +761,7 @@ router.post('/:entity/bulk', async (req, res) => {
     const items = Array.isArray(req.body) ? req.body : req.body.items || [];
     const serializedItems = items
       .map(serializePayload)
-      .map((item) => filterModelFields(entityName, item))
+      .map((item) => filterModelFields(entityName, item, true))
       .map((item) => applyCreatePolicy(req, entityName, item));
 
     if (entityName === 'KhatmPart') {
