@@ -26,9 +26,9 @@ export default function ScholarCard({
   return (
     <Link
       href={href}
-      className={`group flex flex-col items-center text-center rounded-xl border border-border bg-card p-4 min-w-[140px] sm:min-w-[160px] hover:border-primary/30 hover:shadow-sm transition-all ${className}`}
+      className={`group flex flex-col items-center text-center rounded border border-border bg-card p-4 min-w-[140px] sm:min-w-[160px] hover:border-primary/30 hover:shadow-sm transition-all ${className}`}
     >
-      <div className={`relative ${compact ? 'h-16 w-16' : 'h-20 w-20'} rounded-full overflow-hidden bg-muted border border-border mb-3`}>
+      <div className={`relative ${compact ? 'h-16 w-16' : 'h-20 w-20'} rounded overflow-hidden bg-muted border border-border mb-3`}>
         {avatarUrl ? (
           <img src={avatarUrl} alt={name} className="w-full h-full object-cover" loading="lazy" />
         ) : (
@@ -37,7 +37,7 @@ export default function ScholarCard({
           </div>
         )}
         {verified && (
-          <span className="absolute bottom-0 end-0 h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center border-2 border-card">
+          <span className="absolute bottom-0 end-0 h-5 w-5 rounded bg-primary text-primary-foreground flex items-center justify-center border-2 border-card">
             <ShieldCheck className="h-3 w-3" />
           </span>
         )}

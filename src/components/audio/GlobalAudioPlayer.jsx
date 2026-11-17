@@ -39,7 +39,7 @@ export default function GlobalAudioPlayer() {
         className="fixed z-40 bottom-[68px] sm:bottom-4 right-3 left-3 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[620px] max-w-full pointer-events-auto animate-fade-in-up"
         dir="rtl"
       >
-        <div className="relative overflow-hidden rounded-2xl border border-accent/40 bg-card/95 backdrop-blur-xl shadow-premium p-2 sm:px-3 sm:py-2.5 flex items-center gap-3">
+        <div className="relative overflow-hidden rounded border border-accent/40 bg-card/95 backdrop-blur-xl shadow-premium p-2 sm:px-3 sm:py-2.5 flex items-center gap-3">
           {/* Top Thin Progress Line */}
           <div className="absolute top-0 right-0 left-0 h-1 bg-secondary overflow-hidden">
             <div
@@ -51,7 +51,7 @@ export default function GlobalAudioPlayer() {
           {/* Artwork & Playing Indicator */}
           <button
             onClick={() => setIsExpanded(true)}
-            className="relative h-11 w-11 rounded-xl overflow-hidden shrink-0 border border-accent/30 bg-secondary flex items-center justify-center group"
+            className="relative h-11 w-11 rounded overflow-hidden shrink-0 border border-accent/30 bg-secondary flex items-center justify-center group"
             title="بزرگنمایی پلیر"
           >
             {track.coverImage ? (
@@ -67,7 +67,7 @@ export default function GlobalAudioPlayer() {
             )}
             {isPlaying && (
               <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                <span className="h-2 w-2 rounded-full bg-accent animate-ping" />
+                <span className="h-2 w-2 rounded bg-accent animate-ping" />
               </div>
             )}
           </button>
@@ -107,7 +107,7 @@ export default function GlobalAudioPlayer() {
             {/* Rewind 10s */}
             <button
               onClick={() => seekRelative(-10)}
-              className="h-8 w-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
               title="۱۰ ثانیه قبل"
             >
               <RotateCcw className="h-4 w-4" />
@@ -116,7 +116,7 @@ export default function GlobalAudioPlayer() {
             {/* Play / Pause */}
             <button
               onClick={togglePlay}
-              className="h-9 w-9 rounded-xl bg-accent hover:bg-accent/90 text-stone-950 flex items-center justify-center shadow-gold-glow transition-all hover:scale-105 active:scale-95"
+              className="h-9 w-9 rounded bg-accent hover:bg-accent/90 text-stone-950 flex items-center justify-center shadow-gold-glow transition-all hover:scale-105 active:scale-95"
               title={isPlaying ? "توقف" : "پخش"}
             >
               {isPlaying ? (
@@ -129,7 +129,7 @@ export default function GlobalAudioPlayer() {
             {/* Forward 10s */}
             <button
               onClick={() => seekRelative(10)}
-              className="h-8 w-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
               title="۱۰ ثانیه بعد"
             >
               <RotateCw className="h-4 w-4" />
@@ -138,7 +138,7 @@ export default function GlobalAudioPlayer() {
             {/* Expand Modal */}
             <button
               onClick={() => setIsExpanded(true)}
-              className="hidden sm:flex h-8 w-8 rounded-lg hover:bg-secondary items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+              className="hidden sm:flex h-8 w-8 rounded hover:bg-secondary items-center justify-center text-muted-foreground hover:text-accent transition-colors"
               title="نمایش پنل تمام‌صفحه"
             >
               <Maximize2 className="h-3.5 w-3.5" />
@@ -147,7 +147,7 @@ export default function GlobalAudioPlayer() {
             {/* Dismiss / Close */}
             <button
               onClick={closePlayer}
-              className="h-8 w-8 rounded-lg hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors mr-0.5"
+              className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors mr-0.5"
               title="بستن پلیر"
             >
               <X className="h-4 w-4" />

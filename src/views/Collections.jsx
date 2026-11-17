@@ -71,8 +71,8 @@ export default function Collections() {
   return (
     <PullToRefresh onRefresh={loadCollections}>
       <div className="animate-fade-in page-shell font-doran space-y-8">
-        <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
+        <div className="rounded border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
             <FolderHeart className="h-3.5 w-3.5 text-primary" /> مجموعه‌های برگزیده و موضوعی
           </div>
           <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
@@ -97,7 +97,7 @@ export default function Collections() {
           <>
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <div className="h-8 w-8 rounded bg-primary/10 text-primary flex items-center justify-center">
                   <BookOpen className="h-4 w-4" />
                 </div>
                 <h2 className="font-rokh-bold font-bold text-xl">همه مجموعه‌ها</h2>
@@ -116,7 +116,7 @@ export default function Collections() {
                             e.stopPropagation();
                             shareCollection(c);
                           }}
-                          className="pointer-events-auto h-10 w-10 rounded-full bg-card/80 text-muted-foreground hover:text-primary flex items-center justify-center backdrop-blur-sm border border-border/60 transition-all"
+                          className="pointer-events-auto h-10 w-10 rounded bg-card/80 text-muted-foreground hover:text-primary flex items-center justify-center backdrop-blur-sm border border-border/60 transition-all"
                           title="اشتراک‌گذاری مجموعه"
                         >
                           <Share2 className="h-4 w-4" />
@@ -128,7 +128,7 @@ export default function Collections() {
                             e.stopPropagation();
                             toggleSave(c.id);
                           }}
-                          className={`pointer-events-auto h-10 w-10 rounded-full flex items-center justify-center backdrop-blur-sm border transition-all ${
+                          className={`pointer-events-auto h-10 w-10 rounded flex items-center justify-center backdrop-blur-sm border transition-all ${
                             isSaved
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-card/80 text-muted-foreground hover:text-primary border-border/60"

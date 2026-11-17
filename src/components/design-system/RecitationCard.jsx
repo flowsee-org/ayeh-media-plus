@@ -35,7 +35,7 @@ export default function RecitationCard({
  return (
  <Link
  href={href}
- className={`group relative block rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-quranic-turquoise/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
+ className={`group relative block rounded border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-quranic-turquoise/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
  >
  <div className="h-56 lg:h-64 overflow-hidden bg-gradient-to-br from-quranic-emerald-dark/20 to-quranic-turquoise/20 flex items-center justify-center relative">
  {imageUrl ? (
@@ -49,7 +49,7 @@ export default function RecitationCard({
  <div className="w-full h-full flex items-center justify-center">
  <div className="relative flex items-center justify-center">
  <div className="absolute inset-0 bg-black/30" />
- <div className="relative z-10 h-16 w-16 rounded-full bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+ <div className="relative z-10 h-16 w-16 rounded bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
  {isAudio ? (
  <Volume2 className="h-8 w-8 ml-1" />
  ) : (
@@ -62,7 +62,7 @@ export default function RecitationCard({
 
  {/* Play overlay */}
  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
- <div className="h-16 w-16 rounded-full bg-quranic-emerald/95 backdrop-blur-md flex items-center justify-center text-white shadow-xl shadow-quranic-glow transform group-hover:scale-110 transition-transform">
+ <div className="h-16 w-16 rounded bg-quranic-emerald/95 backdrop-blur-md flex items-center justify-center text-white shadow-xl shadow-quranic-glow transform group-hover:scale-110 transition-transform">
  {isAudio ? (
  <Volume2 className="h-8 w-8 ml-1" />
  ) : (
@@ -75,13 +75,13 @@ export default function RecitationCard({
  <div className="absolute top-3 left-3 right-3 flex flex-wrap gap-1.5 justify-between">
  <div className="flex flex-wrap gap-1.5">
  {isAudio && (
- <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-turquoise/90 text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-turquoise/30">
+ <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-quranic-turquoise/90 text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-turquoise/30">
  <Mic className="h-3 w-3" aria-hidden="true" />
  <span>صوتی</span>
  </span>
  )}
  {verseKey && (
- <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-saffron/90 text-quranic-ink text-[10px] font-bold backdrop-blur-sm border border-quranic-saffron/30">
+ <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-quranic-saffron/90 text-quranic-ink text-[10px] font-bold backdrop-blur-sm border border-quranic-saffron/30">
  <BookOpen className="h-3 w-3" aria-hidden="true" />
  <span>{verseKey}</span>
  </span>
@@ -91,7 +91,7 @@ export default function RecitationCard({
 
  {/* Duration - bottom right */}
  {duration && (
- <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
+ <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
  <Clock className="h-3 w-3 text-quranic-saffron" aria-hidden="true" />
  <span>{duration}</span>
  </div>
@@ -99,7 +99,7 @@ export default function RecitationCard({
 
  {/* Views - bottom left */}
  {views > 0 && (
- <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/60 text-white text-[10px] font-bold backdrop-blur-md border border-white/20">
+ <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded bg-black/60 text-white text-[10px] font-bold backdrop-blur-md border border-white/20">
  <Award className="h-3 w-3 text-quranic-saffron" aria-hidden="true" />
  <span>{fa(views)}</span>
  </div>
@@ -129,7 +129,7 @@ export default function RecitationCard({
  {/* Qari info */}
  {qariName && (
  <div className="mt-2 flex items-center justify-center gap-2 text-xs font-ui">
- <div className="h-6 w-6 rounded-full bg-quranic-turquoise/15 flex items-center justify-center text-quranic-turquoise text-[10px] font-bold border border-quranic-turquoise/30">
+ <div className="h-6 w-6 rounded bg-quranic-turquoise/15 flex items-center justify-center text-quranic-turquoise text-[10px] font-bold border border-quranic-turquoise/30">
  {qariName.charAt(0)}
  </div>
  {qariId ? (

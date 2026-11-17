@@ -63,11 +63,11 @@ export default function Achievements() {
       </div>
 
       {/* Soft hero — aligned with Collections/Competitions card headers */}
-      <div className="rounded-3xl border border-border bg-card p-6 sm:p-8 shadow-soft mb-8 overflow-hidden relative">
-        <div className="absolute -top-16 -end-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="rounded border border-border bg-card p-6 sm:p-8 shadow-soft mb-8 overflow-hidden relative">
+        <div className="absolute -top-16 -end-16 w-48 h-48 bg-primary/10 rounded blur-3xl pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-rokh-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 border border-primary/20 text-primary text-xs font-rokh-bold">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>سطح معنوی فعلی: {levelInfo.name} ({levelInfo.title})</span>
             </div>
@@ -82,8 +82,8 @@ export default function Achievements() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <div className="px-5 py-3.5 rounded-2xl bg-secondary border border-border flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+            <div className="px-5 py-3.5 rounded bg-secondary border border-border flex items-center gap-3">
+              <div className="w-12 h-12 rounded bg-primary/15 text-primary flex items-center justify-center">
                 <Flame className="w-6 h-6" />
               </div>
               <div className="text-right">
@@ -96,8 +96,8 @@ export default function Achievements() {
               </div>
             </div>
 
-            <div className="px-5 py-3.5 rounded-2xl bg-secondary border border-border flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+            <div className="px-5 py-3.5 rounded bg-secondary border border-border flex items-center gap-3">
+              <div className="w-12 h-12 rounded bg-primary/15 text-primary flex items-center justify-center">
                 <Sparkles className="w-6 h-6" />
               </div>
               <div className="text-right">
@@ -117,7 +117,7 @@ export default function Achievements() {
             <span>پیشرفت تا سطح بعدی: {levelInfo.maxXp.toLocaleString()} XP</span>
             <span className="font-mono">{progressPercent}%</span>
           </div>
-          <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
+          <div className="w-full h-2.5 rounded bg-muted overflow-hidden">
             <div
               className="h-full bg-primary transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
@@ -138,7 +138,7 @@ export default function Achievements() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-rokh-bold text-sm font-bold transition-all shrink-0 border ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded font-rokh-bold text-sm font-bold transition-all shrink-0 border ${
                 active
                   ? "bg-primary text-primary-foreground border-primary shadow-sm"
                   : "bg-card hover:bg-muted text-muted-foreground hover:text-foreground border-border"
@@ -147,7 +147,7 @@ export default function Achievements() {
               <Icon className="w-4 h-4" />
               {tab.label}
               {tab.badge && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-background/30 text-current font-mono">
+                <span className="text-[11px] px-2 py-0.5 rounded bg-background/30 text-current font-mono">
                   {tab.badge}
                 </span>
               )}

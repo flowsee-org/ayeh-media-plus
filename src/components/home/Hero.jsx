@@ -98,8 +98,8 @@ export default function Hero({ dailyVerse }) {
  </p>
 
  {/* Platform badge */}
- <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/30 bg-black/40 backdrop-blur-md text-amber-200 text-xs font-ui font-medium mb-5 shadow-lg shadow-black/20">
- <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+ <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded border border-amber-400/30 bg-black/40 backdrop-blur-md text-amber-200 text-xs font-ui font-medium mb-5 shadow-lg shadow-black/20">
+ <span className="flex h-2 w-2 rounded bg-emerald-400 animate-pulse" />
  <span>پلتفرم چندرسانه‌ای تدبّر در قرآن کریم</span>
  </div>
 
@@ -115,7 +115,7 @@ export default function Hero({ dailyVerse }) {
 
  {/* Professional Search Box (Doran UI) */}
  <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-5">
- <div className="relative flex items-center rounded-2xl border border-amber-400/30 bg-card/90 dark:bg-black/60 shadow-2xl backdrop-blur-xl hover:border-amber-400/60 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/30 transition-all p-1.5 sm:p-2">
+ <div className="relative flex items-center rounded border border-amber-400/30 bg-card/90 dark:bg-black/60 shadow-2xl backdrop-blur-xl hover:border-amber-400/60 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/30 transition-all p-1.5 sm:p-2">
  <Search className="h-5 w-5 text-amber-400 mr-3 shrink-0" />
  <input
  value={searchQuery}
@@ -125,7 +125,7 @@ export default function Hero({ dailyVerse }) {
  />
  <button
  type="submit"
- className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-800 hover:from-emerald-500 hover:to-teal-700 text-white font-ui font-bold text-xs sm:text-sm shadow-md transition-all whitespace-nowrap active:scale-95"
+ className="px-5 py-2.5 rounded bg-gradient-to-r from-emerald-600 to-teal-800 hover:from-emerald-500 hover:to-teal-700 text-white font-ui font-bold text-xs sm:text-sm shadow-md transition-all whitespace-nowrap active:scale-95"
  >
  کاوش در قرآن
  </button>
@@ -141,7 +141,7 @@ export default function Hero({ dailyVerse }) {
  <button
  key={t.q}
  onClick={() => handleTopicClick(t.q)}
- className="px-3 py-1 rounded-xl text-xs font-ui font-medium bg-black/40 hover:bg-black/60 text-white border border-amber-400/20 backdrop-blur-md transition-all hover:border-amber-400/50"
+ className="px-3 py-1 rounded text-xs font-ui font-medium bg-black/40 hover:bg-black/60 text-white border border-amber-400/20 backdrop-blur-md transition-all hover:border-amber-400/50"
  >
  {t.label}
  </button>
@@ -156,14 +156,14 @@ export default function Hero({ dailyVerse }) {
  <Link
  key={card.to}
  to={card.to}
- className="group relative flex flex-col justify-between p-5 rounded-3xl bg-card/90 dark:bg-card/75 border border-border/80 hover:border-amber-400/50 hover:shadow-2xl transition-all duration-300 backdrop-blur-lg hover:-translate-y-1"
+ className="group relative flex flex-col justify-between p-5 rounded bg-card/90 dark:bg-card/75 border border-border/80 hover:border-amber-400/50 hover:shadow-2xl transition-all duration-300 backdrop-blur-lg hover:-translate-y-1"
  >
  <div>
  <div className="flex items-center justify-between mb-3.5">
- <span className={`text-[11px] font-ui font-bold px-2.5 py-0.5 rounded-full border ${card.tagColor}`}>
+ <span className={`text-[11px] font-ui font-bold px-2.5 py-0.5 rounded border ${card.tagColor}`}>
  {card.badge}
  </span>
- <div className="h-9 w-9 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+ <div className="h-9 w-9 rounded bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
  <Icon className="h-4.5 w-4.5" />
  </div>
  </div>
@@ -187,13 +187,13 @@ export default function Hero({ dailyVerse }) {
 
  {/* Daily Verse Card — Illuminated Persian Katibeh Card */}
  {dailyVerse && (
- <div className="max-w-3xl mx-auto rounded-3xl border border-amber-400/30 bg-card/95 dark:bg-black/60 p-6 sm:p-8 text-right shadow-2xl backdrop-blur-xl relative overflow-hidden">
+ <div className="max-w-3xl mx-auto rounded border border-amber-400/30 bg-card/95 dark:bg-black/60 p-6 sm:p-8 text-right shadow-2xl backdrop-blur-xl relative overflow-hidden">
  {/* Subtle corner light sheen */}
- <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
+ <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded blur-2xl pointer-events-none" />
 
  <div className="flex items-center justify-between gap-3 mb-4 border-b border-border/70 pb-3">
  <div className="flex items-center gap-2">
- <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+ <span className="h-2 w-2 rounded bg-amber-400 animate-pulse" />
  <span className="font-rokh-bold text-xs font-bold text-foreground">
  آیه امروز برای تدبّر شما
  </span>

@@ -95,7 +95,7 @@ export default function ExpandedPlayerModal() {
  <div className="relative flex items-center justify-between px-5 pt-4 pb-2 border-b border-border/60">
  <button
  onClick={() => setIsExpanded(false)}
- className="h-9 w-9 rounded-xl hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
+ className="h-9 w-9 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
  aria-label="بستن پنل"
  >
  <ChevronDown className="h-5 w-5" />
@@ -109,7 +109,7 @@ export default function ExpandedPlayerModal() {
  </div>
 
  {sleepTimeRemaining ? (
- <span className="text-[11px] font-semibold text-accent bg-accent/15 px-2 py-0.5 rounded-full flex items-center gap-1">
+ <span className="text-[11px] font-semibold text-accent bg-accent/15 px-2 py-0.5 rounded flex items-center gap-1">
  <Clock className="h-3 w-3" />
  {formatSeconds(sleepTimeRemaining)}
  </span>
@@ -151,18 +151,18 @@ export default function ExpandedPlayerModal() {
  {activeTab === "player" ? (
  <div className="flex flex-col items-center">
  {/* Royal Artwork Cover Frame */}
- <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-3xl p-2 border-2 border-accent/40 shadow-premium bg-gradient-to-br from-card to-secondary/80 my-2 flex items-center justify-center overflow-hidden">
+ <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded p-2 border-2 border-accent/40 shadow-premium bg-gradient-to-br from-card to-secondary/80 my-2 flex items-center justify-center overflow-hidden">
  <div className="absolute inset-0 pattern-islamic opacity-20" />
 
  {track.coverImage ? (
  <img
  src={track.coverImage}
  alt={track.title}
- className="w-full h-full object-cover rounded-2xl"
+ className="w-full h-full object-cover rounded"
  />
  ) : (
  <div className="flex flex-col items-center justify-center text-center p-4">
- <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white shadow-lg mb-3">
+ <div className="h-16 w-16 rounded bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white shadow-lg mb-3">
  <BookOpen className="h-8 w-8 text-white" />
  </div>
  <span className=" text-accent font-bold text-lg">
@@ -173,7 +173,7 @@ export default function ExpandedPlayerModal() {
 
  {/* Pulsing ring indicator */}
  {isPlaying && (
- <div className="absolute inset-1 rounded-2xl border-2 border-accent/60 pointer-events-none animate-pulse-soft" />
+ <div className="absolute inset-1 rounded border-2 border-accent/60 pointer-events-none animate-pulse-soft" />
  )}
  </div>
 
@@ -188,8 +188,8 @@ export default function ExpandedPlayerModal() {
 
  {/* Active Chapter name if available */}
  {chapters.length > 0 && chapters[currentChapterIndex] && (
- <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/80 border border-border text-xs text-muted-foreground font-medium">
- <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+ <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded bg-secondary/80 border border-border text-xs text-muted-foreground font-medium">
+ <span className="h-1.5 w-1.5 rounded bg-accent" />
  <span>فصل جاری: {chapters[currentChapterIndex].title}</span>
  </div>
  )}
@@ -202,7 +202,7 @@ export default function ExpandedPlayerModal() {
  setIsExpanded(false);
  navigate(`/quran?verse=${track.verseKey}`);
  }}
- className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/25 text-xs font-bold transition-colors"
+ className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-primary/10 hover:bg-primary/20 text-primary border border-primary/25 text-xs font-bold transition-colors"
  >
  <BookOpen className="h-3.5 w-3.5" />
  مشاهده آیه {track.verseKey} در مصحف شریف ←
@@ -220,7 +220,7 @@ export default function ExpandedPlayerModal() {
  max={duration || 100}
  value={currentTime}
  onChange={(e) => seek(Number(e.target.value))}
- className="w-full h-2 rounded-lg bg-secondary appearance-none cursor-pointer accent-accent"
+ className="w-full h-2 rounded bg-secondary appearance-none cursor-pointer accent-accent"
  />
  </div>
  <div className="flex justify-between text-xs text-muted-foreground font-ui">
@@ -237,7 +237,7 @@ export default function ExpandedPlayerModal() {
  {/* Rewind 10s */}
  <button
  onClick={() => seekRelative(-10)}
- className="h-11 w-11 rounded-2xl bg-secondary hover:bg-secondary/80 flex items-center justify-center text-foreground transition-all hover:scale-105 active:scale-95"
+ className="h-11 w-11 rounded bg-secondary hover:bg-secondary/80 flex items-center justify-center text-foreground transition-all hover:scale-105 active:scale-95"
  title="۱۰ ثانیه به عقب"
  >
  <RotateCcw className="h-5 w-5" />
@@ -246,7 +246,7 @@ export default function ExpandedPlayerModal() {
  {/* Big Play / Pause Button */}
  <button
  onClick={togglePlay}
- className="h-16 w-16 rounded-3xl bg-gradient-to-tr from-accent to-yellow-500 hover:from-accent/90 hover:to-yellow-400 text-stone-950 flex items-center justify-center shadow-gold-glow transition-all hover:scale-105 active:scale-95"
+ className="h-16 w-16 rounded bg-gradient-to-tr from-accent to-yellow-500 hover:from-accent/90 hover:to-yellow-400 text-stone-950 flex items-center justify-center shadow-gold-glow transition-all hover:scale-105 active:scale-95"
  title={isPlaying ? "توقف" : "پخش"}
  >
  {isPlaying ? (
@@ -259,7 +259,7 @@ export default function ExpandedPlayerModal() {
  {/* Forward 10s */}
  <button
  onClick={() => seekRelative(10)}
- className="h-11 w-11 rounded-2xl bg-secondary hover:bg-secondary/80 flex items-center justify-center text-foreground transition-all hover:scale-105 active:scale-95"
+ className="h-11 w-11 rounded bg-secondary hover:bg-secondary/80 flex items-center justify-center text-foreground transition-all hover:scale-105 active:scale-95"
  title="۱۰ ثانیه به جلو"
  >
  <RotateCw className="h-5 w-5" />
@@ -275,14 +275,14 @@ export default function ExpandedPlayerModal() {
  setShowSpeedMenu(!showSpeedMenu);
  setShowSleepMenu(false);
  }}
- className="px-3 py-1.5 rounded-xl border border-border bg-secondary/80 hover:bg-secondary text-xs font-bold text-foreground flex items-center gap-1.5 transition-colors"
+ className="px-3 py-1.5 rounded border border-border bg-secondary/80 hover:bg-secondary text-xs font-bold text-foreground flex items-center gap-1.5 transition-colors"
  >
  <Gauge className="h-3.5 w-3.5 text-accent" />
  سرعت: {playbackRate.toLocaleString("fa-IR")}x
  </button>
 
  {showSpeedMenu && (
- <div className="absolute bottom-full mb-2 right-0 rounded-2xl border border-accent/30 bg-card shadow-2xl p-2 z-20 flex flex-col gap-1 min-w-[110px]">
+ <div className="absolute bottom-full mb-2 right-0 rounded border border-accent/30 bg-card shadow-2xl p-2 z-20 flex flex-col gap-1 min-w-[110px]">
  {SPEED_OPTIONS.map((rate) => (
  <button
  key={rate}
@@ -290,7 +290,7 @@ export default function ExpandedPlayerModal() {
  setPlaybackRate(rate);
  setShowSpeedMenu(false);
  }}
- className={`px-3 py-1.5 rounded-lg text-xs font-bold text-right transition-colors ${
+ className={`px-3 py-1.5 rounded text-xs font-bold text-right transition-colors ${
  playbackRate === rate
  ? "bg-accent text-accent-foreground"
  : "hover:bg-secondary text-muted-foreground hover:text-foreground"
@@ -310,14 +310,14 @@ export default function ExpandedPlayerModal() {
  setShowSleepMenu(!showSleepMenu);
  setShowSpeedMenu(false);
  }}
- className="px-3 py-1.5 rounded-xl border border-border bg-secondary/80 hover:bg-secondary text-xs font-bold text-foreground flex items-center gap-1.5 transition-colors"
+ className="px-3 py-1.5 rounded border border-border bg-secondary/80 hover:bg-secondary text-xs font-bold text-foreground flex items-center gap-1.5 transition-colors"
  >
  <Clock className="h-3.5 w-3.5 text-accent" />
  {sleepTimerMinutes ? `خواب: ${sleepTimerMinutes.toLocaleString("fa-IR")} د` : "تایمر خواب"}
  </button>
 
  {showSleepMenu && (
- <div className="absolute bottom-full mb-2 left-0 rounded-2xl border border-accent/30 bg-card shadow-2xl p-2 z-20 flex flex-col gap-1 min-w-[130px]">
+ <div className="absolute bottom-full mb-2 left-0 rounded border border-accent/30 bg-card shadow-2xl p-2 z-20 flex flex-col gap-1 min-w-[130px]">
  {SLEEP_OPTIONS.map((opt) => (
  <button
  key={String(opt.minutes)}
@@ -325,7 +325,7 @@ export default function ExpandedPlayerModal() {
  setSleepTimer(opt.minutes);
  setShowSleepMenu(false);
  }}
- className={`px-3 py-1.5 rounded-lg text-xs font-bold text-right transition-colors ${
+ className={`px-3 py-1.5 rounded text-xs font-bold text-right transition-colors ${
  sleepTimerMinutes === opt.minutes
  ? "bg-accent text-accent-foreground"
  : "hover:bg-secondary text-muted-foreground hover:text-foreground"
@@ -354,7 +354,7 @@ export default function ExpandedPlayerModal() {
  <button
  key={idx}
  onClick={() => jumpChapter(sec)}
- className={`w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-right ${
+ className={`w-full flex items-center justify-between p-3 rounded border transition-all text-right ${
  isActive
  ? "bg-accent/15 border-accent text-accent font-bold shadow-soft"
  : "border-border/60 hover:bg-secondary/70 text-foreground"
@@ -362,7 +362,7 @@ export default function ExpandedPlayerModal() {
  >
  <div className="flex items-center gap-3 min-w-0">
  <span
- className={`h-7 w-7 rounded-xl flex items-center justify-center text-xs shrink-0 font-bold ${
+ className={`h-7 w-7 rounded flex items-center justify-center text-xs shrink-0 font-bold ${
  isActive
  ? "bg-accent text-accent-foreground"
  : "bg-secondary text-muted-foreground"
@@ -373,7 +373,7 @@ export default function ExpandedPlayerModal() {
  <span className="text-sm truncate">{ch.title}</span>
  </div>
 
- <span className="text-xs font-mono px-2 py-0.5 rounded-lg bg-secondary text-muted-foreground">
+ <span className="text-xs font-mono px-2 py-0.5 rounded bg-secondary text-muted-foreground">
  {ch.timestamp || formatSeconds(sec)}
  </span>
  </button>

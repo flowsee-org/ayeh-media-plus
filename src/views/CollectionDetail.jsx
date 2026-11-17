@@ -142,7 +142,7 @@ export default function CollectionDetail() {
  <div className="mt-6 flex items-center justify-center gap-2">
  <button
  onClick={toggleSave}
- className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium border transition-all ${
+ className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium border transition-all ${
  saved ? "border-accent/40 bg-accent/10 text-accent" : "border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50"
  }`}
  >
@@ -151,14 +151,14 @@ export default function CollectionDetail() {
  </button>
  <button
  onClick={handleShare}
- className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
+ className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
  title="اشتراک‌گذاری مجموعه"
  >
  <Share2 className="h-4 w-4" /> اشتراک
  </button>
  <Link
  to={`/collections/${id}/study`}
- className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-sm font-medium bg-accent text-accent-foreground hover:shadow-glow transition-all"
+ className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium bg-accent text-accent-foreground hover:shadow-glow transition-all"
  >
  <BookOpen className="h-4 w-4" /> مطالعه تعاملی
  </Link>
@@ -170,7 +170,7 @@ export default function CollectionDetail() {
  {/* ── Verses ── */}
  <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
  {verses.length === 0 ? (
- <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
+ <div className="rounded border border-dashed border-border/60 p-12 text-center">
  <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground">آیه‌ای در این مجموعه ثبت نشده است.</p>
  </div>
@@ -188,7 +188,7 @@ export default function CollectionDetail() {
  <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-12">
  <IslamicBorder className="mb-8" />
  <div className="flex items-center gap-3 mb-6">
- <div className="h-9 w-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${color}15`, color }}>
+ <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${color}15`, color }}>
  <Tag className="h-4 w-4" />
  </div>
  <h2 className="font-display font-bold text-xl">موضوعات مرتبط</h2>
@@ -198,7 +198,7 @@ export default function CollectionDetail() {
  <Link
  key={i}
  to={`/topics?topic=${encodeURIComponent(t)}`}
- className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-border/40 text-sm hover:border-accent/25 hover:shadow-soft transition-all"
+ className="inline-flex items-center gap-1.5 px-4 py-2 rounded border border-border/40 text-sm hover:border-accent/25 hover:shadow-soft transition-all"
  >
  {t}
  </Link>
@@ -211,15 +211,15 @@ export default function CollectionDetail() {
  {collection.related_scholars?.length > 0 && (
  <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-12">
  <div className="flex items-center gap-3 mb-6">
- <div className="h-9 w-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${color}15`, color }}>
+ <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${color}15`, color }}>
  <Users className="h-4 w-4" />
  </div>
  <h2 className="font-display font-bold text-xl">علما و مفسران مرتبط</h2>
  </div>
  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
  {collection.related_scholars.map((s, i) => (
- <div key={i} className="flex items-center gap-3 rounded-2xl border border-border/40 bg-card/40 p-4">
- <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent font-bold">
+ <div key={i} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-4">
+ <div className="h-10 w-10 rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent font-bold">
  {s[0]}
  </div>
  <span className="text-sm font-medium">{s}</span>
@@ -253,7 +253,7 @@ function VerseCard({ verse, surah, _color, delay = 0 }) {
 
  return (
  <div
- className="group relative rounded-xl border border-accent/10 bg-card/40 p-6 hover:border-accent/30 hover:shadow-premium transition-all duration-300 animate-fade-in-up will-animate"
+ className="group relative rounded border border-accent/10 bg-card/40 p-6 hover:border-accent/30 hover:shadow-premium transition-all duration-300 animate-fade-in-up will-animate"
  style={{ animationDelay: `${delay}s` }}
  >
  <div className="flex items-start gap-5">
@@ -284,7 +284,7 @@ function VerseCard({ verse, surah, _color, delay = 0 }) {
  <button
  type="button"
  onClick={togglePlay}
- className="h-11 w-11 rounded-full bg-accent text-accent-foreground flex items-center justify-center shrink-0 hover:shadow-glow transition-all"
+ className="h-11 w-11 rounded bg-accent text-accent-foreground flex items-center justify-center shrink-0 hover:shadow-glow transition-all"
  title={playing ? "توقف تلاوت" : "پخش تلاوت"}
  >
  {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 mr-0.5" />}
@@ -325,7 +325,7 @@ function VerseCard({ verse, surah, _color, delay = 0 }) {
 
 function Badge({ icon: Icon, label, color }) {
  return (
- <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted/50 text-xs text-muted-foreground font-medium ring-1 ring-border/30">
+ <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-muted/50 text-xs text-muted-foreground font-medium ring-1 ring-border/30">
  <Icon className="h-3 w-3" style={{ color }} />
  {label}
  </span>

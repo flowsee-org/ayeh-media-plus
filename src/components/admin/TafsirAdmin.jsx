@@ -61,8 +61,8 @@ export default function TafsirAdmin() {
       ) : (
         <div className="space-y-2">
           {filtered.map((v) => (
-            <div key={v.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold shrink-0">{v.surah_number}</div>
+            <div key={v.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-bold shrink-0">{v.surah_number}</div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium flex items-center gap-2 flex-wrap">
                   {v.verse_key}
@@ -71,13 +71,13 @@ export default function TafsirAdmin() {
                 {/* filled / empty tafsir chips */}
                 <div className="flex gap-1.5 mt-1.5 flex-wrap">
                   {STATUS_FIELDS.map((f) => (
-                    <span key={f} className={`text-xs px-1.5 py-0.5 rounded-full border ${v[f] ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" : "bg-muted/40 text-muted-foreground/50 border-border/40"}`}>
+                    <span key={f} className={`text-xs px-1.5 py-0.5 rounded border ${v[f] ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" : "bg-muted/40 text-muted-foreground/50 border-border/40"}`}>
                       {STATUS_LABELS[f]}
                     </span>
                   ))}
                 </div>
               </div>
-              <button onClick={() => setEditing(v)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-xs font-medium shadow-soft shrink-0">
+              <button onClick={() => setEditing(v)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-xs font-medium shadow-soft shrink-0">
                 <Pencil className="h-3.5 w-3.5" /> تفسیر
               </button>
             </div>
@@ -134,8 +134,8 @@ function TafsirForm({ initial, onClose, onSaved }) {
       ))}
       {err && <p className="text-sm text-destructive">{err}</p>}
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded-full text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded-full text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
+        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
+        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
           {saving ? "در حال ذخیره…" : "ذخیره تفسیر"}
         </button>
       </div>

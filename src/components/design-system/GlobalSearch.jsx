@@ -79,18 +79,18 @@ export default function GlobalSearch({ className = '' }) {
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
           placeholder="جستجوی ویدیو، قاری، مسابقه..."
-          className="w-full h-10 pe-10 ps-24 rounded-full bg-muted/70 border border-transparent text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 focus:bg-card transition-all"
+          className="w-full h-10 pe-10 ps-24 rounded bg-muted/70 border border-transparent text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 focus:bg-card transition-all"
         />
         <button
           type="submit"
-          className="absolute start-1.5 top-1/2 -translate-y-1/2 h-7 px-3 rounded-full bg-primary text-primary-foreground text-xs font-bold hover:opacity-90"
+          className="absolute start-1.5 top-1/2 -translate-y-1/2 h-7 px-3 rounded bg-primary text-primary-foreground text-xs font-bold hover:opacity-90"
         >
           جستجو
         </button>
       </form>
 
       {showSuggestions && (
-        <div className="absolute top-full inset-x-0 mt-2 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50">
+        <div className="absolute top-full inset-x-0 mt-2 bg-card border border-border rounded shadow-lg overflow-hidden z-50">
           <div className="px-3 py-2 border-b border-border text-[10px] font-bold text-muted-foreground">
             پیشنهادها
           </div>
@@ -100,7 +100,7 @@ export default function GlobalSearch({ className = '' }) {
                 key={s}
                 type="button"
                 onMouseDown={() => goSearch(s)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`w-full flex items-center justify-between px-3 py-2 rounded text-sm transition-colors ${
                   focusedIndex === i ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-foreground'
                 }`}
               >

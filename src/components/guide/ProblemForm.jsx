@@ -21,10 +21,10 @@ export default function ProblemForm({ onSubmit, loading }) {
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-6 shadow-soft relative overflow-hidden">
+    <div className="rounded border border-border bg-card p-6 shadow-soft relative overflow-hidden">
       <div>
         <div className="mb-4 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <div className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Compass className="h-5 w-5" />
           </div>
           <div>
@@ -39,7 +39,7 @@ export default function ProblemForm({ onSubmit, loading }) {
           rows={3}
           dir="rtl"
           placeholder="مثلاً: نگران آینده و روزی‌ام هستم، فشارهای کاری سنگینی می‌کند و دنبال آرامش قلبی‌ام…"
-          className="w-full resize-none rounded-xl border border-border bg-background p-3.5 text-sm sm:text-base font-ui leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground/60"
+          className="w-full resize-none rounded border border-border bg-background p-3.5 text-sm sm:text-base font-ui leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground/60"
         />
 
         <div className="mt-3.5 mb-5 flex flex-wrap items-center gap-1.5 font-ui">
@@ -48,7 +48,7 @@ export default function ProblemForm({ onSubmit, loading }) {
             <button
               key={q}
               onClick={() => setText(q)}
-              className={`rounded-lg border px-3 py-1 text-xs transition-colors ${
+              className={`rounded border px-3 py-1 text-xs transition-colors ${
                 text === q
                   ? "border-primary bg-primary text-primary-foreground font-bold shadow-sm"
                   : "border-border bg-secondary text-muted-foreground hover:text-foreground"
@@ -62,7 +62,7 @@ export default function ProblemForm({ onSubmit, loading }) {
         <button
           onClick={submit}
           disabled={!text.trim() || loading}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-ui font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:pointer-events-none shadow-sm"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded bg-primary text-primary-foreground font-ui font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:pointer-events-none shadow-sm"
         >
           {loading ? (
             <>

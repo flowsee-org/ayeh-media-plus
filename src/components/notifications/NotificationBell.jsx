@@ -73,19 +73,19 @@ export default function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
+        className="relative flex h-10 w-10 items-center justify-center rounded text-foreground transition-colors hover:bg-secondary"
         aria-label="اعلان‌ها"
       >
         <Bell className="h-[21px] w-[21px]" strokeWidth={1.8} />
         {unread > 0 && (
-          <span className="absolute right-1 top-1 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
+          <span className="absolute right-1 top-1 min-w-[16px] h-4 px-1 rounded bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
             {fa(unread)}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute top-full mt-2 left-0 w-80 max-w-[85vw] rounded-lg border border-border bg-popover shadow-premium overflow-hidden z-50 animate-scale-in">
+        <div className="absolute top-full mt-2 left-0 w-80 max-w-[85vw] rounded border border-border bg-popover shadow-premium overflow-hidden z-50 animate-scale-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 bg-accent/[0.03]">
             <span className="font-display font-bold text-sm">اعلان‌ها</span>
             {unread > 0 && (
@@ -109,7 +109,7 @@ export default function NotificationBell() {
                   onClick={() => openItem(n)}
                   className={`w-full flex items-start gap-3 px-4 py-3 text-right border-b border-border/30 last:border-0 transition-colors hover:bg-accent/[0.04] ${!n.read ? "bg-accent/[0.06]" : ""}`}
                 >
-                  <span className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${
+                  <span className={`h-8 w-8 rounded flex items-center justify-center shrink-0 ${
                     n.type === "live" ? "bg-red-500/15 text-red-500"
                     : n.type === "like" ? "bg-accent/10 text-accent"
                     : "bg-primary/10 text-primary"
@@ -137,13 +137,13 @@ export default function NotificationBell() {
                     )}
                     {n.type === "live" && (
                       <span className="inline-flex items-center gap-1 mt-1 text-xs text-red-500 font-medium">
-                        <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                        <span className="h-1.5 w-1.5 rounded bg-red-500 animate-pulse" />
                         اکنون زنده است
                       </span>
                     )}
                     <span className="block text-xs text-muted-foreground/70 mt-1">{timeAgo(n.created_date)}</span>
                   </span>
-                  {!n.read && <span className="h-2 w-2 rounded-full bg-accent shrink-0 mt-1.5" />}
+                  {!n.read && <span className="h-2 w-2 rounded bg-accent shrink-0 mt-1.5" />}
                 </button>
               ))
             )}

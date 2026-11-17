@@ -43,9 +43,9 @@ export default function VideoCard({
     return (
       <Link
         href={href}
-        className={`group flex gap-3 rounded-xl p-1.5 hover:bg-muted/60 transition-colors ${className}`}
+        className={`group flex gap-3 rounded p-1.5 hover:bg-muted/60 transition-colors ${className}`}
       >
-        <div className="relative w-[160px] sm:w-[180px] shrink-0 aspect-video rounded-lg overflow-hidden bg-muted">
+        <div className="relative w-[160px] sm:w-[180px] shrink-0 aspect-video rounded overflow-hidden bg-muted">
           {imageUrl ? (
             <img src={imageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
           ) : (
@@ -81,7 +81,7 @@ export default function VideoCard({
     <article className={`group ${className}`}>
       <Link href={href} className="block">
         <div
-          className={`relative overflow-hidden rounded-xl bg-muted ${
+          className={`relative overflow-hidden rounded bg-muted ${
             isFeatured ? 'aspect-[16/9]' : isCompact ? 'aspect-video' : 'aspect-video'
           }`}
         >
@@ -95,14 +95,14 @@ export default function VideoCard({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/15 to-accent/20">
-              <div className="h-12 w-12 rounded-full bg-card/90 text-primary flex items-center justify-center shadow-md">
+              <div className="h-12 w-12 rounded bg-card/90 text-primary flex items-center justify-center shadow-md">
                 {isAudio ? <Volume2 className="h-6 w-6" /> : <Play className="h-6 w-6 ms-0.5" />}
               </div>
             </div>
           )}
 
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/10">
-            <div className="h-12 w-12 rounded-full bg-primary/95 text-primary-foreground flex items-center justify-center shadow-lg scale-95 group-hover:scale-100 transition-transform">
+            <div className="h-12 w-12 rounded bg-primary/95 text-primary-foreground flex items-center justify-center shadow-lg scale-95 group-hover:scale-100 transition-transform">
               {isAudio ? <Volume2 className="h-5 w-5" /> : <Play className="h-5 w-5 ms-0.5" />}
             </div>
           </div>
@@ -110,14 +110,14 @@ export default function VideoCard({
           <div className="absolute top-2 inset-x-2 flex justify-between gap-1 pointer-events-none">
             <div className="flex flex-wrap gap-1">
               {isLive && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-500 text-white text-[10px] font-bold">
-                  <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500 text-white text-[10px] font-bold">
+                  <span className="h-1.5 w-1.5 rounded bg-white animate-pulse" />
                   زنده
                 </span>
               )}
             </div>
             {isCompetition && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/95 text-white text-[10px] font-bold">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/95 text-white text-[10px] font-bold">
                 <Trophy className="h-3 w-3" />
                 {competitionYear || 'مسابقه'}
               </span>
@@ -125,7 +125,7 @@ export default function VideoCard({
           </div>
 
           {duration && (
-            <span className="absolute bottom-2 start-2 px-1.5 py-0.5 rounded-md bg-black/80 text-white text-[11px] font-bold tabular-nums">
+            <span className="absolute bottom-2 start-2 px-1.5 py-0.5 rounded bg-black/80 text-white text-[11px] font-bold tabular-nums">
               {duration}
             </span>
           )}
@@ -141,7 +141,7 @@ export default function VideoCard({
                 e.preventDefault();
                 if (creatorId) navigate(`/profile/${creatorId}`);
               }}
-              className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 border border-primary/15 hover:bg-primary/15 transition-colors"
+              className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 border border-primary/15 hover:bg-primary/15 transition-colors"
               aria-label={creator || 'کانال'}
             >
               {(creator || 'آ').charAt(0)}

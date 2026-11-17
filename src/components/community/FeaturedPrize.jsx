@@ -7,17 +7,17 @@ export default function FeaturedPrize({ comp }) {
   return (
     <Link
       to={`/competitions/${comp.id}`}
-      className="group relative mb-6 block overflow-hidden rounded-3xl border border-accent/30 bg-gradient-to-br from-primary via-primary to-[#062017] p-5 text-primary-foreground shadow-premium sm:p-7"
+      className="group relative mb-6 block overflow-hidden rounded border border-accent/30 bg-gradient-to-br from-primary via-primary to-[#062017] p-5 text-primary-foreground shadow-premium sm:p-7"
     >
-      <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-accent/20 blur-3xl" />
+      <div className="absolute -left-10 -top-10 h-40 w-40 rounded bg-accent/20 blur-3xl" />
       <div className="relative flex items-start gap-4">
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent/20 text-accent ring-1 ring-accent/40">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded bg-accent/20 text-accent ring-1 ring-accent/40">
           <Trophy className="h-7 w-7" />
         </span>
         <div className="min-w-0 flex-1">
           <span className="text-[11px] font-bold tracking-wide text-accent">مسابقه ویژه — همین حالا شرکت کن</span>
           <h2 className="mt-1 font-display text-xl font-extrabold leading-snug">{comp.title}</h2>
-          <div className="mt-3 inline-flex max-w-full items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-accent-foreground">
+          <div className="mt-3 inline-flex max-w-full items-center gap-2 rounded bg-accent px-4 py-1.5 text-accent-foreground">
             <Gift className="h-4 w-4 shrink-0" />
             <span className="truncate text-sm font-bold">{comp.prize_title}</span>
             {comp.prize_value && <span className="shrink-0 text-xs opacity-80">· {comp.prize_value}</span>}

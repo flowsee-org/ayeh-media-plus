@@ -29,7 +29,7 @@ export default function SuggestedRail() {
  {verse && (
  <Link
  to={`/verse/${String(verse.verse_key).replace(":", "/")}`}
- className="block rounded-2xl border border-border/60 bg-card p-5 transition-colors hover:border-accent/30"
+ className="block rounded border border-border/60 bg-card p-5 transition-colors hover:border-accent/30"
  >
  <div className="mb-3 flex items-center justify-between">
  <span className="flex items-center gap-1.5 text-xs font-medium text-accent">
@@ -59,10 +59,10 @@ export default function SuggestedRail() {
  <Link
  key={c.id}
  to={`/collections/${c.id}`}
- className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted/40"
+ className="flex items-center gap-3 rounded px-2 py-2 transition-colors hover:bg-muted/40"
  >
  <span
- className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
+ className="flex h-9 w-9 shrink-0 items-center justify-center rounded text-xs font-bold"
  style={{
  backgroundColor: `${c.theme_color || "#c5a059"}1f`,
  color: c.theme_color || "#c5a059",
@@ -95,9 +95,9 @@ export default function SuggestedRail() {
  <Link
  key={s.id}
  to={`/scholars/${s.id}`}
- className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted/40"
+ className="flex items-center gap-3 rounded px-2 py-2 transition-colors hover:bg-muted/40"
  >
- <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+ <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-primary/10 text-sm font-bold text-primary">
  {(s.name || "؟").charAt(0)}
  </span>
  <span className="min-w-0 flex-1">

@@ -61,7 +61,7 @@ export default function IslamicArtShowcase() {
  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b border-border/80">
  <div>
  <div className="flex items-center gap-2 mb-2">
- <span className="p-1.5 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-sm">
+ <span className="p-1.5 rounded bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-sm">
  <Camera className="w-4 h-4" />
  </span>
  <span className="text-xs font-bold font-rokh-bold text-amber-600 dark:text-amber-400">
@@ -78,7 +78,7 @@ export default function IslamicArtShowcase() {
 
  <Link
  to="/assistants"
- className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground text-xs font-bold font-rokh-bold shadow-md hover:shadow-lg transition-transform active:scale-95 shrink-0 self-start md:self-auto"
+ className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-primary text-primary-foreground text-xs font-bold font-rokh-bold shadow-md hover:shadow-lg transition-transform active:scale-95 shrink-0 self-start md:self-auto"
  >
  <Palette className="w-4 h-4 text-amber-300" />
  <span>ورود به استودیوی طراحی کارت</span>
@@ -89,7 +89,7 @@ export default function IslamicArtShowcase() {
  {/* Main Interactive Stage */}
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
  {/* Large Featured Viewer (7 cols) */}
- <div className="lg:col-span-7 relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] shadow-2xl border border-amber-400/30 group bg-black">
+ <div className="lg:col-span-7 relative rounded overflow-hidden min-h-[380px] sm:min-h-[440px] shadow-2xl border border-amber-400/30 group bg-black">
  <img
  src={current.image}
  alt={current.title}
@@ -99,7 +99,7 @@ export default function IslamicArtShowcase() {
  {/* Artistic Gradient Vignette */}
  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
  <div className="absolute top-4 right-4">
- <span className="px-3 py-1 rounded-full bg-black/60 border border-amber-400/40 text-amber-300 text-xs font-bold font-rokh-bold backdrop-blur-md shadow-md">
+ <span className="px-3 py-1 rounded bg-black/60 border border-amber-400/40 text-amber-300 text-xs font-bold font-rokh-bold backdrop-blur-md shadow-md">
  {current.tag}
  </span>
  </div>
@@ -124,7 +124,7 @@ export default function IslamicArtShowcase() {
 
  <Link
  to={`/assistants?bg=${current.id}`}
- className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs font-rokh-bold transition-transform active:scale-95 shadow-md"
+ className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs font-rokh-bold transition-transform active:scale-95 shadow-md"
  >
  <Palette className="w-3.5 h-3.5" />
  <span>طراحی کارت با این معماری</span>
@@ -141,13 +141,13 @@ export default function IslamicArtShowcase() {
  <button
  key={item.id}
  onClick={() => setActiveIdx(idx)}
- className={`p-3 rounded-2xl border text-right transition-all flex items-center gap-3.5 ${
+ className={`p-3 rounded border text-right transition-all flex items-center gap-3.5 ${
  isSelected
  ? "bg-primary/10 border-amber-400 shadow-md ring-2 ring-amber-400/30"
  : "bg-card/70 border-border hover:bg-card hover:border-border/90"
  }`}
  >
- <div className="w-20 h-16 rounded-xl overflow-hidden shrink-0 border border-border/80 shadow-sm relative">
+ <div className="w-20 h-16 rounded overflow-hidden shrink-0 border border-border/80 shadow-sm relative">
  <img src={item.image} alt="" className="w-full h-full object-cover" />
  {isSelected && (
  <div className="absolute inset-0 bg-primary/20 backdrop-blur-[1px] flex items-center justify-center">

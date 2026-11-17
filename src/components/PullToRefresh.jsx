@@ -39,7 +39,7 @@ export default function PullToRefresh({ onRefresh, children }) {
       <div className="flex items-center justify-center overflow-hidden transition-[height] duration-200" style={{ height }}>
         {(refreshing || pull > 10) && (
           <div
-            className="h-9 w-9 rounded-full border border-accent/20 bg-card shadow-soft flex items-center justify-center"
+            className="h-9 w-9 rounded border border-accent/20 bg-card shadow-soft flex items-center justify-center"
             style={{ transform: `rotate(${pull * 3}deg)`, opacity: refreshing ? 1 : Math.min(pull / 55, 1) }}
           >
             <Loader2 className={`h-4 w-4 text-accent ${refreshing ? "animate-spin" : ""}`} />

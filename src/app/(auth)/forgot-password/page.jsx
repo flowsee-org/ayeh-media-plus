@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import ForgotPassword from '@/views/ForgotPassword';
 

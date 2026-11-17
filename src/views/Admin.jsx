@@ -51,7 +51,7 @@ export default function Admin() {
   return (
     <RoleGuard requiredPermission={PERMISSIONS.SYSTEM_CONFIG} fallback={
       <div className="mx-auto max-w-md py-24 px-4 text-center font-doran" dir="rtl">
-        <div className="h-16 w-16 mx-auto mb-4 rounded-3xl bg-amber-500/10 border border-amber-500/25 text-amber-500 flex items-center justify-center">
+        <div className="h-16 w-16 mx-auto mb-4 rounded bg-amber-500/10 border border-amber-500/25 text-amber-500 flex items-center justify-center">
           <Lock className="h-8 w-8" />
         </div>
         <h2 className="text-xl font-bold font-rokh-bold mb-2">دسترسی اختصاصی مدیریت</h2>
@@ -63,7 +63,7 @@ export default function Admin() {
         ) : null}
         <button
           onClick={() => openAuthModal()}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-primary text-primary-foreground text-xs font-bold shadow-md hover:shadow-lg transition-all"
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded bg-primary text-primary-foreground text-xs font-bold shadow-md hover:shadow-lg transition-all"
         >
           ورود با حساب مدیر
         </button>
@@ -72,7 +72,7 @@ export default function Admin() {
       <div className="page-shell animate-fade-in">
       {/* Header */}
       <div className="flex items-center gap-3.5 mb-8">
-        <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent/25 to-primary/15 text-accent flex items-center justify-center ring-1 ring-accent/20 shrink-0">
+        <div className="h-12 w-12 rounded bg-gradient-to-br from-accent/25 to-primary/15 text-accent flex items-center justify-center ring-1 ring-accent/20 shrink-0">
           <Shield className="h-5 w-5" />
         </div>
         <div>
@@ -88,7 +88,7 @@ export default function Admin() {
             <button
               key={n.id}
               onClick={() => setTab(n.id)}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${tab === n.id ? "bg-accent text-accent-foreground shadow-soft" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-all ${tab === n.id ? "bg-accent text-accent-foreground shadow-soft" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}
             >
               <n.icon className="h-4 w-4" /> {n.label}
             </button>
@@ -99,12 +99,12 @@ export default function Admin() {
       <div className="grid lg:grid-cols-[220px_1fr] gap-6">
         {/* Desktop sidebar */}
         <aside className="hidden lg:block">
-          <nav className="sticky top-24 space-y-1 rounded-2xl border border-border/40 bg-card/50 p-2 shadow-soft">
+          <nav className="sticky top-24 space-y-1 rounded border border-border/40 bg-card/50 p-2 shadow-soft">
             {NAV.map((n) => (
               <button
                 key={n.id}
                 onClick={() => setTab(n.id)}
-                className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${tab === n.id ? "bg-accent text-accent-foreground shadow-soft" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded text-sm font-medium transition-all ${tab === n.id ? "bg-accent text-accent-foreground shadow-soft" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}
               >
                 <n.icon className="h-4 w-4 shrink-0" /> {n.label}
               </button>
@@ -153,7 +153,7 @@ function VersesAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground font-doran">{items.length} آیه ثبت شده</p>
-        <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
+        <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> آیه جدید
         </button>
       </div>
@@ -163,16 +163,16 @@ function VersesAdmin() {
       ) : (
         <div className="space-y-2">
           {items.map((v) => (
-            <div key={v.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-medium">{v.surah_number}</div>
+            <div key={v.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-medium">{v.surah_number}</div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium font-doran">{v.surah_name_english} · {v.verse_key}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{v.translation}</p>
               </div>
-              <button onClick={() => setForm(v)} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition" title="ویرایش">
+              <button onClick={() => setForm(v)} className="h-11 w-11 rounded text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition" title="ویرایش">
                 <Pencil className="h-4 w-4" />
               </button>
-              <button onClick={async () => { await api.entities.Verse.delete(v.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition" title="حذف">
+              <button onClick={async () => { await api.entities.Verse.delete(v.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition" title="حذف">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -200,7 +200,7 @@ function ScholarsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground font-doran">{items.length} عالم</p>
-        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
+        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> عالم جدید
         </button>
       </div>
@@ -209,13 +209,13 @@ function ScholarsAdmin() {
       ) : (
         <div className="space-y-2">
           {items.map((s) => (
-            <div key={s.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name ? s.name[0] : "?"}</div>
+            <div key={s.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="h-9 w-9 rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name ? s.name[0] : "?"}</div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium font-doran">{s.name}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{s.title} · {s.bio?.slice(0, 30) || ""}</p>
               </div>
-              <button onClick={async () => { await api.entities.Scholar.delete(s.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
+              <button onClick={async () => { await api.entities.Scholar.delete(s.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -253,8 +253,8 @@ function ScholarForm({ onClose, onSaved }) {
       <Field label="زندگی‌نامه"><textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className={inputCls} /></Field>
       <Field label="آثار (با کاما)"><input value={form.books} onChange={(e) => setForm({ ...form, books: e.target.value })} className={inputCls} /></Field>
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded-full text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded-full text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
+        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
+        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
       </div>
     </Modal>
   );
@@ -268,7 +268,7 @@ function CollectionsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">{items.length} مجموعه</p>
-        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
+        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> مجموعه جدید
         </button>
       </div>
@@ -277,13 +277,13 @@ function CollectionsAdmin() {
       ) : (
         <div className="space-y-2">
           {items.map((c) => (
-            <div key={c.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${c.theme_color || "#10b981"}22`, color: c.theme_color || "#10b981" }}><FolderHeart className="h-4 w-4" /></div>
+            <div key={c.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${c.theme_color || "#10b981"}22`, color: c.theme_color || "#10b981" }}><FolderHeart className="h-4 w-4" /></div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium font-doran">{c.name}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{c.description}</p>
               </div>
-              <button onClick={async () => { await api.entities.Collection.delete(c.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
+              <button onClick={async () => { await api.entities.Collection.delete(c.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -324,7 +324,7 @@ function CollectionForm({ onClose, onSaved }) {
       <Field label="نام"><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></Field>
       <Field label="توضیح"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={inputCls} /></Field>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="رنگ"><input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded-lg border border-border/60 bg-card/50" /></Field>
+        <Field label="رنگ"><input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded border border-border/60 bg-card/50" /></Field>
         <Field label="الگوی جلد">
           <SelectInput
             value={form.cover_pattern}
@@ -352,8 +352,8 @@ function CollectionForm({ onClose, onSaved }) {
         </Field>
       </div>
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded-full text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded-full text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
+        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
+        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
       </div>
     </Modal>
   );
@@ -367,7 +367,7 @@ function TopicsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground font-doran">{items.length} موضوع</p>
-        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm shadow-soft">
+        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> موضوع جدید
         </button>
       </div>
@@ -376,13 +376,13 @@ function TopicsAdmin() {
       ) : (
         <div className="space-y-2">
           {items.map((t) => (
-            <div key={t.id} className="flex items-center gap-3 rounded-xl border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${t.theme_color || "#0B6E4F"}22`, color: t.theme_color || "#0B6E4F" }}><Compass className="h-4 w-4" /></div>
+            <div key={t.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${t.theme_color || "#0B6E4F"}22`, color: t.theme_color || "#0B6E4F" }}><Compass className="h-4 w-4" /></div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium font-doran">{t.name}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{t.description} · {(t.verse_keys || []).length} آیه</p>
               </div>
-              <button onClick={async () => { await api.entities.Topic.delete(t.id); reload(); }} className="h-11 w-11 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
+              <button onClick={async () => { await api.entities.Topic.delete(t.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -428,13 +428,13 @@ function TopicForm({ onClose, onSaved }) {
             ]}
           />
         </Field>
-        <Field label="رنگ"><input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded-lg border border-border/50 bg-card/50" /></Field>
+        <Field label="رنگ"><input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded border border-border/50 bg-card/50" /></Field>
       </div>
       <Field label="توضیح"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={inputCls} /></Field>
       <Field label="کلید آیات (با کاما، مثلاً 1:1,2:255)"><input value={form.verse_keys} onChange={(e) => setForm({ ...form, verse_keys: e.target.value })} className={inputCls} /></Field>
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded-full text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded-full text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
+        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
+        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
       </div>
     </Modal>
   );

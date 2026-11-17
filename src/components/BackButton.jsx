@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
  * @param {{ to?: string; onClick?: () => void; label?: string; className?: string }} props
  */
 export default function BackButton({ to = "", onClick = undefined, label = "بازگشت", className = "" }) {
-  const cls = `inline-flex items-center gap-1.5 rounded-full text-sm text-muted-foreground hover:text-accent transition-colors ${className}`;
+  const cls = `inline-flex items-center gap-1.5 rounded text-sm text-muted-foreground hover:text-accent transition-colors ${className}`;
   const inner = (
     <>
       <ChevronRight className="h-4 w-4" /> {label}

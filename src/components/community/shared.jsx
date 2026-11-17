@@ -23,7 +23,7 @@ export function Avatar({ name = "؟", size = 40, className = "", avatar = null }
   }
   return (
     <div
-      className={`rounded-full bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center font-bold text-accent shrink-0 ${className}`}
+      className={`rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center font-bold text-accent shrink-0 ${className}`}
       style={{ width: size, height: size, fontSize: size * 0.38 }}
     >
       {initial}

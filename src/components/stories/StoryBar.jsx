@@ -23,23 +23,23 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
 
   return (
     <>
-      <div className="sticky top-16 z-30 border-b border-border bg-card">
+      <div className="sticky top-16 sm:top-20 z-30 border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-3 sm:px-4">
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-3">
             {/* My Story / Add Story */}
             <div className="flex flex-col items-center gap-1 shrink-0">
               <button
                 onClick={handleMyStoryClick}
-                className="relative h-16 w-16 rounded-full"
+                className="relative h-16 w-16 rounded"
               >
                 <span
-                  className={`absolute inset-0 rounded-full ${
+                  className={`absolute inset-0 rounded ${
                     myGroup
                       ? "bg-gradient-to-tr from-accent via-accent/70 to-primary"
                       : "bg-muted"
                   }`}
                 />
-                <span className="absolute inset-[3px] rounded-full bg-background overflow-hidden">
+                <span className="absolute inset-[3px] rounded bg-background overflow-hidden">
                   {myGroup?.authorAvatar ? (
                     <img
                       src={myGroup.authorAvatar}
@@ -53,7 +53,7 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
                   )}
                 </span>
                 {!myGroup && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center border-2 border-background">
+                  <span className="absolute -bottom-0.5 -right-0.5 h-5 w-5 rounded bg-primary text-primary-foreground flex items-center justify-center border-2 border-background">
                     <Plus className="h-3 w-3" />
                   </span>
                 )}
@@ -70,16 +70,16 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
                 <div key={group.authorId} className="flex flex-col items-center gap-1 shrink-0">
                   <button
                     onClick={() => onOpen(realIndex)}
-                    className="relative h-16 w-16 rounded-full"
+                    className="relative h-16 w-16 rounded"
                   >
                     <span
-                      className={`absolute inset-0 rounded-full ${
+                      className={`absolute inset-0 rounded ${
                         group.allViewed
                           ? "bg-muted-foreground/30"
                           : "bg-gradient-to-tr from-accent via-accent/70 to-primary"
                       }`}
                     />
-                    <span className="absolute inset-[3px] rounded-full bg-background overflow-hidden">
+                    <span className="absolute inset-[3px] rounded bg-background overflow-hidden">
                       {group.authorAvatar ? (
                         <img
                           src={group.authorAvatar}

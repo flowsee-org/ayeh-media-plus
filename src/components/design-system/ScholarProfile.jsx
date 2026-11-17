@@ -114,7 +114,7 @@ export default function ScholarProfile({
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {books.map((book, i) => (
-            <div key={i} className="p-4 rounded-xl border border-accent/10 bg-accent/[0.02] text-right">
+            <div key={i} className="p-4 rounded border border-accent/10 bg-accent/[0.02] text-right">
               <div className="text-sm font-medium text-foreground truncate">{book}</div>
               <div className="text-xs text-muted-foreground mt-1">تألیف استاد</div>
             </div>
@@ -129,7 +129,7 @@ export default function ScholarProfile({
         loading={false}
         className="space-y-4"
       >
-        <div className="rounded-2xl border border-border/50 bg-card p-6">
+        <div className="rounded border border-border/50 bg-card p-6">
           <p className="text-muted-foreground leading-relaxed text-sm">
             {scholarData?.bio || profile.bio || 'این استاد هنوز بیوگرافی خود را وارد نکرده است.'}
           </p>
@@ -139,8 +139,8 @@ export default function ScholarProfile({
             </div>
           )}
           {scholarData?.verified && (
-            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-medium border border-accent">
-              <span className="w-2.5 h-2.5 rounded-full bg-white" /> تایید شده
+            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded bg-accent text-accent-foreground text-xs font-medium border border-accent">
+              <span className="w-2.5 h-2.5 rounded bg-white" /> تایید شده
             </div>
           )}
           <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">

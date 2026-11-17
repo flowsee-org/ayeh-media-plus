@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "@/lib/router-compat";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
+import { useRouter } from 'next/navigation';
 import { getAyah, RECITERS, getAudioUrl } from "@/lib/quranApi";
 import { SURAH_DATA } from "@/lib/surahData";
 import { markVerseRead } from "@/lib/readingTracker";
@@ -15,7 +16,7 @@ import {
  Languages, HelpCircle, Lightbulb, Compass, Link2, Video, Mic,
  Bookmark, Share2, FileText, MessageSquare, Loader2, Quote, BookMarked, RotateCw,
  ChevronRight, ChevronLeft, ChevronDown, Bot, Palette,
- Volume2, Download, Heart, Flag, Check,
+ Volume2, Download, Heart, Flag, Check, Layers,
 } from "lucide-react";
 import TextSettings from "@/components/verse/TextSettings";
 import BackButton from "@/components/BackButton";
@@ -59,6 +60,7 @@ export default function VerseDetail() {
  const [chapters, setChapters] = useState([]);
 
  const navigate = useNavigate();
+ const router = useRouter();
  const { playTrack, track: currentTrack, isPlaying, togglePlay, seek } = useAudioPlayer();
 
  const surahNum = Number(surah);
@@ -228,7 +230,7 @@ export default function VerseDetail() {
  <div className="mx-auto max-w-md py-24 text-center">
  <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground mb-4">بارگذاری این آیه ناموفق بود. لطفاً دوباره تلاش کنید.</p>
- <Button variant="accent" onClick={() => window.location.reload()} className="gap-2">
+ <Button variant="accent" onClick={() => router.refresh()} className="gap-2">
  <RotateCw className="h-4 w-4" /> تلاش مجدد
  </Button>
  </div>
@@ -278,57 +280,99 @@ export default function VerseDetail() {
  </div>
  </div>
 
- {/* Surah Header */}
- <div className="text-center mb-8">
- <div className="inline-flex items-center justify-center gap-2 text-xs tracking-[0.25em] text-accent mb-4 font-semibold">
- <span className="text-accent">۞</span>
- <span>{surahName} · آیه {ayah} ({surah}:{ayah})</span>
- <span className="text-accent">۞</span>
+ {/* Surah Header — Enhanced */}
+ <div className="text-center mb-10">
+ <div className="inline-flex items-center justify-center gap-3 text-sm tracking-[0.15em] text-accent mb-4 font-semibold">
+ <span className="text-2xl text-accent/60">۞</span>
+ <span className="font-rokh-bold text-lg">{surahName}</span>
+ <span className="text-muted-foreground/50">·</span>
+ <span className="font-mono text-base">آیه {ayah} ({surah}:{ayah})</span>
+ <span className="text-2xl text-accent/60">۞</span>
  </div>
  
- {/* Meta Badges */}
+ {/* Meta Badges — Enhanced with Icons */}
  <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
- {ayahData?.revelationType && <Badge variant="sonnat">{ayahData.revelationType === "Meccan" ? "مکی" : "مدنی"}</Badge>}
- {difficultyLabel && <Badge variant="secondary">{difficultyLabel}</Badge>}
- {reflection?.estimated_reading_time && <Badge variant="secondary"><Clock className="h-3 w-3 ml-1" /> {reflection.estimated_reading_time} دقیقه</Badge>}
- {ayahData?.juz && <Badge variant="secondary">جزء {ayahData.juz}</Badge>}
- {(reflection?.tags || []).slice(0, 4).map((t) => <Badge key={t} variant="outline">{t}</Badge>)}
+ {ayahData?.revelationType && (
+ <Badge variant="sonnat" className="gap-1.5">
+ <span className="h-3 w-3">{ayahData.revelationType === "Meccan" ? "🕋" : "🏛️"}</span>
+ {ayahData.revelationType === "Meccan" ? "مکی" : "مدنی"}
+ </Badge>
+ )}
+ {difficultyLabel && (
+ <Badge variant="secondary" className="gap-1.5">
+ <Star className="h-3 w-3" />
+ {difficultyLabel}
+ </Badge>
+ )}
+ {reflection?.estimated_reading_time && (
+ <Badge variant="secondary" className="gap-1.5">
+ <Clock className="h-3 w-3" />
+ {reflection.estimated_reading_time} دقیقه
+ </Badge>
+ )}
+ {ayahData?.juz && (
+ <Badge variant="secondary" className="gap-1.5">
+ <Layers className="h-3 w-3" />
+ جزء {ayahData.juz}
+ </Badge>
+ )}
+ {(reflection?.tags || []).slice(0, 4).map((t) => (
+ <Badge key={t} variant="outline" className="gap-1">
+ <Award className="h-3 w-3" />
+ {t}
+ </Badge>
+ ))}
  </div>
  </div>
 
- {/* Main Verse Display — Large Arabic Typography */}
- <div className="relative my-10">
+ {/* Main Verse Display — Enhanced Arabic Typography */}
+ <div className="relative my-12">
  <div className="relative z-10 text-center">
- <div
- className={`text-foreground/95 will-animate my-6 font-bold ${currentTheme.className}`}
+ {/* Arabic Text Container */}
+ <div className="relative mx-auto max-w-4xl">
+ <div 
+ className={`text-foreground/95 will-animate my-8 font-bold ${currentTheme.className} relative`}
  dir="rtl"
  lang="ar"
  style={{
  fontFamily: prefs.arabicFont,
- fontSize: `calc(clamp(2.5rem, 6vw, 4rem) * ${prefs.arabicScale || prefs.textScale || 1.15})`,
- lineHeight: prefs.lineHeight || 2.6,
+ fontSize: `calc(clamp(2.75rem, 7vw, 4.5rem) * ${prefs.arabicScale || prefs.textScale || 1.15})`,
+ lineHeight: prefs.lineHeight || 2.8,
+ letterSpacing: '0.02em',
  }}
  >
  {renderQuranWaqf(arabic, prefs.highlightWaqf !== false)}
  </div>
+ 
+ {/* Ayah Number Indicator */}
+ <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 rounded-full bg-card/95 backdrop-blur-sm border border-border/50 shadow-soft">
+ <span className="text-[10px] font-mono text-muted-foreground/60 tracking-widest uppercase">Ayah</span>
+ <span className="text-lg font-bold text-accent font-mono">{fa(ayahNum)}</span>
+ </div>
+ </div>
 
  {transliteration && (
- <p className="text-sm text-muted-foreground/60 mt-4 tracking-wide font-light" dir="ltr">
+ <p className="text-sm text-muted-foreground/50 mt-5 tracking-wide font-light leading-relaxed" dir="ltr" style={{fontFamily: 'var(--font-ui)'}}>
  {transliteration}
  </p>
  )}
 
- <OrnamentalDivider className="my-8" />
+ <OrnamentalDivider className="my-10" />
 
  {prefs.showTranslation && (
+ <div className="max-w-3xl mx-auto relative">
  <p
- className="max-w-3xl mx-auto text-foreground/90 font-editorial leading-[2.4] text-lg sm:text-xl"
+ className="text-foreground/85 font-editorial leading-[2.5] text-lg sm:text-xl relative py-2"
  style={{
  fontSize: `calc(clamp(1.125rem, 2.5vw, 1.5rem) * ${prefs.translationScale || 1.0})`,
  }}
  >
  «{translation}»
  </p>
+ {/* Translation Quote Marks */}
+ <div className="absolute -top-6 -right-6 text-accent/20 text-8xl font-light select-none" aria-hidden="true">«</div>
+ <div className="absolute -bottom-10 -left-6 text-accent/20 text-8xl font-light select-none rotate-180" aria-hidden="true">«</div>
+ </div>
  )}
  </div>
  </div>
@@ -434,53 +478,82 @@ export default function VerseDetail() {
  </div>
  )}
 
- {/* Action Buttons Row */}
- <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+ {/* Action Buttons Row — Enhanced Grouped Design */}
+ <div className="mt-10">
+ <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+ {/* Primary Actions */}
+ <div className="flex flex-wrap items-center gap-2">
  <Button
  variant="secondary"
  size="sm"
  onClick={() => navigate(`/assistants?q=تدبّر در آیه ${surah}:${ayah}`)}
- className="gap-1.5"
+ className="gap-1.5 px-4 py-2"
  >
- <Palette className="h-3.5 w-3.5" />
+ <div className="p-1 rounded bg-primary/10 text-primary">
+ <Palette className="h-4 w-4" />
+ </div>
  <span>سازماندهی بصری</span>
  </Button>
  <Button
  variant={bookmarked ? "accent" : "outline"}
  size="sm"
  onClick={toggleBookmark}
- className="gap-1.5"
+ className="gap-1.5 px-4 py-2"
  >
- <Bookmark className="h-3.5 w-3.5" />
+ <div className={`${bookmarked ? 'bg-accent/20 text-accent' : 'bg-muted text-muted-foreground'}`}
+ >
+ <Bookmark className="h-4 w-4" />
+ </div>
  <span>{bookmarked ? "نشان شده" : "نشان کردن"}</span>
  </Button>
+ </div>
+ 
+ {/* Divider */}
+ <div className="h-8 w-px bg-border/50 mx-1 hidden sm:block" />
+ 
+ {/* Secondary Actions */}
+ <div className="flex flex-wrap items-center gap-2">
  <Button
  variant="outline"
  size="sm"
  onClick={handleShare}
- className="gap-1.5"
+ className="gap-1.5 px-4 py-2"
  >
- <Share2 className="h-3.5 w-3.5" />
- <span>اشتراک‌گذاری</span>
+ <Share2 className="h-4 w-4" />
+ <span className="hidden sm:inline">اشتراک‌گذاری</span>
  </Button>
  <Button
  variant="outline"
  size="sm"
  onClick={() => navigate(`/community?verse=${surah}:${ayah}`)}
- className="gap-1.5"
+ className="gap-1.5 px-4 py-2"
  >
- <MessageSquare className="h-3.5 w-3.5" />
- <span>گفتگوی جامعه</span>
+ <MessageSquare className="h-4 w-4" />
+ <span className="hidden sm:inline">گفتگوی جامعه</span>
  </Button>
  <Button
  variant="outline"
  size="sm"
  onClick={() => setTab("notes")}
- className="gap-1.5"
+ className="gap-1.5 px-4 py-2"
  >
- <FileText className="h-3.5 w-3.5" />
- <span>یادداشت من</span>
+ <FileText className="h-4 w-4" />
+ <span className="hidden sm:inline">یادداشت من</span>
  </Button>
+ </div>
+ </div>
+ 
+ {/* Keyboard Shortcuts Hint */}
+ <div className="mt-4 flex items-center justify-center gap-4 text-[10px] text-muted-foreground/60 font-ui">
+ <kbd className="px-1.5 py-0.5 rounded bg-muted/50 border border-border/50 font-mono">←</kbd>
+ <span>/</span>
+ <kbd className="px-1.5 py-0.5 rounded bg-muted/50 border border-border/50 font-mono">→</kbd>
+ <span>ناوبری آیات  •  </span>
+ <kbd className="px-1.5 py-0.5 rounded bg-muted/50 border border-border/50 font-mono">Space</kbd>
+ <span>پخش/توقف  •  </span>
+ <kbd className="px-1.5 py-0.5 rounded bg-muted/50 border border-border/50 font-mono">S</kbd>
+ <span>نشان کردن</span>
+ </div>
  </div>
  </div>
  </section>

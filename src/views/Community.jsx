@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Link } from "@/lib/router-compat";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import { isScholarUser } from "@/lib/scholarAccess";
 import { togglePostLike } from "@/lib/social";
 import { toast } from "react-hot-toast";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -34,6 +35,7 @@ export default function Community() {
   const [selectedChip, setSelectedChip] = useState("all");
 
   const currentUser = authUser || user;
+  const isScholar = isScholarUser(currentUser);
 
   useEffect(() => {
     if (!authUser) {
@@ -121,7 +123,7 @@ export default function Community() {
           </div>
           <Link
             to="/competitions"
-            className="flex shrink-0 items-center gap-1.5 rounded-xl border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary transition-all hover:bg-primary/15"
+            className="flex shrink-0 items-center gap-1.5 rounded border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary transition-all hover:bg-primary/15"
           >
             <Trophy className="h-3.5 w-3.5" />
             <span>چالش‌های قرآنی</span>
@@ -132,7 +134,7 @@ export default function Community() {
         <ActivePrizeStrip />
 
         {/* Quick Create Prompt Bar */}
-        <div className="rounded-2xl border border-border bg-card p-3.5 shadow-soft transition-all hover:border-primary/40">
+        <div className="rounded border border-border bg-card p-3.5 shadow-soft transition-all hover:border-primary/40">
           <button
             onClick={handleOpenCreate}
             className="flex w-full items-center gap-3 text-right group"
@@ -146,7 +148,7 @@ export default function Community() {
             <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium font-doran">
               آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
             </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
               <Plus className="h-4 w-4" />
             </div>
           </button>
@@ -155,7 +157,7 @@ export default function Community() {
           <div className="mt-3 flex items-center gap-2 border-t border-border/50 pt-2.5">
             <button
               onClick={handleOpenCreate}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-secondary py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded bg-secondary py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span>نوشتن تدبّر</span>
@@ -172,7 +174,7 @@ export default function Community() {
               <button
                 key={chip.id}
                 onClick={() => setSelectedChip(chip.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all border ${
+                className={`inline-flex shrink-0 items-center gap-1.5 rounded px-3.5 py-1.5 text-xs font-semibold transition-all border ${
                   isSelected
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-card border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
@@ -213,8 +215,12 @@ export default function Community() {
                 : "در این دسته‌بندی تدبّری یافت نشد"
             }
             subtitle="نخستین نفری باشید که آیه‌ای را به زندگی خود متصل می‌کند و با دیگران به اشتراک می‌گذارد"
-            actionLabel="تدبّر خود را بنویسید"
-            onAction={handleOpenCreate}
+            {...(isScholar
+              ? {
+                  actionLabel: "تدبّر خود را بنویسید",
+                  onAction: handleOpenCreate,
+                }
+              : {})}
           />
         )}
 

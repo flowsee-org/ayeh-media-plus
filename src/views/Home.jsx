@@ -137,7 +137,7 @@ export default function Home() {
               <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border shrink-0 ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-sm font-medium whitespace-nowrap transition-all border shrink-0 ${
                   isActive
                     ? 'bg-foreground text-background border-foreground'
                     : 'bg-card text-foreground/80 border-border hover:bg-muted'
@@ -156,7 +156,7 @@ export default function Home() {
         <section className="grid gap-4 lg:grid-cols-12">
           <Link
             href={`/watch/${hero.id}`}
-            className="group relative lg:col-span-8 overflow-hidden rounded-2xl bg-muted aspect-video lg:aspect-auto lg:min-h-[360px]"
+            className="group relative lg:col-span-8 overflow-hidden rounded bg-muted aspect-video lg:aspect-auto lg:min-h-[360px]"
           >
             {hero.thumbnail_url ? (
               <img
@@ -172,13 +172,13 @@ export default function Home() {
             <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-7">
               <div className="flex flex-wrap gap-2 mb-3">
                 {hero.is_live && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500 text-white text-xs font-bold">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-500 text-white text-xs font-bold">
+                    <span className="h-1.5 w-1.5 rounded bg-white animate-pulse" />
                     زنده
                   </span>
                 )}
                 {hero.is_competition && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary text-white text-xs font-bold">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-primary text-white text-xs font-bold">
                     <Trophy className="h-3 w-3" />
                     {hero.competition_year || 'مسابقه'}
                   </span>
@@ -207,7 +207,7 @@ export default function Home() {
                   </span>
                 )}
               </div>
-              <span className="inline-flex w-fit items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-primary font-bold text-sm shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
+              <span className="inline-flex w-fit items-center gap-2 px-5 py-2.5 rounded bg-white text-primary font-bold text-sm shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
                 <Play className="h-4 w-4" />
                 پخش ویدیو
               </span>
@@ -219,7 +219,7 @@ export default function Home() {
               <Link
                 key={item.id}
                 href={`/watch/${item.id}`}
-                className="group relative overflow-hidden rounded-xl bg-muted aspect-video lg:aspect-auto lg:min-h-[84px]"
+                className="group relative overflow-hidden rounded bg-muted aspect-video lg:aspect-auto lg:min-h-[84px]"
               >
                 {item.thumbnail_url ? (
                   <img
@@ -248,7 +248,7 @@ export default function Home() {
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-rokh-bold text-lg sm:text-xl font-bold flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="h-2 w-2 rounded bg-red-500 animate-pulse" />
               پخش زنده
             </h2>
             <Link href="/live" className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1">
@@ -282,7 +282,7 @@ export default function Home() {
                 href={`/watch/${item.id}`}
                 className="group shrink-0 w-[132px] sm:w-[148px]"
               >
-                <div className="relative aspect-[9/16] rounded-2xl overflow-hidden bg-muted border border-border isolate">
+                <div className="relative aspect-[9/16] rounded overflow-hidden bg-muted border border-border isolate">
                   {item.thumbnail_url ? (
                     <img
                       src={item.thumbnail_url}
@@ -296,12 +296,12 @@ export default function Home() {
                   {/* Dim baked-in thumb labels; keep UI chrome to duration + hover play only */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/20 pointer-events-none" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="h-9 w-9 rounded-full bg-white/95 text-primary flex items-center justify-center shadow-sm">
+                    <span className="h-9 w-9 rounded bg-white/95 text-primary flex items-center justify-center shadow-sm">
                       <Play className="h-3.5 w-3.5 ms-0.5" />
                     </span>
                   </div>
                   {item.duration && (
-                    <span className="absolute top-2 end-2 z-10 rounded-md bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white leading-none">
+                    <span className="absolute top-2 end-2 z-10 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-white leading-none">
                       {item.duration}
                     </span>
                   )}
@@ -400,9 +400,9 @@ export default function Home() {
               <Link
                 key={item.id}
                 href={`/collections/${item.id}`}
-                className="group rounded-xl border border-border bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all"
+                className="group rounded border border-border bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all"
               >
-                <div className="h-28 rounded-lg bg-gradient-to-br from-primary/15 to-accent/10 mb-3 flex items-center justify-center">
+                <div className="h-28 rounded bg-gradient-to-br from-primary/15 to-accent/10 mb-3 flex items-center justify-center">
                   <Video className="h-8 w-8 text-primary/60 group-hover:scale-110 transition-transform" />
                 </div>
                 <h3 className="font-bold text-sm line-clamp-2 group-hover:text-primary transition-colors">
@@ -418,7 +418,7 @@ export default function Home() {
       )}
 
       {/* Creator CTA — video platform, not Quran portal */}
-      <section className="rounded-2xl border border-border bg-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+      <section className="rounded border border-border bg-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
         <div>
           <h2 className="font-rokh-bold text-xl sm:text-2xl font-bold">ویدیوی قرآنی خود را منتشر کنید</h2>
           <p className="mt-1.5 text-sm text-muted-foreground max-w-xl">
@@ -428,14 +428,14 @@ export default function Home() {
         <div className="flex flex-wrap gap-3 shrink-0">
           <button
             onClick={() => router.push('/upload')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
           >
             <Upload className="h-4 w-4" />
             آپلود ویدیو
           </button>
           <Link
             href="/creator"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-bold hover:bg-muted"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-border text-sm font-bold hover:bg-muted"
           >
             داشبورد سازنده
           </Link>

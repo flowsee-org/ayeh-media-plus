@@ -57,7 +57,7 @@ export default function CommunityFeed() {
       {/* Section header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8 gap-3">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-          <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center ring-1 ring-primary/10 shrink-0">
+          <div className="h-9 w-9 sm:h-10 sm:w-10 rounded bg-primary/10 text-primary flex items-center justify-center ring-1 ring-primary/10 shrink-0">
             <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
@@ -76,9 +76,9 @@ export default function CommunityFeed() {
           {/* Create post CTA */}
           <Link
             to="/community"
-            className="flex items-center gap-3 rounded-2xl border border-accent/15 bg-card/60 p-4 hover:border-accent/30 hover:shadow-soft transition-all group"
+            className="flex items-center gap-3 rounded border border-accent/15 bg-card/60 p-4 hover:border-accent/30 hover:shadow-soft transition-all group"
           >
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/15 flex items-center justify-center text-accent">
+            <div className="h-10 w-10 rounded bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/15 flex items-center justify-center text-accent">
               <Plus className="h-5 w-5" />
             </div>
             <span className="text-sm text-muted-foreground flex-1 group-hover:text-foreground transition-colors">تدبّر یا آیه‌ای را به اشتراک بگذارید…</span>
@@ -92,10 +92,10 @@ export default function CommunityFeed() {
               <PostCard key={p.id} post={p} currentUser={user} onLike={handleLike} />
             ))
           ) : (
-            <div className="rounded-2xl border border-dashed border-accent/15 p-12 text-center">
+            <div className="rounded border border-dashed border-accent/15 p-12 text-center">
               <MessageCircle className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
               <p className="text-sm text-muted-foreground mb-4">هنوز پستی منتشر نشده است. اولین تدبّر را شما به اشتراک بگذارید!</p>
-              <Link to="/community" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all">
+              <Link to="/community" className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all">
                 <Plus className="h-4 w-4" /> شروع کنید
               </Link>
             </div>
@@ -103,7 +103,7 @@ export default function CommunityFeed() {
 
           {!loading && displayPosts.length > 0 && (
             <div className="text-center pt-2">
-              <Link to="/community" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-accent/20 text-accent text-sm font-medium hover:bg-accent/5 transition-all">
+              <Link to="/community" className="inline-flex items-center gap-2 px-6 py-3 rounded border border-accent/20 text-accent text-sm font-medium hover:bg-accent/5 transition-all">
                 مشاهده همه پست‌ها <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>
@@ -113,7 +113,7 @@ export default function CommunityFeed() {
         {/* Sidebar */}
         <div className="space-y-5">
           {/* Community stats */}
-          <div className="rounded-2xl border border-accent/15 bg-card/60 p-5">
+          <div className="rounded border border-accent/15 bg-card/60 p-5">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="h-4 w-4 text-accent" />
               <h3 className="font-display font-semibold text-sm">آمار جامعه</h3>
@@ -127,7 +127,7 @@ export default function CommunityFeed() {
 
           {/* Active competitions */}
           {competitions.length > 0 && (
-            <div className="rounded-2xl border border-accent/15 bg-card/60 p-5">
+            <div className="rounded border border-accent/15 bg-card/60 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Trophy className="h-4 w-4 text-accent" />
                 <h3 className="font-display font-semibold text-sm">مسابقات فعال</h3>
@@ -137,9 +137,9 @@ export default function CommunityFeed() {
                   <Link
                     key={c.id}
                     to={`/competitions/${c.id}`}
-                    className="flex items-center gap-3 rounded-xl p-2 hover:bg-accent/5 transition-colors group"
+                    className="flex items-center gap-3 rounded p-2 hover:bg-accent/5 transition-colors group"
                   >
-                    <div className="h-9 w-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                    <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center shrink-0">
                       <Trophy className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -157,7 +157,7 @@ export default function CommunityFeed() {
 
           {/* Trending tags */}
           {trendingTags.length > 0 && (
-            <div className="rounded-2xl border border-accent/15 bg-card/60 p-5">
+            <div className="rounded border border-accent/15 bg-card/60 p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Hash className="h-4 w-4 text-accent" />
                 <h3 className="font-display font-semibold text-sm">موضوعات داغ</h3>
@@ -167,7 +167,7 @@ export default function CommunityFeed() {
                   <Link
                     key={tag}
                     to={`/community`}
-                    className="text-xs px-3 py-1.5 rounded-full bg-accent/8 text-accent border border-accent/10 hover:bg-accent/15 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded bg-accent/8 text-accent border border-accent/10 hover:bg-accent/15 transition-colors"
                   >
                     #{tag}
                   </Link>
@@ -183,7 +183,7 @@ export default function CommunityFeed() {
 
 function StatBox({ icon: Icon, value, label }) {
   return (
-    <div className="text-center rounded-xl bg-accent/[0.03] border border-accent/8 p-3">
+    <div className="text-center rounded bg-accent/[0.03] border border-accent/8 p-3">
       <Icon className="h-4 w-4 text-accent mx-auto mb-1.5" />
       <div className="font-display font-bold text-lg text-foreground">{value.toLocaleString("fa-IR")}</div>
       <div className="text-xs text-muted-foreground mt-0.5">{label}</div>

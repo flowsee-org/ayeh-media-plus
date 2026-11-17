@@ -13,7 +13,7 @@ export default function CollectionsPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded animate-spin" />
         </div>
       }
     >

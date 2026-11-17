@@ -97,7 +97,7 @@ export default function CreatorProfile({
         loading={false}
         className="space-y-4"
       >
-        <div className="rounded-2xl border border-border/50 bg-card p-6">
+        <div className="rounded border border-border/50 bg-card p-6">
           <p className="text-muted-foreground leading-relaxed text-sm">
             {profile.bio || 'این تولیدکننده هنوز بیوگرافی خود را وارد نکرده است.'}
           </p>

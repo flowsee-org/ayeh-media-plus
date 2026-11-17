@@ -43,7 +43,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg bg-card border-border/50 rounded-3xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-lg bg-card border-border/50 rounded max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-display">شخصیت قرآنی شما</DialogTitle>
         </DialogHeader>
@@ -59,7 +59,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
               <button
                 key={p.id}
                 onClick={() => setPresetId(p.id)}
-                className={`relative flex flex-col items-center gap-1.5 rounded-2xl p-2.5 border transition-all ${
+                className={`relative flex flex-col items-center gap-1.5 rounded p-2.5 border transition-all ${
                   active
                     ? "border-accent bg-accent/10 shadow-glow"
                     : "border-border/40 hover:border-accent/30"
@@ -69,7 +69,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
                 <span className="text-xs font-medium leading-tight">{p.name}</span>
                 <span className="text-xs text-muted-foreground leading-tight">{p.epithet}</span>
                 {active && (
-                  <span className="absolute top-1.5 left-1.5 h-4 w-4 rounded-full bg-accent text-accent-foreground flex items-center justify-center">
+                  <span className="absolute top-1.5 left-1.5 h-4 w-4 rounded bg-accent text-accent-foreground flex items-center justify-center">
                     <Check className="h-2.5 w-2.5" />
                   </span>
                 )}
@@ -85,7 +85,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
           <button
             onClick={save}
             disabled={saving || !selected}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             انتخاب شخصیت

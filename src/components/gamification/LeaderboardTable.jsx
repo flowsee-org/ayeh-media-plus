@@ -56,12 +56,12 @@ export default function LeaderboardTable() {
   const remaining = leaderboard.slice(3);
 
   return (
-    <div className="rounded-3xl bg-card/90 border border-emerald-900/30 p-5 sm:p-7 shadow-xl backdrop-blur-md">
+    <div className="rounded bg-card/90 border border-emerald-900/30 p-5 sm:p-7 shadow-xl backdrop-blur-md">
       {/* Header & Filter Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-xl bg-gradient-to-br from-amber-600 to-yellow-500 text-white shadow-sm">
+            <span className="p-1.5 rounded bg-gradient-to-br from-amber-600 to-yellow-500 text-white shadow-sm">
               <Trophy className="w-4 h-4" />
             </span>
             <h3 className="text-lg font-bold font-rokh-bold text-foreground">
@@ -74,10 +74,10 @@ export default function LeaderboardTable() {
         </div>
 
         {/* Toggle Filter */}
-        <div className="flex items-center gap-1 bg-muted p-1 rounded-2xl border border-border shrink-0 self-start sm:self-auto">
+        <div className="flex items-center gap-1 bg-muted p-1 rounded border border-border shrink-0 self-start sm:self-auto">
           <button
             onClick={() => setFilterType("xp")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-rokh-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded text-xs font-bold font-rokh-bold transition-all ${
               filterType === "xp"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -87,7 +87,7 @@ export default function LeaderboardTable() {
           </button>
           <button
             onClick={() => setFilterType("streak")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold font-rokh-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded text-xs font-bold font-rokh-bold transition-all ${
               filterType === "streak"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -113,11 +113,11 @@ export default function LeaderboardTable() {
             <div className="grid grid-cols-3 gap-2 sm:gap-4 my-6 items-end pt-4">
               {/* 2nd Place */}
               {top3[1] && (
-                <div className="flex flex-col items-center p-3 sm:p-4 rounded-2xl bg-card border border-slate-400/30 text-center relative shadow-sm">
-                  <div className="w-6 h-6 rounded-full bg-slate-400 text-white font-bold text-xs flex items-center justify-center absolute -top-3 shadow-md">
+                <div className="flex flex-col items-center p-3 sm:p-4 rounded bg-card border border-slate-400/30 text-center relative shadow-sm">
+                  <div className="w-6 h-6 rounded bg-slate-400 text-white font-bold text-xs flex items-center justify-center absolute -top-3 shadow-md">
                     ۲
                   </div>
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-slate-200 dark:bg-slate-800 border-2 border-slate-400 flex items-center justify-center overflow-hidden mb-2 mt-1">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded bg-slate-200 dark:bg-slate-800 border-2 border-slate-400 flex items-center justify-center overflow-hidden mb-2 mt-1">
                     {top3[1].avatar_url ? (
                       <img src={top3[1].avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -135,11 +135,11 @@ export default function LeaderboardTable() {
 
               {/* 1st Place */}
               {top3[0] && (
-                <div className="flex flex-col items-center p-4 sm:p-5 rounded-2xl bg-card border-2 border-yellow-500/50 text-center relative shadow-lg shadow-yellow-500/10 -translate-y-2">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-yellow-600 to-amber-400 text-white font-bold text-xs flex items-center justify-center absolute -top-3.5 shadow-md">
+                <div className="flex flex-col items-center p-4 sm:p-5 rounded bg-card border-2 border-yellow-500/50 text-center relative shadow-lg shadow-yellow-500/10 -translate-y-2">
+                  <div className="w-7 h-7 rounded bg-gradient-to-tr from-yellow-600 to-amber-400 text-white font-bold text-xs flex items-center justify-center absolute -top-3.5 shadow-md">
                     <Medal className="w-4 h-4 fill-white" />
                   </div>
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-amber-100 dark:bg-amber-950/40 border-2 border-yellow-500 flex items-center justify-center overflow-hidden mb-2 mt-2 shadow-inner">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded bg-amber-100 dark:bg-amber-950/40 border-2 border-yellow-500 flex items-center justify-center overflow-hidden mb-2 mt-2 shadow-inner">
                     {top3[0].avatar_url ? (
                       <img src={top3[0].avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -157,11 +157,11 @@ export default function LeaderboardTable() {
 
               {/* 3rd Place */}
               {top3[2] && (
-                <div className="flex flex-col items-center p-3 sm:p-4 rounded-2xl bg-card border border-amber-700/30 text-center relative shadow-sm">
-                  <div className="w-6 h-6 rounded-full bg-amber-700 text-white font-bold text-xs flex items-center justify-center absolute -top-3 shadow-md">
+                <div className="flex flex-col items-center p-3 sm:p-4 rounded bg-card border border-amber-700/30 text-center relative shadow-sm">
+                  <div className="w-6 h-6 rounded bg-amber-700 text-white font-bold text-xs flex items-center justify-center absolute -top-3 shadow-md">
                     ۳
                   </div>
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-900/20 border-2 border-amber-700 flex items-center justify-center overflow-hidden mb-2 mt-1">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded bg-amber-900/20 border-2 border-amber-700 flex items-center justify-center overflow-hidden mb-2 mt-1">
                     {top3[2].avatar_url ? (
                       <img src={top3[2].avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -186,13 +186,13 @@ export default function LeaderboardTable() {
               return (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between py-3 px-2 sm:px-3 hover:bg-muted/40 rounded-xl transition-colors"
+                  className="flex items-center justify-between py-3 px-2 sm:px-3 hover:bg-muted/40 rounded transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <span className="w-6 text-center font-mono text-xs font-bold text-muted-foreground">
                       {item.rank}
                     </span>
-                    <div className="w-9 h-9 rounded-full bg-muted border border-border flex items-center justify-center overflow-hidden shrink-0">
+                    <div className="w-9 h-9 rounded bg-muted border border-border flex items-center justify-center overflow-hidden shrink-0">
                       {item.avatar_url ? (
                         <img src={item.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -205,7 +205,7 @@ export default function LeaderboardTable() {
                           {item.name}
                         </span>
                         <span
-                          className={`text-[9px] px-1.5 py-0.2 rounded-full font-rokh-bold font-bold border ${league.bg} ${league.text} ${league.border}`}
+                          className={`text-[9px] px-1.5 py-0.2 rounded font-rokh-bold font-bold border ${league.bg} ${league.text} ${league.border}`}
                         >
                           لیگ {item.league}
                         </span>

@@ -303,7 +303,7 @@ export default function AdminPanel() {
             <button
               key={section.key}
               onClick={() => setActiveSection(section.key)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-all ${
                 activeSection === section.key
                   ? "bg-emerald-600 text-white"
                   : "bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -318,7 +318,7 @@ export default function AdminPanel() {
         <div className="p-4 border-t border-border">
           <button
             onClick={() => navigate("/")}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
           >
             <Layout className="h-5 w-5" /> بازگشت به سایت
           </button>
@@ -332,7 +332,7 @@ export default function AdminPanel() {
               <button
                 key={section.key}
                 onClick={() => setActiveSection(section.key)}
-                className={`shrink-0 px-3 py-2 rounded-lg text-xs font-bold border ${
+                className={`shrink-0 px-3 py-2 rounded text-xs font-bold border ${
                   activeSection === section.key ? "bg-emerald-600 text-white border-emerald-600" : "border-border"
                 }`}
               >
@@ -347,7 +347,7 @@ export default function AdminPanel() {
         </header>
 
         {activeSection === "users" && (
-          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between gap-3">
               <h3 className="font-rokh-bold font-bold text-lg text-foreground">مدیریت کاربران</h3>
               <input
@@ -355,7 +355,7 @@ export default function AdminPanel() {
                 value={userQuery}
                 onChange={(e) => setUserQuery(e.target.value)}
                 placeholder="جستجوی کاربر..."
-                className="px-4 py-2 rounded-xl bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 w-48 sm:w-64"
+                className="px-4 py-2 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 w-48 sm:w-64"
               />
             </div>
             <div className="overflow-x-auto">
@@ -374,7 +374,7 @@ export default function AdminPanel() {
                     <tr key={u.id} className="hover:bg-muted/20 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold">
+                          <div className="h-9 w-9 rounded bg-muted flex items-center justify-center text-xs font-bold">
                             {u.full_name?.charAt(0) || "ن"}
                           </div>
                           <div>
@@ -384,12 +384,12 @@ export default function AdminPanel() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold border ${roleColors[u.role || "user"]}`}>
+                        <span className={`px-2 py-1 rounded text-xs font-bold border ${roleColors[u.role || "user"]}`}>
                           {roleLabels[u.role || "user"]}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold border ${
+                        <span className={`px-2 py-1 rounded text-xs font-bold border ${
                           u.is_banned ? "bg-red-500/10 text-red-700 border-red-200" : "bg-emerald-500/10 text-emerald-700 border-emerald-200"
                         }`}>
                           {u.is_banned ? "مسدود" : "فعال"}
@@ -433,7 +433,7 @@ export default function AdminPanel() {
         )}
 
         {activeSection === "content" && (
-          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
               <h3 className="font-rokh-bold font-bold text-lg">ویدیوها و محتوا</h3>
               <Link href="/moderation" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
@@ -459,15 +459,15 @@ export default function AdminPanel() {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2 shrink-0">
-                      <Link href={`/watch/${v.id}`} className="px-3 py-1.5 rounded-lg border text-xs font-bold hover:bg-muted">مشاهده</Link>
-                      <Link href={`/edit-video/${v.id}`} className="px-3 py-1.5 rounded-lg border text-xs font-bold hover:bg-muted">ویرایش</Link>
+                      <Link href={`/watch/${v.id}`} className="px-3 py-1.5 rounded border text-xs font-bold hover:bg-muted">مشاهده</Link>
+                      <Link href={`/edit-video/${v.id}`} className="px-3 py-1.5 rounded border text-xs font-bold hover:bg-muted">ویرایش</Link>
                       {v.status !== "published" && (
-                        <button onClick={() => handleVideoStatus(v.id, "published")} className="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold">انتشار</button>
+                        <button onClick={() => handleVideoStatus(v.id, "published")} className="px-3 py-1.5 rounded bg-emerald-600 text-white text-xs font-bold">انتشار</button>
                       )}
                       {v.status !== "rejected" && (
-                        <button onClick={() => handleVideoStatus(v.id, "rejected")} className="px-3 py-1.5 rounded-lg border text-xs font-bold text-amber-700">رد</button>
+                        <button onClick={() => handleVideoStatus(v.id, "rejected")} className="px-3 py-1.5 rounded border text-xs font-bold text-amber-700">رد</button>
                       )}
-                      <button onClick={() => handleDeleteVideo(v.id)} className="px-3 py-1.5 rounded-lg border text-xs font-bold text-red-600">حذف</button>
+                      <button onClick={() => handleDeleteVideo(v.id)} className="px-3 py-1.5 rounded border text-xs font-bold text-red-600">حذف</button>
                     </div>
                   </div>
                 ))}
@@ -478,7 +478,7 @@ export default function AdminPanel() {
         )}
 
         {activeSection === "competitions" && (
-          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
               <h3 className="font-rokh-bold font-bold text-lg">مسابقات</h3>
               <Link href="/competitions" className="text-sm text-primary hover:underline">صفحه عمومی</Link>
@@ -495,7 +495,7 @@ export default function AdminPanel() {
                         {c.status || "—"} · {c.year || c.competition_year || "—"}
                       </div>
                     </div>
-                    <Link href={`/competitions/${c.id}`} className="px-3 py-1.5 rounded-lg border text-xs font-bold hover:bg-muted">جزئیات</Link>
+                    <Link href={`/competitions/${c.id}`} className="px-3 py-1.5 rounded border text-xs font-bold hover:bg-muted">جزئیات</Link>
                   </div>
                 ))}
                 {competitions.length === 0 && <div className="p-10 text-center text-muted-foreground">مسابقه‌ای ثبت نشده است.</div>}
@@ -505,12 +505,12 @@ export default function AdminPanel() {
         )}
 
         {activeSection === "config" && (
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+          <div className="rounded border border-border bg-card p-6 shadow-sm space-y-4">
             <p className="text-sm text-muted-foreground">
               پرچم‌های ویژگی در این مرورگر ذخیره می‌شوند و برای استقرار چندسروره باید به تنظیمات سرور منتقل شوند. مقادیر جعلی نمایش داده نمی‌شود.
             </p>
             {Object.entries(flags).map(([key, value]) => (
-              <label key={key} className="flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
+              <label key={key} className="flex items-center justify-between gap-4 rounded border border-border px-4 py-3">
                 <span className="text-sm font-medium">{key}</span>
                 <input
                   type="checkbox"
@@ -540,7 +540,7 @@ export default function AdminPanel() {
                     { label: "دنبال‌کردن‌ها", value: stats.follows, icon: Users },
                     { label: "پست‌ها", value: stats.posts, icon: Layout },
                   ].map((card) => (
-                    <div key={card.label} className="rounded-2xl border border-border bg-card p-4">
+                    <div key={card.label} className="rounded border border-border bg-card p-4">
                       <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                         <card.icon className="h-4 w-4" />
                         {card.label}
@@ -549,7 +549,7 @@ export default function AdminPanel() {
                     </div>
                   ))}
                 </div>
-                <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                <div className="rounded border border-border bg-card overflow-hidden">
                   <div className="px-6 py-4 border-b border-border/50 font-bold">پربازدیدترین ویدیوها (داده واقعی)</div>
                   <div className="divide-y divide-border/50">
                     {stats.topVideos.map((v) => (
@@ -566,7 +566,7 @@ export default function AdminPanel() {
         )}
 
         {activeSection === "audit" && (
-          <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-border/50 font-bold">لاگ اقدامات مدیریتی / نظارت</div>
             {sectionLoading ? (
               <div className="p-10 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-emerald-600" /></div>
@@ -596,7 +596,7 @@ export default function AdminPanel() {
 
         {roleModal && selectedUser && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setRoleModal(false)}>
-            <div className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="relative w-full max-w-md rounded border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-rokh-bold font-bold text-lg text-foreground">تغییر نقش کاربر</h3>
                 <button onClick={() => setRoleModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
@@ -608,7 +608,7 @@ export default function AdminPanel() {
                   <button
                     key={role}
                     onClick={() => handleRoleChange(selectedUser.id, role)}
-                    className={`w-full py-3 rounded-xl text-right font-medium transition-all border ${
+                    className={`w-full py-3 rounded text-right font-medium transition-all border ${
                       selectedUser.role === role
                         ? "bg-emerald-600 text-white border-emerald-600"
                         : "bg-transparent text-muted-foreground border-border hover:bg-muted/50"
@@ -627,7 +627,7 @@ export default function AdminPanel() {
 
         {roleConfirmModal && pendingRoleChange && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setRoleConfirmModal(false)}>
-            <div className="relative w-full max-w-md rounded-3xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="relative w-full max-w-md rounded border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-rokh-bold font-bold text-lg text-foreground">تأیید تغییر نقش</h3>
                 <button onClick={() => setRoleConfirmModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
@@ -637,13 +637,13 @@ export default function AdminPanel() {
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={() => setRoleConfirmModal(false)}
-                    className="px-6 py-2.5 rounded-xl border border-border text-muted-foreground hover:bg-muted/50 transition-colors"
+                    className="px-6 py-2.5 rounded border border-border text-muted-foreground hover:bg-muted/50 transition-colors"
                   >
                     انصراف
                   </button>
                   <button
                     onClick={confirmRoleChange}
-                    className="px-6 py-2.5 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
+                    className="px-6 py-2.5 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
                   >
                     تایید و ذخیره
                   </button>

@@ -44,7 +44,7 @@ export default function ForgotPassword() {
           </p>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border shadow-sm p-6 sm:p-8">
+        <div className="bg-card rounded border border-border shadow-sm p-6 sm:p-8">
           {sent ? (
             <div className="space-y-4 text-center">
               <div className="flex justify-center text-primary mb-2">
@@ -56,7 +56,7 @@ export default function ForgotPassword() {
                 پیوند تغییر رمز ارسال گردید.
               </p>
               {resetToken && (
-                <div className="p-3 rounded-xl bg-primary/5 border border-primary/20 text-foreground text-xs text-center mt-3">
+                <div className="p-3 rounded bg-primary/5 border border-primary/20 text-foreground text-xs text-center mt-3">
                   <span className="text-muted-foreground">پیوند مستقیم تغییر رمز (محیط آزمایشی): </span>
                   <Link
                     to={`/reset-password?token=${resetToken}`}

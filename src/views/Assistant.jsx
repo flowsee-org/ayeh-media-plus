@@ -210,15 +210,15 @@ export default function AssistantsRoute() {
       dir="rtl"
     >
       {/* Header: Assistant Selection + Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 p-3.5 sm:p-4 rounded-2xl border border-border/80 bg-card/95 backdrop-blur-sm shadow-soft">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 p-3.5 sm:p-4 rounded border border-border/80 bg-card/95 backdrop-blur-sm shadow-soft">
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5 rounded-xl p-1.5 border border-border/60 bg-secondary/40">
+          <div className="flex items-center gap-1.5 rounded p-1.5 border border-border/60 bg-secondary/40">
             {ASSISTANTS.map((a) => (
               <button
                 key={a.id}
                 onClick={() => handleSwitchAssistant(a.id)}
                 className={cn(
-                  "h-8 w-8 rounded-full flex items-center justify-center transition-all",
+                  "h-8 w-8 rounded flex items-center justify-center transition-all",
                   selectedAssistantId === a.id
                     ? `${a.color} shadow-md`
                     : "bg-background/50 text-muted-foreground hover:bg-muted/50 border-transparent"
@@ -255,7 +255,7 @@ export default function AssistantsRoute() {
       {/* Chat Messages Area */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto space-y-4 px-1 py-2 rounded-2xl bg-secondary/20 border border-border/40 p-3 sm:p-4 mb-3"
+        className="flex-1 overflow-y-auto space-y-4 px-1 py-2 rounded bg-secondary/20 border border-border/40 p-3 sm:p-4 mb-3"
       >
         {messages.map((m, i) => (
           <div
@@ -290,7 +290,7 @@ export default function AssistantsRoute() {
 
             <Card
               className={cn(
-                "max-w-[92%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 text-sm leading-relaxed transition-all shadow-sm",
+                "max-w-[92%] sm:max-w-[85%] rounded p-4 sm:p-5 text-sm leading-relaxed transition-all shadow-sm",
                 m.role === "user"
                   ? "bg-primary text-primary-foreground font-medium rounded-tr-xs border-none"
                   : "bg-card border border-border/80 rounded-tl-xs text-foreground"
@@ -316,7 +316,7 @@ export default function AssistantsRoute() {
             <Avatar className="h-8 w-8 bg-accent/15 text-accent border border-accent/30">
               <Loader2 className="h-4 w-4 animate-spin" />
             </Avatar>
-            <Card className="rounded-2xl bg-card border border-border/70 px-4 py-3 text-xs text-muted-foreground flex items-center gap-2 shadow-xs border-none">
+            <Card className="rounded bg-card border border-border/70 px-4 py-3 text-xs text-muted-foreground flex items-center gap-2 shadow-xs border-none">
               <Sparkles className="h-3.5 w-3.5 text-accent animate-pulse" />
               <span>در حال پاسخ‌گویی...</span>
             </Card>
@@ -338,7 +338,7 @@ export default function AssistantsRoute() {
           onChange={(e) => setInput(e.target.value)}
           placeholder={`سوال یا حال را برای ${assistant.name} بنویسید...`}
           disabled={loading}
-          className="flex-1 py-3.5 pr-4 pl-12 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 font-doran text-xs sm:text-sm shadow-soft transition-all disabled:opacity-50"
+          className="flex-1 py-3.5 pr-4 pl-12 rounded bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 font-doran text-xs sm:text-sm shadow-soft transition-all disabled:opacity-50"
         />
         <Button
           type="submit"
@@ -365,7 +365,7 @@ function AssistantStructuredResponse({ content, playTrack, currentTrack, isPlayi
   return (
     <div className="space-y-4">
       {empathy && (
-        <Card className="rounded-xl border border-accent/20 bg-accent/5 shadow-sm">
+        <Card className="rounded border border-accent/20 bg-accent/5 shadow-sm">
           <CardContent className="p-3.5 sm:p-4">
             <div className="flex items-center gap-1.5 text-accent font-bold mb-1 font-rokh-bold">
               <Heart className="h-3.5 w-3.5 fill-current" />
@@ -446,10 +446,10 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
   return (
     <Card
       variant="interactive"
-      className="rounded-2xl border-primary/20 bg-gradient-to-b from-card via-primary/5 to-secondary/30 p-4 sm:p-5 shadow-xs transition-all hover:border-primary/40"
+      className="rounded border-primary/20 bg-gradient-to-b from-card via-primary/5 to-secondary/30 p-4 sm:p-5 shadow-xs transition-all hover:border-primary/40"
     >
       <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-2.5">
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border/80">
+        <div className="inline-flex items-center gap-1.5 rounded bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border/80">
           <BookOpen className="h-3 w-3 text-accent" />
           <span>
             {meta ? `سوره ${meta.surahName} • آیه ${fa(meta.ayah)}` : `آیه ${verse_key}`}
@@ -501,7 +501,7 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
       )}
 
       {why && (
-        <Card className="mt-3 rounded-xl bg-card/70 border border-border/40 shadow-sm border-none">
+        <Card className="mt-3 rounded bg-card/70 border border-border/40 shadow-sm border-none">
           <CardContent className="p-2.5">
             <div className="flex items-center gap-1 text-xs text-foreground/85 leading-relaxed font-doran">
               <span className="font-bold text-accent font-rokh-bold">نکته تدبّری:</span>
@@ -512,7 +512,7 @@ function CompanionVerseCard({ verse, playTrack, currentTrack, isPlaying, toggleP
       )}
 
       {action && (
-        <div className="mt-2 flex items-start gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed font-doran font-medium">
+        <div className="mt-2 flex items-start gap-2 rounded bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed font-doran font-medium">
           <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
           <div>
             <span className="font-bold ml-1 font-rokh-bold">امروز انجام دهید:</span>

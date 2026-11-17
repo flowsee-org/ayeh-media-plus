@@ -119,21 +119,21 @@ export default function FeedList() {
       <ActivePrizeStrip />
 
       {/* Composer */}
-      <div className="mb-4 border-b border-border bg-card px-3.5 py-3 sm:rounded-lg sm:border">
+      <div className="mb-4 border-b border-border bg-card px-3.5 py-3 sm:rounded sm:border">
         <button
           onClick={() => (user ? setShowCreate(true) : openAuthModal(() => setShowCreate(true)))}
           className="flex w-full items-center gap-3 text-right"
         >
           <Avatar name={user?.full_name || "؟"} size={38} avatar={user?.avatar_config} />
           <span className="flex-1 text-sm text-muted-foreground">چه چیزی به اشتراک می‌گذارید؟</span>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/10 text-accent">
+          <span className="flex h-9 w-9 items-center justify-center rounded bg-accent/10 text-accent">
             <Plus className="h-4 w-4" />
           </span>
         </button>
         <div className="mt-3 flex gap-2 border-t border-border/50 pt-2.5">
           <button
             onClick={() => (user ? setShowCreate(true) : openAuthModal(() => setShowCreate(true)))}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-muted/50 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded bg-muted/50 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <BookOpen className="h-3.5 w-3.5" /> متن یا آیه
           </button>
@@ -145,13 +145,13 @@ export default function FeedList() {
           <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       ) : posts.length === 0 ? (
-        <div className="m-4 rounded-lg border border-dashed border-border p-12 text-center sm:m-0">
+        <div className="m-4 rounded border border-dashed border-border p-12 text-center sm:m-0">
           <Sparkles className="mx-auto mb-3 h-8 w-8 text-muted-foreground/30" />
           <p className="mb-4 text-sm text-muted-foreground">هنوز پستی منتشر نشده است.</p>
           {user && (
             <button
               onClick={() => setShowCreate(true)}
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-all hover:shadow-glow"
+              className="inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-all hover:shadow-glow"
             >
               <ImageIcon className="h-4 w-4" /> انتشار اولین پست
             </button>
@@ -178,7 +178,7 @@ export default function FeedList() {
           ) : hasMore ? (
             <button
               onClick={loadMore}
-              className="rounded-full border border-border/60 px-5 py-2 text-xs font-medium text-muted-foreground hover:border-accent/30 hover:text-foreground transition-colors"
+              className="rounded border border-border/60 px-5 py-2 text-xs font-medium text-muted-foreground hover:border-accent/30 hover:text-foreground transition-colors"
             >
               نمایش بیشتر
             </button>

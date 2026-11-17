@@ -81,7 +81,7 @@ export default function Header({ onMenuToggle }) {
         <div className="flex items-center gap-3">
           <button
             onClick={onMenuToggle}
-            className="lg:hidden p-2.5 rounded-xl hover:bg-quranic-emerald/5 text-foreground/70 transition-colors"
+            className="lg:hidden p-2.5 rounded hover:bg-quranic-emerald/5 text-foreground/70 transition-colors"
             aria-label="بسته منو"
           >
             <Menu className="h-5 w-5" />
@@ -102,9 +102,9 @@ export default function Header({ onMenuToggle }) {
           {authUser ? (
             <Link
               href="/profile"
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-quranic-emerald/5 border border-quranic-emerald/10 text-xs font-medium text-foreground hover:bg-quranic-emerald/10 transition-all group"
+              className="flex items-center gap-2 px-3 py-2 rounded bg-quranic-emerald/5 border border-quranic-emerald/10 text-xs font-medium text-foreground hover:bg-quranic-emerald/10 transition-all group"
             >
-              <div className="h-7 w-7 rounded-full bg-quranic-emerald text-quranic-ink flex items-center justify-center font-bold text-xs shrink-0 border border-quranic-emerald/30 group-hover:scale-105 transition-transform">
+              <div className="h-7 w-7 rounded bg-quranic-emerald text-quranic-ink flex items-center justify-center font-bold text-xs shrink-0 border border-quranic-emerald/30 group-hover:scale-105 transition-transform">
                 {(authUser.full_name || "ک").charAt(0)}
               </div>
               <span className="hidden sm:block truncate max-w-[120px]">{authUser.full_name || "کاربر"}</span>
@@ -112,7 +112,7 @@ export default function Header({ onMenuToggle }) {
           ) : (
             <button
               onClick={() => openAuthModal()}
-              className="px-4 py-2 rounded-xl bg-quranic-emerald text-white text-xs font-bold hover:opacity-90 shadow-quranic-glow transition-all"
+              className="px-4 py-2 rounded bg-quranic-emerald text-white text-xs font-bold hover:opacity-90 shadow-quranic-glow transition-all"
             >
               ورود / ثبت‌نام
             </button>
@@ -131,7 +131,7 @@ export default function Header({ onMenuToggle }) {
                 <button
                   key={tag.label}
                   onClick={() => handleQuickSearch(tag.label, tag.category)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium font-ui transition-all border ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-medium font-ui transition-all border ${
                     isActive
                       ? `bg-quranic-saffron text-quranic-ink border-quranic-saffron shadow-saffron-glow`
                       : `bg-transparent text-muted-foreground border-border/50 hover:bg-muted/50 hover:text-foreground hover:border-border`
@@ -147,7 +147,7 @@ export default function Header({ onMenuToggle }) {
                 setActiveCategory("all");
                 router.push("/search");
               }}
-              className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-medium font-ui text-muted-foreground border border-border/50 bg-transparent hover:bg-muted/50 hover:text-foreground transition-all"
+              className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-medium font-ui text-muted-foreground border border-border/50 bg-transparent hover:bg-muted/50 hover:text-foreground transition-all"
             >
               <Search className="h-3 w-3" /> فلتری پیشرفته
             </button>

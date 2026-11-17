@@ -86,32 +86,32 @@ export default function Profile() {
   return (
     <div className="page-shell-reading animate-fade-in font-doran">
       {!user && (
-        <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4 mb-6 flex items-center justify-between gap-3 text-right">
+        <div className="rounded border border-primary/30 bg-primary/5 p-4 mb-6 flex items-center justify-between gap-3 text-right">
           <div>
             <div className="font-ui font-bold text-sm text-foreground">شما به عنوان مهمان اینجا هستید</div>
             <div className="font-ui text-xs text-muted-foreground mt-0.5">برای ذخیره پیشرفت و یادداشت‌ها، وارد حساب شوید.</div>
           </div>
-          <Link to="/login" className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 shrink-0">
+          <Link to="/login" className="px-4 py-2 rounded bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 shrink-0">
             ورود
           </Link>
         </div>
       )}
 
       {/* Clean UI Kit User Header */}
-      <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
+      <div className="rounded border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
         <div className="relative inline-block mb-3">
           {avatarCfg ? (
-            <div className="ring-2 ring-primary/30 rounded-full">
+            <div className="ring-2 ring-primary/30 rounded">
               <CharacterAvatar config={avatarCfg} size={72} />
             </div>
           ) : (
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 text-primary ring-2 ring-primary/20">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded bg-primary/10 text-primary ring-2 ring-primary/20">
               <BookOpen className="h-7 w-7" />
             </div>
           )}
           <button
             onClick={() => setPickerOpen(true)}
-            className="absolute -bottom-1 -left-1 h-7 w-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm hover:scale-105 transition-transform"
+            className="absolute -bottom-1 -left-1 h-7 w-7 rounded bg-primary text-primary-foreground flex items-center justify-center shadow-sm hover:scale-105 transition-transform"
             title="انتخاب آواتار"
           >
             <Pencil className="h-3.5 w-3.5" />
@@ -138,14 +138,14 @@ export default function Profile() {
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
             <Link
               to="/talks"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-stone-950 text-xs font-bold font-doran shadow-gold-glow hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-accent text-stone-950 text-xs font-bold font-doran shadow-gold-glow hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
             >
               <Mic className="h-3.5 w-3.5" />
               <span>استودیوی گفتارها و پادکست‌ها</span>
             </Link>
             <Link
               to="/live"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold font-doran shadow-soft hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-red-600 text-white text-xs font-bold font-doran shadow-soft hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
             >
               <Video className="h-3.5 w-3.5" />
               <span>پخش زنده تفسیری</span>
@@ -164,7 +164,7 @@ export default function Profile() {
       />
 
       {/* Progress Ring */}
-      <div className="relative overflow-hidden rounded-2xl border border-accent/15 bg-card/60 p-8 sm:p-12 mb-8 shadow-premium">
+      <div className="relative overflow-hidden rounded border border-accent/15 bg-card/60 p-8 sm:p-12 mb-8 shadow-premium">
         <IslamicPattern className="text-foreground" opacity={0.03} />
         <div className="relative flex flex-col items-center gap-6">
           <ProgressRing percent={progress} />
@@ -196,7 +196,7 @@ export default function Profile() {
       </div>
 
       {/* Juz Progress Grid */}
-      <div className="rounded-xl border border-accent/10 bg-card/40 p-6 mb-8">
+      <div className="rounded border border-accent/10 bg-card/40 p-6 mb-8">
         <h2 className="font-rokh-bold font-bold text-lg mb-4 flex items-center gap-2">
           <Target className="h-5 w-5 text-accent" />
           پیشرفت اجزاء
@@ -208,7 +208,7 @@ export default function Profile() {
             return (
               <div
                 key={juz.number}
-                className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs font-medium transition-all ${
+                className={`aspect-square rounded flex flex-col items-center justify-center text-xs font-medium transition-all ${
                   isActive
                     ? "bg-accent/15 text-accent ring-1 ring-accent/20"
                     : "bg-muted/40 text-muted-foreground/50"
@@ -239,10 +239,10 @@ export default function Profile() {
                 <Link
                   key={r.key}
                   to={verseKeyToPath(r.key)}
-                  className="!group flex items-center justify-between rounded-xl border border-accent/10 bg-card/40 p-4 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
+                  className="!group flex items-center justify-between rounded border border-accent/10 bg-card/40 p-4 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">
+                    <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-bold">
                       {r.key}
                     </div>
                     <div>
@@ -259,14 +259,14 @@ export default function Profile() {
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border/60 p-12 text-center">
+        <div className="rounded border border-dashed border-border/60 p-12 text-center">
           <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
           <p className="text-sm text-muted-foreground mb-4">
             هنوز آیه‌ای نخوانده‌اید. با مرور قرآن، پیشرفت شما اینجا نمایش داده می‌شود.
           </p>
           <Link
             to="/quran"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
           >
             <BookOpen className="h-4 w-4" /> آغاز تلاوت
           </Link>
@@ -304,7 +304,7 @@ function SettingsSection({ user }) {
   };
 
   return (
-    <div className="rounded-xl border border-destructive/20 bg-destructive/[0.03] p-6 mt-10">
+    <div className="rounded border border-destructive/20 bg-destructive/[0.03] p-6 mt-10">
       <h2 className="font-rokh-bold font-bold text-lg mb-2 flex items-center gap-2">
         <SettingsIcon className="h-5 w-5 text-destructive" /> تنظیمات حساب
       </h2>
@@ -314,7 +314,7 @@ function SettingsSection({ user }) {
       {user ? (
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-destructive/40 text-destructive text-sm font-medium hover:bg-destructive/10 transition-all">
+            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-destructive/40 text-destructive text-sm font-medium hover:bg-destructive/10 transition-all">
               <Trash2 className="h-4 w-4" /> حذف حساب
             </button>
           </AlertDialogTrigger>
@@ -336,7 +336,7 @@ function SettingsSection({ user }) {
       ) : (
         <Link
           to="/login"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-secondary text-foreground text-xs font-semibold hover:bg-secondary/70 transition-all border border-border"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-secondary text-foreground text-xs font-semibold hover:bg-secondary/70 transition-all border border-border"
         >
           ورود برای مدیریت حساب
         </Link>
@@ -379,8 +379,8 @@ function ProgressRing({ percent }) {
 
 function StatCard({ icon: Icon, label, value, total, color = "text-primary" }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 text-center shadow-soft font-ui">
-      <div className={`inline-flex h-9 w-9 rounded-xl bg-secondary items-center justify-center mb-2.5 ${color}`}>
+    <div className="rounded border border-border bg-card p-4 text-center shadow-soft font-ui">
+      <div className={`inline-flex h-9 w-9 rounded bg-secondary items-center justify-center mb-2.5 ${color}`}>
         <Icon className="h-4.5 w-4.5" />
       </div>
       <div className="font-rokh-bold font-bold text-xl text-foreground">

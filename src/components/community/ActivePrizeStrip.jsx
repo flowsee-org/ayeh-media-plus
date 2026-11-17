@@ -16,7 +16,7 @@ export default function ActivePrizeStrip() {
   if (comps.length === 0) return null;
 
   return (
-    <div className="mb-4 overflow-hidden border-b border-border bg-card sm:rounded-lg sm:border">
+    <div className="mb-4 overflow-hidden border-b border-border bg-card sm:rounded sm:border">
       <div className="flex items-center gap-2 px-3.5 py-2.5">
         <Trophy className="h-4 w-4 text-accent" />
         <span className="text-[13px] font-semibold text-foreground">مسابقات فعال — با جایزه</span>
@@ -29,7 +29,7 @@ export default function ActivePrizeStrip() {
           <Link
             key={c.id}
             to={`/competitions/${c.id}`}
-            className="group w-[78%] shrink-0 snap-start rounded-lg border border-border bg-card p-3 transition-colors hover:border-accent/40 sm:w-[46%]"
+            className="group w-[78%] shrink-0 snap-start rounded border border-border bg-card p-3 transition-colors hover:border-accent/40 sm:w-[46%]"
           >
             <p className="line-clamp-1 text-xs font-medium text-muted-foreground">{c.title}</p>
             <div className="mt-1.5 flex items-center gap-1.5">

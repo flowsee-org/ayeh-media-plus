@@ -69,12 +69,12 @@ export default function ScholarProfile() {
       <BackButton to="/scholars" label="علما" className="mb-4" />
 
       {/* Identity card */}
-      <div className="rounded-3xl border border-accent/15 bg-card/60 p-6 shadow-premium">
+      <div className="rounded border border-accent/15 bg-card/60 p-6 shadow-premium">
         <div className="flex items-center gap-4">
           {avatarCfg ? (
             <CharacterAvatar config={avatarCfg} size={72} />
           ) : (
-            <div className="h-[72px] w-[72px] rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center font-bold text-2xl text-accent shrink-0">
+            <div className="h-[72px] w-[72px] rounded bg-accent/10 border border-accent/20 flex items-center justify-center font-bold text-2xl text-accent shrink-0">
               {name?.[0]}
             </div>
           )}
@@ -84,8 +84,8 @@ export default function ScholarProfile() {
               {sessions.length.toLocaleString("fa-IR")} جلسه منتشرشده
             </p>
             {live && (
-              <span className="inline-flex items-center gap-1.5 mt-2 rounded-full bg-red-500/10 text-red-600 px-2.5 py-1 text-xs font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" /> در حال پخش زنده
+              <span className="inline-flex items-center gap-1.5 mt-2 rounded bg-red-500/10 text-red-600 px-2.5 py-1 text-xs font-medium">
+                <span className="h-1.5 w-1.5 rounded bg-red-500 animate-pulse" /> در حال پخش زنده
               </span>
             )}
           </div>
@@ -95,9 +95,9 @@ export default function ScholarProfile() {
         {live && (
           <Link
             to={`/live/${live.id}`}
-            className="mt-5 flex items-center gap-3 rounded-2xl border border-red-500/25 bg-red-500/[0.06] p-4 hover:bg-red-500/10 transition-colors"
+            className="mt-5 flex items-center gap-3 rounded border border-red-500/25 bg-red-500/[0.06] p-4 hover:bg-red-500/10 transition-colors"
           >
-            <span className="h-10 w-10 rounded-full bg-red-500/15 text-red-600 flex items-center justify-center shrink-0">
+            <span className="h-10 w-10 rounded bg-red-500/15 text-red-600 flex items-center justify-center shrink-0">
               <Radio className="h-5 w-5" />
             </span>
             <div className="flex-1 min-w-0">
@@ -123,7 +123,7 @@ export default function ScholarProfile() {
             </div>
             <div className="flex flex-wrap gap-1.5">
               {scholar.books.map((b, i) => (
-                <span key={i} className="px-2.5 py-1 rounded-lg bg-secondary text-xs text-muted-foreground border border-border">
+                <span key={i} className="px-2.5 py-1 rounded bg-secondary text-xs text-muted-foreground border border-border">
                   {b}
                 </span>
               ))}
@@ -139,7 +139,7 @@ export default function ScholarProfile() {
         </h2>
 
         {!followed ? (
-          <div className="rounded-2xl border border-dashed border-accent/20 bg-accent/[0.03] p-10 text-center">
+          <div className="rounded border border-dashed border-accent/20 bg-accent/[0.03] p-10 text-center">
             <CalendarDays className="h-7 w-7 text-accent/40 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               آرشیو جلسات فقط برای دنبال‌کنندگان این استاد در دسترس است.
@@ -147,7 +147,7 @@ export default function ScholarProfile() {
             <FollowButton scholarId={id} scholarName={name} onChange={setFollowed} />
           </div>
         ) : past.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border/60 p-10 text-center">
+          <div className="rounded border border-dashed border-border/60 p-10 text-center">
             <Video className="h-7 w-7 text-muted-foreground/30 mx-auto mb-2" />
             <p className="text-sm text-muted-foreground">هنوز جلسه‌ای در آرشیو نیست.</p>
           </div>
@@ -156,9 +156,9 @@ export default function ScholarProfile() {
             {past.map((s) => (
               <div
                 key={s.id}
-                className="rounded-2xl border border-accent/10 bg-card/40 p-4 flex items-start gap-3"
+                className="rounded border border-accent/10 bg-card/40 p-4 flex items-start gap-3"
               >
-                <span className="h-10 w-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <span className="h-10 w-10 rounded bg-accent/10 text-accent flex items-center justify-center shrink-0">
                   <Video className="h-4 w-4" />
                 </span>
                 <div className="flex-1 min-w-0">

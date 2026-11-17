@@ -48,7 +48,7 @@ function NavLink({ item, active, collapsed, onClick }) {
       href={item.to}
       onClick={onClick}
       title={collapsed ? item.label : undefined}
-      className={`flex items-center gap-3 rounded-xl text-sm transition-all duration-150 ${
+      className={`flex items-center gap-3 rounded text-sm transition-all duration-150 ${
         collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
       } ${
         active
@@ -103,7 +103,7 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
         )}
         <button
           onClick={handleCollapseToggle}
-          className={`p-2 rounded-lg hover:bg-muted text-muted-foreground ${isCollapsed ? 'hidden' : 'ms-auto'}`}
+          className={`p-2 rounded hover:bg-muted text-muted-foreground ${isCollapsed ? 'hidden' : 'ms-auto'}`}
           aria-label="جمع کردن منو"
         >
           <PanelRightClose className="h-4 w-4" />
@@ -114,7 +114,7 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
         <div className="flex justify-center py-2 border-b border-border">
           <button
             onClick={handleCollapseToggle}
-            className="p-2 rounded-lg hover:bg-muted text-muted-foreground"
+            className="p-2 rounded hover:bg-muted text-muted-foreground"
             aria-label="باز کردن منو"
           >
             <PanelRightOpen className="h-4 w-4" />
@@ -164,9 +164,9 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
             {!isCollapsed && (
               <Link
                 href="/profile"
-                className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-muted transition-colors"
+                className="flex items-center gap-3 rounded px-2 py-2 hover:bg-muted transition-colors"
               >
-                <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 shrink-0">
+                <div className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 shrink-0">
                   {(authUser.full_name || 'ک').charAt(0)}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -182,7 +182,7 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
             )}
             <button
               onClick={() => logout()}
-              className={`w-full flex items-center gap-2 rounded-xl text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${
+              className={`w-full flex items-center gap-2 rounded text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${
                 isCollapsed ? 'justify-center p-2.5' : 'px-3 py-2'
               }`}
               title="خروج"
@@ -194,7 +194,7 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
         ) : (
           <button
             onClick={() => openAuthModal()}
-            className={`w-full flex items-center justify-center gap-2 rounded-xl text-xs font-bold text-primary-foreground bg-primary hover:opacity-90 transition-all ${
+            className={`w-full flex items-center justify-center gap-2 rounded text-xs font-bold text-primary-foreground bg-primary hover:opacity-90 transition-all ${
               isCollapsed ? 'p-2.5' : 'px-3 py-2.5'
             }`}
             title="ورود"

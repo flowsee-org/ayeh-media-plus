@@ -71,19 +71,19 @@ export default function Talks() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMediaType("all")}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border ${mediaType === "all" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
+              className={`px-3 py-1.5 rounded text-xs font-bold border ${mediaType === "all" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
             >
               همه
             </button>
             <button
               onClick={() => setMediaType("video")}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border ${mediaType === "video" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold border ${mediaType === "video" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
             >
               <Video className="h-3.5 w-3.5" /> ویدیو
             </button>
             <button
               onClick={() => setMediaType("audio")}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border ${mediaType === "audio" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold border ${mediaType === "audio" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
             >
               <Mic className="h-3.5 w-3.5" /> صوت
             </button>
@@ -96,7 +96,7 @@ export default function Talks() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="جستجو در عنوان، قاری یا استاد..."
-            className="w-full h-11 pe-10 ps-4 rounded-xl bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className="w-full h-11 pe-10 ps-4 rounded bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
           />
         </div>
 
@@ -105,7 +105,7 @@ export default function Talks() {
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`inline-flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+              className={`inline-flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded text-sm font-medium border transition-colors ${
                 filter === f.id
                   ? "bg-foreground text-background border-foreground"
                   : "bg-card text-foreground/80 border-border hover:bg-muted"

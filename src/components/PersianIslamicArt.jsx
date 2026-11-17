@@ -122,7 +122,7 @@ export function PersianLachak({ position = "tr", size = 64, className = "" }) {
 export function PersianKatibeh({ children, className = "", glow = true }) {
  return (
  <div
- className={`relative rounded-3xl border border-accent/30 bg-gradient-to-b from-card/95 via-accent/[0.04] to-card/95 backdrop-blur-xl p-6 sm:p-10 shadow-premium overflow-hidden ${
+ className={`relative rounded border border-accent/30 bg-gradient-to-b from-card/95 via-accent/[0.04] to-card/95 backdrop-blur-xl p-6 sm:p-10 shadow-premium overflow-hidden ${
  glow ? "ring-1 ring-accent/20" : ""
  } ${className}`}
  >

@@ -71,7 +71,7 @@ export default function PermissionGuard({
         </p>
         <button
           onClick={() => openAuthModal()}
-          className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
+          className="px-8 py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
         >
           ورود / ثبت‌نام
         </button>
@@ -151,7 +151,7 @@ function PermissionDeniedFallback({ userRole, reason, requiredRoles, requiredPer
       {userRole === 'user' && (
         <button
           onClick={() => router.push('/profile')}
-          className="px-8 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
+          className="px-8 py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
         >
           برو به پروفایل
         </button>

@@ -270,7 +270,7 @@ export default function KhatmDetail() {
  navigator.clipboard?.writeText(session.invite_code);
  toast.success(`کد دعوت (${session.invite_code}) کپی شد`);
  }}
- className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-border/70 text-xs font-mono font-medium hover:border-accent text-foreground transition-all shadow-sm"
+ className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-card border border-border/70 text-xs font-mono font-medium hover:border-accent text-foreground transition-all shadow-sm"
  >
  <Copy className="w-3.5 h-3.5 text-accent" />
  <span>کد: {session.invite_code}</span>
@@ -278,7 +278,7 @@ export default function KhatmDetail() {
  )}
  <button
  onClick={handleShare}
- className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent/10 hover:bg-accent/20 text-accent text-xs font-semibold border border-accent/20 transition-all"
+ className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-accent/10 hover:bg-accent/20 text-accent text-xs font-semibold border border-accent/20 transition-all"
  >
  <Share2 className="w-3.5 h-3.5" />
  <span>اشتراک‌گذاری</span>
@@ -287,7 +287,7 @@ export default function KhatmDetail() {
  </div>
 
  {/* Hero Session Card with authentic Persian carpet & sunlight atmosphere */}
- <div className="relative overflow-hidden rounded-3xl border border-amber-400/30 bg-card p-6 sm:p-8 shadow-2xl">
+ <div className="relative overflow-hidden rounded border border-amber-400/30 bg-card p-6 sm:p-8 shadow-2xl">
  <div className="absolute inset-0 z-0 pointer-events-none">
  <img
  src="/images/art/nasir_carpet_window.jpg"
@@ -299,23 +299,23 @@ export default function KhatmDetail() {
  <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
  <div className="space-y-3 max-w-2xl">
  <div className="flex flex-wrap items-center gap-2">
- <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20">
+ <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs font-medium bg-accent/10 text-accent border border-accent/20">
  <Sparkles className="w-3 h-3" />
  <span>{session.target_type === "hezb" ? "۶۰ حزب قرآن" : "۳۰ جزء کامل"}</span>
  </span>
  {session.is_private ? (
- <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted/40 px-2.5 py-1 rounded-full">
+ <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted/40 px-2.5 py-1 rounded">
  <Lock className="w-3 h-3" />
  <span>حلقه خصوصی</span>
  </span>
  ) : (
- <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
+ <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded">
  <Globe className="w-3 h-3" />
  <span>ختم عمومی</span>
  </span>
  )}
  {progressPercent === 100 && (
- <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-500/20 px-2.5 py-1 rounded-full font-bold">
+ <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-500/20 px-2.5 py-1 rounded font-bold">
  <Check className="w-3.5 h-3.5" />
  <span>ختم کامل شد 🎉</span>
  </span>
@@ -327,7 +327,7 @@ export default function KhatmDetail() {
  </h1>
 
  {session.intention && (
- <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 text-sm font-medium flex items-center gap-2">
+ <div className="p-3 rounded bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 text-sm font-medium flex items-center gap-2">
  <Heart className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0" />
  <span>نیت ختم: {session.intention}</span>
  </div>
@@ -341,7 +341,7 @@ export default function KhatmDetail() {
  </div>
 
  {/* Live Salawat Counter Interactive Widget */}
- <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-background/80 border border-border/70 backdrop-blur-md shadow-inner text-center shrink-0 min-w-[220px]">
+ <div className="flex flex-col items-center justify-center p-6 rounded bg-background/80 border border-border/70 backdrop-blur-md shadow-inner text-center shrink-0 min-w-[220px]">
  <div className="text-xs text-muted-foreground font-medium mb-1">
  صلوات‌شمار زنده محفل
  </div>
@@ -350,7 +350,7 @@ export default function KhatmDetail() {
  </div>
  <button
  onClick={handleSendSalawat}
- className={`mt-3 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-accent to-amber-500 text-white font-semibold text-xs shadow-md hover:shadow-lg transition-all active:scale-90 flex items-center gap-2 ${
+ className={`mt-3 px-5 py-2.5 rounded bg-gradient-to-r from-accent to-amber-500 text-white font-semibold text-xs shadow-md hover:shadow-lg transition-all active:scale-90 flex items-center gap-2 ${
  salawatAnimating ? "scale-105" : ""
  }`}
  >
@@ -369,7 +369,7 @@ export default function KhatmDetail() {
  </span>
  <span className="text-accent font-bold">{progressPercent.toLocaleString("fa-IR")}٪</span>
  </div>
- <div className="w-full h-3 rounded-full bg-muted/60 overflow-hidden flex">
+ <div className="w-full h-3 rounded bg-muted/60 overflow-hidden flex">
  <div
  className="bg-emerald-500 h-full transition-all duration-700"
  style={{ width: `${progressPercent}%` }}
@@ -382,15 +382,15 @@ export default function KhatmDetail() {
  </div>
 
  <div className="grid grid-cols-3 gap-2 sm:col-span-2 text-center text-xs">
- <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+ <div className="p-2.5 rounded bg-emerald-500/10 border border-emerald-500/20">
  <div className="font-bold text-emerald-600 dark:text-emerald-400">{completedParts.toLocaleString("fa-IR")}</div>
  <div className="text-muted-foreground text-[10px] mt-0.5">قرائت شده</div>
  </div>
- <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
+ <div className="p-2.5 rounded bg-amber-500/10 border border-amber-500/20">
  <div className="font-bold text-amber-600 dark:text-amber-400">{reservedParts.toLocaleString("fa-IR")}</div>
  <div className="text-muted-foreground text-[10px] mt-0.5">در حال تلاوت</div>
  </div>
- <div className="p-2.5 rounded-xl bg-card border border-border/60">
+ <div className="p-2.5 rounded bg-card border border-border/60">
  <div className="font-bold text-foreground">{availableParts.toLocaleString("fa-IR")}</div>
  <div className="text-muted-foreground text-[10px] mt-0.5">آزاد برای رزرو</div>
  </div>
@@ -421,7 +421,7 @@ export default function KhatmDetail() {
  return (
  <div
  key={part.id}
- className={`relative flex flex-col justify-between p-4 rounded-2xl border transition-all duration-200 ${
+ className={`relative flex flex-col justify-between p-4 rounded border transition-all duration-200 ${
  part.status === "completed"
  ? "bg-emerald-500/5 border-emerald-500/30 dark:bg-emerald-950/20"
  : part.status === "reserved"
@@ -434,7 +434,7 @@ export default function KhatmDetail() {
  {/* Top info */}
  <div>
  <div className="flex items-center justify-between mb-2">
- <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-accent/10 text-accent">
+ <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-bold bg-accent/10 text-accent">
  {isJuz ? `جزء ${part.part_number}` : `حزب ${part.part_number}`}
  </span>
 
@@ -470,8 +470,8 @@ export default function KhatmDetail() {
 
  {/* Reader info if claimed */}
  {part.status !== "available" && (
- <div className="text-xs text-muted-foreground flex items-center gap-1.5 mb-3 bg-background/50 p-1.5 rounded-lg border border-border/40">
- <div className="w-4 h-4 rounded-full bg-accent/20 text-accent flex items-center justify-center text-[10px] font-bold">
+ <div className="text-xs text-muted-foreground flex items-center gap-1.5 mb-3 bg-background/50 p-1.5 rounded border border-border/40">
+ <div className="w-4 h-4 rounded bg-accent/20 text-accent flex items-center justify-center text-[10px] font-bold">
  {part.user_name?.slice(0, 1) || "ک"}
  </div>
  <span className="truncate">
@@ -487,7 +487,7 @@ export default function KhatmDetail() {
  {part.status === "available" ? (
  <button
  onClick={() => handleReservePart(part)}
- className="w-full py-2 rounded-xl bg-accent text-accent-foreground font-semibold text-xs shadow-sm hover:bg-accent/90 transition-all active:scale-95 flex items-center justify-center gap-1"
+ className="w-full py-2 rounded bg-accent text-accent-foreground font-semibold text-xs shadow-sm hover:bg-accent/90 transition-all active:scale-95 flex items-center justify-center gap-1"
  >
  <BookOpen className="w-3.5 h-3.5" />
  <span>رزرو این سهم</span>
@@ -496,7 +496,7 @@ export default function KhatmDetail() {
  <div className="w-full flex items-center gap-1.5">
  <Link
  to={`/quran?juz=${part.part_number}&khatm_part_id=${part.id}`}
- className="flex-1 py-2 rounded-xl bg-accent text-accent-foreground font-semibold text-xs text-center hover:bg-accent/90 transition-all flex items-center justify-center gap-1"
+ className="flex-1 py-2 rounded bg-accent text-accent-foreground font-semibold text-xs text-center hover:bg-accent/90 transition-all flex items-center justify-center gap-1"
  >
  <BookOpen className="w-3.5 h-3.5" />
  <span>شروع تلاوت</span>
@@ -504,14 +504,14 @@ export default function KhatmDetail() {
  <button
  onClick={() => handleCompletePart(part)}
  title="علامت‌گذاری به عنوان خوانده شده"
- className="p-2 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 transition-all text-xs font-semibold"
+ className="p-2 rounded bg-emerald-500 text-white hover:bg-emerald-600 transition-all text-xs font-semibold"
  >
  <Check className="w-4 h-4" />
  </button>
  <button
  onClick={() => handleCancelReservation(part)}
  title="انصراف از سهم"
- className="p-2 rounded-xl bg-card border border-border/70 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-all text-xs"
+ className="p-2 rounded bg-card border border-border/70 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-all text-xs"
  >
  ✕
  </button>
@@ -534,7 +534,7 @@ export default function KhatmDetail() {
  </div>
 
  {/* Dua & Prayer Wall (دیوار ادعیه و نیات) */}
- <div className="rounded-3xl border border-border/50 bg-card p-6 sm:p-8 space-y-6">
+ <div className="rounded border border-border/50 bg-card p-6 sm:p-8 space-y-6">
  <div className="flex items-center justify-between border-b border-border/40 pb-4">
  <div className="flex items-center gap-2">
  <Heart className="w-5 h-5 text-accent" />
@@ -554,12 +554,12 @@ export default function KhatmDetail() {
  value={newDuaText}
  onChange={(e) => setNewDuaText(e.target.value)}
  placeholder="دعای خیر یا نیت قلبی خود را برای شرکت‌کنندگان بنویسید..."
- className="flex-1 px-4 py-3 rounded-2xl bg-background border border-border/70 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
+ className="flex-1 px-4 py-3 rounded bg-background border border-border/70 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
  />
  <button
  type="submit"
  disabled={submittingDua || !newDuaText.trim()}
- className="px-5 py-3 rounded-2xl bg-accent text-accent-foreground font-semibold text-sm shadow-sm hover:bg-accent/90 disabled:opacity-40 transition-all flex items-center gap-1.5 shrink-0"
+ className="px-5 py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-sm hover:bg-accent/90 disabled:opacity-40 transition-all flex items-center gap-1.5 shrink-0"
  >
  <Send className="w-4 h-4 rotate-180" />
  <span>ثبت دعا</span>
@@ -576,11 +576,11 @@ export default function KhatmDetail() {
  duas.map((dua) => (
  <div
  key={dua.id}
- className="p-4 rounded-2xl bg-background/60 border border-border/40 text-sm space-y-1.5"
+ className="p-4 rounded bg-background/60 border border-border/40 text-sm space-y-1.5"
  >
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-2 font-semibold text-foreground text-xs">
- <div className="w-5 h-5 rounded-full bg-accent/20 text-accent flex items-center justify-center text-[10px]">
+ <div className="w-5 h-5 rounded bg-accent/20 text-accent flex items-center justify-center text-[10px]">
  {dua.user_name?.slice(0, 1) || "ک"}
  </div>
  <span>{dua.user_name || "همراه قرآنی"}</span>

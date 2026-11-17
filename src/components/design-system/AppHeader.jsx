@@ -57,7 +57,7 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onMenuToggle}
-            className="lg:hidden p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors"
+            className="lg:hidden p-2 rounded hover:bg-muted text-foreground/70 transition-colors"
             aria-label="باز کردن منو"
           >
             <Menu className="h-5 w-5" />
@@ -75,7 +75,7 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
         <div className="flex items-center gap-1.5 sm:gap-2 ms-auto shrink-0">
           <button
             onClick={() => setMobileSearchOpen((v) => !v)}
-            className="md:hidden p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors"
+            className="md:hidden p-2 rounded hover:bg-muted text-foreground/70 transition-colors"
             aria-label="جستجو"
           >
             <Search className="h-5 w-5" />
@@ -83,7 +83,7 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
 
           <button
             onClick={handleUpload}
-            className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 shadow-sm transition-all"
+            className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 shadow-sm transition-all"
           >
             <Upload className="h-3.5 w-3.5" />
             آپلود ویدیو
@@ -93,7 +93,7 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
 
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-muted text-foreground/70 transition-colors"
+            className="p-2 rounded hover:bg-muted text-foreground/70 transition-colors"
             aria-label="تغییر تم"
           >
             <ThemeIcon className="h-5 w-5" />
@@ -102,9 +102,9 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
           {authUser ? (
             <Link
               href="/profile"
-              className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-xl hover:bg-muted text-foreground text-xs font-medium transition-all group"
+              className="flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded hover:bg-muted text-foreground text-xs font-medium transition-all group"
             >
-              <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20 group-hover:scale-105 transition-transform">
+              <div className="h-8 w-8 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20 group-hover:scale-105 transition-transform">
                 {(authUser?.full_name || 'ک').charAt(0)}
               </div>
               <span className="hidden lg:block truncate max-w-[100px]">
@@ -114,7 +114,7 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
           ) : (
             <button
               onClick={() => openAuthModal()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-border bg-card text-foreground text-xs font-bold hover:bg-muted transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded border border-border bg-card text-foreground text-xs font-bold hover:bg-muted transition-all"
             >
               ورود
             </button>

@@ -36,14 +36,14 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-full" />
+      <div className="flex h-10 w-10 items-center justify-center rounded" />
     );
   }
   return (
     <button
       onClick={toggle}
       aria-label="تغییر تم"
-      className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-secondary"
+      className="flex h-10 w-10 items-center justify-center rounded text-foreground transition-colors hover:bg-secondary"
     >
       {theme === "dark" ? (
         <Sun className="h-[21px] w-[21px]" strokeWidth={1.8} />

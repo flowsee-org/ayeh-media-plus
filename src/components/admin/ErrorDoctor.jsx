@@ -140,7 +140,7 @@ export default function ErrorDoctor() {
     <div className="space-y-6 font-ui" dir="rtl">
       {/* Overview Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
-        <div className="p-4 rounded-2xl border border-border bg-card shadow-soft">
+        <div className="p-4 rounded border border-border bg-card shadow-soft">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <span>مجموع خطاها</span>
             <Bug className="h-4 w-4 text-muted-foreground" />
@@ -153,7 +153,7 @@ export default function ErrorDoctor() {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border bg-card shadow-soft">
+        <div className="p-4 rounded border border-border bg-card shadow-soft">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <span>خطاهای بک‌اند</span>
             <Server className="h-4 w-4 text-amber-500" />
@@ -166,7 +166,7 @@ export default function ErrorDoctor() {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border bg-card shadow-soft">
+        <div className="p-4 rounded border border-border bg-card shadow-soft">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <span>خطاهای فرانت‌اند</span>
             <Globe className="h-4 w-4 text-blue-500" />
@@ -179,13 +179,13 @@ export default function ErrorDoctor() {
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border border-border bg-card shadow-soft">
+        <div className="p-4 rounded border border-border bg-card shadow-soft">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
             <span>وضعیت سلامت پروژه</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </div>
           <div className="text-base font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mt-1">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="h-2.5 w-2.5 rounded bg-emerald-500 animate-pulse"></span>
             <span>دستیار آماده عیب‌یابی</span>
           </div>
           <div className="text-[11px] text-muted-foreground mt-1">
@@ -195,13 +195,13 @@ export default function ErrorDoctor() {
       </div>
 
       {/* Action Toolbar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-card shadow-soft">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded border border-border bg-card shadow-soft">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Source Tabs */}
-          <div className="flex bg-muted/60 p-1 rounded-xl border border-border/60">
+          <div className="flex bg-muted/60 p-1 rounded border border-border/60">
             <button
               onClick={() => setFilterSource("all")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                 filterSource === "all"
                   ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -211,7 +211,7 @@ export default function ErrorDoctor() {
             </button>
             <button
               onClick={() => setFilterSource("backend")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                 filterSource === "backend"
                   ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -221,7 +221,7 @@ export default function ErrorDoctor() {
             </button>
             <button
               onClick={() => setFilterSource("frontend")}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                 filterSource === "frontend"
                   ? "bg-card text-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -238,7 +238,7 @@ export default function ErrorDoctor() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="جستجو در متن یا مسیر..."
-              className="w-full pl-3 pr-8 py-1.5 rounded-xl border border-border bg-background text-xs focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full pl-3 pr-8 py-1.5 rounded border border-border bg-background text-xs focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
         </div>
@@ -247,7 +247,7 @@ export default function ErrorDoctor() {
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
           <button
             onClick={() => handleSimulateTestError("frontend")}
-            className="px-3 py-1.5 rounded-xl border border-border hover:bg-muted/50 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all"
+            className="px-3 py-1.5 rounded border border-border hover:bg-muted/50 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all"
             title="ثبت یک خطای تستی برای اطمینان از عملکرد پایش"
           >
             تست فرانت
@@ -255,7 +255,7 @@ export default function ErrorDoctor() {
 
           <button
             onClick={() => handleSimulateTestError("backend")}
-            className="px-3 py-1.5 rounded-xl border border-border hover:bg-muted/50 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all"
+            className="px-3 py-1.5 rounded border border-border hover:bg-muted/50 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all"
             title="ثبت یک خطای تستی برای اطمینان از عملکرد پایش"
           >
             تست بک‌اند
@@ -264,7 +264,7 @@ export default function ErrorDoctor() {
           <button
             onClick={fetchErrors}
             disabled={loading}
-            className="p-2 rounded-xl border border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all"
+            className="p-2 rounded border border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all"
             title="بروزرسانی لاگ‌ها"
           >
             <RotateCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
@@ -273,7 +273,7 @@ export default function ErrorDoctor() {
           <button
             onClick={handleClearLogs}
             disabled={errors.length === 0}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-bold border border-destructive/20 transition-all disabled:opacity-40"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-bold border border-destructive/20 transition-all disabled:opacity-40"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>پاکسازی لاگ‌ها</span>
@@ -283,7 +283,7 @@ export default function ErrorDoctor() {
 
       {/* Error Items List */}
       {filteredErrors.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl border border-dashed border-border/80 bg-card/50">
+        <div className="p-12 text-center rounded border border-dashed border-border/80 bg-card/50">
           <CheckCircle2 className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
           <h4 className="font-bold text-sm text-foreground">
             هیچ خطایی برای نمایش وجود ندارد
@@ -302,7 +302,7 @@ export default function ErrorDoctor() {
             return (
               <div
                 key={err.id}
-                className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden transition-all"
+                className="rounded border border-border bg-card shadow-soft overflow-hidden transition-all"
               >
                 {/* Header row */}
                 <div
@@ -316,7 +316,7 @@ export default function ErrorDoctor() {
                 >
                   <div className="flex items-start gap-3 min-w-0">
                     <span
-                      className={`shrink-0 mt-0.5 px-2.5 py-1 rounded-lg text-xs font-bold uppercase font-mono ${
+                      className={`shrink-0 mt-0.5 px-2.5 py-1 rounded text-xs font-bold uppercase font-mono ${
                         err.source === "backend"
                           ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
                           : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
@@ -331,7 +331,7 @@ export default function ErrorDoctor() {
                           {err.message}
                         </span>
                         {err.type && (
-                          <span className="text-[11px] px-2 py-0.5 rounded-md bg-secondary text-muted-foreground font-mono">
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-secondary text-muted-foreground font-mono">
                             {err.type}
                           </span>
                         )}
@@ -350,7 +350,7 @@ export default function ErrorDoctor() {
                         e.stopPropagation();
                         handleDiagnose(err);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-accent/15 hover:bg-accent/25 text-accent text-xs font-bold border border-accent/20 transition-all"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-accent/15 hover:bg-accent/25 text-accent text-xs font-bold border border-accent/20 transition-all"
                     >
                       <Sparkles className="h-3 w-3" />
                       <span>{diagnosis ? "تحلیل شده" : isDiagnosing ? "در حال تحلیل..." : "تحلیل دستیار"}</span>
@@ -368,7 +368,7 @@ export default function ErrorDoctor() {
                   <div className="p-4 border-t border-border/60 bg-muted/20 space-y-4">
                     {/* Assistant Diagnosis Box */}
                     {diagnosis ? (
-                      <div className="p-4 rounded-xl border border-accent/30 bg-accent/[0.04] space-y-3">
+                      <div className="p-4 rounded border border-accent/30 bg-accent/[0.04] space-y-3">
                         <div className="flex items-center justify-between text-xs">
                           <div className="flex items-center gap-2 font-bold text-accent">
                             <Sparkles className="h-4 w-4" />
@@ -384,18 +384,18 @@ export default function ErrorDoctor() {
                           {diagnosis.explanation}
                         </div>
 
-                        <div className="p-3 rounded-lg bg-card border border-border text-xs text-foreground font-medium leading-relaxed">
+                        <div className="p-3 rounded bg-card border border-border text-xs text-foreground font-medium leading-relaxed">
                           <strong className="text-emerald-600 dark:text-emerald-400">💡 راهکار پیشنهادی برای فیکس: </strong>
                           <p className="mt-1">{diagnosis.suggestedFix}</p>
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between p-3 rounded-xl bg-card border border-border text-xs">
+                      <div className="flex items-center justify-between p-3 rounded bg-card border border-border text-xs">
                         <span className="text-muted-foreground">برای مشاهده ریشه خطا و نحوه فیکس، دکمه تحلیل دستیار را بزنید.</span>
                         <button
                           onClick={() => handleDiagnose(err)}
                           disabled={isDiagnosing}
-                          className="px-3 py-1 rounded-lg bg-accent text-accent-foreground font-bold text-xs hover:opacity-90"
+                          className="px-3 py-1 rounded bg-accent text-accent-foreground font-bold text-xs hover:opacity-90"
                         >
                           {isDiagnosing ? "در حال تحلیل..." : "شروع تحلیل هوشمند"}
                         </button>
@@ -427,7 +427,7 @@ export default function ErrorDoctor() {
                             )}
                           </button>
                         </div>
-                        <pre className="p-3 rounded-xl bg-black/90 text-amber-200 text-xs font-mono overflow-x-auto leading-relaxed max-h-52" dir="ltr">
+                        <pre className="p-3 rounded bg-black/90 text-amber-200 text-xs font-mono overflow-x-auto leading-relaxed max-h-52" dir="ltr">
                           {err.stack}
                         </pre>
                       </div>

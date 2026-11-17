@@ -1,19 +1,15 @@
 'use client';
 
-import { useLocation } from 'react-router-dom';
+import { usePathname, useRouter } from 'next/navigation';
 import api from "@/lib/api";
 import { useQuery } from '@tanstack/react-query';
 import { IslamicStar } from '@/components/IslamicOrnaments';
 import { Home as HomeIcon } from 'lucide-react';
 
 export default function PageNotFound({}) {
-    let pageName = '';
-    try {
-      const location = useLocation();
-      pageName = location.pathname.substring(1);
-    } catch {
-      pageName = '';
-    }
+    const pathname = usePathname();
+    const router = useRouter();
+    const pageName = pathname ? pathname.substring(1) : '';
 
     const { data: authData, isFetched } = useQuery({
         queryKey: ['user'],
@@ -49,10 +45,10 @@ export default function PageNotFound({}) {
                     </div>
 
                     {isFetched && authData.isAuthenticated && authData.user?.role === 'admin' && (
-                        <div className="mt-8 p-4 bg-accent/5 rounded-lg border border-accent/20">
+                        <div className="mt-8 p-4 bg-accent/5 rounded border border-accent/20">
                             <div className="flex items-start gap-3">
-                                <div className="shrink-0 w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center mt-0.5">
-                                    <div className="w-2 h-2 rounded-full bg-accent"></div>
+                                <div className="shrink-0 w-5 h-5 rounded bg-accent/10 flex items-center justify-center mt-0.5">
+                                    <div className="w-2 h-2 rounded bg-accent"></div>
                                 </div>
                                 <div className="text-right space-y-1">
                                     <p className="text-sm font-medium text-foreground">یادداشت مدیر</p>
@@ -66,8 +62,8 @@ export default function PageNotFound({}) {
 
                     <div className="pt-6">
                         <button
-                            onClick={() => window.location.href = '/'}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded-full hover:shadow-glow transition-all duration-300"
+                            onClick={() => router.push('/')}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded hover:shadow-glow transition-all duration-300"
                         >
                             <HomeIcon className="w-4 h-4" />
                             بازگشت به خانه

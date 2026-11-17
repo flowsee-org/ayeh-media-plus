@@ -9,7 +9,7 @@ const csv = (s) => String(s || "").split(/[،,]/).map((x) => x.trim()).filter(Bo
 function SectionTitle({ children }) {
   return (
     <div className="flex items-center gap-2 pt-2">
-      <span className="h-1.5 w-1.5 rounded-full bg-accent/60" />
+      <span className="h-1.5 w-1.5 rounded bg-accent/60" />
       <span className="text-xs font-bold text-accent tracking-wide">{children}</span>
       <span className="flex-1 h-px bg-accent/10" />
     </div>
@@ -138,8 +138,8 @@ export default function VerseForm({ initial, onClose, onSaved }) {
 
       {err && <p className="text-sm text-destructive">{err}</p>}
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded-full text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded-full text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
+        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
+        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
           {saving ? "در حال ذخیره…" : "ذخیره"}
         </button>
       </div>

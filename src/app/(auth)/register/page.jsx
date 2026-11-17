@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Register from '@/views/Register';
 

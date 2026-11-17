@@ -91,8 +91,8 @@ export default function VerseGuide() {
       <BackButton label="بازگشت به خانه" to="/" className="mb-6" />
 
       {/* Clean UI Kit Header */}
-      <div className="rounded-3xl border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
+      <div className="rounded border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
           <Compass className="h-3.5 w-3.5 text-primary" /> راهنمای تدبّر و تسکین قلوب
         </div>
         <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
@@ -108,7 +108,7 @@ export default function VerseGuide() {
       </div>
 
       {error && (
-        <div className="mb-6 flex items-start gap-2.5 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive shadow-soft">
+        <div className="mb-6 flex items-start gap-2.5 rounded border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive shadow-soft">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
           <span>{error}</span>
         </div>
@@ -120,7 +120,7 @@ export default function VerseGuide() {
             در حال جست‌وجو در گنجینه کلام الهی و تطبیق احوال با آیات آرامش‌بخش…
           </div>
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-44 animate-pulse rounded-2xl border border-accent/15 bg-card/50" />
+            <div key={i} className="h-44 animate-pulse rounded border border-accent/15 bg-card/50" />
           ))}
         </div>
       )}
@@ -135,7 +135,7 @@ export default function VerseGuide() {
           <PersianToranjDivider label="آیات برگزیده برای شما" />
 
           {result.understanding && (
-            <div className="rounded-2xl border border-accent/25 bg-accent/[0.06] p-5 text-sm sm:text-base leading-[2.2] text-foreground/90 shadow-soft">
+            <div className="rounded border border-accent/25 bg-accent/[0.06] p-5 text-sm sm:text-base leading-[2.2] text-foreground/90 shadow-soft">
               <div className="flex items-center gap-2 text-accent font-bold text-xs mb-2">
                 <Sparkles className="h-4 w-4" />
                 <span>نگاه همدلانه قرآن به احوال شما:</span>
@@ -156,7 +156,7 @@ export default function VerseGuide() {
           </div>
 
           {result.caption && (
-            <div className="rounded-2xl border border-dashed border-accent/30 bg-card/50 p-5 shadow-soft">
+            <div className="rounded border border-dashed border-accent/30 bg-card/50 p-5 shadow-soft">
               <div className="mb-2 text-xs font-bold text-accent flex items-center gap-1.5">
                 <BookOpen className="h-3.5 w-3.5" />
                 <span>متن پیشنهادی برای بازنشر و یادآوری قلبی:</span>
@@ -165,7 +165,7 @@ export default function VerseGuide() {
             </div>
           )}
 
-          <div className="flex items-start gap-2.5 rounded-2xl border border-accent/20 bg-card/60 p-4 text-xs leading-[2] text-muted-foreground shadow-soft">
+          <div className="flex items-start gap-2.5 rounded border border-accent/20 bg-card/60 p-4 text-xs leading-[2] text-muted-foreground shadow-soft">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
             <span>
               این راهنمایی‌ها جنبه تدبّر و تسکین قلبی دارد. برای تصمیمات فقهی، حقوقی یا درمانی از مشاوران متخصص و علمای دین راهنمایی بجویید.

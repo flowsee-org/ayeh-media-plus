@@ -22,19 +22,19 @@ export default function VideoCard({ item, className = "" }) {
  return (
  <Link
  href={verseKey ? `/verse/${verseKey.replace(":", "/")}` : "/quran"}
- className={`group relative flex flex-col justify-between rounded-2xl border border-border bg-card overflow-hidden transition-all duration-300 ${className}`}
+ className={`group relative flex flex-col justify-between rounded border border-border bg-card overflow-hidden transition-all duration-300 ${className}`}
  >
  {/* Live indicator badge */}
  {isLive && (
- <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-quranic-saffron text-quranic-ink text-xs font-bold animate-[live-pulse_1.5s_infinite] shadow-saffron-glow">
- <span className="h-2 w-2 rounded-full bg-quranic-ink animate-[breathe_2s_infinite]" />
+ <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 px-3 py-1 rounded bg-quranic-saffron text-quranic-ink text-xs font-bold animate-[live-pulse_1.5s_infinite] shadow-saffron-glow">
+ <span className="h-2 w-2 rounded bg-quranic-ink animate-[breathe_2s_infinite]" />
  زنده
  </div>
  )}
 
  {/* Competition badge */}
  {isCompetition && (
- <div className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-emerald text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-emerald/30">
+ <div className="absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2 py-1 rounded bg-quranic-emerald text-white text-[10px] font-bold backdrop-blur-sm border border-quranic-emerald/30">
  <Trophy className="h-3 w-3" />
  <span>{competitionYear || "مسابقه"}</span>
  </div>
@@ -42,7 +42,7 @@ export default function VideoCard({ item, className = "" }) {
 
  {/* Status badge for pending/verified/archived content */}
  {status !== "published" && status !== "verified" && (
- <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-500/90 text-amber-900 text-[10px] font-bold backdrop-blur-sm border border-amber-200">
+ <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 px-2 py-1 rounded bg-amber-500/90 text-amber-900 text-[10px] font-bold backdrop-blur-sm border border-amber-200">
  {status === "pending_review" ? "در انتظار بررسی" : status === "archived" ? "بایگانی شده" : status}
  </div>
  )}
@@ -60,7 +60,7 @@ export default function VideoCard({ item, className = "" }) {
  <div className="w-full h-full flex items-center justify-center">
  <div className="relative flex items-center justify-center">
  <div className="absolute inset-0 bg-black/30" />
- <div className="relative z-10 h-14 w-14 rounded-full bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+ <div className="relative z-10 h-14 w-14 rounded bg-white text-quranic-emerald flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
  <Play className="h-7 w-7 ml-1" />
  </div>
  </div>
@@ -68,26 +68,26 @@ export default function VideoCard({ item, className = "" }) {
  )}
  {/* Play button overlay on hover */}
  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
- <div className="h-16 w-16 rounded-full bg-quranic-emerald/95 backdrop-blur-md flex items-center justify-center text-white shadow-xl shadow-quranic-glow transform group-hover:scale-110 transition-transform">
+ <div className="h-16 w-16 rounded bg-quranic-emerald/95 backdrop-blur-md flex items-center justify-center text-white shadow-xl shadow-quranic-glow transform group-hover:scale-110 transition-transform">
  <Play className="h-8 w-8 ml-1" />
  </div>
  </div>
  {/* Duration badge */}
  {duration && (
- <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
+ <div className="absolute bottom-3 right-3 inline-flex items-center gap-1 px-2 py-1 rounded bg-black/80 text-white text-[11px] font-bold backdrop-blur-sm border border-white/20">
  <Clock className="h-3 w-3 text-quranic-saffron" />
  <span>{duration}</span>
  </div>
  )}
  {/* Verse badge */}
  {verseKey && (
- <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-quranic-saffron/90 text-quranic-ink text-[11px] font-bold backdrop-blur-sm border border-quranic-saffron/30">
+ <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-1 rounded bg-quranic-saffron/90 text-quranic-ink text-[11px] font-bold backdrop-blur-sm border border-quranic-saffron/30">
  <BookOpen className="h-3 w-3" />
  <span>{verseKey}</span>
  </div>
  )}
  {/* Views overlay */}
- <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-black/60 text-white text-[10px] font-bold backdrop-blur-md border border-white/20">
+ <div className="absolute bottom-3 left-3 flex items-center gap-1 px-2 py-1 rounded bg-black/60 text-white text-[10px] font-bold backdrop-blur-md border border-white/20">
  <Eye className="h-3 w-3 text-quranic-saffron" />
  <span>{fa(views)}</span>
  </div>
@@ -100,8 +100,8 @@ export default function VideoCard({ item, className = "" }) {
  {title}
  </h3>
  {scholar && (
- <div className="flex items-center gap-1.5 text-[10px] font-medium text-quranic-turquoise bg-quranic-turquoise/10 px-2 py-0.5 rounded-full border border-quranic-turquoise/20">
- <span className="h-2 w-2 rounded-full bg-quranic-turquoise" />
+ <div className="flex items-center gap-1.5 text-[10px] font-medium text-quranic-turquoise bg-quranic-turquoise/10 px-2 py-0.5 rounded border border-quranic-turquoise/20">
+ <span className="h-2 w-2 rounded bg-quranic-turquoise" />
  {scholar}
  </div>
  )}

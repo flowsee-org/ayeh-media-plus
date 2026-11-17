@@ -93,11 +93,11 @@ export default function EmptyState({
   const displayActionLabel = actionLabel || config.actionLabel;
   const displayActionHref = actionHref || config.actionHref;
   const actionClassName =
-    'inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-doran font-semibold text-sm hover:opacity-90 shadow-sm transition-all';
+    'inline-flex items-center gap-2 px-6 py-3 rounded bg-primary text-primary-foreground font-doran font-semibold text-sm hover:opacity-90 shadow-sm transition-all';
 
   return (
     <div
-      className={`rounded-2xl border border-dashed border-border/60 p-12 sm:p-16 text-center ${className}`}
+      className={`rounded border border-dashed border-border/60 p-12 sm:p-16 text-center ${className}`}
     >
       <DisplayIcon className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
       <h3 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground mb-2">

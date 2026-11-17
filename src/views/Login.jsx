@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { Link, useNavigate } from "@/lib/router-compat";
+import { useSearchParams } from 'next/navigation';
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import BrandLogo from "@/components/design-system/BrandLogo";
 export default function Login() {
   const { openAuthModal, checkUserAuth } = useAuth();
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,8 +26,7 @@ export default function Login() {
     try {
       await api.auth.loginViaEmailPassword(email, password);
       await checkUserAuth();
-      const params = new URLSearchParams(window.location.search);
-      const returnTo = params.get("returnTo");
+      const returnTo = searchParams.get("returnTo");
       navigate(returnTo || "/");
     } catch (err) {
       // Backend gates email/password login until OTP verification succeeds.
@@ -37,8 +38,7 @@ export default function Login() {
         } catch {
           // Still route to verify UI even if resend fails (user can retry there).
         }
-        const params = new URLSearchParams(window.location.search);
-        const returnTo = params.get("returnTo");
+        const returnTo = searchParams.get("returnTo");
         const qs = new URLSearchParams({ email: pendingEmail, verify: "1" });
         if (returnTo) qs.set("returnTo", returnTo);
         navigate(`/register?${qs.toString()}`);
@@ -64,11 +64,11 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border shadow-sm p-6 sm:p-8">
+        <div className="bg-card rounded border border-border shadow-sm p-6 sm:p-8">
           <button
             type="button"
             onClick={() => openAuthModal(() => { navigate("/"); })}
-            className="w-full mb-5 py-3 rounded-xl bg-muted hover:bg-muted/80 border border-border text-foreground font-semibold text-sm transition-all flex items-center justify-center gap-2"
+            className="w-full mb-5 py-3 rounded bg-muted hover:bg-muted/80 border border-border text-foreground font-semibold text-sm transition-all flex items-center justify-center gap-2"
           >
             <Phone className="w-4 h-4 text-primary" />
             ورود سریع با شماره همراه
@@ -81,7 +81,7 @@ export default function Login() {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
+            <div className="mb-4 p-3 rounded bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
               {error}
             </div>
           )}

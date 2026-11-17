@@ -51,11 +51,11 @@ export default function LiveBar() {
           <button
             key={s.id}
             onClick={() => router.push(`/live/${s.id}`)}
-            className="shrink-0 flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1.5 hover:bg-red-500/15 transition-colors"
+            className="shrink-0 flex items-center gap-2 rounded border border-red-500/30 bg-red-500/10 px-3 py-1.5 hover:bg-red-500/15 transition-colors"
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 animate-ping opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+              <span className="absolute inline-flex h-full w-full rounded bg-red-500 animate-ping opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded bg-red-500" />
             </span>
             <span className="text-xs font-medium text-red-600">{s.scholar_name}</span>
             <span className="text-xs text-muted-foreground hidden sm:inline">— {s.title}</span>

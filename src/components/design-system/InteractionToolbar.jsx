@@ -67,7 +67,7 @@ export default function InteractionToolbar({
     }
   };
 
-  const btnBase = 'inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold border transition-colors';
+  const btnBase = 'inline-flex items-center gap-1.5 px-3.5 py-2 rounded text-xs font-bold border transition-colors';
 
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>

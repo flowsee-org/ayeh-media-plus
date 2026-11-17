@@ -43,7 +43,7 @@ export default function DailyRecommendation() {
  <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
  <div className="flex items-center justify-between mb-6 pb-3 border-b border-border/80">
  <div className="flex items-center gap-3">
- <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+ <div className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center shrink-0">
  <Compass className="h-5 w-5" />
  </div>
  <div>
@@ -60,11 +60,11 @@ export default function DailyRecommendation() {
  <Link
  key={p.verse.id || i}
  to={verseKeyToPath(p.verse.verse_key)}
- className="group relative flex flex-col justify-between rounded-2xl border border-border bg-card p-5 sm:p-6 hover:border-primary/40 hover:shadow-card-hover transition-all duration-200"
+ className="group relative flex flex-col justify-between rounded border border-border bg-card p-5 sm:p-6 hover:border-primary/40 hover:shadow-card-hover transition-all duration-200"
  >
  <div>
  <div className="flex items-center justify-between gap-2 mb-3.5">
- <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary border border-border text-foreground font-ui text-xs font-semibold">
+ <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold">
  <Sparkles className="h-3 w-3 text-accent" /> {p.reason}
  </span>
  <span className="font-ui text-xs font-semibold text-muted-foreground px-2 py-0.5 rounded bg-secondary">
@@ -81,7 +81,7 @@ export default function DailyRecommendation() {
  </p>
 
  {p.reflection && (
- <div className="rounded-xl bg-secondary/60 border border-border/80 p-3 mb-3">
+ <div className="rounded bg-secondary/60 border border-border/80 p-3 mb-3">
  <div className="flex items-center gap-1.5 text-[11px] font-ui text-primary font-bold mb-1">
  <BookOpen className="h-3 w-3" /> پیام تدبّری
  </div>

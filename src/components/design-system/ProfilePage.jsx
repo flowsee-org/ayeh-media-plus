@@ -120,7 +120,7 @@ export default function ProfilePage({ params }) {
         <h2 className="font-semibold text-foreground">{error || 'پروفایل یافت نشد'}</h2>
         <Link
           href="/"
-          className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
+          className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
         >
           بازگشت به صفحه اصلی
         </Link>
@@ -177,25 +177,25 @@ export default function ProfilePage({ params }) {
         isOwnProfile={isOwn}
         roleSpecific={profileType === 'qari' ? (
           <div className="flex flex-wrap gap-3">
-            <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
+            <span className="px-3 py-1 rounded bg-accent/10 text-accent text-xs font-medium border border-accent/20">
               قاری قرآنی
             </span>
-            <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
+            <span className="px-3 py-1 rounded bg-accent/10 text-accent text-xs font-medium border border-accent/20">
               تلاوت
             </span>
           </div>
         ) : profileType === 'scholar' ? (
           <div className="flex flex-wrap gap-3">
-            <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
+            <span className="px-3 py-1 rounded bg-accent/10 text-accent text-xs font-medium border border-accent/20">
               استاد تفسیر
             </span>
-            <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
+            <span className="px-3 py-1 rounded bg-accent/10 text-accent text-xs font-medium border border-accent/20">
               گفتار
             </span>
           </div>
         ) : (
           <div className="flex flex-wrap gap-3">
-            <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium border border-accent/20">
+            <span className="px-3 py-1 rounded bg-accent/10 text-accent text-xs font-medium border border-accent/20">
               تولیدکننده محتوا
             </span>
           </div>
