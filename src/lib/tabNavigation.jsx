@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "@/lib/router-compat";
+import { usePathname, useRouter } from "next/navigation";
 
 /* Per-tab navigation stack: each bottom-tab remembers the routes the user
    visited inside it (sessionStorage). Switching tabs restores the tab's
@@ -20,8 +20,8 @@ const matchTab = (tabs, pathname) =>
   tabs.find(({ to }) => (to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/"))) || null;
 
 export function TabNavProvider({ tabs, children }) {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const router = useRouter();
+  const pathname = usePathname() || "/";
   const [stacks, setStacks] = useState(readStacks);
   const lastTabRef = useRef(matchTab(tabs, pathname)?.to ?? null);
 
@@ -54,12 +54,12 @@ export function TabNavProvider({ tabs, children }) {
         } catch {}
         return next;
       });
-      if (pathname !== to) navigate(to);
+      if (pathname !== to) router.push(to);
       return;
     }
     /* Switching tabs → restore that tab's saved last route */
     const stack = stacks[to] || [to];
-    navigate(stack[stack.length - 1] || to);
+    router.push(stack[stack.length - 1] || to);
   };
 
   return <TabNavContext.Provider value={{ handleTabClick }}>{children}</TabNavContext.Provider>;

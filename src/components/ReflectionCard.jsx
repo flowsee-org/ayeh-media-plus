@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, Quote } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const TYPE_STYLES = {
   Meaning: "primary",
@@ -53,7 +54,7 @@ export default function ReflectionCard({ reflection, scholarName }) {
 
   return (
     <div className="group relative rounded border border-border/40 bg-card/50 overflow-hidden transition-all duration-300 hover:border-border/60 hover:shadow-soft">
-      <button
+      <Button
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-start gap-4 p-5 text-right"
       >
@@ -76,7 +77,7 @@ export default function ReflectionCard({ reflection, scholarName }) {
         <ChevronDown
           className={`shrink-0 h-5 w-5 text-muted-foreground transition-transform duration-300 ${open ? "rotate-180" : ""}`}
         />
-      </button>
+      </Button>
       {open && (
         <div className="px-5 pb-5 animate-fade-in">
           <div className="pr-14 text-sm leading-[1.8] text-muted-foreground whitespace-pre-line">

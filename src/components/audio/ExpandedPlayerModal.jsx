@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useRouter } from "next/navigation";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import {
  ChevronDown,
@@ -13,6 +13,7 @@ import {
  ListMusic,
  Gauge,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { IslamicStar } from "@/components/IslamicOrnaments";
 
@@ -35,7 +36,7 @@ const SLEEP_OPTIONS = [
 ];
 
 export default function ExpandedPlayerModal() {
- const navigate = useNavigate();
+ const router = useRouter();
  const {
  track,
  isPlaying,
@@ -93,13 +94,13 @@ export default function ExpandedPlayerModal() {
 
  {/* Top Bar Header */}
  <div className="relative flex items-center justify-between px-5 pt-4 pb-2 border-b border-border/60">
- <button
+ <Button
  onClick={() => setIsExpanded(false)}
  className="h-9 w-9 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
  aria-label="بستن پنل"
  >
  <ChevronDown className="h-5 w-5" />
- </button>
+ </Button>
 
  <div className="flex items-center gap-2">
  <IslamicStar size={14} className="text-accent" />
@@ -121,7 +122,7 @@ export default function ExpandedPlayerModal() {
  {/* Navigation Tabs (Player vs Chapters) */}
  {chapters.length > 0 && (
  <div className="relative flex border-b border-border/40 px-6 pt-2">
- <button
+ <Button
  onClick={() => setActiveTab("player")}
  className={`flex-1 py-2 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 ${
  activeTab === "player"
@@ -131,8 +132,8 @@ export default function ExpandedPlayerModal() {
  >
  <Sparkles className="h-3.5 w-3.5" />
  پخش اصلی
- </button>
- <button
+ </Button>
+ <Button
  onClick={() => setActiveTab("chapters")}
  className={`flex-1 py-2 text-xs font-bold border-b-2 transition-all flex items-center justify-center gap-1.5 ${
  activeTab === "chapters"
@@ -142,7 +143,7 @@ export default function ExpandedPlayerModal() {
  >
  <ListMusic className="h-3.5 w-3.5" />
  سرفصل‌ها ({chapters.length.toLocaleString("fa-IR")})
- </button>
+ </Button>
  </div>
  )}
 
@@ -197,16 +198,16 @@ export default function ExpandedPlayerModal() {
  {/* Linked Verse Action */}
  {track.verseKey && (
  <div className="mt-3">
- <button
+ <Button
  onClick={() => {
  setIsExpanded(false);
- navigate(`/quran?verse=${track.verseKey}`);
+            router.push(`/quran?verse=${track.verseKey}`);
  }}
  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-primary/10 hover:bg-primary/20 text-primary border border-primary/25 text-xs font-bold transition-colors"
  >
  <BookOpen className="h-3.5 w-3.5" />
  مشاهده آیه {track.verseKey} در مصحف شریف ←
- </button>
+ </Button>
  </div>
  )}
  </div>
@@ -235,16 +236,16 @@ export default function ExpandedPlayerModal() {
  {/* Main Playback Controls */}
  <div className="flex items-center justify-center gap-6 mt-6">
  {/* Rewind 10s */}
- <button
+ <Button
  onClick={() => seekRelative(-10)}
  className="h-11 w-11 rounded bg-secondary hover:bg-secondary/80 flex items-center justify-center text-foreground transition-all hover:scale-105 active:scale-95"
  title="۱۰ ثانیه به عقب"
  >
  <RotateCcw className="h-5 w-5" />
- </button>
+ </Button>
 
  {/* Big Play / Pause Button */}
- <button
+ <Button
  onClick={togglePlay}
  className="h-16 w-16 rounded bg-gradient-to-tr from-accent to-yellow-500 hover:from-accent/90 hover:to-yellow-400 text-stone-950 flex items-center justify-center shadow-gold-glow transition-all hover:scale-105 active:scale-95"
  title={isPlaying ? "توقف" : "پخش"}
@@ -254,23 +255,23 @@ export default function ExpandedPlayerModal() {
  ) : (
  <Play className="h-8 w-8 fill-current mr-0.5" />
  )}
- </button>
+ </Button>
 
  {/* Forward 10s */}
- <button
+ <Button
  onClick={() => seekRelative(10)}
  className="h-11 w-11 rounded bg-secondary hover:bg-secondary/80 flex items-center justify-center text-foreground transition-all hover:scale-105 active:scale-95"
  title="۱۰ ثانیه به جلو"
  >
  <RotateCw className="h-5 w-5" />
- </button>
+ </Button>
  </div>
 
  {/* Control Action Pills (Speed & Sleep Timer) */}
  <div className="flex items-center gap-3 mt-6">
  {/* Speed Pill */}
  <div className="relative">
- <button
+ <Button
  onClick={() => {
  setShowSpeedMenu(!showSpeedMenu);
  setShowSleepMenu(false);
@@ -279,12 +280,12 @@ export default function ExpandedPlayerModal() {
  >
  <Gauge className="h-3.5 w-3.5 text-accent" />
  سرعت: {playbackRate.toLocaleString("fa-IR")}x
- </button>
+ </Button>
 
  {showSpeedMenu && (
  <div className="absolute bottom-full mb-2 right-0 rounded border border-accent/30 bg-card shadow-2xl p-2 z-20 flex flex-col gap-1 min-w-[110px]">
  {SPEED_OPTIONS.map((rate) => (
- <button
+ <Button
  key={rate}
  onClick={() => {
  setPlaybackRate(rate);
@@ -297,7 +298,7 @@ export default function ExpandedPlayerModal() {
  }`}
  >
  {rate.toLocaleString("fa-IR")}x {rate === 1 && "(عادی)"}
- </button>
+ </Button>
  ))}
  </div>
  )}
@@ -305,7 +306,7 @@ export default function ExpandedPlayerModal() {
 
  {/* Sleep Timer Pill */}
  <div className="relative">
- <button
+ <Button
  onClick={() => {
  setShowSleepMenu(!showSleepMenu);
  setShowSpeedMenu(false);
@@ -314,12 +315,12 @@ export default function ExpandedPlayerModal() {
  >
  <Clock className="h-3.5 w-3.5 text-accent" />
  {sleepTimerMinutes ? `خواب: ${sleepTimerMinutes.toLocaleString("fa-IR")} د` : "تایمر خواب"}
- </button>
+ </Button>
 
  {showSleepMenu && (
  <div className="absolute bottom-full mb-2 left-0 rounded border border-accent/30 bg-card shadow-2xl p-2 z-20 flex flex-col gap-1 min-w-[130px]">
  {SLEEP_OPTIONS.map((opt) => (
- <button
+ <Button
  key={String(opt.minutes)}
  onClick={() => {
  setSleepTimer(opt.minutes);
@@ -332,7 +333,7 @@ export default function ExpandedPlayerModal() {
  }`}
  >
  {opt.label}
- </button>
+ </Button>
  ))}
  </div>
  )}
@@ -351,7 +352,7 @@ export default function ExpandedPlayerModal() {
  const isActive = idx === currentChapterIndex;
  const sec = typeof ch.seconds === "number" ? ch.seconds : 0;
  return (
- <button
+ <Button
  key={idx}
  onClick={() => jumpChapter(sec)}
  className={`w-full flex items-center justify-between p-3 rounded border transition-all text-right ${
@@ -376,7 +377,7 @@ export default function ExpandedPlayerModal() {
  <span className="text-xs font-mono px-2 py-0.5 rounded bg-secondary text-muted-foreground">
  {ch.timestamp || formatSeconds(sec)}
  </span>
- </button>
+ </Button>
  );
  })}
  </div>

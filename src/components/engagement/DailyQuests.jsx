@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Flame, BookOpen, Headphones, Bookmark, MessageCircle, PenLine, Gift, CheckCircle2, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { getEngagementSnapshot, claimDailyBonus, ENGAGEMENT_EVENT } from "@/lib/engagement";
 
@@ -90,13 +91,13 @@ export default function DailyQuests() {
 
       {/* Bonus claim */}
       {snap.allDone && !snap.bonusClaimed && (
-        <button
+        <Button
           onClick={claim}
           className="relative mt-4 w-full flex items-center justify-center gap-2 rounded bg-gradient-to-l from-accent to-accent/80 text-accent-foreground py-3 text-sm font-bold hover:shadow-glow transition-all animate-fade-in"
         >
           <Gift className="h-4 w-4" />
           همه مأموریت‌ها انجام شد! جایزه امروز را دریافت کنید (+{fa(BONUS)} امتیاز)
-        </button>
+        </Button>
       )}
       {snap.bonusClaimed && (
         <div className="relative mt-4 flex items-center justify-center gap-2 rounded border border-primary/20 bg-primary/[0.06] py-3 text-sm text-primary font-medium">

@@ -10,6 +10,7 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { IslamicStar } from "@/components/IslamicOrnaments";
 
 function parseTimestampToSeconds(ts) {
@@ -149,17 +150,17 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Steps Indicator */}
         <div className="relative flex items-center justify-between px-4 py-3 my-2 bg-secondary/50 rounded border border-border/40 text-xs font-bold">
-          <button
+          <Button
             onClick={() => setStep(1)}
             className={`flex items-center gap-1.5 transition-colors ${
               step === 1 ? "text-accent" : "text-muted-foreground"
@@ -169,9 +170,9 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               ۱
             </span>
             <span>مشخصات گفتار</span>
-          </button>
+          </Button>
           <span className="text-border">←</span>
-          <button
+          <Button
             onClick={() => setStep(2)}
             className={`flex items-center gap-1.5 transition-colors ${
               step === 2 ? "text-accent" : "text-muted-foreground"
@@ -181,9 +182,9 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               ۲
             </span>
             <span>فصل‌بندی زمانی</span>
-          </button>
+          </Button>
           <span className="text-border">←</span>
-          <button
+          <Button
             onClick={() => setStep(3)}
             className={`flex items-center gap-1.5 transition-colors ${
               step === 3 ? "text-accent" : "text-muted-foreground"
@@ -193,7 +194,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
               ۳
             </span>
             <span>آیات و انتشار</span>
-          </button>
+          </Button>
         </div>
 
         {/* Form Body */}
@@ -299,13 +300,13 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                     کاربر با کلیک روی هر فصل مستقیماً به زمان تعیین‌شده هدایت می‌شود.
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={handleAddChapter}
                   className="px-3 py-1.5 rounded bg-secondary hover:bg-secondary/80 text-accent text-xs font-bold flex items-center gap-1 transition-colors"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   افزودن فصل
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-2 mt-2">
@@ -333,12 +334,12 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                       dir="ltr"
                     />
                     {chapters.length > 1 && (
-                      <button
+                      <Button
                         onClick={() => handleRemoveChapter(idx)}
                         className="h-8 w-8 rounded hover:bg-destructive/15 text-muted-foreground hover:text-destructive flex items-center justify-center transition-colors shrink-0"
                       >
                         <Trash2 className="h-4 w-4" />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 ))}
@@ -386,25 +387,25 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
         {/* Modal Actions Footer */}
         <div className="relative pt-4 border-t border-border/60 flex items-center justify-between">
           {step > 1 ? (
-            <button
+            <Button
               onClick={() => setStep(step - 1)}
               className="px-4 py-2 rounded bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold transition-colors"
             >
               مرحله قبل
-            </button>
+            </Button>
           ) : (
             <div />
           )}
 
           {step < 3 ? (
-            <button
+            <Button
               onClick={() => setStep(step + 1)}
               className="px-5 py-2 rounded bg-primary text-primary-foreground text-xs font-bold transition-all hover:shadow-emerald-glow"
             >
               گام بعدی ←
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               onClick={handleSubmit}
               disabled={loading}
               className="px-6 py-2.5 rounded bg-gradient-to-r from-accent to-yellow-500 hover:from-accent/90 text-stone-950 text-xs font-bold shadow-gold-glow flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
@@ -415,7 +416,7 @@ export default function TalkStudioModal({ isOpen, onClose, onCreated, user }) {
                 <Sparkles className="h-4 w-4" />
               )}
               <span>انتشار درس‌گفتار</span>
-            </button>
+            </Button>
           )}
         </div>
       </div>

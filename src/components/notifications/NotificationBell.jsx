@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { timeAgo } from "@/components/community/shared";
 import { Bell, Heart, MessageCircle, CheckCheck, Loader2, Radio } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
@@ -71,7 +72,7 @@ export default function NotificationBell() {
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
         onClick={() => setOpen((o) => !o)}
         className="relative flex h-10 w-10 items-center justify-center rounded text-foreground transition-colors hover:bg-secondary"
         aria-label="اعلان‌ها"
@@ -82,16 +83,16 @@ export default function NotificationBell() {
             {fa(unread)}
           </span>
         )}
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute top-full mt-2 left-0 w-80 max-w-[85vw] rounded border border-border bg-popover shadow-premium overflow-hidden z-50 animate-scale-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 bg-accent/[0.03]">
             <span className="font-display font-bold text-sm">اعلان‌ها</span>
             {unread > 0 && (
-              <button onClick={markAll} className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
+              <Button type="button" variant="link" size="sm" onClick={markAll} className="text-xs text-accent">
                 <CheckCheck className="h-3.5 w-3.5" /> خواندن همه
-              </button>
+              </Button>
             )}
           </div>
           <div className="max-h-80 overflow-y-auto">
@@ -104,7 +105,7 @@ export default function NotificationBell() {
               </div>
             ) : (
               items.map((n) => (
-                <button
+                <Button
                   key={n.id}
                   onClick={() => openItem(n)}
                   className={`w-full flex items-start gap-3 px-4 py-3 text-right border-b border-border/30 last:border-0 transition-colors hover:bg-accent/[0.04] ${!n.read ? "bg-accent/[0.06]" : ""}`}
@@ -144,7 +145,7 @@ export default function NotificationBell() {
                     <span className="block text-xs text-muted-foreground/70 mt-1">{timeAgo(n.created_date)}</span>
                   </span>
                   {!n.read && <span className="h-2 w-2 rounded bg-accent shrink-0 mt-1.5" />}
-                </button>
+                </Button>
               ))
             )}
           </div>

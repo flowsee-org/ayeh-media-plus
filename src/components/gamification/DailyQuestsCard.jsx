@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import {
  BookOpen,
  Brain,
@@ -10,6 +10,7 @@ import {
  HelpCircle,
  Volume2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
@@ -245,13 +246,13 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <div className="mt-3 p-3 rounded bg-card border border-emerald-900/20 text-xs">
  <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1.5 font-mono">
  <span>آیه منتخب امروز: {dailyContent.featured_verse.verse_key}</span>
- <button
+ <Button
  onClick={handlePlayVerseAudio}
  className="flex items-center gap-1 text-primary hover:underline font-rokh-bold font-bold"
  >
  <Volume2 className="w-3.5 h-3.5" />
  {audioPlaying ? "توقف تلاوت" : "پخش صوت"}
- </button>
+ </Button>
  </div>
  <p className=" text-sm text-foreground/90 leading-relaxed text-right line-clamp-2">
  {dailyContent.featured_verse.arabic}
@@ -271,7 +272,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  </span>
  ) : (
  <Link
- to="/quran"
+ href="/quran"
  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-rokh-bold font-bold transition-transform active:scale-95"
  >
  ورود به قرآن
@@ -333,7 +334,7 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  {!quests[1]?.is_completed ? (
  <div className="space-y-2">
  {dailyContent.quiz.options.map((opt, idx) => (
- <button
+ <Button
  key={idx}
  onClick={() => setSelectedOption(idx)}
  className={`w-full text-right p-2.5 rounded text-xs transition-all border flex items-center justify-between ${
@@ -346,17 +347,17 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  <span className="w-4 h-4 rounded border border-primary/40 flex items-center justify-center text-[10px] font-mono shrink-0">
  {idx + 1}
  </span>
- </button>
+ </Button>
  ))}
 
  <div className="pt-2 flex justify-end">
- <button
+ <Button
  onClick={handleQuizSubmit}
  disabled={selectedOption === null || submittingQuiz}
  className="px-4 py-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-bold font-rokh-bold disabled:opacity-50 transition-all flex items-center gap-1.5"
  >
  {submittingQuiz ? "در حال ثبت..." : "ثبت پاسخ و تدبر"}
- </button>
+ </Button>
  </div>
  </div>
  ) : (
@@ -421,14 +422,14 @@ export default function DailyQuestsCard({ onProgressUpdate }) {
  انجام شد
  </span>
  ) : (
- <button
+ <Button
  onClick={handleQuickSalawat}
  disabled={submittingSocial}
  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-600 text-white hover:bg-amber-700 text-xs font-rokh-bold font-bold transition-transform active:scale-95 disabled:opacity-50 shadow-sm"
  >
  <Sparkles className="w-3.5 h-3.5" />
  {submittingSocial ? "در حال ثبت..." : "نذر صلوات روز"}
- </button>
+ </Button>
  )}
  </div>
  </div>

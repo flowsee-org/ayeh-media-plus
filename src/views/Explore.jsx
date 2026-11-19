@@ -1,15 +1,16 @@
 'use client';
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useNavigate } from "@/lib/router-compat";
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from "@/lib/api";
 import { Compass, Search, Flame, Clock, TrendingUp } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
-import VideoCard from "@/components/design-system/VideoCard";
-import ScholarCard from "@/components/design-system/ScholarCard";
-import { SkeletonGrid } from "@/components/design-system/LoadingSkeleton";
-import EmptyState from "@/components/design-system/EmptyState";
+import VideoCard from "@/components/ui/video-card";
+import ScholarCard from "@/components/ui/scholar-card";
+import { SkeletonGrid } from "@/components/ui/loading-skeleton";
+import EmptyState from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const CHIPS = [
   { id: "all", label: "همه" },
@@ -35,7 +36,7 @@ function isShortVideo(v) {
 }
 
 export default function Explore() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [videos, setVideos] = useState([]);
@@ -104,22 +105,19 @@ export default function Explore() {
               کشف ویدیوهای قرآنی بر اساس موضوع و محبوبیت
             </p>
           </div>
-          <button
-            onClick={() => navigate("/search")}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded border border-border bg-card text-sm font-medium hover:bg-muted"
-          >
-            <Search className="h-4 w-4" />
+          <Button variant="outline" size="sm" onClick={() => router.push("/search")}>
+            <Search className="h-4 w-4 mr-1" />
             جستجوی پیشرفته
-          </button>
+          </Button>
         </div>
 
         <div className="relative">
           <Search className="absolute end-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
+          <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="جستجو در کاوش..."
-            className="w-full h-11 pe-10 ps-4 rounded bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className="pe-10"
           />
         </div>
 
@@ -128,7 +126,7 @@ export default function Explore() {
             const Icon = c.icon;
             const active = chip === c.id;
             return (
-              <button
+              <Button
                 key={c.id}
                 onClick={() => setChip(c.id)}
                 className={`inline-flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded text-sm font-medium border transition-colors ${
@@ -139,7 +137,7 @@ export default function Explore() {
               >
                 {Icon && <Icon className="h-3.5 w-3.5" />}
                 {c.label}
-              </button>
+              </Button>
             );
           })}
         </div>

@@ -2,16 +2,24 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
-import { LayoutDashboard, BookOpen, ScrollText, MessageCircle, Users, FolderHeart, Compass, Shield, Loader2, Plus, Trash2, Pencil, Lock } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { LayoutDashboard, BookOpen, ScrollText, MessageCircle, Users, FolderHeart, Compass, Shield, Loader2, Plus, Trash2, Pencil, Lock, X, Library } from "lucide-react";
 import Dashboard from "@/components/admin/Dashboard";
 import TafsirAdmin from "@/components/admin/TafsirAdmin";
 import PostsAdmin from "@/components/admin/PostsAdmin";
 import VerseForm from "@/components/admin/VerseForm";
 import ErrorDoctor from "@/components/admin/ErrorDoctor";
-import { Field, Modal, EmptyState, inputCls } from "@/components/admin/shared";
 import SelectInput from "@/components/admin/SelectInput";
 import RoleGuard from "@/components/RoleGuard";
 import { PERMISSIONS } from "@/lib/rbac";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const NAV = [
   { id: "dashboard", label: "نمای کلی", icon: LayoutDashboard },
@@ -61,12 +69,14 @@ export default function Admin() {
         {user ? (
           <p className="text-xs text-muted-foreground mb-4 font-doran">نقش شما: {user.role || "کاربر"}</p>
         ) : null}
-        <button
+        <Button
           onClick={() => openAuthModal()}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded bg-primary text-primary-foreground text-xs font-bold shadow-md hover:shadow-lg transition-all"
+          variant="primary"
+          size="sm"
+          className="shadow-md hover:shadow-lg transition-all"
         >
           ورود با حساب مدیر
-        </button>
+        </Button>
       </div>
     }>
       <div className="page-shell animate-fade-in">
@@ -84,15 +94,20 @@ export default function Admin() {
       {/* Mobile pills */}
       <div className="lg:hidden -mx-4 px-4 overflow-x-auto no-scrollbar mb-6">
         <div className="flex gap-2 w-max">
-          {NAV.map((n) => (
-            <button
-              key={n.id}
-              onClick={() => setTab(n.id)}
-              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-all ${tab === n.id ? "bg-accent text-accent-foreground shadow-soft" : "bg-muted/40 text-muted-foreground hover:text-foreground"}`}
-            >
-              <n.icon className="h-4 w-4" /> {n.label}
-            </button>
-          ))}
+          <Tabs defaultValue={tab} onValueChange={setTab}>
+            <TabsList className="gap-2">
+              {NAV.map((n) => (
+                <TabsTrigger
+                  key={n.id}
+                  value={n.id}
+                  variant="outline"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded text-sm font-medium whitespace-nowrap transition-all shrink-0 border"
+                >
+                  <n.icon className="h-4 w-4" /> {n.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
@@ -100,15 +115,20 @@ export default function Admin() {
         {/* Desktop sidebar */}
         <aside className="hidden lg:block">
           <nav className="sticky top-24 space-y-1 rounded border border-border/40 bg-card/50 p-2 shadow-soft">
-            {NAV.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => setTab(n.id)}
-                className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded text-sm font-medium transition-all ${tab === n.id ? "bg-accent text-accent-foreground shadow-soft" : "text-muted-foreground hover:text-foreground hover:bg-muted/40"}`}
-              >
-                <n.icon className="h-4 w-4 shrink-0" /> {n.label}
-              </button>
-            ))}
+            <Tabs defaultValue={tab} onValueChange={setTab}>
+              <TabsList className="flex-col gap-1">
+                {NAV.map((n) => (
+                  <TabsTrigger
+                    key={n.id}
+                    value={n.id}
+                    variant="outline"
+                    className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded text-sm font-medium transition-all shrink-0 border ${tab === n.id ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:bg-muted/40"}`}
+                  >
+                    <n.icon className="h-4 w-4 shrink-0" /> {n.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </nav>
         </aside>
 
@@ -139,7 +159,12 @@ function useList(loader) {
   const [loading, setLoading] = useState(true);
   const reload = () => {
     setLoading(true);
-    loader().then(setItems).catch(() => {}).finally(() => setLoading(false));
+    loader()
+      .then(setItems)
+      .catch((err) => {
+        toast.error(err.message || 'خطا در بارگذاری داده‌ها');
+      })
+      .finally(() => setLoading(false));
   };
   useEffect(reload, []);
   return { items, loading, reload, setItems };
@@ -153,9 +178,9 @@ function VersesAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground font-doran">{items.length} آیه ثبت شده</p>
-        <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
+        <Button variant="secondary" size="sm" onClick={() => setForm({})}>
           <Plus className="h-4 w-4" /> آیه جدید
-        </button>
+        </Button>
       </div>
 
       {loading ? (
@@ -163,19 +188,31 @@ function VersesAdmin() {
       ) : (
         <div className="space-y-2">
           {items.map((v) => (
-            <div key={v.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-medium">{v.surah_number}</div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium font-doran">{v.surah_name_english} · {v.verse_key}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{v.translation}</p>
+            <Card key={v.id} className="rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-medium">{v.surah_number}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium font-doran">{v.surah_name_english} · {v.verse_key}</div>
+                  <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{v.translation}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon" onClick={() => setForm(v)} title="ویرایش">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => {
+                      if (!window.confirm("آیا از حذف این آیه مطمئن هستید؟")) return;
+                      api.entities.Verse.delete(v.id).then(reload);
+                    }}
+                    title="حذف"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <button onClick={() => setForm(v)} className="h-11 w-11 rounded text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition" title="ویرایش">
-                <Pencil className="h-4 w-4" />
-              </button>
-              <button onClick={async () => { await api.entities.Verse.delete(v.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition" title="حذف">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
+            </Card>
           ))}
           {items.length === 0 && <EmptyState text="هنوز آیه‌ای ثبت نشده است." />}
         </div>
@@ -200,25 +237,35 @@ function ScholarsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground font-doran">{items.length} عالم</p>
-        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
+        <Button variant="secondary" size="sm" onClick={() => setShow(true)}>
           <Plus className="h-4 w-4" /> عالم جدید
-        </button>
+        </Button>
       </div>
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-7 w-7 animate-spin text-primary" /></div>
       ) : (
         <div className="space-y-2">
           {items.map((s) => (
-            <div key={s.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name ? s.name[0] : "?"}</div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium font-doran">{s.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{s.title} · {s.bio?.slice(0, 30) || ""}</p>
+            <Card key={s.id} className="rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded bg-gradient-to-br from-accent/25 to-accent/5 border border-accent/20 flex items-center justify-center text-accent text-sm">{s.name ? s.name[0] : "?"}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium font-doran">{s.name}</div>
+                  <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{s.title} · {s.bio?.slice(0, 30) || ""}</p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => {
+                    if (!window.confirm("آیا از حذف این عالم مطمئن هستید؟")) return;
+                    api.entities.Scholar.delete(s.id).then(reload);
+                  }}
+                  title="حذف"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-              <button onClick={async () => { await api.entities.Scholar.delete(s.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
+            </Card>
           ))}
           {items.length === 0 && <EmptyState text="هنوز عالمی ثبت نشده است." />}
         </div>
@@ -231,6 +278,7 @@ function ScholarsAdmin() {
 function ScholarForm({ onClose, onSaved }) {
   const [form, setForm] = useState({ name: "", name_arabic: "", title: "", bio: "", specialization: "", books: "" });
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState(null);
   const submit = async () => {
     setSaving(true);
     try {
@@ -239,24 +287,60 @@ function ScholarForm({ onClose, onSaved }) {
         books: form.books.split(",").map((s) => s.trim()).filter(Boolean),
       });
       onSaved();
-    } catch {}
+    } catch (e) {
+      setErr(e.message || "خطا در ذخیره عالم");
+    }
     setSaving(false);
   };
   return (
-    <Modal onClose={onClose} title="افزودن عالم">
-      <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="نام"><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></Field>
-        <Field label="نام عربی"><input value={form.name_arabic} onChange={(e) => setForm({ ...form, name_arabic: e.target.value })} className={inputCls} dir="rtl" /></Field>
-        <Field label="عنوان"><input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className={inputCls} /></Field>
-        <Field label="تخصص"><input value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} className={inputCls} /></Field>
-      </div>
-      <Field label="زندگی‌نامه"><textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className={inputCls} /></Field>
-      <Field label="آثار (با کاما)"><input value={form.books} onChange={(e) => setForm({ ...form, books: e.target.value })} className={inputCls} /></Field>
-      <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
-      </div>
-    </Modal>
+    <Dialog open={onClose !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-2xl p-0 sm:p-8 shadow-premium space-y-6">
+        <DialogHeader>
+          <DialogTitle>افزودن عالم</DialogTitle>
+          <DialogDescription>افزودن استاد یا مفسّر جدید به سامانه</DialogDescription>
+        </DialogHeader>
+        <DialogClose>
+          <X className="h-4 w-4" />
+        </DialogClose>
+        <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-4 p-6">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>نام</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>نام عربی</Label>
+              <Input value={form.name_arabic} onChange={(e) => setForm({ ...form, name_arabic: e.target.value })} dir="rtl" />
+            </div>
+            <div className="space-y-2">
+              <Label>عنوان</Label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>تخصص</Label>
+              <Input value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>زندگی‌نامه</Label>
+            <Textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} />
+          </div>
+          <div className="space-y-2">
+            <Label>آثار (با کاما)</Label>
+            <Input value={form.books} onChange={(e) => setForm({ ...form, books: e.target.value })} />
+          </div>
+          {err && <p className="text-sm text-destructive">{err}</p>}
+          <div className="flex justify-end gap-2 mt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              انصراف
+            </Button>
+            <Button type="submit" disabled={saving} className="px-4 py-2">
+              {saving ? "…" : "ذخیره"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -268,25 +352,35 @@ function CollectionsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">{items.length} مجموعه</p>
-        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
+        <Button variant="secondary" size="sm" onClick={() => setShow(true)}>
           <Plus className="h-4 w-4" /> مجموعه جدید
-        </button>
+        </Button>
       </div>
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-7 w-7 animate-spin text-primary" /></div>
       ) : (
         <div className="space-y-2">
           {items.map((c) => (
-            <div key={c.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${c.theme_color || "#10b981"}22`, color: c.theme_color || "#10b981" }}><FolderHeart className="h-4 w-4" /></div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium font-doran">{c.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{c.description}</p>
+            <Card key={c.id} className="rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${c.theme_color || "#10b981"}22`, color: c.theme_color || "#10b981" }}><FolderHeart className="h-4 w-4" /></div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium font-doran">{c.name}</div>
+                  <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{c.description}</p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => {
+                    if (!window.confirm("آیا از حذف این مجموعه مطمئن هستید؟")) return;
+                    api.entities.Collection.delete(c.id).then(reload);
+                  }}
+                  title="حذف"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-              <button onClick={async () => { await api.entities.Collection.delete(c.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
+            </Card>
           ))}
           {items.length === 0 && <EmptyState text="هنوز مجموعه‌ای ثبت نشده است." />}
         </div>
@@ -299,6 +393,7 @@ function CollectionsAdmin() {
 function CollectionForm({ onClose, onSaved }) {
   const [form, setForm] = useState({ name: "", description: "", theme_color: "#c5a059", cover_pattern: "stars", verse_keys: "", related_topics: "", reading_time: 15, is_featured: false });
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState(null);
   const submit = async () => {
     setSaving(true);
     try {
@@ -316,46 +411,84 @@ function CollectionForm({ onClose, onSaved }) {
         is_featured: form.is_featured,
       });
       onSaved();
-    } catch {}
+    } catch (e) {
+      setErr(e.message || "خطا در ذخیره مجموعه");
+    }
     setSaving(false);
   };
   return (
-    <Modal onClose={onClose} title="افزودن مجموعه">
-      <Field label="نام"><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></Field>
-      <Field label="توضیح"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={inputCls} /></Field>
-      <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="رنگ"><input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded border border-border/60 bg-card/50" /></Field>
-        <Field label="الگوی جلد">
-          <SelectInput
-            value={form.cover_pattern}
-            onChange={(v) => setForm({ ...form, cover_pattern: v })}
-            options={[
-              { value: "stars", label: "ستاره" },
-              { value: "geometric", label: "هندسی" },
-              { value: "arabesque", label: "اسلیمی" },
-              { value: "mosque", label: "مسجد" },
-            ]}
-          />
-        </Field>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="کلید آیات (با کاما)"><input value={form.verse_keys} onChange={(e) => setForm({ ...form, verse_keys: e.target.value })} className={inputCls} placeholder="1:1,2:255" /></Field>
-        <Field label="موضوعات مرتبط (با کاما)"><input value={form.related_topics} onChange={(e) => setForm({ ...form, related_topics: e.target.value })} className={inputCls} /></Field>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="زمان مطالعه (دقیقه)"><input type="number" value={form.reading_time} onChange={(e) => setForm({ ...form, reading_time: e.target.value })} className={inputCls} /></Field>
-        <Field label="مجموعه ویژه">
-          <label className="flex items-center gap-2 cursor-pointer mt-2">
-            <input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} className="h-4 w-4 rounded" />
-            <span className="text-sm">نمایش در مجموعه‌های ویژه</span>
-          </label>
-        </Field>
-      </div>
-      <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
-      </div>
-    </Modal>
+    <Dialog open={onClose !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-2xl p-0 sm:p-8 shadow-premium space-y-6">
+        <DialogHeader>
+          <DialogTitle>افزودن مجموعه</DialogTitle>
+          <DialogDescription>ایجاد مجموعه موضوعی آیات</DialogDescription>
+        </DialogHeader>
+        <DialogClose>
+          <X className="h-4 w-4" />
+        </DialogClose>
+        <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-4 p-6">
+          <div className="space-y-2">
+            <Label>نام</Label>
+            <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          </div>
+          <div className="space-y-2">
+            <Label>توضیح</Label>
+            <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>رنگ</Label>
+              <Input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded border border-border/60 bg-card/50" />
+            </div>
+            <div className="space-y-2">
+              <Label>الگوی جلد</Label>
+              <SelectInput
+                value={form.cover_pattern}
+                onChange={(v) => setForm({ ...form, cover_pattern: v })}
+                options={[
+                  { value: "stars", label: "ستاره" },
+                  { value: "geometric", label: "هندسی" },
+                  { value: "arabesque", label: "اسلیمی" },
+                  { value: "mosque", label: "مسجد" },
+                ]}
+              />
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>کلید آیات (با کاما)</Label>
+              <Input value={form.verse_keys} onChange={(e) => setForm({ ...form, verse_keys: e.target.value })} placeholder="1:1,2:255" />
+            </div>
+            <div className="space-y-2">
+              <Label>موضوعات مرتبط (با کاما)</Label>
+              <Input value={form.related_topics} onChange={(e) => setForm({ ...form, related_topics: e.target.value })} />
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>زمان مطالعه (دقیقه)</Label>
+              <Input type="number" value={form.reading_time} onChange={(e) => setForm({ ...form, reading_time: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Checkbox
+                checked={form.is_featured}
+                onCheckedChange={(v) => setForm({ ...form, is_featured: v })}
+              />
+              <Label className="mt-1">نمایش در مجموعه‌های ویژه</Label>
+            </div>
+          </div>
+          {err && <p className="text-sm text-destructive">{err}</p>}
+          <div className="flex justify-end gap-2 mt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              انصراف
+            </Button>
+            <Button type="submit" disabled={saving} className="px-4 py-2">
+              {saving ? "…" : "ذخیره"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -367,27 +500,44 @@ function TopicsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground font-doran">{items.length} موضوع</p>
-        <button onClick={() => setShow(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
+        <Button variant="secondary" size="sm" onClick={() => setShow(true)}>
           <Plus className="h-4 w-4" /> موضوع جدید
-        </button>
+        </Button>
       </div>
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-7 w-7 animate-spin text-primary" /></div>
       ) : (
         <div className="space-y-2">
           {items.map((t) => (
-            <div key={t.id} className="flex items-center gap-3 rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
-              <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${t.theme_color || "#0B6E4F"}22`, color: t.theme_color || "#0B6E4F" }}><Compass className="h-4 w-4" /></div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium font-doran">{t.name}</div>
-                <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{t.description} · {(t.verse_keys || []).length} آیه</p>
+            <Card key={t.id} className="rounded border border-border/40 bg-card/40 p-3 hover:border-accent/20 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded flex items-center justify-center" style={{ backgroundColor: `${t.theme_color || "#0B6E4F"}22`, color: t.theme_color || "#0B6E4F" }}><Compass className="h-4 w-4" /></div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium font-doran">{t.name}</div>
+                  <p className="text-xs text-muted-foreground line-clamp-1 font-doran">{t.description} · {(t.verse_keys || []).length} آیه</p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={() => {
+                    if (!window.confirm("آیا از حذف این موضوع مطمئن هستید؟")) return;
+                    api.entities.Topic.delete(t.id).then(reload);
+                  }}
+                  title="حذف"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-              <button onClick={async () => { await api.entities.Topic.delete(t.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition">
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
+            </Card>
           ))}
-          {items.length === 0 && <EmptyState text="هنوز موضوعی ثبت نشده است." />}
+          {items.length === 0 && (
+            <Card className="rounded border border-dashed border-border/60 p-12 text-center">
+              <CardContent>
+                <Library className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">هنوز موضوعی ثبت نشده است.</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
       {show && <TopicForm onClose={() => setShow(false)} onSaved={() => { setShow(false); reload(); }} />}
@@ -398,44 +548,79 @@ function TopicsAdmin() {
 function TopicForm({ onClose, onSaved }) {
   const [form, setForm] = useState({ name: "", name_arabic: "", description: "", category: "ethics", theme_color: "#c5a059", verse_keys: "" });
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState(null);
   const submit = async () => {
     setSaving(true);
     try {
       const keys = form.verse_keys.split(",").map((s) => s.trim()).filter(Boolean);
       await api.entities.Topic.create({ ...form, verse_keys: keys, verse_count: keys.length });
       onSaved();
-    } catch {}
+    } catch (e) {
+      setErr(e.message || "خطا در ذخیره موضوع");
+    }
     setSaving(false);
   };
   return (
-    <Modal onClose={onClose} title="افزودن موضوع">
-      <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="نام"><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} /></Field>
-        <Field label="نام عربی"><input value={form.name_arabic} onChange={(e) => setForm({ ...form, name_arabic: e.target.value })} className={inputCls} dir="rtl" /></Field>
-        <Field label="دسته">
-          <SelectInput
-            value={form.category}
-            onChange={(v) => setForm({ ...form, category: v })}
-            options={[
-              { value: "beliefs", label: "عقاید" },
-              { value: "worship", label: "عبادات" },
-              { value: "ethics", label: "اخلاق" },
-              { value: "family", label: "خانواده" },
-              { value: "social", label: "حقوق اجتماعی" },
-              { value: "economic", label: "اقتصاد" },
-              { value: "governance", label: "مدیریت و رهبری" },
-              { value: "prophets", label: "انبیا" },
-            ]}
-          />
-        </Field>
-        <Field label="رنگ"><input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded border border-border/50 bg-card/50" /></Field>
-      </div>
-      <Field label="توضیح"><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={inputCls} /></Field>
-      <Field label="کلید آیات (با کاما، مثلاً 1:1,2:255)"><input value={form.verse_keys} onChange={(e) => setForm({ ...form, verse_keys: e.target.value })} className={inputCls} /></Field>
-      <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft">{saving ? "…" : "ذخیره"}</button>
-      </div>
-    </Modal>
+    <Dialog open={onClose !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-2xl p-0 sm:p-8 shadow-premium space-y-6">
+        <DialogHeader>
+          <DialogTitle>افزودن موضوع</DialogTitle>
+          <DialogDescription>ایجاد موضوع قرآنی جدید</DialogDescription>
+        </DialogHeader>
+        <DialogClose>
+          <X className="h-4 w-4" />
+        </DialogClose>
+        <form onSubmit={(e) => { e.preventDefault(); submit(); }} className="space-y-4 p-6">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>نام</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>نام عربی</Label>
+              <Input value={form.name_arabic} onChange={(e) => setForm({ ...form, name_arabic: e.target.value })} dir="rtl" />
+            </div>
+            <div className="space-y-2">
+              <Label>دسته</Label>
+              <SelectInput
+                value={form.category}
+                onChange={(v) => setForm({ ...form, category: v })}
+                options={[
+                  { value: "beliefs", label: "عقاید" },
+                  { value: "worship", label: "عبادات" },
+                  { value: "ethics", label: "اخلاق" },
+                  { value: "family", label: "خانواده" },
+                  { value: "social", label: "حقوق اجتماعی" },
+                  { value: "economic", label: "اقتصاد" },
+                  { value: "governance", label: "مدیریت و رهبری" },
+                  { value: "prophets", label: "انبیا" },
+                ]}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>رنگ</Label>
+              <Input type="color" value={form.theme_color} onChange={(e) => setForm({ ...form, theme_color: e.target.value })} className="h-10 w-full rounded border border-border/50 bg-card/50" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>توضیح</Label>
+            <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} />
+          </div>
+          <div className="space-y-2">
+            <Label>کلید آیات (با کاما، مثلاً 1:1,2:255)</Label>
+            <Input value={form.verse_keys} onChange={(e) => setForm({ ...form, verse_keys: e.target.value })} />
+          </div>
+          {err && <p className="text-sm text-destructive">{err}</p>}
+          <div className="flex justify-end gap-2 mt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              انصراف
+            </Button>
+            <Button type="submit" disabled={saving} className="px-4 py-2">
+              {saving ? "…" : "ذخیره"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

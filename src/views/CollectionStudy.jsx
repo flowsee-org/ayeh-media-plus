@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, Link } from "@/lib/router-compat";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
 import { getAyah, getSurahList } from "@/lib/quranApi";
 import { markVerseRead, getReadVerses } from "@/lib/readingTracker";
@@ -8,11 +9,12 @@ import { scopedKey } from "@/lib/storageScope";
 import { toast } from "react-hot-toast";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import BackButton from "@/components/BackButton";
-import EmptyState from "@/components/design-system/EmptyState";
+import EmptyState from "@/components/ui/empty-state";
 import {
  ChevronRight, ChevronLeft, BookOpen, Loader2, Languages,
  Compass, Sparkles, Users, Clock, Play, Pause, Tag, CheckCircle2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const TABS = [
  { id: "linguistic", label: "زبان‌شناسی", icon: Languages },
@@ -134,7 +136,7 @@ export default function CollectionStudy() {
  <div className="mx-auto max-w-md py-24 text-center">
  <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground">مجموعه یافت نشد.</p>
- <Link to="/collections" className="inline-flex items-center gap-1.5 mt-4 text-sm text-accent">بازگشت به مجموعه‌ها</Link>
+ <Link href="/collections" className="inline-flex items-center gap-1.5 mt-4 text-sm text-accent">بازگشت به مجموعه‌ها</Link>
  </div>
  );
  }
@@ -169,7 +171,7 @@ export default function CollectionStudy() {
  const [s, a] = (v.verse_key || "").split(":");
  const isActive = i === selectedIdx;
  return (
- <button
+ <Button
  key={v.id || i}
  onClick={() => selectVerse(i)}
  className={`shrink-0 rounded px-4 py-2 text-sm font-medium border transition-all ${
@@ -181,7 +183,7 @@ export default function CollectionStudy() {
  >
  {s}:{a}
  {v._enriched ? <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded bg-accent" /> : null}
- </button>
+ </Button>
  );
  })}
  </div>
@@ -225,13 +227,13 @@ export default function CollectionStudy() {
  <div className="mt-4 pt-3 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
  {verse.audio_url ? (
  <div className="flex items-center gap-2.5 flex-1 min-w-[200px]">
- <button
+ <Button
  onClick={toggleAudio}
  className="h-10 w-10 rounded bg-accent text-accent-foreground flex items-center justify-center shrink-0 hover:shadow-glow transition-all"
  title={playing ? "توقف تلاوت" : "پخش تلاوت"}
  >
  {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 mr-0.5" />}
- </button>
+ </Button>
  <audio
  ref={audioRef}
  src={verse.audio_url}
@@ -245,7 +247,7 @@ export default function CollectionStudy() {
  ) : <div />}
 
  {/* Mark as read toggle button */}
- <button
+ <Button
  onClick={() => toggleMarkRead(verse)}
  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-ui font-bold border transition-all ${
  readVerses[verse.verse_key]
@@ -255,7 +257,7 @@ export default function CollectionStudy() {
  >
  <CheckCircle2 className={`h-4 w-4 ${readVerses[verse.verse_key] ? "fill-emerald-500/20" : ""}`} />
  <span>{readVerses[verse.verse_key] ? "خوانده شده ✓" : "علامت‌گذاری به عنوان خوانده‌شده"}</span>
- </button>
+ </Button>
  </div>
  </div>
 
@@ -265,7 +267,7 @@ export default function CollectionStudy() {
  const Icon = t.icon;
  const isActive = tab === t.id;
  return (
- <button
+ <Button
  key={t.id}
  onClick={() => setTab(t.id)}
  className={`shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded text-sm font-medium border transition-all ${
@@ -276,7 +278,7 @@ export default function CollectionStudy() {
  >
  <Icon className="h-3.5 w-3.5" />
  {t.label}
- </button>
+ </Button>
  );
  })}
  </div>
@@ -294,25 +296,25 @@ export default function CollectionStudy() {
  {/* Prev / Next */}
  <OrnamentalDivider className="my-8" />
  <div className="flex items-center justify-between gap-3">
- <button
+ <Button
  onClick={goPrev}
  disabled={selectedIdx === 0}
  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
  >
  <ChevronRight className="h-4 w-4" />
  آیه قبلی
- </button>
+ </Button>
  <span className="text-xs text-muted-foreground">
  {selectedIdx + 1} از {verses.length}
  </span>
- <button
+ <Button
  onClick={goNext}
  disabled={selectedIdx === verses.length - 1}
  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded text-sm font-medium border border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
  >
  آیه بعدی
  <ChevronLeft className="h-4 w-4" />
- </button>
+ </Button>
  </div>
  </div>
  )}

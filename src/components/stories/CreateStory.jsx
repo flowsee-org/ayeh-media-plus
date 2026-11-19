@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import api from "@/lib/api";
 import { X, Loader2, Camera } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function CreateStory({ user, onPosted, onClose }) {
   const [mediaUrl, setMediaUrl] = useState("");
@@ -58,12 +59,12 @@ export default function CreateStory({ user, onPosted, onClose }) {
       <div className="relative w-full max-w-md rounded bg-card border border-accent/20 shadow-premium overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-accent/10">
           <h3 className="font-display font-bold text-base">استوری جدید</h3>
-          <button
+          <Button
             onClick={onClose}
             className="h-8 w-8 rounded hover:bg-muted flex items-center justify-center text-muted-foreground"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="p-4 space-y-4">
@@ -75,17 +76,17 @@ export default function CreateStory({ user, onPosted, onClose }) {
               ) : (
                 <img src={mediaUrl} alt="preview" className="w-full max-h-64 object-contain bg-black/5" />
               )}
-              <button
+              <Button
                 onClick={() => {
                   setMediaUrl("");
                 }}
                 className="absolute top-2 left-2 h-8 w-8 rounded bg-black/50 text-white flex items-center justify-center"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           ) : (
-            <button
+            <Button
               onClick={() => fileRef.current?.click()}
               className="w-full rounded border-2 border-dashed border-accent/20 p-8 flex flex-col items-center gap-2 text-muted-foreground hover:border-accent/40 hover:text-accent transition-colors"
             >
@@ -97,7 +98,7 @@ export default function CreateStory({ user, onPosted, onClose }) {
               <span className="text-sm">
                 {uploading ? "در حال بارگذاری..." : "انتخاب عکس یا ویدیو"}
               </span>
-            </button>
+            </Button>
           )}
           <input
             ref={fileRef}
@@ -136,13 +137,13 @@ export default function CreateStory({ user, onPosted, onClose }) {
 
           {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
-          <button
+          <Button
             onClick={handlePost}
             disabled={!mediaUrl || posting}
             className="w-full rounded bg-primary text-primary-foreground py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
           >
             {posting ? "در حال انتشار..." : "انتشار استوری"}
-          </button>
+          </Button>
           <p className="text-xs text-muted-foreground/60 text-center">
             استوری شما ۲۴ ساعت پس از انتشار حذف خواهد شد.
           </p>

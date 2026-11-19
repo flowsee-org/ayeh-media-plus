@@ -4,9 +4,12 @@ import api from "@/lib/api";
 import CompetitionCard from "@/components/community/CompetitionCard";
 import Leaderboard from "@/components/community/Leaderboard";
 import FeaturedPrize from "@/components/community/FeaturedPrize";
-import EmptyState from "@/components/design-system/EmptyState";
+import EmptyState from "@/components/ui/empty-state";
 import { Trophy, Award } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const FILTERS = [
   { id: "all", label: "همه" },
@@ -38,62 +41,64 @@ export default function Competitions() {
   return (
     <PullToRefresh onRefresh={load}>
       <div className="page-shell animate-fade-in font-doran space-y-10">
-        {/* Page Header */}
-        <section className="rounded border border-border bg-card p-6 sm:p-10 mb-6 text-center shadow-soft">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary border border-border text-foreground text-xs font-bold mb-3">
-            <Trophy className="h-3.5 w-3.5 text-accent" /> مسابقات و پویش‌های قرآنی
-          </div>
-          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
-            مسابقات، تلاوت و جوایز نفیس
-          </h1>
-          <p className="font-doran text-muted-foreground text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-            در پویش‌های تعاملی تلاوت، تدبّر، خوشنویسی و بازآفرینی هنری شرکت کنید و از جوایز معنوی و نفیس بهره‌مند شوید
-          </p>
-        </section>
+        <Card className="rounded border border-border bg-card p-6 sm:p-10 mb-6 text-center shadow-soft">
+          <CardContent className="p-0 pt-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary border border-border text-foreground text-xs font-bold mb-3">
+              <Trophy className="h-3.5 w-3.5 text-accent" /> مسابقات و پویش‌های قرآنی
+            </div>
+            <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+              مسابقات، تلاوت و جوایز نفیس
+            </h1>
+            <p className="font-doran text-muted-foreground text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
+              در پویش‌های تعاملی تلاوت، تدبّر، خوشنویسی و بازآفرینی هنری شرکت کنید و از جوایز معنوی و نفیس بهره‌مند شوید
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Featured Competition Prize */}
         {featured && <FeaturedPrize comp={featured} />}
 
-        {/* Leaderboard */}
         <Leaderboard />
 
-        {/* Filters */}
         <div className="flex justify-center gap-2 mb-6 flex-wrap sm:justify-center">
-          {FILTERS.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
-              className={`px-4 py-2 rounded text-sm sm:text-base font-medium transition-all border ${filter === f.id
-                ? "bg-primary text-primary-foreground border-primary shadow-soft"
-                : "bg-card border-border text-muted-foreground hover:text-foreground hover:border-border/60"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+          <Tabs defaultValue={filter} onValueChange={setFilter}>
+            <TabsList className="gap-2">
+              {FILTERS.map((f) => (
+                <TabsTrigger
+                  key={f.id}
+                  value={f.id}
+                  variant="outline"
+                  className="px-4 py-2 rounded text-sm sm:text-base font-medium border"
+                >
+                  {f.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
-        {/* Competitions Grid */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-8 w-8 rounded border-2 border-primary border-t-transparent animate-spin" />
           </div>
         ) : filtered.length > 0 ? (
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 lg:gap-10"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
             {filtered.map((c) => (
               <CompetitionCard key={c.id} comp={c} />
             ))}
           </div>
         ) : (
-          <EmptyState
-            type="competitions"
-            icon={Award}
-            title="مسابقه‌ای در این دسته موجود نیست"
-            subtitle="فیلتر دیگری را امتحان کنید یا بعداً دوباره سر بزنید."
-            showAction={false}
-          />
+          <Card className="rounded border border-dashed border-border/70 bg-card/30 p-12 text-center">
+            <CardContent>
+              <Award className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+              <h3 className="font-rokh-bold font-bold text-lg text-foreground mb-1">مسابقه‌ای در این دسته موجود نیست</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-5 font-doran">
+                فیلتر دیگری را امتحان کنید یا بعداً دوباره سر بزنید.
+              </p>
+              <Button variant="primary" onClick={() => setFilter("all")}>
+                همه مسابقات
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
     </PullToRefresh>

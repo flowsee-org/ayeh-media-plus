@@ -7,15 +7,20 @@ import {
   clearWatchHistory,
 } from "@/lib/watchHistory";
 import { fa } from "@/lib/utils";
-import EmptyState from "@/components/design-system/EmptyState";
+import EmptyState from "@/components/ui/empty-state";
 import {
   Clock, Trash2, Play, Loader2, Video as VideoIcon,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 /**
  * Ayeh Media Plus — Watch History Page
  * Shows the user's video watch history with timestamps and completion.
+ * Built on shadcn/ui Card + Button + Badge primitives.
  */
 export default function WatchHistoryPage() {
   const [history, setHistory] = useState([]);
@@ -84,87 +89,96 @@ export default function WatchHistoryPage() {
             ویدیوهای تماشا‌شده شما
           </p>
         </div>
+        <Button variant="destructive" size="sm" onClick={handleClear}>
+          پاک کردن همه
+        </Button>
       </div>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="rounded border border-border bg-card p-6 shadow-soft">
-          <div className="text-xs text-muted-foreground font-ui mb-1">ویدیوهای تماشای شده</div>
-          <div className="text-2xl font-rokh-bold font-bold text-foreground">{watchCount}</div>
-        </div>
-        <div className="rounded border border-border bg-card p-6 shadow-soft">
-          <div className="text-xs text-muted-foreground font-ui mb-1">زمان کل تماشا</div>
-          <div className="text-2xl font-rokh-bold font-bold text-foreground">{formatDuration(totalWatchTime)}</div>
-        </div>
-        <div className="rounded border border-border bg-card p-6 shadow-soft">
-          <div className="text-xs text-muted-foreground font-ui mb-1">تاریخچه فعلی</div>
-          <div className="text-2xl font-rokh-bold font-bold text-foreground">{history.length}</div>
-        </div>
+        <Card>
+          <CardContent>
+            <CardTitle className="text-xs text-muted-foreground font-ui mb-1">ویدیوهای تماشای شده</CardTitle>
+            <div className="text-2xl font-rokh-bold font-bold text-foreground">{watchCount}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <CardTitle className="text-xs text-muted-foreground font-ui mb-1">زمان کل تماشا</CardTitle>
+            <div className="text-2xl font-rokh-bold font-bold text-foreground">{formatDuration(totalWatchTime)}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <CardTitle className="text-xs text-muted-foreground font-ui mb-1">تاریخچه فعلی</CardTitle>
+            <div className="text-2xl font-rokh-bold font-bold text-foreground">{history.length}</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* History list */}
-      <div className="rounded border border-border bg-card shadow-soft overflow-hidden">
-        <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
-          <h3 className="font-rokh-bold font-bold text-lg text-foreground">تاریخچه تماشا</h3>
-          <button
-            onClick={handleClear}
-            className="text-xs text-destructive hover:underline font-medium"
-          >
-            پاک کردن همه
-          </button>
-        </div>
-        <div className="divide-y divide-border/50">
-          {history.map((entry) => (
-            <div key={entry.video_id} className="px-6 py-5 flex items-center justify-between group hover:bg-muted/20 transition-colors">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded bg-muted overflow-hidden flex-shrink-0">
-                  {entry.thumbnail_url ? (
-                    <img src={entry.thumbnail_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/60">
-                      <VideoIcon className="h-6 w-6" />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>تاریخچه تماشا</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border/50">
+            {history.map((entry) => (
+              <div key={entry.video_id} className="px-6 py-5 flex items-center justify-between group hover:bg-muted/20 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded bg-muted overflow-hidden flex-shrink-0">
+                    {entry.thumbnail_url ? (
+                      <img src={entry.thumbnail_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/60">
+                        <VideoIcon className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    {entry.video_available === false ? (
+                      <span className="font-medium text-muted-foreground truncate block">
+                        {entry.title || "ویدیو حذف‌شده"}
+                        <span className="ms-2 text-xs font-normal">(دیگر در دسترس نیست)</span>
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/watch/${entry.video_id}`}
+                        className="font-medium text-foreground truncate block hover:text-primary transition-colors"
+                      >
+                        {entry.title || "ویدیو بدون عنوان"}
+                      </Link>
+                    )}
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+                      <span>{fa(entry.watch_count || 1)} بار تماشا</span>
+                      <span>•</span>
+                      <span>{entry.completion_percentage}% تکمیل</span>
+                      <span>•</span>
+                      <span className="font-mono">{new Date(entry.watched_at).toLocaleString('fa-IR')}</span>
                     </div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  {entry.video_available === false ? (
-                    <span className="font-medium text-muted-foreground truncate block">
-                      {entry.title || "ویدیو حذف‌شده"}
-                      <span className="ms-2 text-xs font-normal">(دیگر در دسترس نیست)</span>
-                    </span>
-                  ) : (
-                    <Link
-                      href={`/watch/${entry.video_id}`}
-                      className="font-medium text-foreground truncate block hover:text-primary transition-colors"
-                    >
-                      {entry.title || "ویدیو بدون عنوان"}
-                    </Link>
-                  )}
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
-                    <span>{fa(entry.watch_count || 1)} بار تماشا</span>
-                    <span>•</span>
-                    <span>{entry.completion_percentage}% تکمیل</span>
-                    <span>•</span>
-                    <span className="font-mono">{new Date(entry.watched_at).toLocaleString('fa-IR')}</span>
                   </div>
                 </div>
+                <div className="flex items-center gap-2">
+                  {entry.video_available !== false && (
+                    <Play className="h-4 w-4 text-primary/60 hover:text-primary transition-colors" />
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemove(entry.video_id)}
+                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+                    title="حذف از تاریخچه"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                {entry.video_available !== false && (
-                  <Play className="h-4 w-4 text-primary/60 hover:text-primary transition-colors" />
-                )}
-                <button
-                  onClick={() => handleRemove(entry.video_id)}
-                  className="p-2 text-muted-foreground hover:text-red-600 transition-colors"
-                  title="حذف از تاریخچه"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

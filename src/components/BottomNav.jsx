@@ -1,8 +1,9 @@
-import { Link, useLocation } from "@/lib/router-compat";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTabNav } from "@/lib/tabNavigation";
 
 export default function BottomNav({ tabs }) {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
   const { handleTabClick } = useTabNav();
 
   return (
@@ -20,7 +21,7 @@ export default function BottomNav({ tabs }) {
           return (
             <Link
               key={to}
-              to={to}
+              href={to}
               onClick={(e) => handleTabClick?.(e, to)}
               aria-label={label}
               aria-current={active ? "page" : undefined}

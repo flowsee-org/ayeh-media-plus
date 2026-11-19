@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { Play, BookOpen, Users, Mic, Clock } from 'lucide-react';
-import { Link } from '@/lib/router-compat';
+import Link from "next/link";
 import api from '@/lib/api';
-import VideoCard from './VideoCard';
-import ProfileContentSection from './ProfileContentSection';
+import VideoCard from '@/components/ui/video-card';
+import ProfileContentSection from '@/components/ui/profile-content-section';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 /**
  * Qari (Quran reciter) profile content.
@@ -80,7 +82,7 @@ export default function QariProfile({
           {[...new Set(recitations.map((v) => v.verse_key).filter(Boolean))].map((key) => (
             <Link
               key={key}
-              to={`/verse/${key.replace(':', '/')}`}
+              href={`/verse/${key.replace(':', '/')}`}
               className="group block p-3 rounded border border-accent/10 bg-accent/[0.02] hover:border-accent/30 hover:bg-accent/5 transition-all text-right"
             >
               <div className="text-xs font-mono text-accent/60 mb-1">{key}</div>
@@ -121,20 +123,22 @@ export default function QariProfile({
         loading={false}
         className="space-y-4"
       >
-        <div className="rounded border border-border/50 bg-card p-6">
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {profile.bio || 'این قاری هنوز بیوگرافی خود را وارد نکرده است.'}
-          </p>
-          <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            <span>عضو از {new Date(profile.created_date).toLocaleDateString('fa-IR')}</span>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span className="px-3 py-1 rounded bg-accent/10 text-accent text-xs font-medium border border-accent/20">
-              تلاوت قرآنی
-            </span>
-          </div>
-        </div>
+        <Card className="p-6">
+          <CardContent className="pt-0">
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {profile.bio || 'این قاری هنوز بیوگرافی خود را وارد نکرده است.'}
+            </p>
+            {profile.created_date && (
+              <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                <span>عضو از {new Date(profile.created_date).toLocaleDateString('fa-IR')}</span>
+              </div>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Badge variant="accent">تلاوت قرآنی</Badge>
+            </div>
+          </CardContent>
+        </Card>
       </ProfileContentSection>
     ),
   };

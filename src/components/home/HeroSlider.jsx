@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Play, Clock, Trophy, Users, Mic } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
 
@@ -98,7 +99,7 @@ export default function HeroSlider({ competitions, liveVideos }) {
             </div>
 
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={() => {
                   if (item.id) {
                     router.push(isCompetition ? `/competition/${item.id}` : `/watch/${item.id}`);
@@ -107,7 +108,7 @@ export default function HeroSlider({ competitions, liveVideos }) {
                 className="flex-1 px-6 py-3 rounded bg-white text-quranic-ink font-rokh-bold font-bold text-sm hover:bg-quranic-saffron hover:text-quranic-ink transition-all shadow-live-glow"
               >
                 مشاهده ویدیو
-              </button>
+              </Button>
               <Link
                 href="/competitions"
                 className="px-6 py-3 rounded border border-white/30 text-white font-medium text-sm hover:bg-white/10 transition-all backdrop-blur-sm"
@@ -150,7 +151,7 @@ export default function HeroSlider({ competitions, liveVideos }) {
           {/* Pagination dots */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
             {heroItems.map((_, i) => (
-              <button
+              <Button
                 key={i}
                 onClick={() => setActiveIndex(i)}
                 className={`w-2.5 h-2.5 rounded transition-all ${

@@ -9,6 +9,7 @@ import { Avatar } from "@/components/community/shared";
 import ActivePrizeStrip from "@/components/community/ActivePrizeStrip";
 import CompanionBanner from "@/components/feed/CompanionBanner";
 import { Loader2, Plus, ImageIcon, Sparkles, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const PAGE_SIZE = 4;
 
@@ -120,7 +121,7 @@ export default function FeedList() {
 
       {/* Composer */}
       <div className="mb-4 border-b border-border bg-card px-3.5 py-3 sm:rounded sm:border">
-        <button
+        <Button
           onClick={() => (user ? setShowCreate(true) : openAuthModal(() => setShowCreate(true)))}
           className="flex w-full items-center gap-3 text-right"
         >
@@ -129,14 +130,14 @@ export default function FeedList() {
           <span className="flex h-9 w-9 items-center justify-center rounded bg-accent/10 text-accent">
             <Plus className="h-4 w-4" />
           </span>
-        </button>
+        </Button>
         <div className="mt-3 flex gap-2 border-t border-border/50 pt-2.5">
-          <button
+          <Button
             onClick={() => (user ? setShowCreate(true) : openAuthModal(() => setShowCreate(true)))}
             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded bg-muted/50 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             <BookOpen className="h-3.5 w-3.5" /> متن یا آیه
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -149,12 +150,12 @@ export default function FeedList() {
           <Sparkles className="mx-auto mb-3 h-8 w-8 text-muted-foreground/30" />
           <p className="mb-4 text-sm text-muted-foreground">هنوز پستی منتشر نشده است.</p>
           {user && (
-            <button
+            <Button
               onClick={() => setShowCreate(true)}
               className="inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-all hover:shadow-glow"
             >
               <ImageIcon className="h-4 w-4" /> انتشار اولین پست
-            </button>
+            </Button>
           )}
         </div>
       ) : (
@@ -176,12 +177,12 @@ export default function FeedList() {
           {loadingMore ? (
             <Loader2 className="h-6 w-6 animate-spin text-accent" />
           ) : hasMore ? (
-            <button
+            <Button
               onClick={loadMore}
               className="rounded border border-border/60 px-5 py-2 text-xs font-medium text-muted-foreground hover:border-accent/30 hover:text-foreground transition-colors"
             >
               نمایش بیشتر
-            </button>
+            </Button>
           ) : (
             <p className="text-xs text-muted-foreground/60">به پایان پست‌ها رسیدید</p>
           )}

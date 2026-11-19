@@ -1,18 +1,19 @@
 'use client';
 import React, { useState } from "react";
-import { Link, useNavigate } from "@/lib/router-compat";
-import { useSearchParams } from 'next/navigation';
-import api from "@/lib/api";
+import Link from "next/link";
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import api from "@/lib/api";
 import { LogIn, Mail, Lock, Loader2, Phone } from "lucide-react";
 import { useAuth } from "@/lib/AuthContext";
-import BrandLogo from "@/components/design-system/BrandLogo";
+import BrandLogo from "@/components/ui/brand-logo";
 
 export default function Login() {
   const { openAuthModal, checkUserAuth } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +28,7 @@ export default function Login() {
       await api.auth.loginViaEmailPassword(email, password);
       await checkUserAuth();
       const returnTo = searchParams.get("returnTo");
-      navigate(returnTo || "/");
+      router.push(returnTo || "/");
     } catch (err) {
       // Backend gates email/password login until OTP verification succeeds.
       // Resend a code and hand the user to the existing Register OTP step.
@@ -41,7 +42,7 @@ export default function Login() {
         const returnTo = searchParams.get("returnTo");
         const qs = new URLSearchParams({ email: pendingEmail, verify: "1" });
         if (returnTo) qs.set("returnTo", returnTo);
-        navigate(`/register?${qs.toString()}`);
+        router.push(`/register?${qs.toString()}`);
         return;
       }
       setError(err.message || "ایمیل یا رمز عبور اشتباه است");
@@ -65,14 +66,15 @@ export default function Login() {
         </div>
 
         <div className="bg-card rounded border border-border shadow-sm p-6 sm:p-8">
-          <button
-            type="button"
-            onClick={() => openAuthModal(() => { navigate("/"); })}
-            className="w-full mb-5 py-3 rounded bg-muted hover:bg-muted/80 border border-border text-foreground font-semibold text-sm transition-all flex items-center justify-center gap-2"
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => openAuthModal(() => { router.push("/"); })}
+            className="w-full mb-5 py-3 font-semibold flex items-center justify-center gap-2"
           >
             <Phone className="w-4 h-4 text-primary" />
             ورود سریع با شماره همراه
-          </button>
+          </Button>
 
           <div className="flex items-center gap-2 mb-5">
             <div className="h-px flex-1 bg-border" />
@@ -109,7 +111,7 @@ export default function Login() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">رمز عبور</Label>
-                <Link to="/forgot-password" className="text-xs text-primary hover:underline">
+                <Link href="/forgot-password" className="text-xs text-primary hover:underline">
                   فراموشی رمز؟
                 </Link>
               </div>
@@ -146,7 +148,7 @@ export default function Login() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             حساب ندارید؟{" "}
-            <Link to="/register" className="text-primary font-semibold hover:underline">
+            <Link href="/register" className="text-primary font-semibold hover:underline">
               ثبت‌نام
             </Link>
           </p>

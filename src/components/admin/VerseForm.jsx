@@ -1,7 +1,10 @@
 import { useState } from "react";
 import api from "@/lib/api";
-import { Field, Modal, inputCls } from "./shared";
+import { Field, Modal } from "./shared";
 import SelectInput from "./SelectInput";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const lines = (s) => String(s || "").split("\n").map((x) => x.trim()).filter(Boolean);
 const csv = (s) => String(s || "").split(/[،,]/).map((x) => x.trim()).filter(Boolean);
@@ -51,10 +54,12 @@ export default function VerseForm({ initial, onClose, onSaved }) {
     setSaving(true);
     setErr(null);
     try {
+      const surahNum = Number(form.surah_number) || 1;
+      const verseNum = Number(form.verse_number) || 1;
       const payload = {
-        surah_number: Number(form.surah_number) || 1,
-        verse_number: Number(form.verse_number) || 1,
-        verse_key: form.verse_key.trim() || `${form.surah_number}:${form.verse_number}`,
+        surah_number: surahNum,
+        verse_number: verseNum,
+        verse_key: form.verse_key.trim() || `${surahNum}:${verseNum}`,
         surah_name_english: form.surah_name_english,
         surah_name_arabic: form.surah_name_arabic,
         transliteration: form.transliteration,
@@ -92,11 +97,11 @@ export default function VerseForm({ initial, onClose, onSaved }) {
     <Modal onClose={onClose} title={initial?.id ? `ویرایش آیه ${initial.verse_key || ""}` : "افزودن آیه"}>
       <SectionTitle>اطلاعات آیه</SectionTitle>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="شماره سوره"><input type="number" value={form.surah_number} onChange={set("surah_number")} className={inputCls} /></Field>
-        <Field label="شماره آیه"><input type="number" value={form.verse_number} onChange={set("verse_number")} className={inputCls} /></Field>
-        <Field label="کلید آیه (مثلاً 1:1)"><input value={form.verse_key} onChange={set("verse_key")} className={inputCls} placeholder="1:1" /></Field>
-        <Field label="نام سوره (انگلیسی)"><input value={form.surah_name_english} onChange={set("surah_name_english")} className={inputCls} /></Field>
-        <Field label="نام سوره (عربی)"><input value={form.surah_name_arabic} onChange={set("surah_name_arabic")} className={inputCls} dir="rtl" /></Field>
+        <Field label="شماره سوره"><Input type="number" value={form.surah_number} onChange={set("surah_number")} /></Field>
+        <Field label="شماره آیه"><Input type="number" value={form.verse_number} onChange={set("verse_number")} /></Field>
+        <Field label="کلید آیه (مثلاً 1:1)"><Input value={form.verse_key} onChange={set("verse_key")} placeholder="1:1" /></Field>
+        <Field label="نام سوره (انگلیسی)"><Input value={form.surah_name_english} onChange={set("surah_name_english")} /></Field>
+        <Field label="نام سوره (عربی)"><Input value={form.surah_name_arabic} onChange={set("surah_name_arabic")} dir="rtl" /></Field>
         <Field label="سطح">
           <SelectInput
             value={form.difficulty_level}
@@ -111,37 +116,39 @@ export default function VerseForm({ initial, onClose, onSaved }) {
       </div>
 
       <SectionTitle>متن آیه</SectionTitle>
-      <Field label="متن عربی"><textarea value={form.arabic} onChange={set("arabic")} rows={2} className={inputCls} dir="rtl" /></Field>
-      <Field label="ترجمه فارسی"><textarea value={form.translation} onChange={set("translation")} rows={2} className={inputCls} dir="rtl" /></Field>
-      <Field label="آوانویسی (لاتین)"><input value={form.transliteration} onChange={set("transliteration")} className={inputCls} dir="ltr" /></Field>
+      <Field label="متن عربی"><Textarea value={form.arabic} onChange={set("arabic")} rows={2} dir="rtl" /></Field>
+      <Field label="ترجمه فارسی"><Textarea value={form.translation} onChange={set("translation")} rows={2} dir="rtl" /></Field>
+      <Field label="آوانویسی (لاتین)"><Input value={form.transliteration} onChange={set("transliteration")} dir="ltr" /></Field>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="قاری"><input value={form.reciter} onChange={set("reciter")} className={inputCls} /></Field>
-        <Field label="لینک صوت"><input value={form.audio_url} onChange={set("audio_url")} className={inputCls} dir="ltr" placeholder="https://…" /></Field>
+        <Field label="قاری"><Input value={form.reciter} onChange={set("reciter")} /></Field>
+        <Field label="لینک صوت"><Input value={form.audio_url} onChange={set("audio_url")} dir="ltr" placeholder="https://…" /></Field>
       </div>
 
       <SectionTitle>تفسیر و تدبّر</SectionTitle>
-      <Field label="تدبّر"><textarea value={form.tadabbur} onChange={set("tadabbur")} rows={3} className={inputCls} dir="rtl" /></Field>
-      <Field label="تفسیر کلاسیک"><textarea value={form.classical_tafsir} onChange={set("classical_tafsir")} rows={3} className={inputCls} dir="rtl" /></Field>
-      <Field label="تفسیر نوین"><textarea value={form.modern_tafsir} onChange={set("modern_tafsir")} rows={3} className={inputCls} dir="rtl" /></Field>
-      <Field label="زمینه تاریخی"><textarea value={form.historical_context} onChange={set("historical_context")} rows={2} className={inputCls} dir="rtl" /></Field>
-      <Field label="اسباب نزول"><textarea value={form.asbab_al_nuzul} onChange={set("asbab_al_nuzul")} rows={2} className={inputCls} dir="rtl" /></Field>
-      <Field label="تجزیه گرامری"><textarea value={form.grammar_breakdown} onChange={set("grammar_breakdown")} rows={2} className={inputCls} dir="rtl" /></Field>
+      <Field label="تدبّر"><Textarea value={form.tadabbur} onChange={set("tadabbur")} rows={3} dir="rtl" /></Field>
+      <Field label="تفسیر کلاسیک"><Textarea value={form.classical_tafsir} onChange={set("classical_tafsir")} rows={3} dir="rtl" /></Field>
+      <Field label="تفسیر نوین"><Textarea value={form.modern_tafsir} onChange={set("modern_tafsir")} rows={3} dir="rtl" /></Field>
+      <Field label="زمینه تاریخی"><Textarea value={form.historical_context} onChange={set("historical_context")} rows={2} dir="rtl" /></Field>
+      <Field label="اسباب نزول"><Textarea value={form.asbab_al_nuzul} onChange={set("asbab_al_nuzul")} rows={2} dir="rtl" /></Field>
+      <Field label="تجزیه گرامری"><Textarea value={form.grammar_breakdown} onChange={set("grammar_breakdown")} rows={2} dir="rtl" /></Field>
 
       <SectionTitle>درس‌ها و جزئیات</SectionTitle>
-      <Field label="درس‌های زندگی (هر خط یک مورد)"><textarea value={form.life_lessons} onChange={set("life_lessons")} rows={3} className={inputCls} /></Field>
-      <Field label="کاربردهای عملی (هر خط یک مورد)"><textarea value={form.practical_applications} onChange={set("practical_applications")} rows={3} className={inputCls} /></Field>
-      <Field label="پرسش‌های تدبّر (هر خط یک مورد)"><textarea value={form.questions_to_reflect} onChange={set("questions_to_reflect")} rows={3} className={inputCls} /></Field>
+      <Field label="درس‌های زندگی (هر خط یک مورد)"><Textarea value={form.life_lessons} onChange={set("life_lessons")} rows={3} /></Field>
+      <Field label="کاربردهای عملی (هر خط یک مورد)"><Textarea value={form.practical_applications} onChange={set("practical_applications")} rows={3} /></Field>
+      <Field label="پرسش‌های تدبّر (هر خط یک مورد)"><Textarea value={form.questions_to_reflect} onChange={set("questions_to_reflect")} rows={3} /></Field>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="برچسب‌ها (با کاما)"><input value={form.tags} onChange={set("tags")} className={inputCls} /></Field>
-        <Field label="زمان مطالعه (دقیقه)"><input type="number" value={form.estimated_reading_time} onChange={set("estimated_reading_time")} className={inputCls} /></Field>
+        <Field label="برچسب‌ها (با کاما)"><Input value={form.tags} onChange={set("tags")} /></Field>
+        <Field label="زمان مطالعه (دقیقه)"><Input type="number" value={form.estimated_reading_time} onChange={set("estimated_reading_time")} /></Field>
       </div>
 
       {err && <p className="text-sm text-destructive">{err}</p>}
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
+        <Button type="button" variant="outline" onClick={onClose}>
+          انصراف
+        </Button>
+        <Button type="submit" disabled={saving} className="px-4 py-2">
           {saving ? "در حال ذخیره…" : "ذخیره"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );

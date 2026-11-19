@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { X, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const STORY_DURATION = 5000; // 5s per story
 
@@ -162,12 +163,12 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  <div className="text-sm font-medium text-white truncate">{currentGroup.authorName}</div>
  <div className="text-[11px] text-white/70">{timeAgo}</div>
  </div>
- <button
+ <Button
  onClick={onClose}
  className="h-9 w-9 rounded bg-white/10 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/20"
  >
  <X className="h-5 w-5" />
- </button>
+ </Button>
  </div>
 
  {/* Caption / verse */}
@@ -180,7 +181,7 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  </p>
  {currentStory.verse_key && (
  <Link
- to={`/verse/${currentStory.verse_key.replace(":", "/")}`}
+ href={`/verse/${currentStory.verse_key.replace(":", "/")}`}
  onClick={onClose}
  className="block text-center text-[11px] text-accent mt-1 hover:underline"
  >
@@ -209,7 +210,7 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  className="flex-1 bg-transparent text-sm text-white placeholder:text-white/50 focus:outline-none"
  autoFocus
  />
- <button
+ <Button
  onClick={() => {
  setReply("");
  setShowReply(false);
@@ -217,26 +218,26 @@ export default function StoryViewer({ groups, startIndex, user, onClose, onView 
  className="text-white/70 hover:text-white"
  >
  <Send className="h-4 w-4 rotate-180" />
- </button>
+ </Button>
  </div>
  ) : (
- <button
+ <Button
  onClick={() => setShowReply(true)}
  className="w-full rounded bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2.5 text-sm text-white/60 text-center hover:bg-white/15"
  >
  پاسخ به {currentGroup.authorName}...
- </button>
+ </Button>
  )}
  </div>
  )}
 
  {/* Tap zones */}
- <button
+ <Button
  onClick={(e) => { e.stopPropagation(); prev(); }}
  className="absolute top-0 bottom-0 right-0 w-1/3 z-10"
  aria-label="قبلی"
  />
- <button
+ <Button
  onClick={(e) => { e.stopPropagation(); next(); }}
  className="absolute top-0 bottom-0 left-0 w-1/3 z-10"
  aria-label="بعدی"

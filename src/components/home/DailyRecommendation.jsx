@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { getRecommendations, getProfileSummary } from "@/lib/recommendationEngine";
 import { Loader2, Sparkles, ArrowLeft, BookOpen, Compass } from "lucide-react";
@@ -59,7 +59,7 @@ export default function DailyRecommendation() {
  {picks.map((p, i) => (
  <Link
  key={p.verse.id || i}
- to={verseKeyToPath(p.verse.verse_key)}
+ href={verseKeyToPath(p.verse.verse_key)}
  className="group relative flex flex-col justify-between rounded border border-border bg-card p-5 sm:p-6 hover:border-primary/40 hover:shadow-card-hover transition-all duration-200"
  >
  <div>

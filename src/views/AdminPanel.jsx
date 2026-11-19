@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate, Link } from "@/lib/router-compat";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { usePermissions } from "@/lib/usePermissions";
@@ -14,6 +15,14 @@ import {
 } from "lucide-react";
 import { fa } from "@/lib/utils";
 import { PERMISSIONS } from "@/lib/rbac";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 /**
  * Ayeh Media Plus — Admin Panel
@@ -49,7 +58,7 @@ function loadFlags() {
 }
 
 export default function AdminPanel() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
   const { can } = usePermissions();
   const [activeSection, setActiveSection] = useState("users");
@@ -299,46 +308,50 @@ export default function AdminPanel() {
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
-          {ADMIN_SECTIONS.map((section) => (
-            <button
-              key={section.key}
-              onClick={() => setActiveSection(section.key)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-all ${
-                activeSection === section.key
-                  ? "bg-emerald-600 text-white"
-                  : "bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-              }`}
-            >
-              <section.icon className={`h-5 w-5 ${activeSection === section.key ? "text-white" : "text-muted-foreground"}`} />
-              {section.label}
-            </button>
-          ))}
+          <Tabs defaultValue={activeSection} onValueChange={setActiveSection}>
+            <TabsList className="flex-col space-y-1">
+              {ADMIN_SECTIONS.map((section) => (
+                <TabsTrigger
+                  key={section.key}
+                  value={section.key}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-medium transition-all shrink-0 border ${activeSection === section.key ? "bg-emerald-600 text-white border-emerald-600" : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-transparent"}`}
+                >
+                  <section.icon className={`h-5 w-5 ${activeSection === section.key ? "text-white" : "text-muted-foreground"}`} />
+                  {section.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </nav>
 
         <div className="p-4 border-t border-border">
-          <button
-            onClick={() => navigate("/")}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push("/")}
+            className="w-full flex items-center gap-3"
           >
             <Layout className="h-5 w-5" /> بازگشت به سایت
-          </button>
+          </Button>
         </div>
       </aside>
 
       <div className="lg:pr-80 p-4 sm:p-6 lg:p-8 min-h-screen">
         <header className="mb-8">
           <div className="flex gap-2 overflow-x-auto lg:hidden mb-4">
-            {ADMIN_SECTIONS.map((section) => (
-              <button
-                key={section.key}
-                onClick={() => setActiveSection(section.key)}
-                className={`shrink-0 px-3 py-2 rounded text-xs font-bold border ${
-                  activeSection === section.key ? "bg-emerald-600 text-white border-emerald-600" : "border-border"
-                }`}
-              >
-                {section.label}
-              </button>
-            ))}
+            <Tabs defaultValue={activeSection} onValueChange={setActiveSection}>
+              <TabsList className="space-y-1">
+                {ADMIN_SECTIONS.map((section) => (
+                  <TabsTrigger
+                    key={section.key}
+                    value={section.key}
+                    className="shrink-0 px-3 py-2 rounded text-xs font-bold border transition-all"
+                  >
+                    {section.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
           </div>
           <h1 className="font-rokh-bold font-black text-2xl sm:text-3xl text-foreground mb-1">
             {ADMIN_SECTIONS.find((s) => s.key === activeSection)?.label}
@@ -347,99 +360,107 @@ export default function AdminPanel() {
         </header>
 
         {activeSection === "users" && (
-          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between gap-3">
-              <h3 className="font-rokh-bold font-bold text-lg text-foreground">مدیریت کاربران</h3>
-              <input
+          <Card className="rounded border border-border bg-card shadow-sm overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/50 flex items-center justify-between gap-3">
+              <CardTitle className="font-rokh-bold font-bold text-lg text-foreground">مدیریت کاربران</CardTitle>
+              <Input
                 type="text"
                 value={userQuery}
                 onChange={(e) => setUserQuery(e.target.value)}
                 placeholder="جستجوی کاربر..."
-                className="px-4 py-2 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 w-48 sm:w-64"
+                className="w-48 sm:w-64"
               />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border/50 bg-muted/30">
-                    <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">کاربر</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">نقش</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">وضعیت</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">تاریخ ثبت‌نام</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-muted-foreground">عملیات</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
-                  {filteredUsers.map((u) => (
-                    <tr key={u.id} className="hover:bg-muted/20 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded bg-muted flex items-center justify-center text-xs font-bold">
-                            {u.full_name?.charAt(0) || "ن"}
-                          </div>
-                          <div>
-                            <div className="font-semibold text-sm">{u.full_name || "ناشناس"}</div>
-                            <div className="text-xs text-muted-foreground">{u.email || u.phone || "بدون ایمیل/تلفن"}</div>
-                          </div>
+            </CardHeader>
+            <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-border/50 bg-muted/30">
+                  <TableHead className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">کاربر</TableHead>
+                  <TableHead className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">نقش</TableHead>
+                  <TableHead className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">وضعیت</TableHead>
+                  <TableHead className="px-6 py-4 text-right text-xs font-bold text-muted-foreground">تاریخ ثبت‌نام</TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-muted-foreground">عملیات</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/50">
+                {filteredUsers.map((u) => (
+                  <TableRow key={u.id} className="hover:bg-muted/20 transition-colors">
+                    <TableCell className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded bg-muted flex items-center justify-center text-xs font-bold">
+                          {u.full_name?.charAt(0) || "ن"}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded text-xs font-bold border ${roleColors[u.role || "user"]}`}>
-                          {roleLabels[u.role || "user"]}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded text-xs font-bold border ${
-                          u.is_banned ? "bg-red-500/10 text-red-700 border-red-200" : "bg-emerald-500/10 text-emerald-700 border-emerald-200"
-                        }`}>
-                          {u.is_banned ? "مسدود" : "فعال"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground">
-                        {new Date(u.created_date || 0).toLocaleDateString("fa-IR")}
-                      </td>
-                      <td className="px-6 py-4 text-left">
-                        <div className="flex gap-1 justify-end">
-                          {canManageRoles && (
-                            <button
-                              onClick={() => { setSelectedUser(u); setRoleModal(true); }}
-                              className="p-2 text-muted-foreground hover:text-emerald-600"
-                              title="تغییر نقش"
-                              disabled={u.id === user?.id}
-                            >
-                              <Edit3 className="h-4 w-4" />
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleBan(u.id, !u.is_banned)}
-                            className="p-2 text-muted-foreground hover:text-red-600"
-                            title={u.is_banned ? "رفع مسدودسازی" : "مسدودسازی"}
+                        <div>
+                          <div className="font-semibold text-sm">{u.full_name || "ناشناس"}</div>
+                          <div className="text-xs text-muted-foreground">{u.email || u.phone || "بدون ایمیل/تلفن"}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <Badge variant="secondary" className="px-2 py-1 text-xs font-bold border">
+                        {roleLabels[u.role || "user"]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <Badge
+                        variant={u.is_banned ? "destructive" : "secondary"}
+                        className={`px-2 py-1 text-xs font-bold border ${u.is_banned ? "border-red-200" : "border-emerald-200"}`}
+                      >
+                        {u.is_banned ? "مسدود" : "فعال"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-sm text-muted-foreground">
+                      {new Date(u.created_date || 0).toLocaleDateString("fa-IR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-left">
+                      <div className="flex gap-1 justify-end">
+                        {canManageRoles && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => { setSelectedUser(u); setRoleModal(true); }}
+                            className="p-2 text-muted-foreground hover:text-emerald-600"
+                            title="تغییر نقش"
+                            disabled={u.id === user?.id}
                           >
-                            {u.is_banned ? <Check className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredUsers.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">هیچ کاربری یافت نشد.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                            <Edit3 className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleBan(u.id, !u.is_banned)}
+                          className="p-2 text-muted-foreground hover:text-red-600"
+                          title={u.is_banned ? "رفع مسدودسازی" : "مسدودسازی"}
+                        >
+                          {u.is_banned ? <Check className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredUsers.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
+                      هیچ کاربری یافت نشد.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
         )}
 
         {activeSection === "content" && (
-          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
-              <h3 className="font-rokh-bold font-bold text-lg">ویدیوها و محتوا</h3>
+          <Card className="rounded border border-border bg-card shadow-sm overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
+              <CardTitle className="font-rokh-bold font-bold text-lg">ویدیوها و محتوا</CardTitle>
               <Link href="/moderation" className="text-sm text-primary hover:underline inline-flex items-center gap-1">
                 صف بررسی <ExternalLink className="h-3.5 w-3.5" />
               </Link>
-            </div>
+            </CardHeader>
+            <CardContent>
             {sectionLoading ? (
               <div className="p-10 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-emerald-600" /></div>
             ) : (
@@ -462,28 +483,35 @@ export default function AdminPanel() {
                       <Link href={`/watch/${v.id}`} className="px-3 py-1.5 rounded border text-xs font-bold hover:bg-muted">مشاهده</Link>
                       <Link href={`/edit-video/${v.id}`} className="px-3 py-1.5 rounded border text-xs font-bold hover:bg-muted">ویرایش</Link>
                       {v.status !== "published" && (
-                        <button onClick={() => handleVideoStatus(v.id, "published")} className="px-3 py-1.5 rounded bg-emerald-600 text-white text-xs font-bold">انتشار</button>
+                        <Button variant="secondary" size="sm" onClick={() => handleVideoStatus(v.id, "published")}>
+                          انتشار
+                        </Button>
                       )}
                       {v.status !== "rejected" && (
-                        <button onClick={() => handleVideoStatus(v.id, "rejected")} className="px-3 py-1.5 rounded border text-xs font-bold text-amber-700">رد</button>
+                        <Button variant="outline" size="sm" onClick={() => handleVideoStatus(v.id, "rejected")}>
+                          رد
+                        </Button>
                       )}
-                      <button onClick={() => handleDeleteVideo(v.id)} className="px-3 py-1.5 rounded border text-xs font-bold text-red-600">حذف</button>
+                      <Button variant="destructive" size="sm" onClick={() => handleDeleteVideo(v.id)}>
+                        حذف
+                      </Button>
                     </div>
                   </div>
                 ))}
                 {videos.length === 0 && <div className="p-10 text-center text-muted-foreground">محتوایی ثبت نشده است.</div>}
               </div>
             )}
-          </div>
+          </CardContent>
+      </Card>
         )}
 
         {activeSection === "competitions" && (
-          <div className="rounded border border-border bg-card shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
-              <h3 className="font-rokh-bold font-bold text-lg">مسابقات</h3>
+          <Card className="rounded border border-border bg-card shadow-sm overflow-hidden">
+            <CardHeader className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
+              <CardTitle className="font-rokh-bold font-bold text-lg">مسابقات</CardTitle>
               <Link href="/competitions" className="text-sm text-primary hover:underline">صفحه عمومی</Link>
-            </div>
-            {sectionLoading ? (
+            </CardHeader>
+            <CardContent>
               <div className="p-10 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-emerald-600" /></div>
             ) : (
               <div className="divide-y divide-border/50">
@@ -500,27 +528,27 @@ export default function AdminPanel() {
                 ))}
                 {competitions.length === 0 && <div className="p-10 text-center text-muted-foreground">مسابقه‌ای ثبت نشده است.</div>}
               </div>
-            )}
-          </div>
+            </CardContent>
+          </Card>
         )}
 
         {activeSection === "config" && (
-          <div className="rounded border border-border bg-card p-6 shadow-sm space-y-4">
-            <p className="text-sm text-muted-foreground">
-              پرچم‌های ویژگی در این مرورگر ذخیره می‌شوند و برای استقرار چندسروره باید به تنظیمات سرور منتقل شوند. مقادیر جعلی نمایش داده نمی‌شود.
-            </p>
-            {Object.entries(flags).map(([key, value]) => (
-              <label key={key} className="flex items-center justify-between gap-4 rounded border border-border px-4 py-3">
-                <span className="text-sm font-medium">{key}</span>
-                <input
-                  type="checkbox"
-                  checked={!!value}
-                  onChange={(e) => saveFlags({ ...flags, [key]: e.target.checked })}
-                  className="h-4 w-4"
-                />
-              </label>
-            ))}
-          </div>
+          <Card className="rounded border border-border bg-card p-6 shadow-sm space-y-4">
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                پرچم‌های ویژگی در این مرورگر ذخیره می‌شوند و برای استقرار چندسروره باید به تنظیمات سرور منتقل شوند. مقادیر جعلی نمایش داده نمی‌شود.
+              </p>
+              {Object.entries(flags).map(([key, value]) => (
+                <div key={key} className="flex items-center justify-between gap-4 rounded border border-border px-4 py-3">
+                  <span className="text-sm font-medium">{key}</span>
+                  <Checkbox
+                    checked={!!value}
+                    onCheckedChange={(v) => saveFlags({ ...flags, [key]: v })}
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         )}
 
         {activeSection === "analytics" && (
@@ -540,26 +568,32 @@ export default function AdminPanel() {
                     { label: "دنبال‌کردن‌ها", value: stats.follows, icon: Users },
                     { label: "پست‌ها", value: stats.posts, icon: Layout },
                   ].map((card) => (
-                    <div key={card.label} className="rounded border border-border bg-card p-4">
-                      <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
-                        <card.icon className="h-4 w-4" />
-                        {card.label}
-                      </div>
-                      <div className="text-2xl font-bold font-rokh-bold">{fa(card.value || 0)}</div>
-                    </div>
+                    <Card key={card.label} className="rounded border border-border bg-card p-4">
+                      <CardContent className="p-0 pt-3">
+                        <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
+                          <card.icon className="h-4 w-4" />
+                          {card.label}
+                        </div>
+                        <div className="text-2xl font-bold font-rokh-bold">{fa(card.value || 0)}</div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
-                <div className="rounded border border-border bg-card overflow-hidden">
-                  <div className="px-6 py-4 border-b border-border/50 font-bold">پربازدیدترین ویدیوها (داده واقعی)</div>
-                  <div className="divide-y divide-border/50">
-                    {stats.topVideos.map((v) => (
-                      <div key={v.id} className="px-6 py-3 flex items-center justify-between gap-3 text-sm">
-                        <span className="line-clamp-1">{v.title}</span>
-                        <span className="text-muted-foreground shrink-0">{fa(v.views_count || 0)} بازدید</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <Card className="rounded border border-border bg-card overflow-hidden">
+                  <CardHeader className="px-6 py-4 border-b border-border/50 font-bold">
+                    پربازدیدترین ویدیوها (داده واقعی)
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <div className="divide-y divide-border/50">
+                      {stats.topVideos.map((v) => (
+                        <div key={v.id} className="px-6 py-3 flex items-center justify-between gap-3 text-sm">
+                          <span className="line-clamp-1">{v.title}</span>
+                          <span className="text-muted-foreground shrink-0">{fa(v.views_count || 0)} بازدید</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </>
             )}
           </div>
@@ -599,13 +633,13 @@ export default function AdminPanel() {
             <div className="relative w-full max-w-md rounded border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-rokh-bold font-bold text-lg text-foreground">تغییر نقش کاربر</h3>
-                <button onClick={() => setRoleModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                <Button onClick={() => setRoleModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></Button>
               </div>
               <p className="text-sm text-muted-foreground mb-6">{selectedUser.full_name}</p>
               <p className="text-xs text-muted-foreground mb-4">نقش فعلی: {roleLabels[selectedUser.role || "user"]}</p>
               <div className="space-y-3">
                 {["admin", "moderator", "creator", "user"].map((role) => (
-                  <button
+                  <Button
                     key={role}
                     onClick={() => handleRoleChange(selectedUser.id, role)}
                     className={`w-full py-3 rounded text-right font-medium transition-all border ${
@@ -618,7 +652,7 @@ export default function AdminPanel() {
                   >
                     {roleLabels[role]}
                     {selectedUser.id === user?.id && <span className="ml-2 text-xs">(شما)</span>}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -630,23 +664,23 @@ export default function AdminPanel() {
             <div className="relative w-full max-w-md rounded border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-rokh-bold font-bold text-lg text-foreground">تأیید تغییر نقش</h3>
-                <button onClick={() => setRoleConfirmModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+                <Button onClick={() => setRoleConfirmModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></Button>
               </div>
               <div className="space-y-4">
                 <p className="text-sm text-muted-foreground">آیا از تغییر نقش به <span className="font-bold">{roleLabels[pendingRoleChange.newRole]}</span> مطمئن هستید؟</p>
                 <div className="flex gap-3 justify-end">
-                  <button
+                  <Button
                     onClick={() => setRoleConfirmModal(false)}
                     className="px-6 py-2.5 rounded border border-border text-muted-foreground hover:bg-muted/50 transition-colors"
                   >
                     انصراف
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={confirmRoleChange}
                     className="px-6 py-2.5 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
                   >
                     تایید و ذخیره
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

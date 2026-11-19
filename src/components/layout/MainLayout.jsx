@@ -11,13 +11,15 @@ import LiveNotifications from '@/components/notifications/LiveNotifications';
 import { AnimatePresence, motion } from 'framer-motion';
 import PwaInstallBanner from '@/components/pwa/PwaInstallBanner';
 import BottomNav from '@/components/BottomNav';
+import FloatingAssistantChat from '@/components/assistant/FloatingAssistantChat';
 import {
   Home, Compass, Video, Radio, User,
 } from 'lucide-react';
 
-import AppHeader from '@/components/design-system/AppHeader';
-import AppSidebar from '@/components/design-system/AppSidebar';
-import MobileNav from '@/components/design-system/MobileNav';
+import AdminLayout from '@/components/layout/AdminLayout';
+import AppHeader from '@/components/ui/app-header';
+import AppSidebar from '@/components/ui/app-sidebar';
+import MobileNav from '@/components/ui/mobile-nav';
 
 const MOBILE_TABS = [
   { to: '/', label: 'خانه', icon: Home },
@@ -39,6 +41,12 @@ export default function MainLayout({ children }) {
     document.documentElement.dir = 'rtl';
     setMenuOpen(false);
   }, [pathname]);
+
+  const isAdmin = pathname.startsWith('/admin');
+
+  if (isAdmin) {
+    return <AdminLayout>{children}</AdminLayout>;
+  }
 
   const isLiveViewer = Boolean(pathname?.match(/^\/live\/[^/]+/));
   const hideChrome = isLiveViewer;
@@ -105,6 +113,7 @@ export default function MainLayout({ children }) {
 
       <LiveNotifications />
       <PwaInstallBanner />
+      <FloatingAssistantChat />
     </div>
   );
 }

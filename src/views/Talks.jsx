@@ -4,9 +4,14 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import api from "@/lib/api";
 import { Search, Video, Mic, Filter } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
-import VideoCard from "@/components/design-system/VideoCard";
-import { SkeletonGrid } from "@/components/design-system/LoadingSkeleton";
-import EmptyState from "@/components/design-system/EmptyState";
+import VideoCard from "@/components/ui/video-card";
+import { SkeletonGrid } from "@/components/ui/loading-skeleton";
+import EmptyState from "@/components/ui/empty-state";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const FILTERS = [
   { id: "all", label: "همه" },
@@ -22,7 +27,7 @@ export default function Talks() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [mediaType, setMediaType] = useState("all"); // all | video | audio
+  const [mediaType, setMediaType] = useState("all");
 
   const loadData = useCallback(() => {
     setLoading(true);
@@ -69,52 +74,50 @@ export default function Talks() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setMediaType("all")}
-              className={`px-3 py-1.5 rounded text-xs font-bold border ${mediaType === "all" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
-            >
-              همه
-            </button>
-            <button
-              onClick={() => setMediaType("video")}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold border ${mediaType === "video" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
-            >
-              <Video className="h-3.5 w-3.5" /> ویدیو
-            </button>
-            <button
-              onClick={() => setMediaType("audio")}
-              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded text-xs font-bold border ${mediaType === "audio" ? "bg-foreground text-background border-foreground" : "bg-card border-border"}`}
-            >
-              <Mic className="h-3.5 w-3.5" /> صوت
-            </button>
+            <Tabs defaultValue={mediaType} onValueChange={setMediaType}>
+              <TabsList className="gap-2">
+                <TabsTrigger value="all" variant="outline" className="px-3 py-1.5 text-xs font-bold">
+                  همه
+                </TabsTrigger>
+                <TabsTrigger value="video" variant="outline" className="px-3 py-1.5 text-xs font-bold">
+                  <Video className="h-3.5 w-3.5 mr-1" /> ویدیو
+                </TabsTrigger>
+                <TabsTrigger value="audio" variant="outline" className="px-3 py-1.5 text-xs font-bold">
+                  <Mic className="h-3.5 w-3.5 mr-1" /> صوت
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </div>
 
         <div className="relative">
           <Search className="absolute end-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
+          <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="جستجو در عنوان، قاری یا استاد..."
-            className="w-full h-11 pe-10 ps-4 rounded bg-card border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/25"
+            dir="ltr"
+            className="pe-10"
           />
         </div>
 
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
-          {FILTERS.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => setFilter(f.id)}
-              className={`inline-flex items-center gap-1.5 shrink-0 px-3.5 py-1.5 rounded text-sm font-medium border transition-colors ${
-                filter === f.id
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-card text-foreground/80 border-border hover:bg-muted"
-              }`}
-            >
-              {f.id === "all" && <Filter className="h-3.5 w-3.5" />}
-              {f.label}
-            </button>
-          ))}
+        <Separator />
+
+        <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
+          <Tabs defaultValue={filter} onValueChange={setFilter}>
+            <TabsList className="gap-2">
+              {FILTERS.map((f) => (
+                <TabsTrigger
+                  key={f.id}
+                  value={f.id}
+                  className="inline-flex shrink-0 items-center gap-1.5 px-3.5 py-1.5 rounded text-sm font-medium border shrink-0"
+                >
+                  {f.id === "all" && <Filter className="h-3.5 w-3.5" />}
+                  {f.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
         {loading ? (

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import {
   Sparkles, Send, Loader2, BookOpen, Play, Pause,
   Compass, Heart, CheckCircle2, RotateCcw,
-  ExternalLink, X as XIcon,
+  ExternalLink, X as XIcon, Users,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -238,7 +238,7 @@ export default function FloatingAssistantChat({ initialQuery } = {}) {
               <div className="flex items-center gap-2 flex-wrap shrink-0">
                 <div className="flex items-center gap-1 rounded p-1 border border-border/60 bg-secondary/40">
                   {ASSISTANTS.map((a) => (
-                    <button
+                    <Button
                       key={a.id}
                       onClick={() => handleSwitchAssistant(a.id)}
                       className={cn(
@@ -250,7 +250,7 @@ export default function FloatingAssistantChat({ initialQuery } = {}) {
                       title={a.name}
                     >
                       <a.icon className={`h-3.5 w-3.5 fill-current`} />
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 <div className="flex flex-col items-start">

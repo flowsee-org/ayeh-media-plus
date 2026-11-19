@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Image } from "@/components/ui/image";
 import {
@@ -7,6 +7,7 @@ import {
  HelpCircle, Sparkles, Trash2, Loader2, Bookmark, MoreHorizontal,
  Play, Pause, Copy, ExternalLink,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import { getSavedPosts, toggleSavedPost } from "@/lib/readingTracker";
 import { Avatar, timeAgo, POST_TYPE_LABELS } from "./shared";
@@ -190,19 +191,19 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
 
  {/* Menu & Actions */}
  <div className="relative">
- <button
+ <Button
  onClick={() => setShowMenu(!showMenu)}
  className="flex h-8 w-8 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
  aria-label="گزینه‌ها"
  >
  <MoreHorizontal className="h-4 w-4" />
- </button>
+ </Button>
 
  {showMenu && (
  <>
  <div className="fixed inset-0 z-30" onClick={() => setShowMenu(false)} />
  <div className="absolute left-0 top-9 z-40 w-44 rounded border border-border bg-popover/95 p-1.5 shadow-lg backdrop-blur-md animate-scale-in font-ui text-xs">
- <button
+ <Button
  onClick={() => {
  handleShare();
  setShowMenu(false);
@@ -211,10 +212,10 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  >
  <Copy className="h-3.5 w-3.5 text-muted-foreground" />
  <span>رونوشت پیوند</span>
- </button>
+ </Button>
 
  <Link
- to={`/community/${post.id}`}
+ href={`/community/${post.id}`}
  className="flex w-full items-center gap-2 rounded px-2.5 py-2 text-foreground transition-colors hover:bg-secondary"
  onClick={() => setShowMenu(false)}
  >
@@ -223,7 +224,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  </Link>
 
  {isOwn && onDelete && (
- <button
+ <Button
  onClick={() => {
  setShowMenu(false);
  onDelete(post);
@@ -232,7 +233,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  >
  <Trash2 className="h-3.5 w-3.5" />
  <span>حذف پست</span>
- </button>
+ </Button>
  )}
  </div>
  </>
@@ -264,7 +265,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  </div>
  ) : post.image_url ? (
  <div className="relative overflow-hidden bg-muted/20">
- <Link to={`/community/${post.id}`} className="block">
+ <Link href={`/community/${post.id}`} className="block">
  <Image
  src={post.image_url}
  fittingType="cover"
@@ -281,7 +282,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Top Header of Verse: Surah Name Badge + Audio Recitation Button */}
  <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-3">
  <Link
- to={`/verse/${post.verse_key.replace(":", "/")}`}
+ href={`/verse/${post.verse_key.replace(":", "/")}`}
  className="inline-flex items-center gap-1.5 rounded bg-background/80 px-3 py-1 font-rokh-bold text-xs font-bold text-foreground border border-border shadow-xs hover:border-accent transition-colors"
  >
  <BookOpen className="h-3.5 w-3.5 text-accent" />
@@ -292,7 +293,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
 
  {/* Recitation Play/Pause Button */}
  {verseInfo && (
- <button
+ <Button
  onClick={handleToggleAudio}
  className={`inline-flex items-center gap-1.5 rounded px-3 py-1 text-xs font-semibold font-ui transition-all shadow-xs ${
  isThisVersePlaying
@@ -312,7 +313,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  <span>تلاوت آیه</span>
  </>
  )}
- </button>
+ </Button>
  )}
  </div>
 
@@ -337,7 +338,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Link to Verse Details */}
  <div className="mt-3.5 flex justify-end">
  <Link
- to={`/verse/${post.verse_key.replace(":", "/")}`}
+ href={`/verse/${post.verse_key.replace(":", "/")}`}
  className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline font-ui"
  >
  <span>مشاهده تفسیر و تدبر کامل</span>
@@ -353,7 +354,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  <div className="flex items-center justify-between px-3 pt-2.5">
  <div className="flex items-center gap-1">
  {/* Like Button */}
- <button
+ <Button
  onClick={handleLike}
  disabled={liking}
  className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded transition-transform active:scale-80 ${
@@ -366,29 +367,29 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  isLiked ? "fill-current scale-110 drop-shadow-sm" : ""
  } ${liking ? "animate-pulse" : ""}`}
  />
- </button>
+ </Button>
 
  {/* Comment Button */}
- <button
+ <Button
  onClick={toggleComments}
  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
  aria-label="نظرات"
  >
  <MessageCircle className="h-[21px] w-[21px]" />
- </button>
+ </Button>
 
  {/* Share Button */}
- <button
+ <Button
  onClick={handleShare}
  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
  aria-label="اشتراک‌گذاری"
  >
  <Send className="h-[20px] w-[20px]" />
- </button>
+ </Button>
  </div>
 
  {/* Bookmark Button */}
- <button
+ <Button
  onClick={handleSave}
  className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded transition-colors ${
  savedPost ? "text-accent" : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
@@ -396,7 +397,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  aria-label={savedPost ? "حذف از نشان‌ها" : "ذخیره"}
  >
  <Bookmark className={`h-[21px] w-[21px] ${savedPost ? "fill-current" : ""}`} />
- </button>
+ </Button>
  </div>
 
  {/* Likes Count */}
@@ -407,17 +408,17 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  {/* Caption Content */}
  {post.content && (
  <div className="px-4 pb-2 text-xs sm:text-sm leading-[2] text-foreground/95 font-doran">
- <Link to={`/community/${post.id}`} className="ml-1.5 font-bold font-rokh-bold text-foreground hover:underline">
+ <Link href={`/community/${post.id}`} className="ml-1.5 font-bold font-rokh-bold text-foreground hover:underline">
  {post.author_name}
  </Link>
  <span className="whitespace-pre-line">{displayContent}</span>
  {isLongText && (
- <button
+ <Button
  onClick={() => setIsExpanded(!isExpanded)}
  className="mr-1.5 font-bold text-xs text-accent hover:underline inline-block"
  >
  {isExpanded ? "بستن" : "بیشتر..."}
- </button>
+ </Button>
  )}
  </div>
  )}
@@ -438,12 +439,12 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
 
  {/* Comments Count / Toggle */}
  <div className="px-4 pb-3 pt-0.5">
- <button
+ <Button
  onClick={toggleComments}
  className="text-xs sm:text-[13px] text-muted-foreground hover:text-foreground transition-colors font-doran"
  >
  {showComments ? "بستن نظرات" : commentCount > 0 ? `مشاهده هر ${fa(commentCount)} نظر` : "ثبت اولین نظر..."}
- </button>
+ </Button>
  </div>
 
  {/* Inline Comments Drawer */}
@@ -463,7 +464,7 @@ export default function PostCard({ post, currentUser, onLike, onDelete }) {
  onCountChange={setCommentCount}
  />
  <div className="px-3 pb-3 text-center">
- <Link to={`/community/${post.id}`} className="text-xs text-accent hover:underline font-ui font-medium">
+ <Link href={`/community/${post.id}`} className="text-xs text-accent hover:underline font-ui font-medium">
  مشاهده صفحه کامل پست و تمام گفتگوها ←
  </Link>
  </div>

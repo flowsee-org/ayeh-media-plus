@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Users, Loader2, Radio, ChevronLeft } from "lucide-react";
 import CharacterAvatar from "@/components/CharacterAvatar";
 import FollowButton from "@/components/live/FollowButton";
-import ScholarCard from "@/components/design-system/ScholarCard";
-import EmptyState from "@/components/design-system/EmptyState";
+import ScholarCard from "@/components/ui/scholar-card";
+import EmptyState from "@/components/ui/empty-state";
 import { parseAvatar } from "@/lib/avatars";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function Scholars() {
   const [scholars, setScholars] = useState([]);
@@ -43,17 +45,19 @@ export default function Scholars() {
 
   return (
     <div className="page-shell animate-fade-in font-doran space-y-8">
-      <div className="rounded border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
-          <Users className="h-3.5 w-3.5 text-primary" /> اساتید و مفسران کلام‌الله
-        </div>
-        <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
-          علما و مفسران قرآن کریم
-        </h1>
-        <p className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
-          سیری در آرا و تدبّرهای مفسران بزرگ جهان اسلام و اساتید معاصر
-        </p>
-      </div>
+      <Card className="rounded border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
+        <CardContent className="p-0 pt-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
+            <Users className="h-3.5 w-3.5 text-primary" /> اساتید و مفسران کلام‌الله
+          </div>
+          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+            علما و مفسران قرآن کریم
+          </h1>
+          <p className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
+            سیری در آرا و تدبّرهای مفسران بزرگ جهان اسلام و اساتید معاصر
+          </p>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
@@ -71,7 +75,7 @@ export default function Scholars() {
                 {liveScholars.map((s) => {
                   const cfg = parseAvatar(s.avatar);
                   return (
-                    <div
+                    <Card
                       key={s.id}
                       className="rounded border border-border bg-card p-4 hover:border-primary/30 hover:shadow-soft transition-all"
                     >
@@ -88,9 +92,10 @@ export default function Scholars() {
                           <div className="text-xs text-muted-foreground mt-0.5">
                             {s.sessions.toLocaleString("fa-IR")} جلسه
                             {s.live && (
-                              <span className="inline-flex items-center gap-1 mr-2 text-red-600 font-medium">
-                                <span className="h-1.5 w-1.5 rounded bg-red-500 animate-pulse" /> زنده
-                              </span>
+                              <Badge variant="destructive" size="sm" className="ml-2 animate-pulse">
+                                <span className="h-1.5 w-1.5 rounded bg-red-500 animate-pulse" />
+                                زنده
+                              </Badge>
                             )}
                           </div>
                         </div>
@@ -98,13 +103,13 @@ export default function Scholars() {
                       <div className="flex items-center gap-2 mt-4">
                         <FollowButton scholarId={s.id} scholarName={s.name} />
                         <Link
-                          to={`/scholars/${s.id}`}
+                          href={`/scholars/${s.id}`}
                           className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors mr-auto"
                         >
                           پروفایل <ChevronLeft className="h-3.5 w-3.5" />
                         </Link>
                       </div>
-                    </div>
+                    </Card>
                   );
                 })}
               </div>

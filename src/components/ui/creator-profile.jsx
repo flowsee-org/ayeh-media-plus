@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Video, FolderHeart, BookOpen, Clock } from 'lucide-react';
 import api from '@/lib/api';
-import VideoCard from './VideoCard';
-import CollectionCard from './CollectionCard';
-import ProfileContentSection from './ProfileContentSection';
+import VideoCard from '@/components/ui/video-card';
+import CollectionCard from '@/components/ui/collection-card';
+import ProfileContentSection from '@/components/ui/profile-content-section';
+import { Card, CardContent } from '@/components/ui/card';
 
 /**
  * Creator profile content: published videos, collections, and about info.
@@ -85,7 +86,7 @@ export default function CreatorProfile({
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {collections.map((c) => (
-            <CollectionCard key={c.id} collection={c} />
+            <CollectionCard key={c.id} item={c} />
           ))}
         </div>
       </ProfileContentSection>
@@ -97,17 +98,19 @@ export default function CreatorProfile({
         loading={false}
         className="space-y-4"
       >
-        <div className="rounded border border-border/50 bg-card p-6">
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {profile.bio || 'این تولیدکننده هنوز بیوگرافی خود را وارد نکرده است.'}
-          </p>
-          {profile.created_date && (
-            <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" />
-              <span>عضو از {new Date(profile.created_date).toLocaleDateString('fa-IR')}</span>
-            </div>
-          )}
-        </div>
+        <Card className="p-6">
+          <CardContent className="pt-0">
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {profile.bio || 'این تولیدکننده هنوز بیوگرافی خود را وارد نکرده است.'}
+            </p>
+            {profile.created_date && (
+              <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                <span>عضو از {new Date(profile.created_date).toLocaleDateString('fa-IR')}</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </ProfileContentSection>
     ),
   };

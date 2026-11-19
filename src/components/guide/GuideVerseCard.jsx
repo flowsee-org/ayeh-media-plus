@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { BookOpen, Film, Lightbulb, Loader2, Plus, ArrowLeft, Copy, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
 import CreatePost from "@/components/community/CreatePost";
@@ -54,7 +55,7 @@ export default function GuideVerseCard({ match, user, verse }) {
  </div>
 
  {verse ? (
- <Link to={link} className="block group cursor-pointer my-4">
+ <Link href={link} className="block group cursor-pointer my-4">
  <p
  className="mb-4 text-center text-2xl sm:text-3xl leading-[2.4] text-foreground font-semibold group-hover:text-primary transition-colors"
  dir="rtl"
@@ -107,35 +108,35 @@ export default function GuideVerseCard({ match, user, verse }) {
 
  {/* Actions */}
  <div className="flex flex-wrap items-center gap-2.5 border-t border-border/70 bg-card p-4 sm:px-8 font-ui">
- <button
+ <Button
  onClick={() => (user ? setComposing(true) : api.auth.redirectToLogin())}
  className="flex flex-1 min-w-[140px] items-center justify-center gap-2 rounded bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
  >
  <Plus className="h-4 w-4" /> ساخت پست تدبّری
- </button>
+ </Button>
 
  <Link
- to={link}
+ href={link}
  className="flex items-center justify-center gap-1.5 rounded border border-border bg-secondary px-4 py-2.5 text-xs font-bold text-foreground hover:bg-secondary/70 transition-colors"
  >
  <span>تفسیر جامع</span>
  <ArrowLeft className="h-3.5 w-3.5" />
  </Link>
 
- <button
+ <Button
  onClick={copyVerse}
  className="flex items-center justify-center gap-1.5 rounded border border-border bg-card px-3.5 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
  title="رونوشت آیه و ترجمه"
  >
  {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
  <span>{copied ? "کپی شد" : "کپی"}</span>
- </button>
+ </Button>
  </div>
 
  {posted && (
  <div className="border-t border-border bg-secondary p-3 text-center text-xs font-ui text-primary font-medium">
  پست تدبّری شما با موفقیت منتشر شد.{" "}
- <Link to="/community" className="font-bold underline hover:opacity-80">
+ <Link href="/community" className="font-bold underline hover:opacity-80">
  مشاهده در بخش جامعه
  </Link>
  </div>

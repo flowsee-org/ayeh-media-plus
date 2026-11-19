@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams, useNavigate } from "@/lib/router-compat";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { getSurahList, getSurah, getJuz, RECITERS, getAudioUrl } from "@/lib/quranApi";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { VerseMarker } from "@/components/IslamicDecorations";
@@ -19,11 +20,14 @@ import {
  Play, Pause, Type, SkipBack, SkipForward, Volume2, Check,
  Compass, ChevronDown, Sparkles, Palette,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
 export default function Quran() {
- const [params, setParams] = useSearchParams();
+ const params = useSearchParams();
+ const router = useRouter();
  const view = params.get("juz") ? "juz" : params.get("surah") ? "surah" : "list";
  const khatmPartId = params.get("khatm_part_id");
  const [completingKhatm, setCompletingKhatm] = useState(false);
@@ -83,17 +87,17 @@ export default function Quran() {
 
  <div className="flex items-center gap-2 w-full sm:w-auto">
  {!khatmDone ? (
- <button
+ <Button
  onClick={handleConfirmKhatmPart}
  disabled={completingKhatm}
  className="w-full sm:w-auto px-5 py-2.5 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
  >
  <Check className="w-4 h-4" />
  <span>{completingKhatm ? "در حال ثبت..." : "ثبت اتمام قرائت این جزء"}</span>
- </button>
+ </Button>
  ) : (
  <Link
- to="/khatm"
+ href="/khatm"
  className="w-full sm:w-auto px-4 py-2 rounded bg-accent text-accent-foreground font-semibold text-xs text-center shadow-sm"
  >
  بازگشت به دوره‌های ختم
@@ -105,15 +109,15 @@ export default function Quran() {
 
  {view === "list" && (
  <SurahList
- onPick={(n) => setParams({ surah: n })}
- onPickJuz={(n) => setParams({ juz: n })}
+ onPick={(n) => router.push('/quran?surah=' + n)}
+ onPickJuz={(n) => router.push('/quran?juz=' + n)}
  />
  )}
  {view === "surah" && (
- <SurahView n={Number(params.get("surah"))} onBack={() => setParams({})} />
+ <SurahView n={Number(params.get("surah"))} onBack={() => router.push('/quran')} />
  )}
  {view === "juz" && (
- <JuzView n={Number(params.get("juz"))} onBack={() => setParams({})} />
+ <JuzView n={Number(params.get("juz"))} onBack={() => router.push('/quran')} />
  )}
  </div>
  );
@@ -169,7 +173,7 @@ function SurahList({ onPick, onPickJuz }) {
  {/* Search bar */}
  <div className="relative max-w-md mx-auto">
  <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
- <input
+ <Input
  type="search"
  name="surah-search"
  autoComplete="off"
@@ -190,7 +194,7 @@ function SurahList({ onPick, onPickJuz }) {
  {/* Mode Switcher */}
  <div className="flex justify-center mb-8">
  <div className="inline-flex p-1 rounded bg-secondary border border-border">
- <button
+ <Button
  onClick={() => setMode("surah")}
  className={`px-6 py-2 rounded text-xs font-bold font-ui transition-all ${
  mode === "surah"
@@ -199,8 +203,8 @@ function SurahList({ onPick, onPickJuz }) {
  }`}
  >
  فهرست سوره‌ها ({surahs.length})
- </button>
- <button
+ </Button>
+ <Button
  onClick={() => setMode("juz")}
  className={`px-6 py-2 rounded text-xs font-bold font-ui transition-all ${
  mode === "juz"
@@ -209,7 +213,7 @@ function SurahList({ onPick, onPickJuz }) {
  }`}
  >
  اجزاء سی‌گانه (۳۰)
- </button>
+ </Button>
  </div>
  </div>
 
@@ -220,7 +224,7 @@ function SurahList({ onPick, onPickJuz }) {
  ) : mode === "surah" ? (
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
  {filtered.map((s) => (
- <button
+ <Button
  key={s.number}
  onClick={() => onPick(s.number)}
  className="group relative flex items-center justify-between p-4 sm:p-5 rounded border border-border/80 bg-card hover:border-primary/50 hover:shadow-card-hover transition-all text-right"
@@ -244,13 +248,13 @@ function SurahList({ onPick, onPickJuz }) {
  >
  {s.name}
  </div>
- </button>
+ </Button>
  ))}
  </div>
  ) : (
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
  {JUZ_DATA.map((juz) => (
- <button
+ <Button
  key={juz.number}
  onClick={() => onPickJuz(juz.number)}
  className="group p-5 rounded border border-border/80 bg-card hover:border-primary/50 hover:shadow-card-hover transition-all text-right"
@@ -272,7 +276,7 @@ function SurahList({ onPick, onPickJuz }) {
  <div className="font-ui text-xs font-medium text-primary" dir="rtl">
  {juz.verseRange}
  </div>
- </button>
+ </Button>
  ))}
  </div>
  )}
@@ -297,7 +301,8 @@ function SurahView({ n, onBack }) {
  const [reciterDropdownOpen, setReciterDropdownOpen] = useState(false);
 
  const [prefs, updatePrefs] = useReadingPrefs();
- const navigate = useNavigate();
+ const surahRouter = useRouter();
+ const navigate = (path) => surahRouter.push(path);
  const { playTrack, track: currentTrack, isPlaying, togglePlay } = useAudioPlayer();
 
  const currentTheme =
@@ -415,12 +420,12 @@ function SurahView({ n, onBack }) {
  <div className="rounded border border-dashed border-accent/15 p-12 text-center max-w-md mx-auto">
  <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground mb-4">{error}</p>
- <button
+ <Button
  onClick={() => setRetryKey((k) => k + 1)}
  className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
  >
  <RotateCw className="h-4 w-4" /> تلاش مجدد
- </button>
+ </Button>
  </div>
  );
 
@@ -431,13 +436,13 @@ function SurahView({ n, onBack }) {
  {/* Top Navigation */}
  <div className="flex items-center justify-between mb-6 sm:mb-8">
  <BackButton onClick={onBack} label="همه سوره‌ها" className="mb-0" />
- <button
+ <Button
  onClick={() => setSettingsOpen(true)}
  className="inline-flex items-center gap-2 px-4 py-2 rounded border border-accent/30 bg-card/85 hover:bg-secondary text-xs font-bold text-foreground shadow-soft transition-all hover:scale-105 active:scale-95 font-ui"
  >
  <Type className="h-4 w-4 text-accent" />
  <span>تنظیمات خط و مصحف</span>
- </button>
+ </Button>
  </div>
 
  {/* Surah Banner Card with Authentic Persian Muqarnas Ceiling */}
@@ -469,7 +474,7 @@ function SurahView({ n, onBack }) {
 
  {/* Surah Recitation Audio Trigger Button */}
  <div className="mt-6 flex justify-center items-center gap-3 flex-wrap">
- <button
+ <Button
  onClick={() => {
  if (isPlayingThisSurah) {
  togglePlay();
@@ -494,7 +499,7 @@ function SurahView({ n, onBack }) {
  <span>شروع تلاوت پیوسته با صدای {currentReciterObj.name}</span>
  </>
  )}
- </button>
+ </Button>
  </div>
  </div>
  </div>
@@ -523,7 +528,7 @@ function SurahView({ n, onBack }) {
  <Link
  key={a.number}
  id={`ayah-${n}-${a.numberInSurah}`}
- to={`/verse/${data.number}/${a.numberInSurah}`}
+ href={`/verse/${data.number}/${a.numberInSurah}`}
  className={`group relative block rounded border p-5 sm:p-7 transition-all duration-300 ${
  isAyahActive
  ? "border-amber-500/80 bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent shadow-[0_0_25px_rgba(245,158,11,0.22)] ring-2 ring-amber-500/40 scale-[1.01]"
@@ -543,7 +548,7 @@ function SurahView({ n, onBack }) {
  </div>
 
  {/* Audio Play Trigger for Individual Ayah */}
- <button
+ <Button
  type="button"
  onClick={(e) => togglePlayAyah(e, a)}
  className={`h-9 w-9 rounded flex items-center justify-center transition-all ${
@@ -558,7 +563,7 @@ function SurahView({ n, onBack }) {
  ) : (
  <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
  )}
- </button>
+ </Button>
 
  {/* Equalizer animation indicator */}
  {isAyahActive && (
@@ -602,7 +607,7 @@ function SurahView({ n, onBack }) {
  {a.page ? <span>صفحه {fa(a.page)}</span> : null}
  </div>
  <div className="flex items-center gap-3">
- <button
+ <Button
  type="button"
  onClick={(e) => {
  e.preventDefault();
@@ -614,7 +619,7 @@ function SurahView({ n, onBack }) {
  >
  <Palette className="h-3.5 w-3.5" />
  <span className="hidden sm:inline">کارت آیه</span>
- </button>
+ </Button>
  <span className="text-primary font-bold group-hover:underline flex items-center gap-1">
  مشاهده تفسیر و تدبّر{" "}
  <ChevronRight className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform" />
@@ -634,7 +639,7 @@ function SurahView({ n, onBack }) {
  <div className="flex items-center justify-between gap-2">
  {/* Reciter Selector Trigger */}
  <div className="relative">
- <button
+ <Button
  onClick={() => setReciterDropdownOpen(!reciterDropdownOpen)}
  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-secondary/80 hover:bg-secondary text-foreground text-xs font-bold border border-border/60 transition-colors font-ui"
  title="انتخاب قاری"
@@ -642,7 +647,7 @@ function SurahView({ n, onBack }) {
  <Volume2 className="h-3.5 w-3.5 text-accent" />
  <span className="max-w-[100px] truncate">{currentReciterObj.name}</span>
  <ChevronDown className="h-3 w-3 text-muted-foreground" />
- </button>
+ </Button>
 
  {/* Reciter Dropdown Menu */}
  {reciterDropdownOpen && (
@@ -658,7 +663,7 @@ function SurahView({ n, onBack }) {
  {RECITERS.map((r) => {
  const isChosen = r.id === selectedReciter;
  return (
- <button
+ <Button
  key={r.id}
  onClick={() => handleSelectReciter(r.id)}
  className={`flex w-full items-center justify-between rounded px-3 py-2 text-right transition-colors ${
@@ -672,7 +677,7 @@ function SurahView({ n, onBack }) {
  <span className="text-[10px] text-muted-foreground">{r.style}</span>
  </div>
  {isChosen && <Check className="h-3.5 w-3.5 text-accent" />}
- </button>
+ </Button>
  );
  })}
  </div>
@@ -683,17 +688,17 @@ function SurahView({ n, onBack }) {
  {/* Playback Controls (Previous / Play-Pause / Next) */}
  <div className="flex items-center gap-2">
  {/* Prev Ayah (RTL: right arrow goes to prev) */}
- <button
+ <Button
  onClick={handlePlayPrev}
  disabled={!currentPlayingAyah || currentPlayingAyah <= 1}
  className="flex h-9 w-9 items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-secondary disabled:opacity-40 transition-colors"
  title="آیه قبلی"
  >
  <SkipForward className="h-4 w-4" />
- </button>
+ </Button>
 
  {/* Main Play / Pause Button */}
- <button
+ <Button
  onClick={() => {
  if (isPlayingThisSurah) {
  togglePlay();
@@ -713,10 +718,10 @@ function SurahView({ n, onBack }) {
  ) : (
  <Play className="h-5 w-5 fill-current ml-0.5" />
  )}
- </button>
+ </Button>
 
  {/* Next Ayah (RTL: left arrow goes to next) */}
- <button
+ <Button
  onClick={handlePlayNext}
  disabled={
  !currentPlayingAyah || currentPlayingAyah >= data.numberOfAyahs
@@ -725,7 +730,7 @@ function SurahView({ n, onBack }) {
  title="آیه بعدی"
  >
  <SkipBack className="h-4 w-4" />
- </button>
+ </Button>
  </div>
 
  {/* Current Ayah Tracking & AutoScroll Toggle */}
@@ -735,7 +740,7 @@ function SurahView({ n, onBack }) {
  </span>
 
  {/* Auto Scroll Toggle */}
- <button
+ <Button
  onClick={() => setAutoScroll(!autoScroll)}
  className={`flex items-center gap-1 px-2.5 py-1.5 rounded border text-xs font-semibold font-ui transition-all ${
  autoScroll
@@ -748,7 +753,7 @@ function SurahView({ n, onBack }) {
  <span className="hidden sm:inline">
  {autoScroll ? "پیمایش خودکار" : "پیمایش دستی"}
  </span>
- </button>
+ </Button>
  </div>
  </div>
  </div>
@@ -798,12 +803,12 @@ function JuzView({ n, onBack }) {
  <div className="rounded border border-dashed border-accent/15 p-12 text-center max-w-md mx-auto">
  <Layers className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
  <p className="text-sm text-muted-foreground mb-4">{error}</p>
- <button
+ <Button
  onClick={() => setRetryKey((k) => k + 1)}
  className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
  >
  <RotateCw className="h-4 w-4" /> تلاش مجدد
- </button>
+ </Button>
  </div>
  );
 
@@ -825,7 +830,7 @@ function JuzView({ n, onBack }) {
  return (
  <div key={g.surah}>
  <Link
- to={`/quran?surah=${g.surah}`}
+ href={`/quran?surah=${g.surah}`}
  className="inline-flex items-center gap-2 mb-4 group"
  >
  <span className="h-8 w-8 rounded bg-accent/10 text-accent flex items-center justify-center text-xs font-bold ring-1 ring-accent/10">
@@ -842,7 +847,7 @@ function JuzView({ n, onBack }) {
  {g.ayahs.map((a) => (
  <Link
  key={a.number}
- to={`/verse/${g.surah}/${a.numberInSurah}`}
+ href={`/verse/${g.surah}/${a.numberInSurah}`}
  className="group flex items-start gap-4 rounded border border-accent/10 bg-card/40 p-4 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
  >
  <VerseMarker number={a.numberInSurah} size={36} />

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { ShieldAlert, Loader2, Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * RoleGuard - Protects routes based on user roles and/or permissions.
@@ -49,12 +50,12 @@ export default function RoleGuard({ children, allowedRoles, requiredPermission, 
         <p className="text-muted-foreground mb-6">
           برای دسترسی به این بخش، باید وارد حساب کاربری خود شوید.
         </p>
-        <button
+        <Button
           onClick={() => openAuthModal()}
           className="px-8 py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
         >
           ورود / ثبت‌نام
-        </button>
+        </Button>
       </div>
     );
   }
@@ -111,12 +112,12 @@ function AccessDeniedFallback({ userRole, reason, allowedRoles, requiredPermissi
           : `شما مجاز به انجام این عملیات نیستید. مجوز مورد نیاز: ${requiredList.map((p) => String(p)).join("، ")}. نقش شما: ${roleLabel}`}
       </p>
       {userRole === "user" && (
-        <button
+        <Button
           onClick={() => router.push("/profile")}
           className="px-8 py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-emerald-glow"
         >
           برو به پروفایل
-        </button>
+        </Button>
       )}
     </div>
   );

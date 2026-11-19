@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import PostCard from "@/components/community/PostCard";
@@ -65,7 +65,7 @@ export default function CommunityFeed() {
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 truncate">تازه‌ترین تدبّرها و گفت‌وگوهای قرآنی</p>
           </div>
         </div>
-        <Link to="/community" className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors shrink-0 whitespace-nowrap">
+        <Link href="/community" className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors shrink-0 whitespace-nowrap">
           جامعه کامل <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </Link>
       </div>
@@ -75,7 +75,7 @@ export default function CommunityFeed() {
         <div className="lg:col-span-2 space-y-5">
           {/* Create post CTA */}
           <Link
-            to="/community"
+            href="/community"
             className="flex items-center gap-3 rounded border border-accent/15 bg-card/60 p-4 hover:border-accent/30 hover:shadow-soft transition-all group"
           >
             <div className="h-10 w-10 rounded bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/15 flex items-center justify-center text-accent">
@@ -95,7 +95,7 @@ export default function CommunityFeed() {
             <div className="rounded border border-dashed border-accent/15 p-12 text-center">
               <MessageCircle className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
               <p className="text-sm text-muted-foreground mb-4">هنوز پستی منتشر نشده است. اولین تدبّر را شما به اشتراک بگذارید!</p>
-              <Link to="/community" className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all">
+              <Link href="/community" className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all">
                 <Plus className="h-4 w-4" /> شروع کنید
               </Link>
             </div>
@@ -103,7 +103,7 @@ export default function CommunityFeed() {
 
           {!loading && displayPosts.length > 0 && (
             <div className="text-center pt-2">
-              <Link to="/community" className="inline-flex items-center gap-2 px-6 py-3 rounded border border-accent/20 text-accent text-sm font-medium hover:bg-accent/5 transition-all">
+              <Link href="/community" className="inline-flex items-center gap-2 px-6 py-3 rounded border border-accent/20 text-accent text-sm font-medium hover:bg-accent/5 transition-all">
                 مشاهده همه پست‌ها <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>
@@ -136,7 +136,7 @@ export default function CommunityFeed() {
                 {competitions.slice(0, 3).map((c) => (
                   <Link
                     key={c.id}
-                    to={`/competitions/${c.id}`}
+                    href={`/competitions/${c.id}`}
                     className="flex items-center gap-3 rounded p-2 hover:bg-accent/5 transition-colors group"
                   >
                     <div className="h-9 w-9 rounded bg-accent/10 text-accent flex items-center justify-center shrink-0">
@@ -149,7 +149,7 @@ export default function CommunityFeed() {
                   </Link>
                 ))}
               </div>
-              <Link to="/competitions" className="block text-center mt-3 text-xs text-accent hover:underline">
+              <Link href="/competitions" className="block text-center mt-3 text-xs text-accent hover:underline">
                 همه مسابقات ←
               </Link>
             </div>
@@ -166,7 +166,7 @@ export default function CommunityFeed() {
                 {trendingTags.map((tag) => (
                   <Link
                     key={tag}
-                    to={`/community`}
+                    href={`/community`}
                     className="text-xs px-3 py-1.5 rounded bg-accent/8 text-accent border border-accent/10 hover:bg-accent/15 transition-colors"
                   >
                     #{tag}

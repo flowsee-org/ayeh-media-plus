@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "@/lib/router-compat";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
@@ -11,10 +12,11 @@ import PostCard from "@/components/community/PostCard";
 import CommentSection from "@/components/community/CommentSection";
 import { ChevronRight, Loader2, MessageCircle, BookOpen } from "lucide-react";
 import BackButton from "@/components/BackButton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function PostDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user: authUser, openAuthModal } = useAuth();
   const [localUser, setLocalUser] = useState(null);
   const [post, setPost] = useState(null);
@@ -74,7 +76,7 @@ export default function PostDetail() {
     try {
       await api.entities.Post.delete(post.id);
       toast.success("پست با موفقیت حذف شد");
-      navigate("/community");
+      router.push("/community");
     } catch {
       toast.error("خطا در حذف پست");
     }
@@ -85,7 +87,7 @@ export default function PostDetail() {
     <div className="mx-auto max-w-md py-24 text-center">
       <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
       <p className="text-sm text-muted-foreground mb-4">پست یافت نشد.</p>
-      <Link to="/community" className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline">
+      <Link href="/community" className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline">
         <ChevronRight className="h-4 w-4" /> بازگشت به جامعه
       </Link>
     </div>
@@ -97,21 +99,23 @@ export default function PostDetail() {
 
       <PostCard post={post} currentUser={user} onLike={handleLike} onDelete={handleDelete} />
 
-      <div className="mt-8 rounded border border-accent/15 bg-card/60 overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-accent/10 bg-accent/[0.02]">
+      <Card className="mt-8 rounded border border-accent/15 bg-card overflow-hidden">
+        <CardHeader className="flex items-center gap-2 px-4 py-3 border-b border-accent/10 bg-accent/[0.02]">
           <MessageCircle className="h-5 w-5 text-accent" />
-          <h2 className="font-display font-bold text-lg">
+          <CardTitle className="font-display font-bold text-lg">
             نظرات ({commentCount.toLocaleString("fa-IR")})
-          </h2>
-        </div>
-        <CommentSection
-          postId={post.id}
-          post={post}
-          currentUser={user}
-          comments={comments}
-          onCountChange={setCommentCount}
-        />
-      </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CommentSection
+            postId={post.id}
+            post={post}
+            currentUser={user}
+            comments={comments}
+            onCountChange={setCommentCount}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

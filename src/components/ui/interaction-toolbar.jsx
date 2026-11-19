@@ -1,14 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ThumbsUp, ThumbsDown, Bookmark, Share2, MessageCircle } from 'lucide-react';
 import { fa } from '@/lib/utils';
 import { useAuth } from '@/lib/AuthContext';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 /**
  * Aparat-style interaction bar under the video title
+ * Built on shadcn/ui Button + Tooltip primitives.
  */
 export default function InteractionToolbar({
   videoId,
@@ -67,46 +71,57 @@ export default function InteractionToolbar({
     }
   };
 
-  const btnBase = 'inline-flex items-center gap-1.5 px-3.5 py-2 rounded text-xs font-bold border transition-colors';
+  const InteractionBtn = ({ active, Icon, label, onClick }) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant={active ? 'primary' : 'outline'}
+          size="sm"
+          onClick={onClick}
+          className={`flex items-center gap-1.5 px-3 py-2 text-xs font-bold border transition-colors ${active ? 'border-primary' : 'border-transparent'}`}
+        >
+          <Icon className={`h-4 w-4 ${active ? 'fill-current' : ''}`} />
+          {label}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">{label}</TooltipContent>
+    </Tooltip>
+  );
 
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
-      <button
-        onClick={handleLike}
-        className={`${btnBase} ${
-          liked
-            ? 'bg-primary text-primary-foreground border-primary'
-            : 'bg-muted/60 text-foreground border-transparent hover:bg-muted'
-        }`}
-      >
-        <ThumbsUp className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} />
-        {fa(likes)}
-      </button>
-      <button className={`${btnBase} bg-muted/60 text-foreground border-transparent hover:bg-muted`}>
-        <ThumbsDown className="h-4 w-4" />
-      </button>
-      <button
-        onClick={handleBookmark}
-        className={`${btnBase} ${
-          bookmarked
-            ? 'bg-primary text-primary-foreground border-primary'
-            : 'bg-muted/60 text-foreground border-transparent hover:bg-muted'
-        }`}
-      >
-        <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-current' : ''}`} />
-        ذخیره
-      </button>
-      <button
-        onClick={handleShare}
-        className={`${btnBase} bg-muted/60 text-foreground border-transparent hover:bg-muted`}
-      >
-        <Share2 className="h-4 w-4" />
-        اشتراک
-      </button>
-      <span className={`${btnBase} bg-muted/60 text-foreground border-transparent`}>
-        <MessageCircle className="h-4 w-4" />
-        {fa(commentsCount)}
-      </span>
-    </div>
+    <TooltipProvider>
+      <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+        <InteractionBtn
+          active={liked}
+          Icon={ThumbsUp}
+          label={fa(likes)}
+          onClick={handleLike}
+        />
+        <Button
+          size="sm"
+          variant="outline"
+          disabled
+          className="px-3 py-2 text-xs font-bold border-transparent"
+        >
+          <ThumbsDown className="h-4 w-4" />
+        </Button>
+        <InteractionBtn
+          active={bookmarked}
+          Icon={Bookmark}
+          label="ذخیره"
+          onClick={handleBookmark}
+        />
+        <InteractionBtn
+          active={false}
+          Icon={Share2}
+          label="اشتراک"
+          onClick={handleShare}
+        />
+        <span className="px-3 py-2 text-xs font-bold text-muted-foreground">
+          <MessageCircle className="h-4 w-4" />
+          {fa(commentsCount)}
+        </span>
+      </div>
+    </TooltipProvider>
   );
 }

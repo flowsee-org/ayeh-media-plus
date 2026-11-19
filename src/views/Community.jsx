@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useMemo } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { isScholarUser } from "@/lib/scholarAccess";
@@ -11,11 +11,16 @@ import PostCard from "@/components/community/PostCard";
 import CreatePost from "@/components/community/CreatePost";
 import ActivePrizeStrip from "@/components/community/ActivePrizeStrip";
 import { Avatar } from "@/components/community/shared";
-import EmptyState from "@/components/design-system/EmptyState";
+import EmptyState from "@/components/ui/empty-state";
 import {
   Plus, Loader2, Sparkles, Trophy, BookOpen,
   HelpCircle, Video, Compass,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 
 const CHIPS = [
   { id: "all", label: "همه تدبّرها", icon: Sparkles },
@@ -76,7 +81,6 @@ export default function Community() {
     const likedBy = post.liked_by || [];
     const isLiked = likedBy.includes(currentUser.id);
     const newLikedBy = isLiked ? likedBy.filter((id) => id !== currentUser.id) : [...likedBy, currentUser.id];
-    // Optimistic: update immediately, revert if the API call fails
     setPosts((prev) =>
       prev.map((p) =>
         p.id === post.id ? { ...p, liked_by: newLikedBy, likes_count: newLikedBy.length } : p
@@ -121,70 +125,74 @@ export default function Community() {
               جایی که آیات در زندگی‌ها رویداد می‌شوند
             </p>
           </div>
-          <Link
-            to="/competitions"
-            className="flex shrink-0 items-center gap-1.5 rounded border border-primary/20 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary transition-all hover:bg-primary/15"
-          >
-            <Trophy className="h-3.5 w-3.5" />
-            <span>چالش‌های قرآنی</span>
-          </Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/competitions">
+              <Trophy className="h-3.5 w-3.5" />
+              <span>چالش‌های قرآنی</span>
+            </Link>
+          </Button>
         </div>
 
         {/* Active Competitions / Prizes */}
         <ActivePrizeStrip />
 
         {/* Quick Create Prompt Bar */}
-        <div className="rounded border border-border bg-card p-3.5 shadow-soft transition-all hover:border-primary/40">
-          <button
-            onClick={handleOpenCreate}
-            className="flex w-full items-center gap-3 text-right group"
-          >
-            <Avatar
-              name={currentUser?.full_name || currentUser?.phone || "کاربر"}
-              size={38}
-              avatar={currentUser?.avatar || currentUser?.avatar_url}
-              className="ring-2 ring-primary/20"
-            />
-            <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium font-doran">
-              آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
-            </span>
-            <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <Plus className="h-4 w-4" />
-            </div>
-          </button>
+        <Card className="p-3.5 shadow-soft transition-all hover:border-primary/40">
+          <CardContent>
+            <Button
+              onClick={handleOpenCreate}
+              className="flex w-full items-center gap-3 text-right group"
+              variant="ghost"
+            >
+              <Avatar
+                name={currentUser?.full_name || currentUser?.phone || "کاربر"}
+                size={38}
+                avatar={currentUser?.avatar || currentUser?.avatar_url}
+                className="ring-2 ring-primary/20"
+              />
+              <span className="flex-1 text-xs sm:text-sm text-muted-foreground group-hover:text-foreground transition-colors font-medium font-doran">
+                آیه‌ای لمس کردت؟ تدبّری داری؟ با جامعه به اشتراک بگذار
+              </span>
+              <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <Plus className="h-4 w-4" />
+              </div>
+            </Button>
+          </CardContent>
 
           {/* Quick Actions Row */}
-          <div className="mt-3 flex items-center gap-2 border-t border-border/50 pt-2.5">
-            <button
+          <Separator className="mt-3 mb-2" />
+          <div className="flex items-center gap-2">
+            <Button
               onClick={handleOpenCreate}
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded bg-secondary py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
+              variant="secondary"
+              size="sm"
+              className="flex-1 items-center justify-center gap-1.5 py-1.5 text-xs font-semibold"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
               <span>نوشتن تدبّر</span>
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
 
         {/* Filter Chips Bar */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-          {CHIPS.map((chip) => {
-            const isSelected = selectedChip === chip.id;
-            const Icon = chip.icon;
-            return (
-              <button
-                key={chip.id}
-                onClick={() => setSelectedChip(chip.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded px-3.5 py-1.5 text-xs font-semibold transition-all border ${
-                  isSelected
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-card border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                }`}
-              >
-                <Icon className="h-3 w-3" />
-                <span>{chip.label}</span>
-              </button>
-            );
-          })}
+          <Tabs defaultValue={selectedChip} onValueChange={setSelectedChip}>
+            <TabsList className="gap-2">
+              {CHIPS.map((chip) => {
+                const Icon = chip.icon;
+                return (
+                  <TabsTrigger
+                    key={chip.id}
+                    value={chip.id}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded px-3.5 py-1.5 text-xs font-semibold transition-all border shrink-0"
+                  >
+                    <Icon className="h-3 w-3" />
+                    <span>{chip.label}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Feed List */}

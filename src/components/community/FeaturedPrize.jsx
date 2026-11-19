@@ -1,4 +1,4 @@
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { Trophy, Gift, ArrowLeft, Clock } from "lucide-react";
 
 /** Big highlighted prize block for the leading active competition. */
@@ -6,7 +6,7 @@ export default function FeaturedPrize({ comp }) {
   if (!comp) return null;
   return (
     <Link
-      to={`/competitions/${comp.id}`}
+      href={`/competitions/${comp.id}`}
       className="group relative mb-6 block overflow-hidden rounded border border-accent/30 bg-gradient-to-br from-primary via-primary to-[#062017] p-5 text-primary-foreground shadow-premium sm:p-7"
     >
       <div className="absolute -left-10 -top-10 h-40 w-40 rounded bg-accent/20 blur-3xl" />

@@ -6,11 +6,33 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
   turbopack: {},
   // Minimal runtime image for Docker (`pnpm build` → `.next/standalone`).
-  // public/ and .next/static must be copied beside standalone/server.js in the image.
   output: 'standalone',
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'cdn.islamic.network' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      { protocol: 'https', hostname: 'via.placeholder.com' },
+    ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+    ];
+  },
   // eslint and TypeScript are enforced during builds (lint + typecheck pass cleanly).
   async rewrites() {
     // Development: Next (5173) proxies /api, /uploads, /socket.io → Express (5000).
@@ -41,13 +63,6 @@ const nextConfig = {
         destination: `${apiBase}/socket.io/:path*`,
       },
     ];
-  },
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'react-router-dom': path.resolve(__dirname, 'src/lib/router-compat.jsx'),
-    };
-    return config;
   },
 };
 

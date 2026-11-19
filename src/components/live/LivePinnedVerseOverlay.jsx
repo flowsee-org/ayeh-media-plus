@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { BookOpen, ChevronDown, ChevronUp, ExternalLink, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
@@ -31,7 +32,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
  <div className="flex items-center gap-1">
  {surahNum && ayahNum && (
  <Link
- to={`/verse/${surahNum}/${ayahNum}`}
+ href={`/verse/${surahNum}/${ayahNum}`}
  target="_blank"
  rel="noopener noreferrer"
  className="flex h-7 w-7 items-center justify-center rounded bg-white/10 hover:bg-white/20 text-stone-200 transition-colors"
@@ -40,7 +41,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
  <ExternalLink className="h-3.5 w-3.5" />
  </Link>
  )}
- <button
+ <Button
  type="button"
  onClick={() => setMinimized(true)}
  className="flex h-7 items-center gap-1 px-2 rounded bg-white/10 hover:bg-white/20 text-xs text-stone-200 transition-colors font-ui"
@@ -48,7 +49,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
  >
  <ChevronDown className="h-3.5 w-3.5" />
  <span className="text-[10px]">کوچک‌کردن</span>
- </button>
+ </Button>
  </div>
  </div>
 
@@ -73,7 +74,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
  ) : (
  /* Minimized Pill on Video */
  <div className="flex justify-center animate-scale-in">
- <button
+ <Button
  type="button"
  onClick={() => setMinimized(false)}
  className="inline-flex items-center gap-2 rounded border border-amber-500/40 bg-black/85 backdrop-blur-md px-4 py-1.5 text-xs font-bold text-amber-400 shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95 font-rokh-bold"
@@ -84,7 +85,7 @@ export default function LivePinnedVerseOverlay({ pinnedVerse }) {
  آیه تدبّر: {surahName ? `سوره ${surahName} (${verseKey})` : verseKey}
  </span>
  <ChevronUp className="h-3.5 w-3.5 ml-0.5 text-stone-300" />
- </button>
+ </Button>
  </div>
  )}
  </div>

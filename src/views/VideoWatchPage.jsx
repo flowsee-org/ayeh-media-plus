@@ -2,13 +2,13 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Hls from 'hls.js';
-import { useParams, Link } from "@/lib/router-compat";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
 import { fa } from "@/lib/utils";
 import { recordWatch } from "@/lib/watchHistory";
-import { STATUS_COLORS } from "@/lib/design-tokens";
 import {
   Play, Pause, Volume2, VolumeX, Maximize, Minimize,
   Clock, BookOpen, ThumbsUp, Headphones, Layout,
@@ -16,7 +16,12 @@ import {
 } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import RelatedVideos from "@/components/video/RelatedVideos";
-import InteractionToolbar from "@/components/design-system/InteractionToolbar";
+import InteractionToolbar from "@/components/ui/interaction-toolbar";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function VideoWatchPage() {
   const { id } = useParams();
@@ -275,14 +280,20 @@ export default function VideoWatchPage() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
         <BookOpen className="h-12 w-12 text-muted-foreground/30 mb-4" />
         <h2 className="font-rokh-bold font-bold text-xl text-foreground mb-2">{error || "ویدیو یافت نشد"}</h2>
-        <button onClick={loadVideo} className="mt-4 px-6 py-2 rounded bg-primary text-primary-foreground text-sm font-medium font-doran hover:opacity-90">
+        <Button onClick={loadVideo} className="mt-4 px-6 py-2 rounded bg-primary text-primary-foreground text-sm font-medium font-doran hover:opacity-90">
           تلاش مجدد
-        </button>
+        </Button>
       </div>
     );
   }
 
-  const statusConfig = STATUS_COLORS[video.status] || STATUS_COLORS.published;
+  const statusConfig = {
+    pending_review: { label: "در انتظار بررسی", variant: "warning" },
+    verified: { label: "تایید شده", variant: "success" },
+    published: { label: "منتشر شده", variant: "success" },
+    rejected: { label: "رد شده", variant: "destructive" },
+    archived: { label: "بایگانی شده", variant: "secondary" },
+  };
 
   return (
     <div className="watch-page min-h-screen bg-background">
@@ -343,7 +354,7 @@ export default function VideoWatchPage() {
               {/* Controls */}
               {!isAparatUrl(video.media_url) && (video.media_url || video.hls_url) && (
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 sm:p-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                  <input
+                  <Input
                     type="range"
                     min="0"
                     max={duration || 100}
@@ -358,65 +369,73 @@ export default function VideoWatchPage() {
                   />
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                      <button onClick={() => seekBy(-10)} className="p-2 rounded text-white hover:bg-white/15" title="۱۰ ثانیه عقب">
+                      <Button onClick={() => seekBy(-10)} className="p-2 rounded text-white hover:bg-white/15" title="۱۰ ثانیه عقب">
                         <RotateCcw className="h-4 w-4" />
-                      </button>
-                      <button onClick={togglePlayPause} className="h-10 w-10 rounded bg-white text-foreground flex items-center justify-center hover:scale-105 transition-transform">
+                      </Button>
+                      <Button onClick={togglePlayPause} className="h-10 w-10 rounded bg-white text-foreground flex items-center justify-center hover:scale-105 transition-transform">
                         {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ms-0.5" />}
-                      </button>
-                      <button onClick={() => seekBy(10)} className="p-2 rounded text-white hover:bg-white/15" title="۱۰ ثانیه جلو">
+                      </Button>
+                      <Button onClick={() => seekBy(10)} className="p-2 rounded text-white hover:bg-white/15" title="۱۰ ثانیه جلو">
                         <RotateCw className="h-4 w-4" />
-                      </button>
-                      <button onClick={toggleMute} className="p-2 rounded text-white hover:bg-white/15">
+                      </Button>
+                      <Button onClick={toggleMute} className="p-2 rounded text-white hover:bg-white/15">
                         {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                      </button>
+                      </Button>
                       <span className="text-[11px] text-white/80 font-mono tabular-nums hidden sm:inline">
                         {formatTime(currentTime)} / {formatTime(duration)}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <select
-                        value={playbackRate}
-                        onChange={(e) => {
-                          const rate = parseFloat(e.target.value);
+                      <Select
+                        value={String(playbackRate)}
+                        onValueChange={(v) => {
+                          const rate = parseFloat(v);
                           setPlaybackRate(rate);
                           if (videoRef.current) videoRef.current.playbackRate = rate;
                         }}
-                        className="bg-black/50 border border-white/20 text-white text-[11px] rounded px-2 py-1"
                       >
+                        <SelectTrigger className="bg-black/50 border border-white/20 text-white text-[11px] rounded px-2 py-1">
+                        <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
                         {[0.5, 1, 1.25, 1.5, 2].map((r) => (
-                          <option key={r} value={r}>{r}×</option>
+                          <SelectItem key={r} value={String(r)}>{r}×</SelectItem>
                         ))}
-                      </select>
+                        </SelectContent>
+                      </Select>
                       {availableQualities.length > 0 && (
-                        <select
+                        <Select
                           value={selectedQuality || ''}
-                          onChange={(e) => setHlsQuality(e.target.value)}
-                          className="bg-black/50 border border-white/20 text-white text-[11px] rounded px-2 py-1"
+                          onValueChange={(v) => setHlsQuality(v)}
                         >
+                          <SelectTrigger className="bg-black/50 border border-white/20 text-white text-[11px] rounded px-2 py-1">
+                          <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
                           {availableQualities.map((q) => {
                             const name = typeof q === 'string' ? q : q.name;
-                            return <option key={name} value={name}>{name}</option>;
+                            return <SelectItem key={name} value={name}>{name}</SelectItem>;
                           })}
-                        </select>
+                          </SelectContent>
+                        </Select>
                       )}
-                      <button
+                      <Button
                         onClick={() => setIsAudioOnly((v) => !v)}
                         className="p-2 rounded text-white hover:bg-white/15"
                         title="حالت صوتی"
                       >
                         <Headphones className="h-4 w-4" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         onClick={() => setTheaterMode((v) => !v)}
                         className="p-2 rounded text-white hover:bg-white/15 hidden sm:inline-flex"
                         title="حالت تئاتر"
                       >
                         <Layout className="h-4 w-4" />
-                      </button>
-                      <button onClick={toggleFullscreen} className="p-2 rounded text-white hover:bg-white/15">
+                      </Button>
+                      <Button onClick={toggleFullscreen} className="p-2 rounded text-white hover:bg-white/15">
                         {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -426,17 +445,20 @@ export default function VideoWatchPage() {
             {/* Title + meta (below player — Aparat pattern) */}
             <div className="px-3 sm:px-0 space-y-3">
               <div className="flex flex-wrap gap-2">
-                <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
-                  {statusConfig.label}
-                </span>
+                <Badge variant={statusConfig[video.status]?.variant || "secondary"} size="sm" className="text-[11px]">
+                  {statusConfig[video.status]?.label}
+                </Badge>
                 {video.is_live && (
-                  <span className="px-2 py-0.5 rounded bg-red-500 text-white text-[11px] font-bold">زنده</span>
+                  <Badge variant="destructive" size="sm" className="text-[11px] font-bold animate-pulse">
+                    <span className="h-1.5 w-1.5 rounded bg-white animate-pulse" />
+                    زنده
+                  </Badge>
                 )}
                 {video.is_competition && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-[11px] font-bold border border-primary/20">
-                    <Trophy className="h-3 w-3" />
+                  <Badge variant="quranic" size="sm" className="text-[11px] font-bold border border-primary/20">
+                    <Trophy className="h-3 w-3 mr-1" />
                     {video.competition_year || 'مسابقه'}
-                  </span>
+                  </Badge>
                 )}
               </div>
 
@@ -469,13 +491,15 @@ export default function VideoWatchPage() {
                   </div>
                 </Link>
                 {video.download_enabled && video.download_url && (
-                  <a
-                    href={video.download_url}
-                    download
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded border border-border text-xs font-medium hover:bg-muted shrink-0"
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    asChild
                   >
-                    <Download className="h-3.5 w-3.5" /> دانلود
-                  </a>
+                    <a href={video.download_url} download className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium shrink-0">
+                      <Download className="h-3.5 w-3.5" /> دانلود
+                    </a>
+                  </Button>
                 )}
               </div>
 
@@ -494,19 +518,21 @@ export default function VideoWatchPage() {
                     {video.description}
                   </p>
                   {video.description && video.description.length > 120 && (
-                    <button
+                    <Button
+                      variant="link"
+                      size="sm"
                       onClick={() => setDescriptionExpanded((v) => !v)}
                       className="mt-2 text-xs font-bold text-primary font-doran"
                     >
                       {descriptionExpanded ? 'بستن' : 'ادامه مطلب'}
-                    </button>
+                    </Button>
                   )}
                   {video.tags?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-3">
                       {video.tags.map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded bg-card border border-border text-[11px] text-muted-foreground font-doran">
+                        <Badge key={i} variant="secondary" size="sm" className="text-[11px] font-doran">
                           #{tag}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   )}
@@ -522,20 +548,18 @@ export default function VideoWatchPage() {
                   </div>
                   <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                     {chapterMarkers.map((chapter, i) => (
-                      <button
+                      <Button
                         key={i}
+                        variant={activeAyah === chapter.verse_key ? "primary" : "outline"}
+                        size="sm"
                         onClick={() => {
                           if (videoRef.current) videoRef.current.currentTime = chapter.start_time || 0;
                           setActiveAyah(chapter.verse_key);
                         }}
-                        className={`shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-colors ${
-                          activeAyah === chapter.verse_key
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'bg-card text-foreground border-border hover:bg-muted'
-                        }`}
+                        className="shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-colors"
                       >
                         {chapter.title}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -548,9 +572,9 @@ export default function VideoWatchPage() {
                     <Users className="h-4 w-4 text-primary" />
                     نظرات ({fa(comments.length)})
                   </h3>
-                  <button onClick={() => setShowComments((v) => !v)} className="text-xs font-medium text-primary font-doran">
+                  <Button onClick={() => setShowComments((v) => !v)} className="text-xs font-medium text-primary font-doran">
                     {showComments ? 'مخفی' : 'نمایش'}
-                  </button>
+                  </Button>
                 </div>
 
                 {showComments && (
@@ -559,10 +583,10 @@ export default function VideoWatchPage() {
                       {replyTo && (
                         <div className="flex items-start justify-between gap-2 rounded bg-muted p-2.5 text-xs">
                           <p className="text-muted-foreground line-clamp-2 font-doran">پاسخ به: {replyTo.content}</p>
-                          <button type="button" onClick={() => setReplyTo(null)} className="text-primary font-medium font-doran shrink-0">لغو</button>
+                          <Button type="button" onClick={() => setReplyTo(null)} className="text-primary font-medium font-doran shrink-0">لغو</Button>
                         </div>
                       )}
-                      <textarea
+                      <Textarea
                         value={commentText}
                         onChange={(e) => setCommentText(e.target.value)}
                         placeholder="نظر خود را بنویسید..."
@@ -570,13 +594,13 @@ export default function VideoWatchPage() {
                         className="w-full px-3 py-2 rounded bg-background border border-input text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
                       />
                       <div className="flex justify-end">
-                        <button
+                        <Button
                           type="submit"
                           disabled={submittingComment || !commentText.trim()}
                           className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm font-bold disabled:opacity-50"
                         >
                           {submittingComment ? '...' : 'ارسال'}
-                        </button>
+                        </Button>
                       </div>
                     </form>
 
@@ -628,16 +652,16 @@ function CommentThread({ comment, onReply }) {
         </div>
         <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line mt-1 font-doran">{comment.content}</p>
         <div className="flex items-center gap-3 pt-1.5">
-          <button
+          <Button
             onClick={() => setLikeState(!likeState)}
             className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
           >
             <ThumbsUp className={`h-3 w-3 ${likeState ? 'text-primary fill-current' : ''}`} />
             {fa(comment.likes_count || 0)}
-          </button>
-          <button onClick={() => onReply(comment)} className="text-xs text-muted-foreground hover:text-primary font-medium">
+          </Button>
+          <Button onClick={() => onReply(comment)} className="text-xs text-muted-foreground hover:text-primary font-medium">
             پاسخ
-          </button>
+          </Button>
         </div>
       </div>
     </div>

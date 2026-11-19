@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import {
   getReadCount, getProgressPercent, getRecentVerses, getUniqueSurahsRead,
@@ -28,6 +28,8 @@ import {
   BookOpen, Bookmark, FileText, Library, Clock, ChevronRight,
   Target, Loader2, Settings as SettingsIcon, Trash2, Mic, Video,
 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -86,15 +88,19 @@ export default function Profile() {
   return (
     <div className="page-shell-reading animate-fade-in font-doran">
       {!user && (
-        <div className="rounded border border-primary/30 bg-primary/5 p-4 mb-6 flex items-center justify-between gap-3 text-right">
-          <div>
-            <div className="font-ui font-bold text-sm text-foreground">شما به عنوان مهمان اینجا هستید</div>
-            <div className="font-ui text-xs text-muted-foreground mt-0.5">برای ذخیره پیشرفت و یادداشت‌ها، وارد حساب شوید.</div>
-          </div>
-          <Link to="/login" className="px-4 py-2 rounded bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 shrink-0">
-            ورود
-          </Link>
-        </div>
+        <Card className="rounded border border-primary/30 bg-primary/5 p-4 mb-6 flex items-center justify-between gap-3 text-right">
+          <CardContent className="p-0">
+            <div>
+              <div className="font-ui font-bold text-sm text-foreground">شما به عنوان مهمان اینجا هستید</div>
+              <div className="font-ui text-xs text-muted-foreground mt-0.5">برای ذخیره پیشرفت و یادداشت‌ها، وارد حساب شوید.</div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button asChild>
+              <Link href="/login">ورود</Link>
+            </Button>
+          </CardFooter>
+        </Card>
       )}
 
       {/* Clean UI Kit User Header */}
@@ -109,13 +115,15 @@ export default function Profile() {
               <BookOpen className="h-7 w-7" />
             </div>
           )}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setPickerOpen(true)}
-            className="absolute -bottom-1 -left-1 h-7 w-7 rounded bg-primary text-primary-foreground flex items-center justify-center shadow-sm hover:scale-105 transition-transform"
+            className="absolute -bottom-1 -left-1 h-7 w-7 rounded bg-primary text-primary-foreground shadow-sm hover:scale-105 transition-transform"
             title="انتخاب آواتار"
           >
             <Pencil className="h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
         <h1 className="font-rokh-bold font-black text-2xl sm:text-3xl text-foreground tracking-tight">
           {user?.full_name || "کاربر گرامی"}
@@ -126,25 +134,27 @@ export default function Profile() {
             <span className="text-muted-foreground/60"> · {characterInfo(user.avatar_config).epithet}</span>
           </p>
         ) : (
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setPickerOpen(true)}
             className="font-ui text-primary text-xs mt-1.5 hover:underline"
           >
             شخصیت قرآنی برای نمایه خود برگزینید
-          </button>
+          </Button>
         )}
 
         {(user?.is_scholar || user?.role === "admin") && (
           <div className="mt-4 flex flex-wrap justify-center gap-2.5">
             <Link
-              to="/talks"
+              href="/talks"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-accent text-stone-950 text-xs font-bold font-doran shadow-gold-glow hover:bg-accent/90 transition-all hover:scale-105 active:scale-95"
             >
               <Mic className="h-3.5 w-3.5" />
               <span>استودیوی گفتارها و پادکست‌ها</span>
             </Link>
             <Link
-              to="/live"
+              href="/live"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-red-600 text-white text-xs font-bold font-doran shadow-soft hover:bg-red-700 transition-all hover:scale-105 active:scale-95"
             >
               <Video className="h-3.5 w-3.5" />
@@ -164,29 +174,72 @@ export default function Profile() {
       />
 
       {/* Progress Ring */}
-      <div className="relative overflow-hidden rounded border border-accent/15 bg-card/60 p-8 sm:p-12 mb-8 shadow-premium">
-        <IslamicPattern className="text-foreground" opacity={0.03} />
-        <div className="relative flex flex-col items-center gap-6">
-          <ProgressRing percent={progress} />
-          <div className="text-center">
-            <div className="text-3xl font-rokh-bold font-bold text-accent">
-              {readCount.toLocaleString("fa-IR")}
-            </div>
-            <div className="text-sm text-muted-foreground mt-1">
-              آیه از {TOTAL_QURAN_VERSES.toLocaleString("fa-IR")} آیه قرآن
+      <Card className="rounded border border-accent/15 bg-card shadow-premium">
+        <CardContent className="p-8 sm:p-12">
+          <IslamicPattern className="text-foreground" opacity={0.03} />
+          <div className="relative flex flex-col items-center gap-6">
+            <ProgressRing percent={progress} />
+            <div className="text-center">
+              <div className="text-3xl font-rokh-bold font-bold text-accent">
+                {readCount.toLocaleString("fa-IR")}
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                آیه از {TOTAL_QURAN_VERSES.toLocaleString("fa-IR")} آیه قرآن
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <StatCard icon={Library} label="سوره‌های خوانده شده" value={surahsRead} total={114} color="text-accent" />
-        <StatCard icon={BookOpen} label="اجزای خوانده شده" value={juzRead} total={30} color="text-accent" />
-        <Link to="/bookmarks" className="block">
-          <StatCard icon={Bookmark} label="نشان شده‌ها" value={bookmarksCount} color="text-accent" />
+        <Card className="rounded border border-border bg-card p-4 text-center shadow-soft">
+          <CardContent className="p-0 pt-4">
+            <div className="inline-flex h-9 w-9 rounded bg-secondary items-center justify-center mb-2.5 text-accent">
+              <Library className="h-4.5 w-4.5" />
+            </div>
+            <div className="font-rokh-bold font-bold text-xl text-foreground">
+              {surahsRead.toLocaleString("fa-IR")}
+              <span className="text-xs text-muted-foreground font-ui"> / 114</span>
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">سوره‌های خوانده شده</div>
+          </CardContent>
+        </Card>
+        <Card className="rounded border border-border bg-card p-4 text-center shadow-soft">
+          <CardContent className="p-0 pt-4">
+            <div className="inline-flex h-9 w-9 rounded bg-secondary items-center justify-center mb-2.5 text-accent">
+              <BookOpen className="h-4.5 w-4.5" />
+            </div>
+            <div className="font-rokh-bold font-bold text-xl text-foreground">
+              {juzRead.toLocaleString("fa-IR")}
+              <span className="text-xs text-muted-foreground font-ui"> / 30</span>
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">اجزای خوانده شده</div>
+          </CardContent>
+        </Card>
+        <Link href="/bookmarks">
+          <Card className="rounded border border-border bg-card p-4 text-center shadow-soft">
+            <CardContent className="p-0 pt-4">
+              <div className="inline-flex h-9 w-9 rounded bg-secondary items-center justify-center mb-2.5 text-accent">
+                <Bookmark className="h-4.5 w-4.5" />
+              </div>
+              <div className="font-rokh-bold font-bold text-xl text-foreground">
+                {bookmarksCount.toLocaleString("fa-IR")}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">نشان شده‌ها</div>
+            </CardContent>
+          </Card>
         </Link>
-        <StatCard icon={FileText} label="یادداشت‌ها" value={notesCount} color="text-accent" />
+        <Card className="rounded border border-border bg-card p-4 text-center shadow-soft">
+          <CardContent className="p-0 pt-4">
+            <div className="inline-flex h-9 w-9 rounded bg-secondary items-center justify-center mb-2.5 text-accent">
+              <FileText className="h-4.5 w-4.5" />
+            </div>
+            <div className="font-rokh-bold font-bold text-xl text-foreground">
+              {notesCount.toLocaleString("fa-IR")}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">یادداشت‌ها</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* My posts — Instagram-style grid */}
@@ -196,34 +249,38 @@ export default function Profile() {
       </div>
 
       {/* Juz Progress Grid */}
-      <div className="rounded border border-accent/10 bg-card/40 p-6 mb-8">
-        <h2 className="font-rokh-bold font-bold text-lg mb-4 flex items-center gap-2">
-          <Target className="h-5 w-5 text-accent" />
-          پیشرفت اجزاء
-        </h2>
-        <div className="grid grid-cols-6 sm:grid-cols-10 gap-2">
-          {JUZ_DATA.map((juz) => {
-            const count = juzVerseCounts[juz.number] || 0;
-            const isActive = count > 0;
-            return (
-              <div
-                key={juz.number}
-                className={`aspect-square rounded flex flex-col items-center justify-center text-xs font-medium transition-all ${
-                  isActive
-                    ? "bg-accent/15 text-accent ring-1 ring-accent/20"
-                    : "bg-muted/40 text-muted-foreground/50"
-                }`}
-                title={`جزء ${juz.number}${count > 0 ? ` — ${count} آیه` : ""}`}
-              >
-                {juz.number}
-                {count > 0 && (
-                  <span className="text-[8px] text-accent/60 mt-0.5">{count.toLocaleString("fa-IR")}</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <Card className="rounded border border-accent/10 bg-card p-6 mb-8">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-accent" />
+            <CardTitle className="text-lg">پیشرفت اجزاء</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="grid grid-cols-6 sm:grid-cols-10 gap-2">
+            {JUZ_DATA.map((juz) => {
+              const count = juzVerseCounts[juz.number] || 0;
+              const isActive = count > 0;
+              return (
+                <div
+                  key={juz.number}
+                  className={`aspect-square rounded flex flex-col items-center justify-center text-xs font-medium transition-all ${
+                    isActive
+                      ? "bg-accent/15 text-accent ring-1 ring-accent/20"
+                      : "bg-muted/40 text-muted-foreground/50"
+                  }`}
+                  title={`جزء ${juz.number}${count > 0 ? ` — ${count} آیه` : ""}`}
+                >
+                  {juz.number}
+                  {count > 0 && (
+                    <span className="text-[8px] text-accent/60 mt-0.5">{count.toLocaleString("fa-IR")}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Recently Read */}
       {recent.length > 0 ? (
@@ -238,7 +295,7 @@ export default function Profile() {
               return (
                 <Link
                   key={r.key}
-                  to={verseKeyToPath(r.key)}
+                  href={verseKeyToPath(r.key)}
                   className="!group flex items-center justify-between rounded border border-accent/10 bg-card/40 p-4 hover:border-accent/30 hover:shadow-soft transition-all duration-300"
                 >
                   <div className="flex items-center gap-3">
@@ -259,18 +316,20 @@ export default function Profile() {
           </div>
         </div>
       ) : (
-        <div className="rounded border border-dashed border-border/60 p-12 text-center">
-          <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">
-            هنوز آیه‌ای نخوانده‌اید. با مرور قرآن، پیشرفت شما اینجا نمایش داده می‌شود.
-          </p>
-          <Link
-            to="/quran"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
-          >
-            <BookOpen className="h-4 w-4" /> آغاز تلاوت
-          </Link>
-        </div>
+        <Card className="rounded border border-dashed border-border/60 p-12 text-center">
+          <CardContent>
+            <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground mb-4">
+              هنوز آیه‌ای نخوانده‌اید. با مرور قرآن، پیشرفت شما اینجا نمایش داده می‌شود.
+            </p>
+            <Button variant="secondary" asChild>
+              <Link href="/quran">
+                <BookOpen className="h-4 w-4 mr-2" />
+                آغاز تلاوت
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {/* ═══════ DAILY RECITATION PLAN ═══════ */}
@@ -304,19 +363,21 @@ function SettingsSection({ user }) {
   };
 
   return (
-    <div className="rounded border border-destructive/20 bg-destructive/[0.03] p-6 mt-10">
-      <h2 className="font-rokh-bold font-bold text-lg mb-2 flex items-center gap-2">
-        <SettingsIcon className="h-5 w-5 text-destructive" /> تنظیمات حساب
-      </h2>
-      <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+    <Card className="rounded border border-destructive/20 bg-destructive/[0.03] p-6 mt-10">
+      <CardHeader className="flex items-center gap-2">
+        <SettingsIcon className="h-5 w-5 text-destructive" />
+        <CardTitle className="text-lg">تنظیمات حساب</CardTitle>
+      </CardHeader>
+      <CardDescription className="text-xs text-muted-foreground leading-relaxed mb-4">
         حذف حساب، همه اطلاعات شما — پیشرفت تلاوت، نشان‌ها، یادداشت‌ها و فعالیت‌ها — را برای همیشه پاک می‌کند.
-      </p>
+      </CardDescription>
       {user ? (
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-destructive/40 text-destructive text-sm font-medium hover:bg-destructive/10 transition-all">
-              <Trash2 className="h-4 w-4" /> حذف حساب
-            </button>
+            <Button variant="destructive" size="sm">
+              <Trash2 className="h-4 w-4 mr-1.5" />
+              حذف حساب
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="max-w-md">
             <AlertDialogHeader>
@@ -334,14 +395,11 @@ function SettingsSection({ user }) {
           </AlertDialogContent>
         </AlertDialog>
       ) : (
-        <Link
-          to="/login"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-secondary text-foreground text-xs font-semibold hover:bg-secondary/70 transition-all border border-border"
-        >
-          ورود برای مدیریت حساب
-        </Link>
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/login">ورود برای مدیریت حساب</Link>
+        </Button>
       )}
-    </div>
+    </Card>
   );
 }
 

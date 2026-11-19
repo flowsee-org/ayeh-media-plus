@@ -1,11 +1,11 @@
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { Compass, ChevronLeft } from "lucide-react";
 
 /** دعوت به بخش «آیه‌ی راه» بالای فید. */
 export default function CompanionBanner() {
   return (
     <Link
-      to="/guide"
+      href="/guide"
       className="mx-3.5 mb-4 flex items-center gap-3 rounded border border-border bg-card p-3.5 transition-colors hover:border-accent/40 sm:mx-0"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-accent/10 text-accent">

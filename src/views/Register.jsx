@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "@/lib/router-compat";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from 'next/navigation';
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -9,11 +10,11 @@ import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2, CheckCircle } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useAuth } from "@/lib/AuthContext";
-import BrandLogo from "@/components/design-system/BrandLogo";
+import BrandLogo from "@/components/ui/brand-logo";
 
 export default function Register() {
   const { checkUserAuth } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,7 +64,7 @@ export default function Register() {
       await api.auth.verifyOtp({ email, otpCode });
       await checkUserAuth();
       const returnTo = searchParams.get("returnTo");
-      navigate(returnTo || "/");
+      router.push(returnTo || "/");
     } catch (err) {
       setError(err.message || "کد تأیید نامعتبر است");
     } finally {
@@ -113,7 +114,9 @@ export default function Register() {
             </Button>
             <p className="text-center text-sm text-muted-foreground mt-4">
               کد دریافت نکردید؟{" "}
-              <button onClick={handleResend} className="text-primary font-semibold hover:underline">ارسال مجدد</button>
+              <Button variant="link" size="sm" onClick={handleResend} className="text-primary font-semibold">
+                ارسال مجدد
+              </Button>
             </p>
           </div>
         </div>
@@ -222,7 +225,7 @@ export default function Register() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             حساب دارید؟{" "}
-            <Link to="/login" className="text-primary font-semibold hover:underline">وارد شوید</Link>
+            <Link href="/login" className="text-primary font-semibold hover:underline">وارد شوید</Link>
           </p>
         </div>
       </div>

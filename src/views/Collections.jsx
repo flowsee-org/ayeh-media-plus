@@ -6,8 +6,11 @@ import { SectionOrnament } from "@/components/IslamicDecorations";
 import { Bookmark, Share2, BookOpen, Loader2, FolderHeart } from "lucide-react";
 import PullToRefresh from "@/components/PullToRefresh";
 import { scopedKey } from "@/lib/storageScope";
-import CollectionCard from "@/components/design-system/CollectionCard";
-import EmptyState from "@/components/design-system/EmptyState";
+import CollectionCard from "@/components/ui/collection-card";
+import EmptyState from "@/components/ui/empty-state";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function Collections() {
   const [collections, setCollections] = useState([]);
@@ -71,17 +74,19 @@ export default function Collections() {
   return (
     <PullToRefresh onRefresh={loadCollections}>
       <div className="animate-fade-in page-shell font-doran space-y-8">
-        <div className="rounded border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
-            <FolderHeart className="h-3.5 w-3.5 text-primary" /> مجموعه‌های برگزیده و موضوعی
-          </div>
-          <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
-            مجموعه‌های مطالعاتی قرآن
-          </h1>
-          <p className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
-            سفرهای موضوعی در آیات قرآن کریم — هر مجموعه، مسیری هدفمند برای تدبّر و تأمّل
-          </p>
-        </div>
+        <Card className="rounded border border-border bg-card p-6 sm:p-10 text-center shadow-soft">
+          <CardContent className="p-0 pt-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
+              <FolderHeart className="h-3.5 w-3.5 text-primary" /> مجموعه‌های برگزیده و موضوعی
+            </div>
+            <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+              مجموعه‌های مطالعاتی قرآن
+            </h1>
+            <p className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
+              سفرهای موضوعی در آیات قرآن کریم — هر مجموعه، مسیری هدفمند برای تدبّر و تأمّل
+            </p>
+          </CardContent>
+        </Card>
 
         {loading ? (
           <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
@@ -109,26 +114,28 @@ export default function Collections() {
                     <div key={c.id} className="relative group/card">
                       <CollectionCard item={c} />
                       <div className="absolute top-3 inset-x-3 z-10 flex items-center justify-between pointer-events-none">
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             shareCollection(c);
                           }}
-                          className="pointer-events-auto h-10 w-10 rounded bg-card/80 text-muted-foreground hover:text-primary flex items-center justify-center backdrop-blur-sm border border-border/60 transition-all"
+                          className="h-10 w-10 rounded bg-card/80 text-muted-foreground hover:text-primary backdrop-blur-sm border border-border/60"
                           title="اشتراک‌گذاری مجموعه"
                         >
                           <Share2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
+                        </Button>
+                        <Button
+                          variant={isSaved ? "primary" : "ghost"}
+                          size="icon"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             toggleSave(c.id);
                           }}
-                          className={`pointer-events-auto h-10 w-10 rounded flex items-center justify-center backdrop-blur-sm border transition-all ${
+                          className={`h-10 w-10 rounded flex items-center justify-center backdrop-blur-sm border transition-all ${
                             isSaved
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-card/80 text-muted-foreground hover:text-primary border-border/60"
@@ -136,7 +143,7 @@ export default function Collections() {
                           title="نشان‌گذاری مجموعه"
                         >
                           <Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );

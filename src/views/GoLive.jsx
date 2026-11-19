@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { usePermissions } from "@/lib/usePermissions";
 import { PERMISSIONS } from "@/lib/rbac";
@@ -8,11 +8,15 @@ import {
   Radio, Send, Users, VideoOff, Hand, Check, X, MicOff,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
 export default function GoLive() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [user, setUser] = useState(null);
   const { can } = usePermissions();
   const [title, setTitle] = useState("");
@@ -194,7 +198,7 @@ export default function GoLive() {
     if (sessionId) {
       await api.entities.LiveSession.update(sessionId, { status: "ended" }).catch(() => {});
     }
-    navigate("/talks");
+    router.push("/talks");
   };
 
   useEffect(() => {
@@ -209,7 +213,8 @@ export default function GoLive() {
   if (phase === "setup") {
     return (
       <div className="mx-auto max-w-lg px-4 py-8 animate-fade-in font-doran">
-        <div className="rounded border border-border bg-card p-6 sm:p-8 shadow-soft">
+        <Card className="rounded border border-border bg-card p-6 sm:p-8 shadow-soft">
+        <CardContent className="p-0 pt-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-10 w-10 rounded bg-red-500/10 text-red-500 flex items-center justify-center shrink-0">
               <Radio className="h-5 w-5" />
@@ -225,24 +230,27 @@ export default function GoLive() {
           {error && <p className="text-sm text-destructive mb-4 text-center">{error}</p>}
 
           <div className="space-y-4">
-            <div>
-              <label className="text-sm font-bold mb-1.5 block font-ui">عنوان جلسه</label>
-              <input
+            <div className="space-y-2">
+              <Label className="text-sm font-bold font-ui">عنوان جلسه</Label>
+              <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="مثلاً: تدبّر در آیات نورانی سوره کهف"
-                className="w-full rounded border border-border bg-secondary/50 px-3.5 py-2.5 text-sm focus:border-primary focus:outline-none font-doran"
               />
             </div>
-            <button
+            <Button
               onClick={startLive}
               disabled={!user}
-              className="w-full rounded bg-primary text-primary-foreground py-3 text-sm font-bold flex items-center justify-center gap-2 shadow-soft hover:opacity-90 disabled:opacity-50 transition-all font-ui"
+              variant="primary"
+              size="sm"
+              className="w-full shadow-soft hover:opacity-90 disabled:opacity-50 transition-all font-ui"
             >
-              <Radio className="h-4 w-4" /> شروع پخش زنده
-            </button>
+              <Radio className="h-4 w-4 mr-1.5" />
+              شروع پخش زنده
+            </Button>
           </div>
-        </div>
+        </CardContent>
+      </Card>
       </div>
     );
   }
@@ -293,13 +301,13 @@ export default function GoLive() {
               <div className="absolute bottom-3 right-3 rounded bg-primary/80 backdrop-blur-sm px-3 py-1 text-xs text-primary-foreground font-bold flex items-center gap-1.5 font-ui">
                 <span>مهمان برنامه: {activeSpeaker.name}</span>
               </div>
-              <button
+              <Button
                 onClick={kickActiveSpeaker}
                 className="absolute top-3 left-3 rounded bg-destructive/90 hover:bg-destructive text-white px-2.5 py-1 text-xs font-bold flex items-center gap-1 transition-colors font-ui"
                 title="قطع ارتباط با مهمان"
               >
                 <MicOff className="h-3 w-3" /> پایان گفتگو
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -315,7 +323,7 @@ export default function GoLive() {
 
             {/* Hand Raise Queue Button */}
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 onClick={() => setShowHandQueue(!showHandQueue)}
                 className={`relative inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-bold border transition-all font-ui ${
                   raisedHands.length > 0
@@ -325,14 +333,14 @@ export default function GoLive() {
               >
                 <Hand className="h-4 w-4" />
                 <span>درخواست‌های گفتگو ({fa(raisedHands.length)})</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={endLive}
                 className="inline-flex items-center gap-1.5 rounded bg-destructive text-destructive-foreground px-4 py-2 text-xs font-bold hover:opacity-90 transition-opacity font-ui"
               >
                 <VideoOff className="h-4 w-4" /> پایان پخش زنده
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -343,12 +351,12 @@ export default function GoLive() {
                 <span className="font-bold text-xs text-foreground flex items-center gap-1.5">
                   <Hand className="h-4 w-4 text-accent" /> لیست انتظار پرسش و پاسخ صوتی/تصویری
                 </span>
-                <button
+                <Button
                   onClick={() => setShowHandQueue(false)}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <X className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
 
               {raisedHands.length === 0 ? (
@@ -369,18 +377,18 @@ export default function GoLive() {
                         <span className="text-xs font-bold text-foreground">{speaker.name}</span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <button
+                        <Button
                           onClick={() => acceptSpeaker(speaker)}
                           className="inline-flex items-center gap-1 px-3 py-1 rounded bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 font-ui"
                         >
                           <Check className="h-3 w-3" /> پذیرش دوطرفه
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => rejectSpeaker(speaker)}
                           className="inline-flex items-center px-2 py-1 rounded bg-secondary text-muted-foreground hover:text-destructive text-xs"
                         >
                           <X className="h-3 w-3" />
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -408,19 +416,19 @@ export default function GoLive() {
           </div>
 
           <div className="flex items-center gap-2">
-            <input
+            <Input
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && sendChat()}
               placeholder="ارسال پیام یا پاسخ در جلسه زنده…"
               className="flex-1 rounded border border-border bg-background px-3.5 py-2 text-xs focus:border-primary focus:outline-none font-doran"
             />
-            <button
+            <Button
               onClick={sendChat}
               className="h-9 px-4 rounded bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center gap-1 font-ui"
             >
               <Send className="h-3.5 w-3.5" /> ارسال
-            </button>
+            </Button>
           </div>
         </div>
       </div>

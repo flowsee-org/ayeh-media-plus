@@ -4,6 +4,7 @@ import {
   PenLine, Bookmark, Crown, ChevronDown, ChevronUp,
   CheckCircle2, Compass,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { getEngagementSnapshot, ENGAGEMENT_EVENT } from "@/lib/engagement";
 import DailyQuests from "@/components/engagement/DailyQuests";
 
@@ -238,13 +239,13 @@ export default function AchievementsShelf({ readCount = 0, surahsRead = 0, compl
       {/* ── Daily Quests (Collapsible) ── */}
       <div>
         <div className="flex items-center justify-between mb-3 px-1">
-          <button
+          <Button
             onClick={() => setShowQuests(!showQuests)}
             className="flex items-center gap-2 text-sm font-bold font-rokh-bold text-foreground hover:text-accent transition-colors"
           >
             <span>مأموریت‌های امروز و جوایز روزانه</span>
             {showQuests ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
+          </Button>
         </div>
         {showQuests && <DailyQuests />}
       </div>

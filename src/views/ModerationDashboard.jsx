@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
@@ -10,6 +10,7 @@ import {
   Check, X, Loader2, Filter, Search, Trophy, Crown,
   ChevronRight, MoreHorizontal, Edit3, Trash2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { fa } from "@/lib/utils";
 import { STATUS_COLORS } from "@/lib/design-tokens";
 
@@ -30,7 +31,7 @@ const QUEUE_TYPES = [
 ];
 
 export default function ModerationDashboard() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user } = useAuth();
   const [queue, setQueue] = useState([]);
   const [total, setTotal] = useState(0);
@@ -47,18 +48,22 @@ export default function ModerationDashboard() {
   const loadQueue = async () => {
     try {
       setLoading(true);
-      const res = await api.entities.ModerationAction.filter(
-        {},
-        "-created_date",
-        50
-      );
       // In a real implementation, this would be a dedicated moderation queue endpoint
-      // For now, we fetch pending items from each model
+      // For now, we fetch pending items from each model, filtered by filterType
+      const isAll = filterType === "all";
       const [videos, entries, comments, reports] = await Promise.all([
-        api.entities.Video.filter({ status: "pending_review" }, "-created_date", 20).catch(() => []),
-        api.entities.CompetitionEntry.filter({ status: "pending_review" }, "-created_date", 20).catch(() => []),
-        api.entities.Comment.filter({ status: "pending_review" }, "-created_date", 20).catch(() => []),
-        api.entities.Report.filter({ status: "pending" }, "-created_date", 20).catch(() => []),
+        (isAll || filterType === "video")
+          ? api.entities.Video.filter({ status: "pending_review" }, "-created_date", 20).catch(() => [])
+          : [],
+        (isAll || filterType === "entry")
+          ? api.entities.CompetitionEntry.filter({ status: "pending_review" }, "-created_date", 20).catch(() => [])
+          : [],
+        (isAll || filterType === "comment")
+          ? api.entities.Comment.filter({ status: "pending_review" }, "-created_date", 20).catch(() => [])
+          : [],
+        (isAll || filterType === "report")
+          ? api.entities.Report.filter({ status: "pending" }, "-created_date", 20).catch(() => [])
+          : [],
       ]);
 
       const combined = [
@@ -108,6 +113,13 @@ export default function ModerationDashboard() {
             status: action === "approve" ? "published" : action === "reject" ? "hidden" : "removed",
           });
           break;
+        case "report":
+          await api.entities.Report.update(selectedItem.id, {
+            status: action === "approve" ? "reviewed" : action === "reject" ? "rejected" : "pending",
+            moderation_note: action === "reject" ? reason : undefined,
+            action_taken: action,
+          });
+          break;
       }
 
       toast.success(`عملیات ${action} با موفقیت انجام شد`);
@@ -139,18 +151,18 @@ export default function ModerationDashboard() {
             </p>
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={() => navigate("/moderation/reports")}
+            <Button
+              onClick={() => router.push("/moderation/reports")}
               className="px-4 py-2 rounded bg-transparent text-muted-foreground hover:bg-muted border border-border font-medium text-sm transition-colors"
             >
               <User className="h-4 w-4 mr-2" /> گزارش‌ها
-            </button>
-            <button
-              onClick={() => navigate("/moderation/audit-log")}
+            </Button>
+            <Button
+              onClick={() => router.push("/moderation/audit-log")}
               className="px-4 py-2 rounded bg-transparent text-muted-foreground hover:bg-muted border border-border font-medium text-sm transition-colors"
             >
               <ShieldCheck className="h-4 w-4 mr-2" /> گزارش‌های فعالیت
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -158,7 +170,7 @@ export default function ModerationDashboard() {
         <div className="rounded border border-border bg-card p-1 mb-8 shadow-sm">
           <div className="flex overflow-x-auto no-scrollbar gap-1 p-1">
             {QUEUE_TYPES.map((qt) => (
-              <button
+              <Button
                 key={qt.key}
                 onClick={() => setFilterType(qt.key)}
                 className={`flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-all ${
@@ -169,7 +181,7 @@ export default function ModerationDashboard() {
               >
                 <qt.icon className="h-3.5 w-3.5" />
                 {qt.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -189,7 +201,7 @@ export default function ModerationDashboard() {
             <tbody className="divide-y divide-border/50">
               {queue.length > 0 ? (
                 queue.map((item) => {
-                  const statusCfg = STATUS_COLORS[item.status || item.status || "pending_review"];
+                  const statusCfg = STATUS_COLORS[item.status || "pending_review"];
                   return (
                     <tr key={item.id} className="hover:bg-muted/20 transition-colors group">
                       <td className="px-6 py-4">
@@ -228,12 +240,12 @@ export default function ModerationDashboard() {
                         {new Date(item.created_date || item.reviewed_at || 0).toLocaleDateString("fa-IR")}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button
+                        <Button
                           onClick={() => { setSelectedItem(item); setActionModal(true); }}
                           className="p-2 text-muted-foreground hover:text-emerald-600 transition-colors"
                         >
                           <MoreHorizontal className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   );
@@ -258,30 +270,30 @@ export default function ModerationDashboard() {
           <div className="relative w-full max-w-md rounded border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-rokh-bold font-bold text-lg text-foreground">عملیات بررسی</h3>
-              <button onClick={() => setActionModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
+              <Button onClick={() => setActionModal(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></Button>
             </div>
             <div className="text-sm text-muted-foreground mb-6">
               {selectedItem.title || selectedItem.content || selectedItem.message}
             </div>
             <div className="space-y-3">
-              <button
+              <Button
                 onClick={() => handleAction("approve", "محتوای مناسبی برای منتشرسازی است")}
                 className="w-full py-3 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors"
               >
                 <Check className="h-4 w-4 mr-2" /> تایید و انتشار
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => handleAction("reject", "محتوای مناسبی نیست")}
                 className="w-full py-3 rounded bg-red-600 text-white font-medium hover:bg-red-700 transition-colors"
               >
                 <X className="h-4 w-4 mr-2" /> رد و عدم انتشار
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => handleAction("hide", "محتوا مخفی شد")}
                 className="w-full py-3 rounded bg-amber-600 text-white font-medium hover:bg-amber-700 transition-colors"
               >
                 <Clock className="h-4 w-4 mr-2" /> مخفی کردن موقت
-              </button>
+              </Button>
             </div>
           </div>
         </div>

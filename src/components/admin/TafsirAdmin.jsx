@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Loader2, Pencil, Search } from "lucide-react";
-import { EmptyState, Field, Modal, inputCls } from "./shared";
+import { EmptyState, Field, Modal } from "./shared"; import { Button } from "@/components/ui/button"; import { Textarea } from "@/components/ui/textarea";
 
 const lines = (s) => String(s || "").split("\n").map((x) => x.trim()).filter(Boolean);
 
@@ -77,9 +77,9 @@ export default function TafsirAdmin() {
                   ))}
                 </div>
               </div>
-              <button onClick={() => setEditing(v)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-xs font-medium shadow-soft shrink-0">
+              <Button onClick={() => setEditing(v)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-xs font-medium shadow-soft shrink-0">
                 <Pencil className="h-3.5 w-3.5" /> تفسیر
-              </button>
+              </Button>
             </div>
           ))}
           {filtered.length === 0 && <EmptyState text="آیه‌ای یافت نشد." />}
@@ -129,15 +129,15 @@ function TafsirForm({ initial, onClose, onSaved }) {
     <Modal onClose={onClose} title={`تفسیر آیه ${initial.verse_key || ""}`}>
       {FIELDS.map(({ key, label, rows }) => (
         <Field key={key} label={label}>
-          <textarea value={form[key]} onChange={set(key)} rows={rows} className={inputCls} dir="rtl" />
+          <Textarea value={form[key]} onChange={set(key)} rows={rows} dir="rtl" />
         </Field>
       ))}
       {err && <p className="text-sm text-destructive">{err}</p>}
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
+        <Button type="button" variant="outline" onClick={onClose}>انصراف</Button>
+        <Button type="submit" disabled={saving} className="px-4 py-2">
           {saving ? "در حال ذخیره…" : "ذخیره تفسیر"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const ToastProvider = React.forwardRef(({ ...props }, ref) => (
@@ -61,7 +62,7 @@ const ToastAction = React.forwardRef(({ className, ...props }, ref) => (
 ToastAction.displayName = "ToastAction";
 
 const ToastClose = React.forwardRef(({ className, ...props }, ref) => (
-  <button
+  <Button
     ref={ref}
     className={cn(
       "absolute right-2 top-2 rounded p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
@@ -71,7 +72,7 @@ const ToastClose = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   >
     <X className="h-4 w-4" />
-  </button>
+  </Button>
 ));
 ToastClose.displayName = "ToastClose";
 

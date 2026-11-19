@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Loader2, Sparkles, Compass } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const QUICK = [
   "مشکل مالی و بدهی",
@@ -45,7 +46,7 @@ export default function ProblemForm({ onSubmit, loading }) {
         <div className="mt-3.5 mb-5 flex flex-wrap items-center gap-1.5 font-ui">
           <span className="text-[11px] font-semibold text-muted-foreground ml-1">موضوعات پرتکرار:</span>
           {QUICK.map((q) => (
-            <button
+            <Button
               key={q}
               onClick={() => setText(q)}
               className={`rounded border px-3 py-1 text-xs transition-colors ${
@@ -55,11 +56,11 @@ export default function ProblemForm({ onSubmit, loading }) {
               }`}
             >
               {q}
-            </button>
+            </Button>
           ))}
         </div>
 
-        <button
+        <Button
           onClick={submit}
           disabled={!text.trim() || loading}
           className="w-full flex items-center justify-center gap-2 py-3 rounded bg-primary text-primary-foreground font-ui font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 disabled:pointer-events-none shadow-sm"
@@ -75,7 +76,7 @@ export default function ProblemForm({ onSubmit, loading }) {
               <span>یافتن آیه‌ی راه و پیام‌های تسکین‌بخش</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );

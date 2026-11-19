@@ -1,14 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { useNavigate } from '@/lib/router-compat';
+import { useRouter } from 'next/navigation';
 import {
   Play, Eye, Trophy, Volume2,
 } from 'lucide-react';
 import { fa } from '@/lib/utils';
 
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from "@/components/ui/button";
+
 /**
  * Aparat-style video card — thumbnail-first, soft radius, minimal chrome.
+ * Built on shadcn/ui Card + Avatar + Badge primitives.
  */
 export default function VideoCard({
   item,
@@ -30,7 +35,7 @@ export default function VideoCard({
   const isCompetition = item.is_competition || item.competition || false;
   const isAudio = item.media_type === 'audio' || item.type === 'audio';
   const competitionYear = item.competition_year || '';
-  const navigate = useNavigate();
+  const router = useRouter();
 
   let href = `/watch/${id}`;
   if (linkTo === 'custom' && customHref) href = customHref;
@@ -58,6 +63,12 @@ export default function VideoCard({
               {duration}
             </span>
           )}
+          {isLive && (
+            <Badge variant="destructive" className="absolute top-2 start-2 animate-pulse">
+              <span className="h-1.5 w-1.5 rounded bg-white animate-pulse" />
+              زنده
+            </Badge>
+          )}
         </div>
         <div className="min-w-0 flex-1 py-0.5">
           <h3 className="font-bold text-sm leading-snug line-clamp-2 text-foreground group-hover:text-primary transition-colors">
@@ -80,11 +91,7 @@ export default function VideoCard({
   return (
     <article className={`group ${className}`}>
       <Link href={href} className="block">
-        <div
-          className={`relative overflow-hidden rounded bg-muted ${
-            isFeatured ? 'aspect-[16/9]' : isCompact ? 'aspect-video' : 'aspect-video'
-          }`}
-        >
+        <Card className="overflow-hidden bg-muted aspect-video group-hover:border-quranic-turquoise/50 hover:shadow-card-hover transition-all duration-300">
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -110,18 +117,18 @@ export default function VideoCard({
           <div className="absolute top-2 inset-x-2 flex justify-between gap-1 pointer-events-none">
             <div className="flex flex-wrap gap-1">
               {isLive && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500 text-white text-[10px] font-bold">
+                <Badge variant="destructive" className="animate-pulse">
                   <span className="h-1.5 w-1.5 rounded bg-white animate-pulse" />
                   زنده
-                </span>
+                </Badge>
+              )}
+              {isCompetition && (
+                <Badge variant="quranic" className="text-[10px] font-bold">
+                  <Trophy className="h-3 w-3" />
+                  {competitionYear || 'مسابقه'}
+                </Badge>
               )}
             </div>
-            {isCompetition && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/95 text-white text-[10px] font-bold">
-                <Trophy className="h-3 w-3" />
-                {competitionYear || 'مسابقه'}
-              </span>
-            )}
           </div>
 
           {duration && (
@@ -129,23 +136,23 @@ export default function VideoCard({
               {duration}
             </span>
           )}
-        </div>
+        </Card>
       </Link>
 
       <div className={`pt-2.5 ${isCompact ? 'pt-2' : ''}`}>
         <div className="flex gap-2.5">
           {showCreator && (
-            <button
+            <Button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                if (creatorId) navigate(`/profile/${creatorId}`);
+                if (creatorId) router.push(`/profile/${creatorId}`);
               }}
               className="h-9 w-9 rounded bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 border border-primary/15 hover:bg-primary/15 transition-colors"
               aria-label={creator || 'کانال'}
             >
               {(creator || 'آ').charAt(0)}
-            </button>
+            </Button>
           )}
           <div className="min-w-0 flex-1">
             <Link href={href}>
@@ -158,13 +165,13 @@ export default function VideoCard({
               </h3>
             </Link>
             {creator && showCreator && (
-              <button
+              <Button
                 type="button"
-                onClick={() => creatorId && navigate(`/profile/${creatorId}`)}
+                onClick={() => creatorId && router.push(`/profile/${creatorId}`)}
                 className="mt-1 text-xs text-muted-foreground hover:text-foreground truncate block max-w-full text-start"
               >
                 {creator}
-              </button>
+              </Button>
             )}
             {showMeta && (
               <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">

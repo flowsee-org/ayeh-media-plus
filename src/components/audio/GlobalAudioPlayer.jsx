@@ -1,6 +1,7 @@
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import ExpandedPlayerModal from "./ExpandedPlayerModal";
 import { Play, Pause, RotateCcw, RotateCw, X, Maximize2, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function formatSeconds(sec) {
   if (!sec || isNaN(sec) || !isFinite(sec)) return "۰۰:۰۰";
@@ -49,7 +50,7 @@ export default function GlobalAudioPlayer() {
           </div>
 
           {/* Artwork & Playing Indicator */}
-          <button
+          <Button
             onClick={() => setIsExpanded(true)}
             className="relative h-11 w-11 rounded overflow-hidden shrink-0 border border-accent/30 bg-secondary flex items-center justify-center group"
             title="بزرگنمایی پلیر"
@@ -70,7 +71,7 @@ export default function GlobalAudioPlayer() {
                 <span className="h-2 w-2 rounded bg-accent animate-ping" />
               </div>
             )}
-          </button>
+          </Button>
 
           {/* Track Info (Click to Expand) */}
           <div
@@ -105,16 +106,16 @@ export default function GlobalAudioPlayer() {
           {/* Quick Controls */}
           <div className="flex items-center gap-1 shrink-0">
             {/* Rewind 10s */}
-            <button
+            <Button
               onClick={() => seekRelative(-10)}
               className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
               title="۱۰ ثانیه قبل"
             >
               <RotateCcw className="h-4 w-4" />
-            </button>
+            </Button>
 
             {/* Play / Pause */}
-            <button
+            <Button
               onClick={togglePlay}
               className="h-9 w-9 rounded bg-accent hover:bg-accent/90 text-stone-950 flex items-center justify-center shadow-gold-glow transition-all hover:scale-105 active:scale-95"
               title={isPlaying ? "توقف" : "پخش"}
@@ -124,34 +125,34 @@ export default function GlobalAudioPlayer() {
               ) : (
                 <Play className="h-4 w-4 fill-current mr-0.5" />
               )}
-            </button>
+            </Button>
 
             {/* Forward 10s */}
-            <button
+            <Button
               onClick={() => seekRelative(10)}
               className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
               title="۱۰ ثانیه بعد"
             >
               <RotateCw className="h-4 w-4" />
-            </button>
+            </Button>
 
             {/* Expand Modal */}
-            <button
+            <Button
               onClick={() => setIsExpanded(true)}
               className="hidden sm:flex h-8 w-8 rounded hover:bg-secondary items-center justify-center text-muted-foreground hover:text-accent transition-colors"
               title="نمایش پنل تمام‌صفحه"
             >
               <Maximize2 className="h-3.5 w-3.5" />
-            </button>
+            </Button>
 
             {/* Dismiss / Close */}
-            <button
+            <Button
               onClick={closePlayer}
               className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors mr-0.5"
               title="بستن پلیر"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

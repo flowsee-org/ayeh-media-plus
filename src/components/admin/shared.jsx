@@ -1,14 +1,16 @@
 import { X, Library } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 
 export const inputCls =
   "w-full px-3 py-2.5 rounded border border-accent/15 bg-card/50 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/30 transition-all";
 
 export function Field({ label, children }) {
   return (
-    <label className="block">
-      <span className="text-xs text-muted-foreground mb-1 block">{label}</span>
+    <div className="space-y-1">
+      <Label className="text-xs text-muted-foreground font-ui">{label}</Label>
       {children}
-    </label>
+    </div>
   );
 }
 
@@ -23,16 +25,17 @@ export function EmptyState({ text }) {
 
 export function Modal({ onClose, title, children }) {
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
-      <div className="bg-card rounded border border-border/40 w-full max-w-2xl max-h-[85vh] overflow-y-auto p-6 shadow-premium animate-scale-in" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-5">
-          <h3 className="font-display font-bold text-xl">{title}</h3>
-          <button onClick={onClose} className="h-9 w-9 rounded hover:bg-muted/50 flex items-center justify-center transition-colors">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="space-y-3">{children}</div>
-      </div>
-    </div>
+    <Dialog open={onClose !== null} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-2xl p-0 sm:p-8 shadow-premium space-y-6">
+        <DialogHeader>
+          <DialogTitle className="font-display font-bold text-xl">{title}</DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
+        <DialogClose>
+          <X className="h-4 w-4" />
+        </DialogClose>
+        <div className="space-y-3 p-6">{children}</div>
+      </DialogContent>
+    </Dialog>
   );
 }

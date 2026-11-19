@@ -1,5 +1,4 @@
-import { Suspense } from 'react';
-import Assistant from '@/views/Assistant';
+import FloatingAssistantChat from '@/components/assistant/FloatingAssistantChat';
 
 export const metadata = {
   title: 'دستیار هوش مصنوعی تدبر — آیه مدیا پلاس',
@@ -7,15 +6,5 @@ export const metadata = {
 };
 
 export default function AssistantRoute() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-accent/30 border-t-accent rounded animate-spin" />
-        </div>
-      }
-    >
-      <Assistant />
-    </Suspense>
-  );
+  return <FloatingAssistantChat />;
 }

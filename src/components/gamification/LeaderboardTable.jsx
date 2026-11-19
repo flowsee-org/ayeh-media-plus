@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Trophy, Flame, Sparkles, Medal, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
 
 const LEAGUE_BADGES = {
@@ -75,7 +76,7 @@ export default function LeaderboardTable() {
 
         {/* Toggle Filter */}
         <div className="flex items-center gap-1 bg-muted p-1 rounded border border-border shrink-0 self-start sm:self-auto">
-          <button
+          <Button
             onClick={() => setFilterType("xp")}
             className={`px-3.5 py-1.5 rounded text-xs font-bold font-rokh-bold transition-all ${
               filterType === "xp"
@@ -84,8 +85,8 @@ export default function LeaderboardTable() {
             }`}
           >
             امتیاز کل (XP)
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setFilterType("streak")}
             className={`px-3.5 py-1.5 rounded text-xs font-bold font-rokh-bold transition-all ${
               filterType === "streak"
@@ -94,7 +95,7 @@ export default function LeaderboardTable() {
             }`}
           >
             استریک پیوسته (روزها)
-          </button>
+          </Button>
         </div>
       </div>
 
