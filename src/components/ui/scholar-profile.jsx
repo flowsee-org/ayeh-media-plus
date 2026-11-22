@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react';
 import { User2, BookOpen, FileText, Clock } from 'lucide-react';
 import api from '@/lib/api';
-import VideoCard from './VideoCard';
-import ProfileContentSection from './ProfileContentSection';
+import VideoCard from '@/components/ui/video-card';
+import ProfileContentSection from '@/components/ui/profile-content-section';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 /**
  * Scholar profile content: educational talks, tafsir, books, and about.
@@ -114,10 +116,12 @@ export default function ScholarProfile({
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {books.map((book, i) => (
-            <div key={i} className="p-4 rounded border border-accent/10 bg-accent/[0.02] text-right">
-              <div className="text-sm font-medium text-foreground truncate">{book}</div>
-              <div className="text-xs text-muted-foreground mt-1">تألیف استاد</div>
-            </div>
+            <Card key={i} className="p-4 text-right">
+              <CardContent className="pt-0">
+                <div className="text-sm font-medium text-foreground truncate">{book}</div>
+                <div className="text-xs text-muted-foreground mt-1">تألیف استاد</div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </ProfileContentSection>
@@ -129,25 +133,29 @@ export default function ScholarProfile({
         loading={false}
         className="space-y-4"
       >
-        <div className="rounded border border-border/50 bg-card p-6">
-          <p className="text-muted-foreground leading-relaxed text-sm">
-            {scholarData?.bio || profile.bio || 'این استاد هنوز بیوگرافی خود را وارد نکرده است.'}
-          </p>
-          {scholarData?.title && (
-            <div className="mt-3 text-xs font-medium text-accent">
-              {scholarData.title}
-            </div>
-          )}
-          {scholarData?.verified && (
-            <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded bg-accent text-accent-foreground text-xs font-medium border border-accent">
-              <span className="w-2.5 h-2.5 rounded bg-white" /> تایید شده
-            </div>
-          )}
-          <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" />
-            <span>عضو از {new Date(profile.created_date).toLocaleDateString('fa-IR')}</span>
-          </div>
-        </div>
+        <Card className="p-6">
+          <CardContent className="pt-0">
+            <p className="text-muted-foreground leading-relaxed text-sm">
+              {scholarData?.bio || profile.bio || 'این استاد هنوز بیوگرافی خود را وارد نکرده است.'}
+            </p>
+            {scholarData?.title && (
+              <div className="mt-3 text-xs font-medium text-accent">
+                {scholarData.title}
+              </div>
+            )}
+            {scholarData?.verified && (
+              <Badge variant="quranic" className="mt-3 text-xs font-medium" size="sm">
+                تایید شده
+              </Badge>
+            )}
+            {profile.created_date && (
+              <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                <span>عضو از {new Date(profile.created_date).toLocaleDateString('fa-IR')}</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </ProfileContentSection>
     ),
   };

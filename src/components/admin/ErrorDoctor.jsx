@@ -14,6 +14,7 @@ import {
   Server,
   Bug,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 
 export default function ErrorDoctor() {
@@ -199,7 +200,7 @@ export default function ErrorDoctor() {
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Source Tabs */}
           <div className="flex bg-muted/60 p-1 rounded border border-border/60">
-            <button
+            <Button
               onClick={() => setFilterSource("all")}
               className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                 filterSource === "all"
@@ -208,8 +209,8 @@ export default function ErrorDoctor() {
               }`}
             >
               همه ({errors.length})
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setFilterSource("backend")}
               className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                 filterSource === "backend"
@@ -218,8 +219,8 @@ export default function ErrorDoctor() {
               }`}
             >
               بک‌اند ({stats.backend || 0})
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setFilterSource("frontend")}
               className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
                 filterSource === "frontend"
@@ -228,7 +229,7 @@ export default function ErrorDoctor() {
               }`}
             >
               فرانت‌اند ({stats.frontend || 0})
-            </button>
+            </Button>
           </div>
 
           {/* Search Box */}
@@ -245,39 +246,39 @@ export default function ErrorDoctor() {
 
         {/* Buttons */}
         <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <button
+          <Button
             onClick={() => handleSimulateTestError("frontend")}
             className="px-3 py-1.5 rounded border border-border hover:bg-muted/50 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all"
             title="ثبت یک خطای تستی برای اطمینان از عملکرد پایش"
           >
             تست فرانت
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => handleSimulateTestError("backend")}
             className="px-3 py-1.5 rounded border border-border hover:bg-muted/50 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all"
             title="ثبت یک خطای تستی برای اطمینان از عملکرد پایش"
           >
             تست بک‌اند
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={fetchErrors}
             disabled={loading}
             className="p-2 rounded border border-border hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all"
             title="بروزرسانی لاگ‌ها"
           >
             <RotateCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={handleClearLogs}
             disabled={errors.length === 0}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-destructive/10 text-destructive hover:bg-destructive/20 text-xs font-bold border border-destructive/20 transition-all disabled:opacity-40"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>پاکسازی لاگ‌ها</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -345,7 +346,7 @@ export default function ErrorDoctor() {
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <button
+                    <Button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDiagnose(err);
@@ -354,7 +355,7 @@ export default function ErrorDoctor() {
                     >
                       <Sparkles className="h-3 w-3" />
                       <span>{diagnosis ? "تحلیل شده" : isDiagnosing ? "در حال تحلیل..." : "تحلیل دستیار"}</span>
-                    </button>
+                    </Button>
                     {isExpanded ? (
                       <ChevronUp className="h-4 w-4 text-muted-foreground" />
                     ) : (
@@ -392,13 +393,13 @@ export default function ErrorDoctor() {
                     ) : (
                       <div className="flex items-center justify-between p-3 rounded bg-card border border-border text-xs">
                         <span className="text-muted-foreground">برای مشاهده ریشه خطا و نحوه فیکس، دکمه تحلیل دستیار را بزنید.</span>
-                        <button
+                        <Button
                           onClick={() => handleDiagnose(err)}
                           disabled={isDiagnosing}
                           className="px-3 py-1 rounded bg-accent text-accent-foreground font-bold text-xs hover:opacity-90"
                         >
                           {isDiagnosing ? "در حال تحلیل..." : "شروع تحلیل هوشمند"}
-                        </button>
+                        </Button>
                       </div>
                     )}
 
@@ -410,7 +411,7 @@ export default function ErrorDoctor() {
                             <Terminal className="h-3.5 w-3.5" />
                             ردیابی پشته (Stack Trace):
                           </span>
-                          <button
+                          <Button
                             onClick={() => handleCopyStack(err.id, err.stack)}
                             className="inline-flex items-center gap-1 text-[11px] text-accent hover:underline font-mono"
                           >
@@ -425,7 +426,7 @@ export default function ErrorDoctor() {
                                 <span>کپی استک</span>
                               </>
                             )}
-                          </button>
+                          </Button>
                         </div>
                         <pre className="p-3 rounded bg-black/90 text-amber-200 text-xs font-mono overflow-x-auto leading-relaxed max-h-52" dir="ltr">
                           {err.stack}

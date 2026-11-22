@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Video, PlayCircle, Clock, ArrowLeft, Loader2, BookOpen, Sparkles } from "lucide-react";
 
@@ -43,7 +43,7 @@ export default function TalksPreview() {
             <p className="font-doran text-xs sm:text-sm text-muted-foreground mt-0.5">دروس و تدبّرهای علامه طباطبایی، دکتر شمالی و دیگر مفسران</p>
           </div>
         </div>
-        <Link to="/talks" className="inline-flex items-center gap-1.5 font-ui text-xs sm:text-sm font-semibold text-primary hover:underline">
+        <Link href="/talks" className="inline-flex items-center gap-1.5 font-ui text-xs sm:text-sm font-semibold text-primary hover:underline">
           همه گفتارها <ArrowLeft className="h-4 w-4" />
         </Link>
       </div>
@@ -55,7 +55,7 @@ export default function TalksPreview() {
           {talks.map((talk) => (
             <Link
               key={talk.id}
-              to={`/verse/${talk.verse_key.replace(":", "/")}`}
+              href={`/verse/${talk.verse_key.replace(":", "/")}`}
               className="group relative flex flex-col justify-between rounded border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-card-hover transition-all duration-200"
             >
               {/* Thumbnail with Persian Art Tone */}
@@ -102,7 +102,7 @@ export default function TalksPreview() {
         <div className="rounded border border-dashed border-border p-10 text-center bg-card">
           <Sparkles className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
           <p className="font-doran text-sm text-muted-foreground mb-4">گفتارهای جدید اساتید به‌زودی بارگذاری خواهند شد.</p>
-          <Link to="/quran" className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 transition-opacity">
+          <Link href="/quran" className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-primary text-primary-foreground font-ui text-xs font-bold hover:opacity-90 transition-opacity">
             مرور مصحف شریف
           </Link>
         </div>

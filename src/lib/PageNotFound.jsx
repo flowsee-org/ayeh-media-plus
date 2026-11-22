@@ -5,6 +5,7 @@ import api from "@/lib/api";
 import { useQuery } from '@tanstack/react-query';
 import { IslamicStar } from '@/components/IslamicOrnaments';
 import { Home as HomeIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function PageNotFound({}) {
     const pathname = usePathname();
@@ -61,13 +62,13 @@ export default function PageNotFound({}) {
                     )}
 
                     <div className="pt-6">
-                        <button
+                        <Button
                             onClick={() => router.push('/')}
                             className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded hover:shadow-glow transition-all duration-300"
                         >
                             <HomeIcon className="w-4 h-4" />
                             بازگشت به خانه
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

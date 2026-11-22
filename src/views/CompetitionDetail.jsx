@@ -1,19 +1,25 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "@/lib/router-compat";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
 import { Image } from "@/components/ui/image";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
-import { Avatar, COMPETITION_TYPE_LABELS, STATUS_LABELS, STATUS_COLORS, timeAgo } from "@/components/community/shared";
+import { Avatar, COMPETITION_TYPE_LABELS, STATUS_LABELS, timeAgo } from "@/components/community/shared";
 import {
   ChevronRight, Loader2, Trophy, Award, Users, Calendar, Crown,
   ThumbsUp, Send, X, BookOpen, Mic, Play, Pause,
   RotateCcw, Upload, FileAudio, Check, AlertCircle,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import BackButton from "@/components/BackButton";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const MEDAL_IMAGE = "/images/1397cc654_generated_image.png";
 
@@ -122,7 +128,7 @@ export default function CompetitionDetail() {
         <BookOpen className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
         <p className="text-sm text-muted-foreground mb-4">مسابقه یافت نشد.</p>
         <Link
-          to="/competitions"
+          href="/competitions"
           className="inline-flex items-center gap-1.5 text-sm text-accent hover:underline font-ui font-medium"
         >
           <ChevronRight className="h-4 w-4" /> بازگشت به مسابقات
@@ -153,11 +159,9 @@ export default function CompetitionDetail() {
           <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-3">
             {comp.title}
           </h1>
-          <span
-            className={`inline-block text-xs px-3 py-1 rounded font-bold font-ui ${STATUS_COLORS[status]}`}
-          >
+          <Badge variant="secondary" size="sm" className="text-xs font-bold font-ui">
             {STATUS_LABELS[status]}
-          </span>
+          </Badge>
           <p className="text-muted-foreground mt-4 leading-relaxed max-w-xl mx-auto text-xs sm:text-sm font-doran">
             {comp.description}
           </p>
@@ -240,21 +244,21 @@ export default function CompetitionDetail() {
             </h3>
           </div>
           {canSubmit ? (
-            <button
+            <Button
               onClick={() => setShowSubmit(true)}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-accent text-accent-foreground text-xs font-bold shadow-soft hover:shadow-glow transition-all hover:scale-105 active:scale-95 font-ui"
             >
               <Mic className="h-4 w-4" />
               <span>ثبت تلاوت / اثر</span>
-            </button>
+            </Button>
           ) : !user && status === "active" ? (
-            <button
+            <Button
               onClick={() => openAuthModal(() => setShowSubmit(true))}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-accent/15 border border-accent/30 text-accent text-xs font-bold hover:bg-accent/25 transition-all font-ui"
             >
               <Send className="h-4 w-4" />
               <span>ورود و ثبت اثر</span>
-            </button>
+            </Button>
           ) : null}
         </div>
 
@@ -278,13 +282,13 @@ export default function CompetitionDetail() {
               هنوز اثری در این مسابقه ثبت نشده است. {canSubmit ? "اولین شرکت‌کننده شما باشید!" : ""}
             </p>
             {canSubmit && (
-              <button
+              <Button
                 onClick={() => setShowSubmit(true)}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-accent text-accent-foreground text-xs font-bold shadow-soft font-ui"
               >
                 <Mic className="h-4 w-4" />
                 <span>ضبط و ارسال تلاوت</span>
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -433,7 +437,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
             /* Luxury Quranic Audio Player Card */
             <div className="rounded border border-primary/25 bg-gradient-to-r from-card via-primary/5 to-secondary/30 p-3.5 sm:p-4 flex items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3 min-w-0">
-                <button
+                <Button
                   type="button"
                   onClick={handleAudioPlay}
                   className={`h-11 w-11 rounded flex items-center justify-center transition-all shadow-soft transform active:scale-90 shrink-0 ${
@@ -448,7 +452,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
                   ) : (
                     <Play className="h-5 w-5 fill-current ml-0.5" />
                   )}
-                </button>
+                </Button>
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
@@ -471,7 +475,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
 
               {entry.verse_key && (
                 <Link
-                  to={`/verse/${entry.verse_key.replace(":", "/")}`}
+                  href={`/verse/${entry.verse_key.replace(":", "/")}`}
                   className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded bg-background/80 border border-border/80 text-[11px] font-bold text-accent font-ui hover:border-accent"
                 >
                   <BookOpen className="h-3 w-3" />
@@ -493,7 +497,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
       <div className="flex items-center justify-between pt-2 border-t border-border/40">
         {entry.verse_key ? (
           <Link
-            to={`/verse/${entry.verse_key.replace(":", "/")}`}
+            href={`/verse/${entry.verse_key.replace(":", "/")}`}
             className="inline-flex items-center gap-1.5 text-xs text-accent hover:underline font-ui font-medium"
           >
             <BookOpen className="h-3.5 w-3.5" />
@@ -503,7 +507,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
           <div />
         )}
 
-        <button
+        <Button
           onClick={() => onVote(entry)}
           disabled={!currentUser}
           className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded text-xs font-bold font-ui transition-all ${
@@ -515,7 +519,7 @@ function CompetitionEntryCard({ entry, rank, currentUser, onVote }) {
         >
           <ThumbsUp className={`h-3.5 w-3.5 ${hasVoted ? "fill-current" : ""}`} />
           <span>{fa(entry.votes_count || 0)} رأی</span>
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -684,12 +688,12 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               <p className="text-[11px] text-muted-foreground">{comp.title}</p>
             </div>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="h-8 w-8 rounded flex items-center justify-center text-muted-foreground hover:bg-secondary"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {err && (
@@ -701,7 +705,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
 
         {/* Mode Selector Tabs */}
         <div className="mt-4 flex rounded bg-secondary p-1 border border-border/60 sm:px-1">
-          <button
+          <Button
             type="button"
             onClick={() => {
               setTab("record");
@@ -715,8 +719,8 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
           >
             <Mic className="h-3.5 w-3.5 text-accent" />
             <span>ضبط زنده تلاوت</span>
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => {
               setTab("upload");
@@ -730,7 +734,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
           >
             <Upload className="h-3.5 w-3.5 text-primary" />
             <span>بارگذاری فایل (صوتی/ویدیو)</span>
-          </button>
+          </Button>
         </div>
 
         {/* Scrollable Content */}
@@ -741,7 +745,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
               {!recordedUrl ? (
                 <div className="space-y-4">
                   <div className="flex justify-center">
-                    <button
+                    <Button
                       type="button"
                       onClick={isRecording ? stopRecording : startRecording}
                       className={`relative h-20 w-20 sm:h-24 sm:w-24 rounded flex items-center justify-center transition-all ${
@@ -751,7 +755,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                       }`}
                     >
                       <Mic className="h-9 w-9 sm:h-12 sm:w-12" />
-                    </button>
+                    </Button>
                   </div>
 
                   <div>
@@ -779,14 +783,14 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                   <audio src={recordedUrl} controls className="w-full mt-2" />
 
                   <div className="flex justify-center pt-1">
-                    <button
+                    <Button
                       type="button"
                       onClick={resetRecording}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-card hover:bg-secondary text-xs text-muted-foreground hover:text-foreground font-ui"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                       <span>ضبط مجدد</span>
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
@@ -794,17 +798,14 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
           ) : (
             /* Upload File Section */
             <div className="rounded border border-dashed border-border/80 bg-secondary/20 p-4 sm:p-6 text-center">
-              <input
+              <Input
                 type="file"
                 accept="audio/*,video/*"
                 onChange={handleFileChange}
                 className="hidden"
                 id="comp-file-upload"
               />
-              <label
-                htmlFor="comp-file-upload"
-                className="cursor-pointer flex flex-col items-center gap-2"
-              >
+              <Label htmlFor="comp-file-upload" className="cursor-pointer flex flex-col items-center gap-2 block">
                 <div className="h-12 w-12 rounded bg-accent/15 text-accent flex items-center justify-center">
                   <FileAudio className="h-6 w-6" />
                 </div>
@@ -819,16 +820,16 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                     <Check className="h-3.5 w-3.5" /> آماده بارگذاری
                   </span>
                 )}
-              </label>
+              </Label>
             </div>
           )}
 
           {/* Form Fields */}
           <div>
-            <label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
+            <Label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
               عنوان اثر یا نام سوره:
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -838,10 +839,10 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
           </div>
 
           <div>
-            <label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
+            <Label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
               شماره یا مشخصات آیه شریفه:
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={verseKey}
               onChange={(e) => setVerseKey(e.target.value)}
@@ -851,10 +852,10 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
           </div>
 
           <div>
-            <label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
+            <Label className="block text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2 font-ui">
               یادداشت یا نکته تدبّری پیرامون تلاوت:
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={3}
@@ -866,15 +867,15 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
 
         {/* Footer Actions */}
         <div className="pt-4 sm:pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-end gap-2 sm:justify-end sm:gap-3">
-          <button
+          <Button
             type="button"
             onClick={onClose}
             disabled={saving}
             className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded border border-border text-xs sm:text-sm font-bold font-ui text-muted-foreground hover:text-foreground transition-colors"
           >
             انصراف
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={submit}
             disabled={saving || isRecording}
@@ -891,7 +892,7 @@ function SubmitEntry({ comp, user, onClose, onSubmitted }) {
                 <span>ارسال نهایی اثر</span>
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

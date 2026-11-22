@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import api from '@/lib/api';
-import ProfilePage from '@/components/design-system/ProfilePage';
+import ProfilePage from '@/components/ui/profile-page';
 
 /**
  * Public profile route.

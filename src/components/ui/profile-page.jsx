@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { User2, Play, BookOpen, Users, Loader2, AlertCircle } from 'lucide-react';
 import api from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
-import { usePathname } from 'next/navigation';
-import ProfileHeader from './ProfileHeader';
-import ProfileTabs from './ProfileTabs';
-import CreatorProfile from './CreatorProfile';
-import QariProfile from './QariProfile';
-import ScholarProfile from './ScholarProfile';
+import { usePathname, useSearchParams } from 'next/navigation';
+import ProfileHeader from '@/components/ui/profile-header';
+import ProfileTabs from '@/components/ui/profile-tabs';
+import CreatorProfile from '@/components/ui/creator-profile';
+import QariProfile from '@/components/ui/qari-profile';
+import ScholarProfile from '@/components/ui/scholar-profile';
 
 /**
  * Shared profile page composition for creators, qaris, and scholars.
@@ -30,11 +30,8 @@ export default function ProfilePage({ params }) {
   const [profileType, setProfileType] = useState('creator');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState(() => {
-    if (typeof window === 'undefined') return null;
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('tab') || null;
-  });
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || null);
   const [followerCount, setFollowerCount] = useState(0);
   const [contentCount, setContentCount] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);

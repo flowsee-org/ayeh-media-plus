@@ -1,12 +1,12 @@
 'use client';
 import React, { useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
-import BrandLogo from "@/components/design-system/BrandLogo";
+import BrandLogo from "@/components/ui/brand-logo";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -59,7 +59,7 @@ export default function ForgotPassword() {
                 <div className="p-3 rounded bg-primary/5 border border-primary/20 text-foreground text-xs text-center mt-3">
                   <span className="text-muted-foreground">پیوند مستقیم تغییر رمز (محیط آزمایشی): </span>
                   <Link
-                    to={`/reset-password?token=${resetToken}`}
+                    href={`/reset-password?token=${resetToken}`}
                     className="underline font-bold text-primary block mt-1"
                   >
                     تغییر فوری رمز عبور
@@ -68,7 +68,7 @@ export default function ForgotPassword() {
               )}
               <div className="pt-2">
                 <Link
-                  to="/login"
+                  href="/login"
                   className="inline-flex items-center gap-2 text-primary font-semibold hover:underline text-sm"
                 >
                   <ArrowRight className="w-4 h-4" />
@@ -110,7 +110,7 @@ export default function ForgotPassword() {
 
               <div className="text-center pt-1">
                 <Link
-                  to="/login"
+                  href="/login"
                   className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
                 >
                   <ArrowRight className="w-3.5 h-3.5" />

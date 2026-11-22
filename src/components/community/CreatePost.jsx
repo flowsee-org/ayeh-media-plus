@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "@/lib/api";
-import { X, Loader2, BookOpen, Sparkles, Image as ImageIcon, HelpCircle, Send, Video } from "lucide-react";
+import { X, Loader2, BookOpen, Sparkles, Image as ImageIcon, HelpCircle, Send, Video } from "lucide-react"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input"; import { Textarea } from "@/components/ui/textarea";
 import { Avatar } from "./shared";
 import { useScholar } from "@/lib/scholarAccess";
 
@@ -87,7 +87,7 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
  <div className="bg-card rounded border border-border/40 w-full max-w-xl max-h-[85vh] overflow-y-auto p-6 shadow-premium animate-scale-in" onClick={(e) => e.stopPropagation()}>
  <div className="flex items-center justify-between mb-5">
  <h3 className="font-display font-bold text-xl">پست جدید</h3>
- <button onClick={onClose} className="h-9 w-9 rounded hover:bg-muted/50 flex items-center justify-center transition-colors"><X className="h-4 w-4" /></button>
+ <Button type="button" variant="ghost" size="icon" onClick={onClose}><X className="h-4 w-4" /></Button>
  </div>
 
  <div className="flex items-center gap-3 mb-4">
@@ -97,30 +97,31 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
 
  <div className="flex gap-2 mb-4 flex-wrap">
  {TYPES.filter((t) => isScholar || t.id !== "reflection").map(({ id, label, icon: Icon }) => (
- <button
- key={id}
- onClick={() => setType(id)}
- className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-all ${type === id ? "bg-accent text-accent-foreground" : "bg-muted/50 text-muted-foreground hover:text-foreground"}`}
- >
+ <Button
+  key={id}
+  variant={type === id ? "primary" : "outline"}
+  size="sm"
+  onClick={() => setType(id)}
+>
  <Icon className="h-3.5 w-3.5" /> {label}
- </button>
+ </Button>
  ))}
  </div>
 
- <textarea
- value={content}
- onChange={(e) => setContent(e.target.value)}
- placeholder={
- type === "question"
- ? "پرسش خود را بنویسید…"
- : type === "reflection"
- ? "تدبّر خود را بنویسید…"
- : "متن پست را بنویسید…"
- }
- rows={4}
- className="w-full bg-muted/30 rounded border border-border/40 p-3 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-accent/20 resize-none"
- dir="rtl"
- />
+ <Textarea
+  value={content}
+  onChange={(e) => setContent(e.target.value)}
+  placeholder={
+  type === "question"
+  ? "پرسش خود را بنویسید…"
+  : type === "reflection"
+  ? "تدبّر خود را بنویسید…"
+  : "متن پست را بنویسید…"
+  }
+  rows={4}
+  className="resize-none"
+  dir="rtl"
+/>
 
  {initialVerse && type === "verse_share" && (
  <p className="mb-3 mt-3 rounded bg-accent/10 px-3 py-2 text-xs text-accent">
@@ -130,9 +131,9 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
 
  {type === "verse_share" && (
  <div className="space-y-2 mb-3 mt-3">
- <input value={verseKey} onChange={(e) => setVerseKey(e.target.value)} placeholder="کلید آیه (مثلاً 2:255)" className="w-full bg-muted/30 rounded border border-border/40 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" />
- <input value={verseArabic} onChange={(e) => setVerseArabic(e.target.value)} placeholder="متن عربی آیه" className="w-full bg-muted/30 rounded border border-border/40 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" dir="rtl" />
- <input value={verseText} onChange={(e) => setVerseText(e.target.value)} placeholder="ترجمه آیه" className="w-full bg-muted/30 rounded border border-border/40 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20" dir="rtl" />
+ <Input value={verseKey} onChange={(e) => setVerseKey(e.target.value)} placeholder="کلید آیه (مثلاً 2:255)" />
+ <Input value={verseArabic} onChange={(e) => setVerseArabic(e.target.value)} placeholder="متن عربی آیه" dir="rtl" />
+ <Input value={verseText} onChange={(e) => setVerseText(e.target.value)} placeholder="ترجمه آیه" dir="rtl" />
  </div>
  )}
 
@@ -141,7 +142,7 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
  {imageUrl ? (
  <div className="relative">
  <img src={imageUrl} className="w-full rounded max-h-60 object-cover" alt="preview" />
- <button onClick={() => setImageUrl("")} className="absolute top-2 left-2 h-11 w-11 rounded bg-black/50 text-white flex items-center justify-center"><X className="h-4 w-4" /></button>
+ <Button type="button" variant="ghost" size="icon-sm" className="absolute top-2 left-2 h-9 w-9 rounded bg-black/50 text-white" onClick={() => setImageUrl("")}><X className="h-4 w-4" /></Button>
  </div>
  ) : (
  <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border/50 rounded p-8 cursor-pointer hover:border-accent/30 transition-colors">
@@ -158,7 +159,7 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
  {videoUrl ? (
  <div className="relative">
  <video src={videoUrl} controls playsInline className="w-full rounded max-h-60 bg-black" />
- <button onClick={() => setVideoUrl("")} className="absolute top-2 left-2 h-9 w-9 rounded bg-black/60 text-white flex items-center justify-center"><X className="h-4 w-4" /></button>
+ <Button type="button" variant="ghost" size="icon-sm" className="absolute top-2 left-2 h-9 w-9 rounded bg-black/60 text-white" onClick={() => setVideoUrl("")}><X className="h-4 w-4" /></Button>
  </div>
  ) : (
  <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border/50 rounded p-8 cursor-pointer hover:border-accent/30 transition-colors">
@@ -170,16 +171,16 @@ export default function CreatePost({ user, onClose, onPosted, initialVerse = nul
  </div>
  )}
 
- <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="برچسب‌ها (با کاما جدا کنید)" className="w-full bg-muted/30 rounded border border-border/40 p-2.5 text-sm mt-3 mb-3 focus:outline-none focus:ring-2 focus:ring-accent/20" />
+ <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="برچسب‌ها (با کاما جدا کنید)" className="mt-3 mb-3" />
 
  {err && <p className="text-sm text-destructive mb-3">{err}</p>}
 
  <div className="flex justify-end gap-2">
- <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
- <button onClick={submit} disabled={saving || uploading || (!content.trim() && !imageUrl && !videoUrl && !verseKey.trim())} className="inline-flex items-center gap-2 px-5 py-2 rounded text-sm bg-accent text-accent-foreground font-medium hover:shadow-glow transition-all disabled:opacity-50">
+ <Button type="button" variant="outline" onClick={onClose}>انصراف</Button>
+ <Button type="submit" disabled={saving || uploading || (!content.trim() && !imageUrl && !videoUrl && !verseKey.trim())} variant="secondary" className="inline-flex items-center gap-2 px-5 py-2 rounded text-sm bg-accent text-accent-foreground font-medium hover:shadow-glow transition-all disabled:opacity-50">
  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
  انتشار
- </button>
+ </Button>
  </div>
  </div>
  </div>

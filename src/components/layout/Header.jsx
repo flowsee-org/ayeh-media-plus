@@ -10,8 +10,9 @@ import ThemeToggle from '@/components/ThemeToggle';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import StreakBadge from '@/components/gamification/StreakBadge';
 // New design system
-import BrandLogo from '@/components/design-system/BrandLogo';
-import GlobalSearch from '@/components/design-system/GlobalSearch';
+import BrandLogo from '@/components/ui/brand-logo';
+import GlobalSearch from '@/components/ui/global-search';
+import { Button } from "@/components/ui/button";
 
 /* ── Quick Tags — Sub Header ── */
 const quickTags = [
@@ -79,13 +80,13 @@ export default function Header({ onMenuToggle }) {
       <div className="px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
         {/* Left: Mobile Menu + Logo */}
         <div className="flex items-center gap-3">
-          <button
+          <Button
             onClick={onMenuToggle}
             className="lg:hidden p-2.5 rounded hover:bg-quranic-emerald/5 text-foreground/70 transition-colors"
             aria-label="بسته منو"
           >
             <Menu className="h-5 w-5" />
-          </button>
+          </Button>
           <BrandLogo variant="inline" className="shrink-0" />
         </div>
 
@@ -110,12 +111,12 @@ export default function Header({ onMenuToggle }) {
               <span className="hidden sm:block truncate max-w-[120px]">{authUser.full_name || "کاربر"}</span>
             </Link>
           ) : (
-            <button
+            <Button
               onClick={() => openAuthModal()}
               className="px-4 py-2 rounded bg-quranic-emerald text-white text-xs font-bold hover:opacity-90 shadow-quranic-glow transition-all"
             >
               ورود / ثبت‌نام
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -128,7 +129,7 @@ export default function Header({ onMenuToggle }) {
               const Icon = tag.icon;
               const isActive = activeCategory === tag.category;
               return (
-                <button
+                <Button
                   key={tag.label}
                   onClick={() => handleQuickSearch(tag.label, tag.category)}
                   className={`inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-medium font-ui transition-all border ${
@@ -139,10 +140,10 @@ export default function Header({ onMenuToggle }) {
                 >
                   <Icon className={`h-3 w-3 ${isActive ? "text-quranic-ink" : "text-muted-foreground/60"}`} />
                   {tag.label}
-                </button>
+                </Button>
               );
             })}
-            <button
+            <Button
               onClick={() => {
                 setActiveCategory("all");
                 router.push("/search");
@@ -150,7 +151,7 @@ export default function Header({ onMenuToggle }) {
               className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded text-xs font-medium font-ui text-muted-foreground border border-border/50 bg-transparent hover:bg-muted/50 hover:text-foreground transition-all"
             >
               <Search className="h-3 w-3" /> فلتری پیشرفته
-            </button>
+            </Button>
           </div>
         </div>
       </div>

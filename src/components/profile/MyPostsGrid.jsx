@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Image } from "@/components/ui/image";
 import { Heart, MessageCircle, Loader2, NotebookPen, LogIn, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 const PAGE_SIZE = 30;
@@ -74,7 +75,7 @@ export default function MyPostsGrid({ userId }) {
           برای مشاهده پست‌های خود وارد حساب کاربری شوید.
         </p>
         <Link
-          to="/login"
+          href="/login"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
         >
           ورود به حساب
@@ -94,13 +95,13 @@ export default function MyPostsGrid({ userId }) {
         <p className="text-sm text-muted-foreground mb-4">
           دریافت پست‌ها با خطا مواجه شد. اتصال خود را بررسی کنید و دوباره تلاش کنید.
         </p>
-        <button
+        <Button
           type="button"
           onClick={load}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-secondary text-foreground text-sm font-medium hover:bg-secondary/70 transition-all border border-border"
         >
           <RefreshCw className="h-4 w-4" /> تلاش دوباره
-        </button>
+        </Button>
       </div>
     );
   }
@@ -111,7 +112,7 @@ export default function MyPostsGrid({ userId }) {
         <NotebookPen className="h-7 w-7 text-muted-foreground/30 mx-auto mb-2" />
         <p className="text-sm text-muted-foreground mb-4">هنوز پستی منتشر نکرده‌اید.</p>
         <Link
-          to="/community"
+          href="/community"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
         >
           انتشار اولین تدبّر
@@ -126,7 +127,7 @@ export default function MyPostsGrid({ userId }) {
         {posts.map((p) => (
           <Link
             key={p.id}
-            to={`/community/${p.id}`}
+            href={`/community/${p.id}`}
             className="relative group aspect-square rounded overflow-hidden border border-accent/10 bg-card/40"
           >
             {p.image_url ? (
@@ -146,7 +147,7 @@ export default function MyPostsGrid({ userId }) {
 
       {hasMore && (
         <div className="flex justify-center mt-4">
-          <button
+          <Button
             type="button"
             onClick={loadMore}
             disabled={loadingMore}
@@ -154,7 +155,7 @@ export default function MyPostsGrid({ userId }) {
           >
             {loadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             نمایش پست‌های بیشتر
-          </button>
+          </Button>
         </div>
       )}
     </div>

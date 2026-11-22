@@ -9,7 +9,8 @@ import {
   User, BookOpen, Trophy, MessageCircle, ChevronRight, PanelRightClose, PanelRightOpen,
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-import BrandLogo from './BrandLogo';
+import BrandLogo from '@/components/ui/brand-logo';
+import { Button } from '@/components/ui/button';
 
 /**
  * Aparat-style sidebar — video-first IA, collapsible, RTL (right rail).
@@ -101,24 +102,24 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
         ) : (
           <BrandLogo variant="inline" />
         )}
-        <button
+        <Button
           onClick={handleCollapseToggle}
           className={`p-2 rounded hover:bg-muted text-muted-foreground ${isCollapsed ? 'hidden' : 'ms-auto'}`}
           aria-label="جمع کردن منو"
         >
           <PanelRightClose className="h-4 w-4" />
-        </button>
+        </Button>
       </div>
 
       {isCollapsed && (
         <div className="flex justify-center py-2 border-b border-border">
-          <button
+          <Button
             onClick={handleCollapseToggle}
             className="p-2 rounded hover:bg-muted text-muted-foreground"
             aria-label="باز کردن منو"
           >
             <PanelRightOpen className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       )}
 
@@ -180,28 +181,28 @@ export default function AppSidebar({ className = '', collapsed = false, onCollap
                 <ChevronRight className="h-4 w-4 text-muted-foreground rotate-180" />
               </Link>
             )}
-            <button
+            <Button
               onClick={() => logout()}
-              className={`w-full flex items-center gap-2 rounded text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${
-                isCollapsed ? 'justify-center p-2.5' : 'px-3 py-2'
-              }`}
+              variant="ghost"
+              size={isCollapsed ? 'icon' : 'sm'}
+              className={`w-full ${isCollapsed ? 'justify-center p-2.5' : 'px-3 py-2 flex items-center gap-2'}`}
               title="خروج"
             >
               <LogOut className="h-4 w-4" />
               {!isCollapsed && 'خروج از حساب'}
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
+          <Button
             onClick={() => openAuthModal()}
-            className={`w-full flex items-center justify-center gap-2 rounded text-xs font-bold text-primary-foreground bg-primary hover:opacity-90 transition-all ${
-              isCollapsed ? 'p-2.5' : 'px-3 py-2.5'
-            }`}
+            variant="primary"
+            size={isCollapsed ? 'icon' : 'sm'}
+            className={`w-full ${isCollapsed ? 'p-2.5 justify-center' : 'px-3 py-2.5 flex items-center gap-2'}`}
             title="ورود"
           >
             <User className="h-4 w-4" />
             {!isCollapsed && 'ورود / ثبت‌نام'}
-          </button>
+          </Button>
         )}
       </div>
     </aside>

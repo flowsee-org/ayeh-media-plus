@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/AuthContext';
 import api from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { fa } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
 
 /**
  * Aparat-style channel header
@@ -116,7 +117,7 @@ export default function ProfileHeader({
           </div>
 
           {!isOwnProfile && (
-            <button
+            <Button
               onClick={handleFollow}
               disabled={isLoading}
               className={`shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded text-sm font-bold transition-all disabled:opacity-50 ${
@@ -126,7 +127,7 @@ export default function ProfileHeader({
               }`}
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : isFollowing ? 'دنبال می‌کنید' : 'دنبال کردن'}
-            </button>
+            </Button>
           )}
         </div>
 

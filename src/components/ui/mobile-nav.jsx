@@ -7,7 +7,8 @@ import {
   Trophy, MessageCircle, User, BookOpen, Clock, Bookmark, Upload,
 } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
-import BrandLogo from './BrandLogo';
+import BrandLogo from '@/components/ui/brand-logo';
+import { Button } from '@/components/ui/button';
 
 const mobileItems = [
   { to: '/', label: 'صفحه اصلی', icon: Home },
@@ -38,13 +39,13 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
       >
         <div className="flex items-center justify-between px-4 h-16 border-b border-border">
           <BrandLogo variant="inline" />
-          <button
+          <Button
             onClick={onClose}
             className="h-9 w-9 rounded hover:bg-muted flex items-center justify-center text-muted-foreground"
             aria-label="بستن"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         <div className="p-4 border-b border-border">
@@ -63,12 +64,14 @@ export default function MobileNav({ isOpen, onClose, className = '' }) {
               </div>
             </Link>
           ) : (
-            <button
+            <Button
               onClick={() => { onClose(); openAuthModal(); }}
-              className="w-full py-2.5 rounded bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
+              variant="primary"
+              size="sm"
+              className="w-full"
             >
               ورود / ثبت‌نام
-            </button>
+            </Button>
           )}
         </div>
 

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "@/lib/router-compat";
+import { useParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
 import { useRouter } from 'next/navigation';
@@ -24,12 +24,13 @@ import { useReadingPrefs, renderQuranWaqf, DIACRITIC_THEMES } from "@/lib/readin
 import { trackEngagement } from "@/lib/engagement";
 import { useAudioPlayer } from "@/context/AudioPlayerContext";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import ScholarCard from "@/components/design-system/ScholarCard";
+import ScholarCard from "@/components/ui/scholar-card";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 const MIHRAB_IMG = "/images/art/nasir_light_columns.jpg";
@@ -59,8 +60,8 @@ export default function VerseDetail() {
  const [showReciterMenu, setShowReciterMenu] = useState(false);
  const [chapters, setChapters] = useState([]);
 
- const navigate = useNavigate();
  const router = useRouter();
+ const navigate = (path) => router.push(path);
  const { playTrack, track: currentTrack, isPlaying, togglePlay, seek } = useAudioPlayer();
 
  const surahNum = Number(surah);
@@ -293,7 +294,7 @@ export default function VerseDetail() {
  {/* Meta Badges — Enhanced with Icons */}
  <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
  {ayahData?.revelationType && (
- <Badge variant="sonnat" className="gap-1.5">
+ <Badge variant="quranic" className="gap-1.5">
  <span className="h-3 w-3">{ayahData.revelationType === "Meccan" ? "🕋" : "🏛️"}</span>
  {ayahData.revelationType === "Meccan" ? "مکی" : "مدنی"}
  </Badge>
@@ -386,10 +387,10 @@ export default function VerseDetail() {
  <div className="relative flex items-center gap-4 sm:gap-6">
  {/* Main Play Button */}
  <Button
- variant="sonnat"
+ variant="quranic"
  size="xl"
  onClick={() => toggleAudio()}
- className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 shadow-sonnat-glow hover:shadow-lg transition-all"
+ className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 shadow-emerald-glow hover:shadow-lg transition-all"
  title={isThisVersePlaying ? "توقف تلاوت" : "پخش تلاوت"}
  >
  {isThisVersePlaying ? (
@@ -451,7 +452,7 @@ export default function VerseDetail() {
  {RECITERS.map((r) => {
  const isChosen = r.id === selectedReciter;
  return (
- <button
+ <Button
  key={r.id}
  onClick={() => handleReciterChange(r.id)}
  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-right transition-colors ${
@@ -465,7 +466,7 @@ export default function VerseDetail() {
  <span className="text-[10px] text-muted-foreground">{r.style}</span>
  </div>
  {isChosen && <Check className="h-3.5 w-3.5 text-accent" />}
- </button>
+ </Button>
  );
  })}
  </div>
@@ -677,7 +678,7 @@ function ChapterList({ chapters, currentTrack, isPlaying, onSeek }) {
  <ScrollArea className="h-64">
  <div className="space-y-2">
  {chapters.map((c, i) => (
- <button
+ <Button
  key={i}
  onClick={() => onSeek(c.timestamp || i * 60)}
  className="w-full text-right p-2 rounded-xl hover:bg-accent/10 transition-colors group"
@@ -696,7 +697,7 @@ function ChapterList({ chapters, currentTrack, isPlaying, onSeek }) {
  : '0%' }}
  />
  </div>
- </button>
+ </Button>
  ))}
  </div>
  </ScrollArea>
@@ -710,7 +711,7 @@ function RelatedSidebar({ relatedVerses, relatedHadith, onNavigate }) {
  <h4 className="font-rokh-bold font-bold text-sm text-foreground mb-4">مربوط</h4>
  <div className="space-y-3">
  {relatedVerses?.slice(0, 5).map((v, i) => (
- <button
+ <Button
  key={i}
  onClick={() => {
  const [s, a] = v.split(':').map(Number);
@@ -722,7 +723,7 @@ function RelatedSidebar({ relatedVerses, relatedHadith, onNavigate }) {
  <span className="text-sm text-foreground font-medium">{v}</span>
  <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
  </div>
- </button>
+ </Button>
  ))}
  {relatedHadith?.slice(0, 3).map((h, i) => (
  <div key={i} className="p-3 rounded-xl bg-muted/30 border border-border/50">
@@ -740,7 +741,7 @@ function RelatedSidebar({ relatedVerses, relatedHadith, onNavigate }) {
 
 function ActionSidebar({ verseKey, arabic, translation, url, onShare, bookmarked, onBookmark }) {
  return (
- <Card variant="sonnat" className="p-4">
+ <Card variant="quranic" className="p-4">
  <h4 className="font-rokh-bold font-bold text-sm text-foreground mb-4">اکشن‌ها</h4>
  <div className="space-y-2">
  <Button variant="outline" className="w-full gap-2 justify-start" onClick={onShare}>
@@ -905,7 +906,7 @@ function Tafsir({ reflection, surah, ayah, surahName, translation, navigate }) {
  }
 
  return (
- <Card variant="sonnat" className="p-6 sm:p-10 text-center">
+ <Card variant="quranic" className="p-6 sm:p-10 text-center">
  <div className="h-12 w-12 rounded-2xl bg-accent/15 text-accent flex items-center justify-center mx-auto mb-4 border border-accent/20 shadow-xs">
  <Compass className="h-6 w-6" />
  </div>
@@ -1139,7 +1140,7 @@ function Notes({ verseKey }) {
  <div>
  <Section icon={FileText} title="یادداشت شخصی">
  <Card variant="default" className="p-5">
- <textarea
+ <Textarea
  value={notes}
  onChange={(e) => save(e.target.value)}
  onBlur={() => { if (notes.trim()) trackEngagement("note"); }}
@@ -1169,7 +1170,7 @@ function Notes({ verseKey }) {
 /* ── UI Primitives ── */
 function ActionBtn({ icon: Icon, label, onClick, active = false, variant = "outline" }) {
  return (
- <button
+ <Button
  onClick={onClick}
  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-ui font-bold border transition-all ${
  active ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:text-foreground hover:bg-secondary"
@@ -1177,7 +1178,7 @@ function ActionBtn({ icon: Icon, label, onClick, active = false, variant = "outl
  >
  <Icon className="h-3.5 w-3.5" />
  {label}
- </button>
+ </Button>
  );
 }
 

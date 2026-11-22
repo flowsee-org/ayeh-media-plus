@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useMemo } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { toast } from "react-hot-toast";
@@ -11,6 +11,7 @@ import {
  AlertCircle, Play,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
 const STEPS = [
  { id: "media", label: "انتخاب محتوا", icon: Upload },
@@ -20,7 +21,7 @@ const STEPS = [
 ];
 
 export default function SubmissionWizard({ competitionId, onComplete }) {
- const navigate = useNavigate();
+  const router = useRouter();
  const { user: authUser, openAuthModal } = useAuth();
  const [stepIndex, setStepIndex] = useState(0);
  const [form, setForm] = useState({
@@ -147,7 +148,7 @@ export default function SubmissionWizard({ competitionId, onComplete }) {
 
  toast.success(isStaff ? "محتوای شما منتشر شد!" : "محتوای شما برای بررسی ارسال شد.");
  if (onComplete) onComplete();
- navigate("/creator");
+      router.push("/creator");
  } catch (err) {
  toast.error(err.message || "خطا در ارسال محتوا");
  } finally { setSubmitting(false); }
@@ -196,19 +197,19 @@ export default function SubmissionWizard({ competitionId, onComplete }) {
  </div>
  <div className="flex gap-3">
  {!isFirstStep && (
- <button onClick={prevStep} className="px-6 py-3 rounded bg-transparent text-muted-foreground font-medium hover:bg-muted transition-colors border border-border/50">
+ <Button variant="outline" size="sm" onClick={prevStep}>
  <ChevronLeft className="h-4 w-4 mr-2" /> بازگشت
- </button>
+ </Button>
  )}
  {!isLastStep ? (
- <button disabled={!isFormValid} onClick={nextStep} className="px-8 py-3 rounded bg-primary text-primary-foreground font-medium hover:bg-primary/90 shadow-sm disabled:opacity-50">
+ <Button disabled={!isFormValid} onClick={nextStep}>
  بعدی <ChevronRight className="h-4 w-4 ml-2" />
- </button>
+ </Button>
  ) : (
- <button onClick={handleSubmit} disabled={submitting} className="px-8 py-3 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm flex items-center gap-2 disabled:opacity-50">
+ <Button type="submit" disabled={submitting} variant="primary" size="lg" className="w-full py-4 rounded bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-sm flex items-center gap-2 disabled:opacity-50">
  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "ارسال نهایی"}
  {!submitting && <ChevronRight className="h-4 w-4 ml-2" />}
- </button>
+ </Button>
  )}
  </div>
  </div>
@@ -251,12 +252,12 @@ function MediaStep({ form, setForm, handleFileChange, errors }) {
  return (
  <div className="space-y-6">
  <div className="flex gap-3">
- <button onClick={() => setTab("upload")} className={`flex-1 py-3 rounded font-medium transition-all ${tab==="upload"?"bg-primary/10 text-primary border border-primary/20":"bg-transparent text-muted-foreground hover:bg-muted/50"}`}>
+ <Button onClick={() => setTab("upload")} className={`flex-1 py-3 rounded font-medium transition-all ${tab==="upload"?"bg-primary/10 text-primary border border-primary/20":"bg-transparent text-muted-foreground hover:bg-muted/50"}`}>
  <Upload className="h-4 w-4 mr-2" /> بارگذاری فایل
- </button>
- <button onClick={() => setTab("record")} className={`flex-1 py-3 rounded font-medium transition-all ${tab==="record"?"bg-primary/10 text-primary border border-primary/20":"bg-transparent text-muted-foreground hover:bg-muted/50"}`}>
+ </Button>
+ <Button onClick={() => setTab("record")} className={`flex-1 py-3 rounded font-medium transition-all ${tab==="record"?"bg-primary/10 text-primary border border-primary/20":"bg-transparent text-muted-foreground hover:bg-muted/50"}`}>
  <Mic className="h-4 w-4 mr-2" /> ضبط از دوربین
- </button>
+ </Button>
  </div>
  {tab === "upload" ? (
  <div className="rounded border-2 border-dashed border-border/50 bg-background/50 p-12 text-center hover:border-primary/40 transition-all">
@@ -276,9 +277,14 @@ function MediaStep({ form, setForm, handleFileChange, errors }) {
  <div className="space-y-6">
  <div className="relative">
  <div className="h-48 w-48 rounded bg-gradient-to-br from-primary/15 to-primary/35 flex items-center justify-center border-2 border-primary/30">
- <button onClick={isRecording ? stopRecording : startRecording} className={`absolute h-20 w-20 rounded flex items-center justify-center transition-all active:scale-95 ${isRecording?"bg-red-500 text-white ring-8 ring-red-500/30 animate-pulse":"bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"}`}>
- {isRecording ? <X className="h-8 w-8" /> : <div className="flex items-center gap-2"><Video className="h-6 w-6"/><span className="ml-1">ضبط</span></div>}
- </button>
+ <Button
+  onClick={isRecording ? stopRecording : startRecording}
+  variant={isRecording ? "destructive" : "primary"}
+  size="icon"
+  className={`absolute h-20 w-20 rounded flex items-center justify-center transition-all active:scale-95 ${isRecording ? "bg-red-500 text-white ring-8 ring-red-500/30 animate-pulse" : "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"}`}
+>
+{isRecording ? <X className="h-8 w-8" /> : <div className="flex items-center gap-2"><Video className="h-6 w-6" /><span className="ml-1">ضبط</span></div>}
+</Button>
  </div>
  </div>
  {isRecording && <div className="space-y-2"><div className="font-rokh-bold font-bold text-lg text-foreground">در حال ضبط...</div><div className="text-3xl font-mono font-bold text-primary">{formatTime(recordingTime)}</div><p className="text-sm text-muted-foreground">برای پایان ضبط، روی دکمه توقف کلیک کنید.</p></div>}
@@ -289,8 +295,8 @@ function MediaStep({ form, setForm, handleFileChange, errors }) {
  <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-primary/10 text-primary text-xs font-bold border border-primary/20"><Check className="h-3 w-3" /><span>ضبط با موفقیت انجام شد ({formatTime(recordingTime)})</span></div>
  <video src={recordedUrl} controls className="w-full max-w-xs rounded border border-border" />
  <div className="flex gap-3">
- <button onClick={() => { URL.revokeObjectURL(recordedUrl); setForm((p) => ({ ...p, file: null, media_url: null })); }} className="flex-1 py-2.5 rounded border border-border text-muted-foreground hover:bg-muted/50 transition-colors text-sm font-medium">ضبط مجدد</button>
- <button className="flex-1 py-2.5 rounded bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">استفاده از این ضبط</button>
+ <Button onClick={() => { URL.revokeObjectURL(recordedUrl); setForm((p) => ({ ...p, file: null, media_url: null })); }} className="flex-1 py-2.5 rounded border border-border text-muted-foreground hover:bg-muted/50 transition-colors text-sm font-medium">ضبط مجدد</Button>
+ <Button variant="primary" size="sm" className="flex-1 py-2.5 text-sm font-medium">استفاده از این ضبط</Button>
  </div>
  </div>
  )}
@@ -339,7 +345,7 @@ function MetadataStep({ form, setForm, errors }) {
  <label className="block text-xs font-bold text-foreground font-ui mb-1">تگ‌ها</label>
  <div className="flex flex-wrap gap-2">
  {form.tags.map((tag, i) => (
- <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary/10 text-primary text-xs font-medium border border-primary/20"><span>{tag}</span><button onClick={() => setForm((p) => ({ ...p, tags: p.tags.filter((_, idx) => idx !== i) }))} className="text-primary/70 hover:text-primary"><X className="h-3 w-3" /></button></div>
+ <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary/10 text-primary text-xs font-medium border border-primary/20"><span>{tag}</span><Button onClick={() => setForm((p) => ({ ...p, tags: p.tags.filter((_, idx) => idx !== i) }))} className="text-primary/70 hover:text-primary"><X className="h-3 w-3" /></Button></div>
  ))}
  <input type="text" onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); const v = e.target.value.trim(); if (v && !form.tags.includes(v)) setForm((p) => ({ ...p, tags: [...p.tags, v] })); e.target.value = ""; } }} className="flex-1 px-4 py-3 rounded bg-background border border-input text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 placeholder:text-muted-foreground/50" placeholder="افزودن تگ..." />
  </div>
@@ -390,9 +396,9 @@ function SubmitStep({ form, submitting, onSubmit }) {
  <div className="flex justify-between px-4 py-2 rounded bg-background/50 border border-border/50"><span className="text-sm text-muted-foreground font-ui">عنوان</span><span className="text-sm font-medium text-foreground">{form.title}</span></div>
  <div className="flex justify-between px-4 py-2 rounded bg-background/50 border border-border/50"><span className="text-sm text-muted-foreground font-ui">وضعیت</span><span className="text-sm font-medium text-foreground">در انتظار بررسی</span></div>
  </div>
- <button onClick={onSubmit} disabled={submitting} className="w-full py-4 rounded bg-primary text-primary-foreground font-rokh-bold font-bold text-lg hover:bg-primary/90 shadow-sm flex items-center justify-center gap-2 disabled:opacity-50">
+ <Button type="submit" disabled={submitting} variant="primary" size="lg" className="w-full py-4 font-rokh-bold font-bold">
  {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "ارسال نهایی برای بررسی"}
- </button>
+ </Button>
  </div>
  );
 }

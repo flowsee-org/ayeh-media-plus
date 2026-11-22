@@ -1,15 +1,16 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import { Heart, MessageCircle, Radio, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /* Global live-notification listener:
    1. Real-time scholar live broadcast announcements via Socket.io
    2. Real-time social notifications (likes, comments, mentions)
    3. Entity Notification subscriptions for persistent notifications */
 export default function LiveNotifications() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const uidRef = useRef(null);
   const seenRef = useRef(new Set());
 
@@ -37,13 +38,13 @@ export default function LiveNotifications() {
 
             toast.custom(
               (t) => (
-                <button
+                <Button
                   onClick={() => {
                     toast.dismiss(t.id);
                     if (isLive && n.live_session_id) {
-                      navigate(`/live/${n.live_session_id}`);
+                      router.push(`/live/${n.live_session_id}`);
                     } else if (n.post_id) {
-                      navigate(`/community/${n.post_id}`);
+                      router.push(`/community/${n.post_id}`);
                     }
                   }}
                   className={`flex items-start gap-3 w-full max-w-sm mx-auto rounded border border-accent/40 bg-card/95 backdrop-blur-md shadow-premium px-4 py-3 text-right transition-all duration-300 hover:border-accent ${
@@ -90,7 +91,7 @@ export default function LiveNotifications() {
                       isLive ? "bg-red-500 animate-ping" : "bg-accent animate-pulse-soft"
                     }`}
                   />
-                </button>
+                </Button>
               ),
               { duration: isLive ? 8000 : 5000, position: "top-center" }
             );
@@ -133,22 +134,22 @@ export default function LiveNotifications() {
                     {session.title || "جلسه تفسیری زنده"}
                   </h4>
                   <div className="mt-3 flex items-center gap-2">
-                    <button
+                    <Button
                       onClick={() => {
                         toast.dismiss(t.id);
-                        navigate(`/live/${session.id}`);
+                        router.push(`/live/${session.id}`);
                       }}
                       className="px-3.5 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all shadow-md hover:shadow-red-500/20 flex items-center gap-1.5"
                     >
                       <Sparkles className="h-3.5 w-3.5 text-accent" />
                       ورود به جلسه
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => toast.dismiss(t.id)}
                       className="px-2.5 py-1.5 rounded text-xs text-muted-foreground hover:bg-secondary transition-colors"
                     >
                       بعداً
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -170,10 +171,10 @@ export default function LiveNotifications() {
         const isLike = data.type === "like";
         toast.custom(
           (t) => (
-            <button
+            <Button
               onClick={() => {
                 toast.dismiss(t.id);
-                if (data.post_id) navigate(`/community/${data.post_id}`);
+                if (data.post_id) router.push(`/community/${data.post_id}`);
               }}
               className={`flex items-start gap-3 w-full max-w-sm mx-auto rounded border border-accent/40 bg-card/95 backdrop-blur-md shadow-premium px-4 py-3 text-right transition-all duration-300 ${
                 t.visible ? "animate-fade-in-up" : "opacity-0"
@@ -195,7 +196,7 @@ export default function LiveNotifications() {
                   <span className="block text-xs text-muted-foreground truncate mt-0.5">{data.post_excerpt}</span>
                 )}
               </span>
-            </button>
+            </Button>
           ),
           { duration: 5000, position: "top-center" }
         );
@@ -207,7 +208,7 @@ export default function LiveNotifications() {
       unsubLiveStarted?.();
       unsubSocial?.();
     };
-  }, [navigate]);
+  }, [router]);
 
   return null;
 }

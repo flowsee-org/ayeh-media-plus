@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Trophy, ArrowLeft, Gift } from "lucide-react";
 
@@ -20,7 +20,7 @@ export default function ActivePrizeStrip() {
       <div className="flex items-center gap-2 px-3.5 py-2.5">
         <Trophy className="h-4 w-4 text-accent" />
         <span className="text-[13px] font-semibold text-foreground">مسابقات فعال — با جایزه</span>
-        <Link to="/competitions" className="mr-auto inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-accent">
+        <Link href="/competitions" className="mr-auto inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-accent">
           همه <ArrowLeft className="h-3 w-3" />
         </Link>
       </div>
@@ -28,7 +28,7 @@ export default function ActivePrizeStrip() {
         {comps.map((c) => (
           <Link
             key={c.id}
-            to={`/competitions/${c.id}`}
+            href={`/competitions/${c.id}`}
             className="group w-[78%] shrink-0 snap-start rounded border border-border bg-card p-3 transition-colors hover:border-accent/40 sm:w-[46%]"
           >
             <p className="line-clamp-1 text-xs font-medium text-muted-foreground">{c.title}</p>

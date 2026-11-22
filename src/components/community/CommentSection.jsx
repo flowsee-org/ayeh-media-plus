@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import api from "@/lib/api";
 import { notifyPostOwner } from "@/lib/social";
 import { toast } from "react-hot-toast";
@@ -7,6 +7,7 @@ import { trackEngagement } from "@/lib/engagement";
 import { scopedKey } from "@/lib/storageScope";
 import { Avatar, timeAgo } from "./shared";
 import { Heart, Trash2, Send, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const LIKED_KEY = "tadabbur-liked-comments";
 
@@ -99,20 +100,20 @@ export default function CommentSection({ postId, post, currentUser, comments: in
               className="flex-1 bg-muted/30 rounded border border-accent/15 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/30 transition-all"
               dir="rtl"
             />
-            <button
+            <Button
               onClick={submit}
               disabled={posting || !text.trim()}
               className="h-10 w-10 rounded bg-gradient-to-br from-accent to-accent/80 text-accent-foreground flex items-center justify-center hover:shadow-glow transition-all disabled:opacity-50 shrink-0"
             >
               {posting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
         <div className="mb-4 px-4 pt-3 text-center">
           <p className="text-xs text-muted-foreground">
             برای ثبت نظر و مشارکت در بحث،{" "}
-            <Link to="/login" className="text-primary font-bold hover:underline">
+            <Link href="/login" className="text-primary font-bold hover:underline">
               وارد حساب کاربری
             </Link>{" "}
             شوید.
@@ -136,22 +137,22 @@ export default function CommentSection({ postId, post, currentUser, comments: in
                   <p className="text-sm leading-relaxed text-foreground/90 whitespace-pre-line">{c.content}</p>
                 </div>
                 <div className="flex items-center gap-4 mt-1 pr-3">
-                  <button
+                  <Button
                     onClick={() => likeComment(c)}
                     disabled={busy === c.id}
                     className={`flex items-center gap-1 text-xs transition-colors ${liked ? "text-accent" : "text-muted-foreground hover:text-accent"}`}
                   >
                     <Heart className={`h-3 w-3 ${liked ? "fill-current" : ""}`} />
                     {(c.likes_count || 0).toLocaleString("fa-IR")}
-                  </button>
+                  </Button>
                   {isOwn && (
-                    <button
+                    <Button
                       onClick={() => deleteComment(c)}
                       className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
                     >
                       <Trash2 className="h-3 w-3" />
                       حذف
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

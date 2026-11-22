@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { UserPlus, UserCheck, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * Follow a platform user / live host channel.
@@ -73,7 +74,7 @@ export default function FollowButton({ scholarId, scholarName = "", className = 
   if (!user || user.id === scholarId) return null;
 
   return (
-    <button
+    <Button
       onClick={toggle}
       disabled={toggling}
       className={`inline-flex items-center gap-1.5 rounded px-4 py-2 text-sm font-medium transition-all disabled:opacity-50 ${
@@ -90,6 +91,6 @@ export default function FollowButton({ scholarId, scholarName = "", className = 
         <UserPlus className="h-3.5 w-3.5" />
       )}
       {following ? "دنبال می‌کنید" : "دنبال کردن"}
-    </button>
+    </Button>
   );
 }

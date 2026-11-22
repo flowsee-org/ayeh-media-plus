@@ -1,4 +1,4 @@
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { Lock, Loader2 } from "lucide-react";
 import { useScholar } from "@/lib/scholarAccess";
 
@@ -38,7 +38,7 @@ export default function ScholarGate({ children, compact = false }) {
         تدبّر آیات فقط توسط اساتید و علما ارائه می‌شود. برای مطالعه تدبّرهای تأییدشده، پروفایل اساتید را دنبال کنید.
       </p>
       <Link
-        to="/scholars"
+        href="/scholars"
         className="inline-flex items-center gap-1.5 rounded border border-accent/25 px-4 py-2 text-xs font-medium text-accent hover:bg-accent/10 transition-colors"
       >
         مشاهده اساتید

@@ -1,16 +1,17 @@
 'use client';
 import React, { useState } from "react";
-import { Link, useSearchParams, useNavigate } from "@/lib/router-compat";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2, AlertTriangle, CheckCircle, ArrowRight } from "lucide-react";
-import BrandLogo from "@/components/design-system/BrandLogo";
+import BrandLogo from "@/components/ui/brand-logo";
 
 export default function ResetPassword() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const resetToken = searchParams.get("token");
 
   const [newPassword, setNewPassword] = useState("");
@@ -35,7 +36,7 @@ export default function ResetPassword() {
       await api.auth.resetPassword({ resetToken, newPassword });
       setSuccess(true);
       setTimeout(() => {
-        navigate("/login");
+        router.push("/login");
       }, 2000);
     } catch (err) {
       setError(err.message || "پیوند بازیابی رمز عبور نامعتبر است یا منقضی شده است");
@@ -60,7 +61,7 @@ export default function ResetPassword() {
               این پیوند بازیابی فاقد شناسه امنیتی لازم است یا منقضی شده است.
             </p>
             <Link
-              to="/forgot-password"
+              href="/forgot-password"
               className="inline-flex items-center justify-center gap-2 w-full h-11 rounded bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 transition-all"
             >
               درخواست مجدد پیوند بازیابی
@@ -101,7 +102,7 @@ export default function ResetPassword() {
               <p className="text-muted-foreground text-xs">در حال هدایت به صفحه ورود...</p>
               <div className="pt-2">
                 <Link
-                  to="/login"
+                  href="/login"
                   className="inline-flex items-center gap-2 text-primary font-semibold hover:underline text-sm"
                 >
                   <ArrowRight className="w-4 h-4" />

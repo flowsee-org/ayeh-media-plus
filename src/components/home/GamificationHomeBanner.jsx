@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { Flame, Trophy, ArrowRight, Brain, CheckCircle2 } from "lucide-react";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
@@ -71,7 +71,7 @@ export default function GamificationHomeBanner() {
             </div>
 
             <Link
-              to="/achievements"
+              href="/achievements"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-bold font-rokh-bold shadow-lg shadow-emerald-950/50 transition-all active:scale-95 border border-emerald-400/30"
             >
               <Trophy className="w-4 h-4 text-amber-300" />

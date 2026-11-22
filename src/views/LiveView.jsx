@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from "react";
-import { useParams, Link, useNavigate } from "@/lib/router-compat";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import api from "@/lib/api";
 import { Loader2, Users, Send, Radio, Lock, Hand, Mic, Video, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, ChevronRight, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause, BookOpen } from "lucide-react";
 import BackButton from "@/components/BackButton";
@@ -21,7 +22,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function LiveView() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -324,7 +325,7 @@ export default function LiveView() {
           <p className="text-xs text-muted-foreground mt-1 mb-4 font-doran">
             جلسه زنده با این شناسه وجود ندارد یا به پایان رسیده است.
           </p>
-          <Link to="/live" className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-ui font-medium">
+          <Link href="/live" className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-ui font-medium">
             <ChevronRight className="h-4 w-4" /> بازگشت به جلسات زنده
           </Link>
         </Card>
@@ -336,7 +337,7 @@ export default function LiveView() {
     const cfg = parseAvatar(session?.scholar_avatar);
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
-        <Card variant="sonnat" className="w-full max-w-md p-8 text-center">
+        <Card variant="quranic" className="w-full max-w-md p-8 text-center">
           <div className="flex justify-center mb-4">
             {cfg ? (
               <CharacterAvatar config={cfg} size={80} />
@@ -354,7 +355,7 @@ export default function LiveView() {
           <div className="flex items-center justify-center gap-2 mt-6">
             <FollowButton scholarId={session?.scholar_id} scholarName={session?.scholar_name} />
             <Link
-              to={`/scholars/${session?.scholar_id}`}
+              href={`/scholars/${session?.scholar_id}`}
               className="px-4 py-2 rounded text-xs font-bold border border-border text-muted-foreground hover:text-foreground transition-colors"
             >
               پروفایل استاد
@@ -373,7 +374,7 @@ export default function LiveView() {
           <h2 className="font-rokh-bold font-bold text-lg text-foreground">جلسه زنده تمام شده</h2>
           <p className="text-xs text-muted-foreground mt-1 mb-4 font-doran">این جلسه به پایان رسیده است. آرشیو گفتارهای پیشین استاد در بخش گفتارها و پروفایل در دسترس است.</p>
           {session?.scholar_id && (
-            <Link to={`/scholars/${session.scholar_id}`} className="text-xs font-bold text-primary hover:underline inline-block mt-2">
+            <Link href={`/scholars/${session.scholar_id}`} className="text-xs font-bold text-primary hover:underline inline-block mt-2">
               دیدن آرشیو جلسات استاد ←
             </Link>
           )}
@@ -390,7 +391,7 @@ export default function LiveView() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 to-transparent border-b border-white/10 px-4 py-3">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate(session?.scholar_id ? `/scholars/${session.scholar_id}` : "/scholars")} className="text-white hover:text-accent">
+            <Button variant="ghost" size="icon" onClick={() => router.push(session?.scholar_id ? `/scholars/${session.scholar_id}` : "/scholars")} className="text-white hover:text-accent">
               <ChevronDown className="h-5 w-5" />
             </Button>
             <div>
@@ -549,12 +550,12 @@ export default function LiveView() {
                       <span>{isSpeaking ? "شما (روی آنتن زنده)" : `مهمان: ${activeSpeaker?.name || "مهمان"}`}</span>
                     </div>
                     {isSpeaking && (
-                      <button
+                      <Button
                         onClick={handleSpeakerKicked}
                         className="absolute top-2 left-2 rounded bg-destructive/90 text-white px-2 py-1 text-xs font-bold flex items-center gap-1"
                       >
                         <VideoOff className="h-3 w-3" /> خروج
-                      </button>
+                      </Button>
                     )}
                   </div>
                 )}
@@ -681,7 +682,7 @@ export default function LiveView() {
                     ) : (
                       <div className="border-t border-border/50 p-4 text-center">
                         <p className="text-xs text-white/50">
-                          برای ارسال پیام، <Link to="/login" className="text-accent hover:underline font-medium">وارد شوید</Link>.
+                          برای ارسال پیام، <Link href="/login" className="text-accent hover:underline font-medium">وارد شوید</Link>.
                         </p>
                       </div>
                     )}

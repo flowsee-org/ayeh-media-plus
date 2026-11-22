@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { Menu, Upload, Sun, Moon, Search } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { useTheme } from '@/components/ThemeToggle';
-import BrandLogo from './BrandLogo';
-import GlobalSearch from './GlobalSearch';
+import BrandLogo from '@/components/ui/brand-logo';
+import GlobalSearch from '@/components/ui/global-search';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import { Button } from '@/components/ui/button';
 
 /**
  * Global Header — Aparat-style light chrome
@@ -55,13 +56,15 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
       <div className="px-3 sm:px-5 lg:px-6 h-14 sm:h-16 flex items-center gap-3">
         {/* Start: Menu + Logo */}
         <div className="flex items-center gap-2 shrink-0">
-          <button
+          <Button
             onClick={onMenuToggle}
-            className="lg:hidden p-2 rounded hover:bg-muted text-foreground/70 transition-colors"
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
             aria-label="باز کردن منو"
           >
             <Menu className="h-5 w-5" />
-          </button>
+          </Button>
           {/* Logo only on mobile/tablet — desktop sidebar already shows brand */}
           <BrandLogo variant="inline" className="shrink-0 lg:hidden" />
         </div>
@@ -73,31 +76,36 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
 
         {/* End: Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2 ms-auto shrink-0">
-          <button
+          <Button
             onClick={() => setMobileSearchOpen((v) => !v)}
-            className="md:hidden p-2 rounded hover:bg-muted text-foreground/70 transition-colors"
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
             aria-label="جستجو"
           >
             <Search className="h-5 w-5" />
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={handleUpload}
-            className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded bg-primary text-primary-foreground text-xs font-bold hover:opacity-90 shadow-sm transition-all"
+            variant="primary"
+            size="sm"
+            className="hidden sm:inline-flex"
           >
             <Upload className="h-3.5 w-3.5" />
             آپلود ویدیو
-          </button>
+          </Button>
 
           {authUser && <NotificationBell className="hidden sm:block" />}
 
-          <button
+          <Button
             onClick={toggleTheme}
-            className="p-2 rounded hover:bg-muted text-foreground/70 transition-colors"
+            variant="ghost"
+            size="icon"
             aria-label="تغییر تم"
           >
             <ThemeIcon className="h-5 w-5" />
-          </button>
+          </Button>
 
           {authUser ? (
             <Link
@@ -112,12 +120,13 @@ export default function AppHeader({ onMenuToggle, className = '' }) {
               </span>
             </Link>
           ) : (
-            <button
+            <Button
               onClick={() => openAuthModal()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded border border-border bg-card text-foreground text-xs font-bold hover:bg-muted transition-all"
+              variant="outline"
+              size="sm"
             >
               ورود
-            </button>
+            </Button>
           )}
         </div>
       </div>

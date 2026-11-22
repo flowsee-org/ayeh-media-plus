@@ -1,21 +1,23 @@
 'use client';
 import { useEffect, useState } from "react";
-import { useSearchParams } from "@/lib/router-compat";
+import { useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import { getSurahList } from "@/lib/quranApi";
 import { JUZ_DATA } from "@/lib/juzData";
 import { ALL_TOPICS } from "@/lib/topicData";
 import { Search, ArrowLeft, Loader2, BookOpen, Compass, Layers, Mic, Trophy, ChevronRight, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // New design system
-import ContentSection from "@/components/design-system/ContentSection";
-import VideoCard from "@/components/design-system/VideoCard";
-import RecitationCard from "@/components/design-system/RecitationCard";
-import ScholarCard from "@/components/design-system/ScholarCard";
-import GatheringCard from "@/components/design-system/GatheringCard";
-import CollectionCard from "@/components/design-system/CollectionCard";
-import { SkeletonGrid } from "@/components/design-system/LoadingSkeleton";
-import EmptyState from "@/components/design-system/EmptyState";
+import ContentSection from "@/components/ui/content-section";
+import VideoCard from "@/components/ui/video-card";
+import RecitationCard from "@/components/ui/recitation-card";
+import ScholarCard from "@/components/ui/scholar-card";
+import GatheringCard from "@/components/ui/gathering-card";
+import CollectionCard from "@/components/ui/collection-card";
+import { SkeletonGrid } from "@/components/ui/loading-skeleton";
+import EmptyState from "@/components/ui/empty-state";
 
 /**
  * Search Categories — Persian labels with icons
@@ -59,7 +61,7 @@ function normalizeText(text) {
 }
 
 export default function SearchPage() {
- const [params] = useSearchParams();
+ const params = useSearchParams();
  const [query, setQuery] = useState(params.get("q") || "");
  const [activeFilter, setActiveFilter] = useState(params.get("category") || "all");
  const [results, setResults] = useState({
@@ -419,8 +421,9 @@ export default function SearchPage() {
  {/* Search Input */}
  <div className="relative">
  <Search className="absolute end-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
- <input
+ <Input
  autoFocus
+ type="search"
  value={query}
  onChange={(e) => setQuery(e.target.value)}
  placeholder="عنوان ویدیو، نام قاری، سوره یا موضوع…"
@@ -434,7 +437,7 @@ export default function SearchPage() {
  const Icon = filter.icon;
  const isActive = activeFilter === filter.id;
  return (
- <button
+ <Button
  key={filter.id}
  onClick={() => setActiveFilter(filter.id)}
  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-sm font-medium transition-all border ${
@@ -445,7 +448,7 @@ export default function SearchPage() {
  >
  <Icon className="h-3.5 w-3.5" />
  {filter.label}
- </button>
+ </Button>
  );
  })}
  </div>

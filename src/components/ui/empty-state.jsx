@@ -5,9 +5,13 @@ import {
   BookOpen, Search, Users, Trophy, Video, Sparkles, Clock, Mic,
 } from 'lucide-react';
 
+import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
 /**
  * Empty State Component — Guides users toward useful actions
  * Consistent empty state design across the platform.
+ * Built on shadcn/ui Card + Button primitives.
  */
 const EMPTY_STATE_CONFIGS = {
   search: {
@@ -92,30 +96,28 @@ export default function EmptyState({
   const DisplayIcon = Icon || config.icon;
   const displayActionLabel = actionLabel || config.actionLabel;
   const displayActionHref = actionHref || config.actionHref;
-  const actionClassName =
-    'inline-flex items-center gap-2 px-6 py-3 rounded bg-primary text-primary-foreground font-doran font-semibold text-sm hover:opacity-90 shadow-sm transition-all';
 
   return (
-    <div
-      className={`rounded border border-dashed border-border/60 p-12 sm:p-16 text-center ${className}`}
-    >
-      <DisplayIcon className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-      <h3 className="font-rokh-bold font-bold text-lg sm:text-xl text-foreground mb-2">
-        {displayTitle}
-      </h3>
-      <p className="font-doran text-sm text-muted-foreground max-w-md mx-auto leading-relaxed mb-8">
-        {displaySubtitle}
-      </p>
-      {showAction && onAction && (
-        <button type="button" onClick={onAction} className={actionClassName}>
-          {displayActionLabel}
-        </button>
-      )}
-      {showAction && !onAction && (
-        <Link href={displayActionHref} className={actionClassName}>
-          {displayActionLabel}
-        </Link>
-      )}
-    </div>
+    <Card className={`border-dashed border-border/60 p-8 sm:p-12 text-center ${className}`}>
+      <CardContent className="flex flex-col items-center justify-center">
+        <DisplayIcon className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+        <CardTitle className="mb-2">{displayTitle}</CardTitle>
+        <CardDescription className="max-w-md mx-auto mb-6">
+          {displaySubtitle}
+        </CardDescription>
+        {showAction && onAction && (
+          <Button variant="primary" className="w-auto">
+            {displayActionLabel}
+          </Button>
+        )}
+        {showAction && !onAction && (
+          <Link href={displayActionHref}>
+            <Button variant="primary" className="w-auto">
+              {displayActionLabel}
+            </Button>
+          </Link>
+        )}
+      </CardContent>
+    </Card>
   );
 }

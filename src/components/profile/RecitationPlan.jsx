@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CalendarClock, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 
 /** Builds an .ics file for a daily recitation plan (works with Google Calendar import). */
@@ -68,7 +69,7 @@ export default function RecitationPlan() {
   };
 
   const dayOption = (n, label) => (
-    <button
+    <Button
       key={n}
       type="button"
       onClick={() => setDays(n)}
@@ -77,7 +78,7 @@ export default function RecitationPlan() {
       }`}
     >
       {label}
-    </button>
+    </Button>
   );
 
   return (
@@ -134,12 +135,12 @@ export default function RecitationPlan() {
         </div>
       </div>
 
-      <button
+      <Button
         onClick={download}
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all"
       >
         <Download className="h-4 w-4" /> دانلود فایل تقویم (Google / iOS)
-      </button>
+      </Button>
     </div>
   );
 }

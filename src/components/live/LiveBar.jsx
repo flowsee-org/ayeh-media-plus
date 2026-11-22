@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import { Button } from "@/components/ui/button";
 
 /**
  * Live bar: shows ONLY live sessions from scholars the user follows
@@ -48,7 +49,7 @@ export default function LiveBar() {
     <div className="sticky top-[112px] z-20 px-2">
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1.5">
         {sessions.map((s) => (
-          <button
+          <Button
             key={s.id}
             onClick={() => router.push(`/live/${s.id}`)}
             className="shrink-0 flex items-center gap-2 rounded border border-red-500/30 bg-red-500/10 px-3 py-1.5 hover:bg-red-500/15 transition-colors"
@@ -59,7 +60,7 @@ export default function LiveBar() {
             </span>
             <span className="text-xs font-medium text-red-600">{s.scholar_name}</span>
             <span className="text-xs text-muted-foreground hidden sm:inline">— {s.title}</span>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

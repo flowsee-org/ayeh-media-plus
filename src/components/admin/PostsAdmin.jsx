@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Plus, Trash2, Loader2, Pencil } from "lucide-react";
-import { EmptyState, Field, Modal, inputCls } from "./shared";
+import { EmptyState, Field, Modal } from "./shared"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input"; import { Textarea } from "@/components/ui/textarea";
 import SelectInput from "./SelectInput";
 
 const csv = (s) => String(s || "").split(/[،,]/).map((x) => x.trim()).filter(Boolean);
@@ -32,9 +32,9 @@ export default function PostsAdmin() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <p className="text-sm text-muted-foreground">{(items.length || 0).toLocaleString("fa-IR")} پست</p>
-        <button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
+        <Button onClick={() => setForm({})} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent text-accent-foreground text-sm shadow-soft">
           <Plus className="h-4 w-4" /> پست جدید
-        </button>
+        </Button>
       </div>
 
       {loading ? (
@@ -50,12 +50,12 @@ export default function PostsAdmin() {
                 <div className="text-sm font-medium">{p.author_name} · {TYPES.find((t) => t.id === p.type)?.label || p.type}</div>
                 <p className="text-xs text-muted-foreground line-clamp-1">{p.content}</p>
               </div>
-              <button onClick={() => setForm(p)} className="h-11 w-11 rounded text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition shrink-0" title="ویرایش">
+              <Button onClick={() => setForm(p)} className="h-11 w-11 rounded text-muted-foreground hover:text-accent hover:bg-accent/10 flex items-center justify-center transition shrink-0" title="ویرایش">
                 <Pencil className="h-4 w-4" />
-              </button>
-              <button onClick={async () => { await api.entities.Post.delete(p.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition shrink-0" title="حذف">
+              </Button>
+              <Button onClick={async () => { await api.entities.Post.delete(p.id); reload(); }} className="h-11 w-11 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex items-center justify-center transition shrink-0" title="حذف">
                 <Trash2 className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           ))}
           {items.length === 0 && <EmptyState text="هنوز پستی ثبت نشده است." />}
@@ -124,34 +124,34 @@ function PostForm({ initial, onClose, onSaved }) {
   return (
     <Modal onClose={onClose} title={initial?.id ? "ویرایش پست" : "پست جدید"}>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="نام نویسنده"><input value={form.author_name} onChange={set("author_name")} className={inputCls} /></Field>
+        <Field label="نام نویسنده"><Input value={form.author_name} onChange={set("author_name")}  /></Field>
         <Field label="نوع پست">
           <SelectInput value={form.type} onChange={(v) => setForm((f) => ({ ...f, type: v }))} options={TYPES.map((t) => ({ value: t.id, label: t.label }))} />
         </Field>
       </div>
-      <Field label="متن پست"><textarea value={form.content} onChange={set("content")} rows={4} className={inputCls} dir="rtl" /></Field>
+      <Field label="متن پست"><Textarea value={form.content} onChange={set("content")} rows={4}  dir="rtl" /></Field>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="آیه مرتبط (مثلاً 2:255)"><input value={form.verse_key} onChange={set("verse_key")} className={inputCls} /></Field>
-        <Field label="برچسب‌ها (با کاما)"><input value={form.tags} onChange={set("tags")} className={inputCls} /></Field>
+        <Field label="آیه مرتبط (مثلاً 2:255)"><Input value={form.verse_key} onChange={set("verse_key")}  /></Field>
+        <Field label="برچسب‌ها (با کاما)"><Input value={form.tags} onChange={set("tags")}  /></Field>
       </div>
-      <Field label="متن عربی آیه"><textarea value={form.verse_arabic} onChange={set("verse_arabic")} rows={2} className={inputCls} dir="rtl" /></Field>
-      <Field label="ترجمه آیه"><input value={form.verse_text} onChange={set("verse_text")} className={inputCls} /></Field>
-      <Field label="لینک تصویر"><input value={form.image_url} onChange={set("image_url")} className={inputCls} dir="ltr" placeholder="https://…" /></Field>
+      <Field label="متن عربی آیه"><Textarea value={form.verse_arabic} onChange={set("verse_arabic")} rows={2}  dir="rtl" /></Field>
+      <Field label="ترجمه آیه"><Input value={form.verse_text} onChange={set("verse_text")}  /></Field>
+      <Field label="لینک تصویر"><Input value={form.image_url} onChange={set("image_url")}  dir="ltr" placeholder="https://…" /></Field>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="لینک ویدیو (mp4)"><input value={form.video_url} onChange={set("video_url")} className={inputCls} dir="ltr" placeholder="https://…" /></Field>
-        <Field label="عنوان ویدیو"><input value={form.video_title} onChange={set("video_title")} className={inputCls} /></Field>
+        <Field label="لینک ویدیو (mp4)"><Input value={form.video_url} onChange={set("video_url")}  dir="ltr" placeholder="https://…" /></Field>
+        <Field label="عنوان ویدیو"><Input value={form.video_title} onChange={set("video_title")}  /></Field>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
-        <Field label="لینک آواتار نویسنده"><input value={form.author_avatar} onChange={set("author_avatar")} className={inputCls} dir="ltr" placeholder="https://…" /></Field>
-        <Field label="تعداد لایک اولیه"><input type="number" value={form.likes_count} onChange={set("likes_count")} className={inputCls} /></Field>
+        <Field label="لینک آواتار نویسنده"><Input value={form.author_avatar} onChange={set("author_avatar")}  dir="ltr" placeholder="https://…" /></Field>
+        <Field label="تعداد لایک اولیه"><Input type="number" value={form.likes_count} onChange={set("likes_count")}  /></Field>
       </div>
 
       {err && <p className="text-sm text-destructive">{err}</p>}
       <div className="flex justify-end gap-2 mt-2">
-        <button onClick={onClose} className="px-4 py-2 rounded text-sm border border-border/50 text-muted-foreground hover:text-foreground transition-colors">انصراف</button>
-        <button onClick={submit} disabled={saving} className="px-4 py-2 rounded text-sm bg-accent text-accent-foreground shadow-soft disabled:opacity-50">
+        <Button type="button" variant="outline" onClick={onClose}>انصراف</Button>
+        <Button type="submit" disabled={saving} className="px-4 py-2">
           {saving ? "در حال ذخیره…" : "ذخیره"}
-        </button>
+        </Button>
       </div>
     </Modal>
   );

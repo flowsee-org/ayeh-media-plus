@@ -10,16 +10,15 @@ import {
   Mic, ChevronLeft, Eye, User, Compass, Upload, Radio,
 } from "lucide-react";
 
-import VideoCard from "@/components/design-system/VideoCard";
-import ScholarCard from "@/components/design-system/ScholarCard";
-import ContentSection from "@/components/design-system/ContentSection";
-import { SkeletonPage } from "@/components/design-system/LoadingSkeleton";
-import EmptyState from "@/components/design-system/EmptyState";
-
-/**
- * Homepage — Aparat-style video discovery
- * Topic chips · featured hero · dense video grid · channels · collections
- */
+import VideoCard from "@/components/ui/video-card";
+import ScholarCard from "@/components/ui/scholar-card";
+import ContentSection from "@/components/ui/content-section";
+import { SkeletonPage } from "@/components/ui/loading-skeleton";
+import EmptyState from "@/components/ui/empty-state";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 const CATEGORY_CHIPS = [
   { label: 'برای شما', key: 'all', icon: Compass },
@@ -99,7 +98,6 @@ export default function Home() {
       if (v.category === "short" || (typeof tags === "string" ? tags.includes("شورت") : tags.includes("شورت") || tags.includes("کوتاه"))) {
         return true;
       }
-      // Parse Persian/Latin durations under ~90s as shorts
       const d = String(v.duration || "");
       const m = d.match(/(\d+)/g);
       if (!m) return false;
@@ -130,24 +128,28 @@ export default function Home() {
       {/* Topic chips — Aparat personalized tabs */}
       <section className="sticky top-14 sm:top-16 z-20 -mx-3 sm:-mx-5 lg:-mx-6 px-3 sm:px-5 lg:px-6 py-3 bg-background/90 backdrop-blur-md border-b border-border/60">
         <div className="flex gap-2 overflow-x-auto no-scrollbar">
-          {CATEGORY_CHIPS.map((cat) => {
-            const Icon = cat.icon;
-            const isActive = activeCategory === cat.key;
-            return (
-              <button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-sm font-medium whitespace-nowrap transition-all border shrink-0 ${
-                  isActive
-                    ? 'bg-foreground text-background border-foreground'
-                    : 'bg-card text-foreground/80 border-border hover:bg-muted'
-                }`}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {cat.label}
-              </button>
-            );
-          })}
+          <Tabs defaultValue={activeCategory} onValueChange={setActiveCategory}>
+            <TabsList className="gap-2">
+              {CATEGORY_CHIPS.map((cat) => {
+                const Icon = cat.icon;
+                const isActive = activeCategory === cat.key;
+                return (
+                  <TabsTrigger
+                    key={cat.key}
+                    value={cat.key}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-sm font-medium whitespace-nowrap transition-all border shrink-0 ${
+                      isActive
+                        ? 'bg-foreground text-background border-foreground'
+                        : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    {cat.label}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </Tabs>
         </div>
       </section>
 
@@ -172,16 +174,16 @@ export default function Home() {
             <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-7">
               <div className="flex flex-wrap gap-2 mb-3">
                 {hero.is_live && (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-500 text-white text-xs font-bold">
+                  <Badge variant="destructive" className="text-xs font-bold animate-pulse">
                     <span className="h-1.5 w-1.5 rounded bg-white animate-pulse" />
                     زنده
-                  </span>
+                  </Badge>
                 )}
                 {hero.is_competition && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-primary text-white text-xs font-bold">
+                  <Badge variant="quranic" className="text-xs font-bold">
                     <Trophy className="h-3 w-3" />
                     {hero.competition_year || 'مسابقه'}
-                  </span>
+                  </Badge>
                 )}
               </div>
               <h1 className="font-rokh-bold text-xl sm:text-2xl lg:text-3xl text-white font-bold leading-snug line-clamp-2 mb-3">
@@ -207,10 +209,10 @@ export default function Home() {
                   </span>
                 )}
               </div>
-              <span className="inline-flex w-fit items-center gap-2 px-5 py-2.5 rounded bg-white text-primary font-bold text-sm shadow-lg group-hover:bg-primary group-hover:text-white transition-colors">
+              <Button variant="primary" className="w-fit px-5 py-2.5 text-sm font-bold shadow-lg group-hover:bg-secondary group-hover:text-white transition-colors">
                 <Play className="h-4 w-4" />
                 پخش ویدیو
-              </span>
+              </Button>
             </div>
           </Link>
 
@@ -243,7 +245,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Live strip — only real is_live rows (no placeholders) */}
+      {/* Live strip */}
       {liveVideos.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-4">
@@ -263,7 +265,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Shorts — real short-form recitations only */}
+      {/* Shorts */}
       {shorts.length > 0 && (
         <section>
           <div className="flex items-center justify-between mb-4">
@@ -293,7 +295,6 @@ export default function Home() {
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-accent/20" />
                   )}
-                  {/* Dim baked-in thumb labels; keep UI chrome to duration + hover play only */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/20 pointer-events-none" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <span className="h-9 w-9 rounded bg-white/95 text-primary flex items-center justify-center shadow-sm">
@@ -397,10 +398,9 @@ export default function Home() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {collections.slice(0, 8).map((item) => (
-              <Link
+              <Card
                 key={item.id}
-                href={`/collections/${item.id}`}
-                className="group rounded border border-border bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all"
+                className="rounded border border-border bg-card p-4 hover:border-primary/30 hover:shadow-sm transition-all"
               >
                 <div className="h-28 rounded bg-gradient-to-br from-primary/15 to-accent/10 mb-3 flex items-center justify-center">
                   <Video className="h-8 w-8 text-primary/60 group-hover:scale-110 transition-transform" />
@@ -411,14 +411,14 @@ export default function Home() {
                 {item.description && (
                   <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{item.description}</p>
                 )}
-              </Link>
+              </Card>
             ))}
           </div>
         </section>
       )}
 
-      {/* Creator CTA — video platform, not Quran portal */}
-      <section className="rounded border border-border bg-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+      {/* Creator CTA */}
+      <Card className="rounded border border-border bg-card p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
         <div>
           <h2 className="font-rokh-bold text-xl sm:text-2xl font-bold">ویدیوی قرآنی خود را منتشر کنید</h2>
           <p className="mt-1.5 text-sm text-muted-foreground max-w-xl">
@@ -426,13 +426,14 @@ export default function Home() {
           </p>
         </div>
         <div className="flex flex-wrap gap-3 shrink-0">
-          <button
+          <Button
             onClick={() => router.push('/upload')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-primary text-primary-foreground text-sm font-bold hover:opacity-90"
+            variant="primary"
+            size="sm"
           >
             <Upload className="h-4 w-4" />
             آپلود ویدیو
-          </button>
+          </Button>
           <Link
             href="/creator"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-border text-sm font-bold hover:bg-muted"
@@ -440,7 +441,7 @@ export default function Home() {
             داشبورد سازنده
           </Link>
         </div>
-      </section>
+      </Card>
     </div>
   );
 }

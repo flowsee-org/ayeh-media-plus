@@ -7,6 +7,7 @@ import {
   Trophy, MessageCircle, User, Play, X, Flame, Upload, ShieldCheck,
   Settings, BarChart3,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useTheme } from "@/components/ThemeToggle";
@@ -93,13 +94,13 @@ export default function SidebarNav({ className = "" }) {
             <span className="font-rokh-bold font-bold text-lg text-quranic-emerald leading-none block">آیه</span>
             <span className="font-rokh-bold font-bold text-lg text-quranic-saffron leading-none block">پلاس</span>
           </div>
-          <button
+          <Button
             onClick={() => setCollapsed(!collapsed)}
             className="lg:hidden ml-auto p-2 rounded hover:bg-muted/50 text-foreground/70"
             aria-label="بستن منو"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {/* Main navigation */}
@@ -285,20 +286,20 @@ export default function SidebarNav({ className = "" }) {
             >
               <User className="h-4 w-4" /> پروفایل کاربری
             </Link>
-            <button
+            <Button
               onClick={() => openAuthModal()}
               className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded text-xs font-medium text-white bg-gradient-to-r from-quranic-emerald to-quranic-turquoise shadow-quranic-glow hover:opacity-90 transition-all"
             >
               <Play className="h-3.5 w-3.5" /> ورود به حساب
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
+          <Button
             onClick={() => openAuthModal()}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded text-xs font-bold text-white bg-gradient-to-r from-quranic-emerald to-quranic-turquoise shadow-quranic-glow hover:opacity-90 transition-all"
           >
             <User className="h-4 w-4" /> ورود / ثبت‌نام
-          </button>
+          </Button>
         )}
       </div>
     </aside>

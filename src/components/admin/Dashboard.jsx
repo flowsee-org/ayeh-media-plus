@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Loader2, BookOpen, ScrollText, MessageCircle, Users, FolderHeart, Compass, Trophy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const fa = (n) => (n || 0).toLocaleString("fa-IR");
 
@@ -61,7 +62,7 @@ export default function Dashboard({ onNavigate }) {
             const Icon = c.icon;
             const clickable = !!c.id;
             return (
-              <button
+              <Button
                 key={c.label}
                 onClick={clickable ? () => onNavigate(c.id) : undefined}
                 className={`group text-right rounded border border-border/40 bg-card/50 p-4 sm:p-5 transition-all ${clickable ? "hover:border-accent/30 hover:shadow-premium cursor-pointer" : "cursor-default"}`}
@@ -71,7 +72,7 @@ export default function Dashboard({ onNavigate }) {
                 </div>
                 <div className="font-display font-extrabold text-2xl">{fa(countFor(c))}</div>
                 <div className="text-xs text-muted-foreground mt-0.5">{c.label}</div>
-              </button>
+              </Button>
             );
           })}
         </div>

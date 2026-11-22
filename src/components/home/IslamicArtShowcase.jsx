@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { Palette, Sparkles, ArrowRight, Eye, Camera } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PERSIAN_ART_IMAGES } from "@/lib/persianArtSystem";
 
 const ART_WORKS = [
@@ -77,7 +78,7 @@ export default function IslamicArtShowcase() {
  </div>
 
  <Link
- to="/assistants"
+ href="/assistants"
  className="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-primary text-primary-foreground text-xs font-bold font-rokh-bold shadow-md hover:shadow-lg transition-transform active:scale-95 shrink-0 self-start md:self-auto"
  >
  <Palette className="w-4 h-4 text-amber-300" />
@@ -123,7 +124,7 @@ export default function IslamicArtShowcase() {
  </span>
 
  <Link
- to={`/assistants?bg=${current.id}`}
+ href={`/assistants?bg=${current.id}`}
  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs font-rokh-bold transition-transform active:scale-95 shadow-md"
  >
  <Palette className="w-3.5 h-3.5" />
@@ -138,7 +139,7 @@ export default function IslamicArtShowcase() {
  {ART_WORKS.map((item, idx) => {
  const isSelected = activeIdx === idx;
  return (
- <button
+ <Button
  key={item.id}
  onClick={() => setActiveIdx(idx)}
  className={`p-3 rounded border text-right transition-all flex items-center gap-3.5 ${
@@ -168,7 +169,7 @@ export default function IslamicArtShowcase() {
  {item.desc}
  </p>
  </div>
- </button>
+ </Button>
  );
  })}
  </div>

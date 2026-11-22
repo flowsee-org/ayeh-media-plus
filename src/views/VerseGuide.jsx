@@ -7,6 +7,8 @@ import GuideVerseCard from "@/components/guide/GuideVerseCard";
 import BackButton from "@/components/BackButton";
 import { PersianToranjDivider } from "@/components/PersianIslamicArt";
 import { AlertCircle, Compass, Sparkles, BookOpen } from "lucide-react";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const PROMPT = (problem) => `You are a compassionate Quranic guidance assistant for a Persian-language app.
 A person describes a real life difficulty. Your job: find the Quranic verses that speak directly to THIS difficulty.
@@ -71,7 +73,6 @@ export default function VerseGuide() {
       setResult(res);
       setLoading(false);
 
-      // متن دقیق آیات از منبع قرآنی خوانده می‌شود
       (res?.verses || []).forEach(async (m) => {
         const [s, a] = String(m.verse_key || "").split(":");
         if (!s || !a) return;
@@ -91,27 +92,27 @@ export default function VerseGuide() {
       <BackButton label="بازگشت به خانه" to="/" className="mb-6" />
 
       {/* Clean UI Kit Header */}
-      <div className="rounded border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
+      <Card className="rounded border border-border bg-card p-6 sm:p-10 mb-8 text-center shadow-soft">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-secondary border border-border text-foreground font-ui text-xs font-semibold mb-3">
           <Compass className="h-3.5 w-3.5 text-primary" /> راهنمای تدبّر و تسکین قلوب
         </div>
-        <h1 className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
+        <CardTitle className="font-rokh-bold font-black text-3xl sm:text-4xl text-foreground tracking-tight mb-2">
           آیه‌ی راه
-        </h1>
-        <p className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
+        </CardTitle>
+        <CardDescription className="font-editorial text-muted-foreground text-sm max-w-lg mx-auto">
           کلام وحی برای تسکین اندوه‌ها، رفع تردیدها و یافتن هدایت در گذرگاه‌های سخت زندگی
-        </p>
-      </div>
+        </CardDescription>
+      </Card>
 
       <div className="mb-8">
         <ProblemForm onSubmit={search} loading={loading} />
       </div>
 
       {error && (
-        <div className="mb-6 flex items-start gap-2.5 rounded border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive shadow-soft">
+        <Alert variant="destructive" className="mb-6">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
-          <span>{error}</span>
-        </div>
+          <AlertTitle>{error}</AlertTitle>
+        </Alert>
       )}
 
       {loading && (
@@ -135,13 +136,15 @@ export default function VerseGuide() {
           <PersianToranjDivider label="آیات برگزیده برای شما" />
 
           {result.understanding && (
-            <div className="rounded border border-accent/25 bg-accent/[0.06] p-5 text-sm sm:text-base leading-[2.2] text-foreground/90 shadow-soft">
-              <div className="flex items-center gap-2 text-accent font-bold text-xs mb-2">
-                <Sparkles className="h-4 w-4" />
-                <span>نگاه همدلانه قرآن به احوال شما:</span>
-              </div>
-              <p>{result.understanding}</p>
-            </div>
+            <Card className="rounded border border-accent/25 bg-accent/[0.06] shadow-soft">
+              <CardContent className="p-5 text-sm sm:text-base leading-[2.2] text-foreground/90">
+                <div className="flex items-center gap-2 text-accent font-bold text-xs mb-2">
+                  <Sparkles className="h-4 w-4" />
+                  <span>نگاه همدلانه قرآن به احوال شما:</span>
+                </div>
+                <p>{result.understanding}</p>
+              </CardContent>
+            </Card>
           )}
 
           <div className="space-y-6">
@@ -156,21 +159,25 @@ export default function VerseGuide() {
           </div>
 
           {result.caption && (
-            <div className="rounded border border-dashed border-accent/30 bg-card/50 p-5 shadow-soft">
-              <div className="mb-2 text-xs font-bold text-accent flex items-center gap-1.5">
-                <BookOpen className="h-3.5 w-3.5" />
-                <span>متن پیشنهادی برای بازنشر و یادآوری قلبی:</span>
-              </div>
-              <p className="text-sm leading-[2] text-muted-foreground">{result.caption}</p>
-            </div>
+            <Card className="rounded border border-dashed border-accent/30 bg-card/50 shadow-soft">
+              <CardContent className="p-5">
+                <div className="mb-2 text-xs font-bold text-accent flex items-center gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5" />
+                  <span>متن پیشنهادی برای بازنشر و یادآوری قلبی:</span>
+                </div>
+                <p className="text-sm leading-[2] text-muted-foreground">{result.caption}</p>
+              </CardContent>
+            </Card>
           )}
 
-          <div className="flex items-start gap-2.5 rounded border border-accent/20 bg-card/60 p-4 text-xs leading-[2] text-muted-foreground shadow-soft">
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-            <span>
-              این راهنمایی‌ها جنبه تدبّر و تسکین قلبی دارد. برای تصمیمات فقهی، حقوقی یا درمانی از مشاوران متخصص و علمای دین راهنمایی بجویید.
-            </span>
-          </div>
+          <Card className="flex items-start gap-2.5 rounded border border-accent/20 bg-card/60 p-4 text-xs leading-[2] text-muted-foreground shadow-soft">
+            <CardContent className="p-0 pt-1">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <span>
+                این راهنمایی‌ها جنبه تدبّر و تسکین قلبی دارد. برای تصمیمات فقهی، حقوقی یا درمانی از مشاوران متخصص و علمای دین راهنمایی بجویید.
+              </span>
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

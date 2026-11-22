@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Download, WifiOff, X, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { usePwa } from "@/lib/pwa";
 import { toast } from "react-hot-toast";
 
@@ -62,20 +63,20 @@ export default function PwaInstallBanner() {
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            <button
+            <Button
               onClick={handleInstall}
               disabled={installing}
               className="px-3.5 py-2 rounded bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-all active:scale-95 flex items-center gap-1 shadow-sm"
             >
               <Download className="w-3.5 h-3.5" />
               <span>نصب</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setDismissed(true)}
               className="w-7 h-7 rounded hover:bg-muted/60 flex items-center justify-center text-muted-foreground"
             >
               <X className="w-3.5 h-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

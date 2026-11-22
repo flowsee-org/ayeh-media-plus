@@ -1,5 +1,6 @@
 import React from "react";
 import { AlertTriangle, RotateCw, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { reportClientError } from "@/lib/errorLogger";
 
 export default class ErrorBoundary extends React.Component {
@@ -52,21 +53,21 @@ export default class ErrorBoundary extends React.Component {
             )}
 
             <div className="flex items-center justify-center gap-2">
-              <button
+              <Button
                 onClick={this.handleReset}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-primary text-primary-foreground text-xs font-bold shadow-sm hover:opacity-90 transition-all font-ui"
               >
                 <RotateCw className="h-3.5 w-3.5" />
                 <span>تلاش دوباره</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={() => { window.location.href = "/"; }}
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-secondary hover:bg-secondary/80 text-foreground text-xs font-bold transition-all font-ui"
               >
                 <Home className="h-3.5 w-3.5" />
                 <span>صفحه اصلی</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

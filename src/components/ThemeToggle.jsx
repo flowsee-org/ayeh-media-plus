@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * Theme hook — light mode is the primary Aparat-style experience.
@@ -40,7 +41,7 @@ export default function ThemeToggle() {
     );
   }
   return (
-    <button
+    <Button
       onClick={toggle}
       aria-label="تغییر تم"
       className="flex h-10 w-10 items-center justify-center rounded text-foreground transition-colors hover:bg-secondary"
@@ -50,6 +51,6 @@ export default function ThemeToggle() {
       ) : (
         <Moon className="h-[21px] w-[21px]" strokeWidth={1.8} />
       )}
-    </button>
+    </Button>
   );
 }

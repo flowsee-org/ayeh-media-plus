@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import CreateStory from "@/components/stories/CreateStory";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -28,7 +29,7 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
           <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-3">
             {/* My Story / Add Story */}
             <div className="flex flex-col items-center gap-1 shrink-0">
-              <button
+              <Button
                 onClick={handleMyStoryClick}
                 className="relative h-16 w-16 rounded"
               >
@@ -57,7 +58,7 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
                     <Plus className="h-3 w-3" />
                   </span>
                 )}
-              </button>
+              </Button>
               <span className="text-[11px] text-muted-foreground max-w-[64px] truncate text-[12px]">
                 {myGroup ? "استوری شما" : "استوری من"}
               </span>
@@ -68,7 +69,7 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
               const realIndex = user ? groups.indexOf(group) : groups.indexOf(group);
               return (
                 <div key={group.authorId} className="flex flex-col items-center gap-1 shrink-0">
-                  <button
+                  <Button
                     onClick={() => onOpen(realIndex)}
                     className="relative h-16 w-16 rounded"
                   >
@@ -92,7 +93,7 @@ export default function StoryBar({ groups, user, onOpen, onRefresh }) {
                         </span>
                       )}
                     </span>
-                  </button>
+                  </Button>
                   <span className="text-[11px] text-muted-foreground max-w-[64px] truncate text-[12px]">
                     {group.authorName?.split(" ")[0]}
                   </span>

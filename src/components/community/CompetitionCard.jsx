@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useNavigate } from "@/lib/router-compat";
 import { Image } from "@/components/ui/image";
 import { Trophy, Clock, Users, Gift } from "lucide-react";
 import {
@@ -15,7 +14,6 @@ const fa = (n) => (n || 0).toLocaleString("fa-IR");
  * Clean, minimal chrome; consistent spacing; responsive across screen sizes.
  */
 export default function CompetitionCard({ comp, className = "" }) {
-  const navigate = useNavigate();
   const status = comp.status || "active";
   const id = comp.id || "";
   const href = `/competitions/${id}`;
@@ -27,10 +25,6 @@ export default function CompetitionCard({ comp, className = "" }) {
   return (
     <Link
       href={href}
-      onClick={(e) => {
-        e.preventDefault();
-        navigate(href);
-      }}
       className={`group block rounded border border-border/60 bg-card overflow-hidden transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:-translate-y-0.5 ${className}`}
     >
       {/* Image / hero area */}

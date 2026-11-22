@@ -9,6 +9,7 @@ import {
   Palette,
   Sliders,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   QURAN_FONTS,
   DIACRITIC_THEMES,
@@ -61,12 +62,12 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="h-8 w-8 rounded hover:bg-secondary flex items-center justify-center text-muted-foreground transition-colors"
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
         {/* Live Preview Card */}
@@ -110,7 +111,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
 
         {/* Setting Navigation Tabs */}
         <div className="relative flex border-b border-border/50 text-xs font-bold mb-3">
-          <button
+          <Button
             onClick={() => setActiveTab("font")}
             className={`flex-1 py-2 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "font"
@@ -120,8 +121,8 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
           >
             <Type className="h-3.5 w-3.5" />
             قلم و رسم‌الخط
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab("colors")}
             className={`flex-1 py-2 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "colors"
@@ -131,8 +132,8 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
           >
             <Palette className="h-3.5 w-3.5" />
             رنگ اعراب و وقف
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setActiveTab("layout")}
             className={`flex-1 py-2 text-center border-b-2 transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "layout"
@@ -142,7 +143,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
           >
             <Sliders className="h-3.5 w-3.5" />
             ابعاد و فواصل
-          </button>
+          </Button>
         </div>
 
         {/* Tab Content Body */}
@@ -153,7 +154,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
               {QURAN_FONTS.map((font) => {
                 const isSelected = prefs.arabicFont === font.family;
                 return (
-                  <button
+                  <Button
                     key={font.id}
                     onClick={() =>
                       onChange({
@@ -199,7 +200,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                     >
                       <Check className="h-4 w-4 stroke-[3]" />
                     </div>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -216,7 +217,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                   {DIACRITIC_THEMES.map((theme) => {
                     const isSelected = prefs.diacriticTheme === theme.id;
                     return (
-                      <button
+                      <Button
                         key={theme.id}
                         onClick={() =>
                           onChange({
@@ -243,7 +244,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                         <p className="text-[11px] text-muted-foreground leading-relaxed">
                           {theme.description}
                         </p>
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -260,7 +261,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                       تفکیک علائم وقف (صلی، قلی، ج، مـ، ۛ) با رنگ انتخابی تم مصحف
                     </p>
                   </div>
-                  <button
+                  <Button
                     onClick={() =>
                       onChange({
                         ...prefs,
@@ -276,7 +277,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                         prefs.highlightWaqf !== false ? "-translate-x-5" : "translate-x-0"
                       }`}
                     />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -352,7 +353,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                       نمایش ترجمه فارسی زیر هر آیه
                     </span>
                   </div>
-                  <button
+                  <Button
                     onClick={() =>
                       onChange({
                         ...prefs,
@@ -368,7 +369,7 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
                         prefs.showTranslation ? "-translate-x-5" : "translate-x-0"
                       }`}
                     />
-                  </button>
+                  </Button>
                 </div>
 
                 {prefs.showTranslation && (
@@ -402,20 +403,20 @@ export default function MushafSettingsModal({ isOpen, onClose, prefs, onChange }
 
         {/* Modal Actions Footer */}
         <div className="relative pt-3.5 border-t border-border/60 flex items-center justify-between">
-          <button
+          <Button
             onClick={handleReset}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             <span>بازنشانی پیش‌فرض</span>
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={onClose}
             className="px-5 py-2 rounded bg-primary text-primary-foreground text-xs font-bold shadow-soft hover:shadow-emerald-glow transition-all"
           >
             تأیید و بازگشت به مصحف
-          </button>
+          </Button>
         </div>
       </div>
     </div>

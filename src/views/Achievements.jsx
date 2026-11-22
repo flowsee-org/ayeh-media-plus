@@ -9,7 +9,8 @@ import {
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
-import { Link } from "@/lib/router-compat";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import DailyQuestsCard from "@/components/gamification/DailyQuestsCard";
@@ -54,7 +55,7 @@ export default function Achievements() {
     <div dir="rtl" className="page-shell animate-fade-in font-doran pb-16">
       <div className="mb-4">
         <Link
-          to="/"
+          href="/"
           className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-rokh-bold"
         >
           <ArrowRight className="w-3.5 h-3.5" />
@@ -135,7 +136,7 @@ export default function Achievements() {
           const Icon = tab.icon;
           const active = activeTab === tab.id;
           return (
-            <button
+            <Button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded font-rokh-bold text-sm font-bold transition-all shrink-0 border ${
@@ -151,7 +152,7 @@ export default function Achievements() {
                   {tab.badge}
                 </span>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

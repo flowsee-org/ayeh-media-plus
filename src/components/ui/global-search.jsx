@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, ChevronLeft } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 /**
  * Aparat-style global search — compact bar with suggestions
@@ -67,7 +69,7 @@ export default function GlobalSearch({ className = '' }) {
     <div className={`relative w-full ${className}`}>
       <form onSubmit={handleSubmit} className="relative w-full">
         <Search className="absolute end-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <input
+        <Input
           ref={searchRef}
           type="search"
           value={query}
@@ -81,12 +83,12 @@ export default function GlobalSearch({ className = '' }) {
           placeholder="جستجوی ویدیو، قاری، مسابقه..."
           className="w-full h-10 pe-10 ps-24 rounded bg-muted/70 border border-transparent text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/30 focus:bg-card transition-all"
         />
-        <button
+        <Button
           type="submit"
           className="absolute start-1.5 top-1/2 -translate-y-1/2 h-7 px-3 rounded bg-primary text-primary-foreground text-xs font-bold hover:opacity-90"
         >
           جستجو
-        </button>
+        </Button>
       </form>
 
       {showSuggestions && (
@@ -96,7 +98,7 @@ export default function GlobalSearch({ className = '' }) {
           </div>
           <div className="p-1">
             {filtered.map((s, i) => (
-              <button
+              <Button
                 key={s}
                 type="button"
                 onMouseDown={() => goSearch(s)}
@@ -106,16 +108,16 @@ export default function GlobalSearch({ className = '' }) {
               >
                 <span className="truncate">{s}</span>
                 <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
-              </button>
+              </Button>
             ))}
-            <button
+            <Button
               type="button"
               onMouseDown={() => goSearch()}
               className="w-full flex items-center justify-between px-3 py-2.5 mt-1 border-t border-border text-xs font-bold text-primary hover:bg-primary/5"
             >
               <span>مشاهده همه نتایج</span>
               <ChevronLeft className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

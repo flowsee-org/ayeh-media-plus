@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link, useNavigate } from "@/lib/router-compat";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import {
  ChevronRight,
  Sparkles,
@@ -16,6 +17,8 @@ import {
  Check,
  Copy,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import api from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 import { JUZ_DATA } from "@/lib/juzData";
@@ -24,7 +27,7 @@ import confetti from "canvas-confetti";
 
 export default function KhatmDetail() {
  const { id } = useParams();
- const navigate = useNavigate();
+ const router = useRouter();
  const { user, openAuthModal } = useAuth();
 
  const [session, setSession] = useState(null);
@@ -50,7 +53,7 @@ export default function KhatmDetail() {
  const sessionData = await api.entities.KhatmSession.get(id);
  if (!sessionData) {
  toast.error("دوره ختم مورد نظر یافت نشد");
- navigate("/khatm");
+ router.push("/khatm");
  return;
  }
  setSession(sessionData);
@@ -256,7 +259,7 @@ export default function KhatmDetail() {
  {/* Navigation Breadcrumb */}
  <div className="flex items-center justify-between">
  <Link
- to="/khatm"
+ href="/khatm"
  className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
  >
  <ChevronRight className="w-4 h-4" />
@@ -265,7 +268,7 @@ export default function KhatmDetail() {
 
  <div className="flex items-center gap-2">
  {session.is_private && session.invite_code && (
- <button
+ <Button
  onClick={() => {
  navigator.clipboard?.writeText(session.invite_code);
  toast.success(`کد دعوت (${session.invite_code}) کپی شد`);
@@ -274,15 +277,15 @@ export default function KhatmDetail() {
  >
  <Copy className="w-3.5 h-3.5 text-accent" />
  <span>کد: {session.invite_code}</span>
- </button>
+ </Button>
  )}
- <button
+ <Button
  onClick={handleShare}
  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-accent/10 hover:bg-accent/20 text-accent text-xs font-semibold border border-accent/20 transition-all"
  >
  <Share2 className="w-3.5 h-3.5" />
  <span>اشتراک‌گذاری</span>
- </button>
+ </Button>
  </div>
  </div>
 
@@ -348,7 +351,7 @@ export default function KhatmDetail() {
  <div className="text-3xl sm:text-4xl font-extrabold font-mono text-accent my-1">
  {salawatCount.toLocaleString("fa-IR")}
  </div>
- <button
+ <Button
  onClick={handleSendSalawat}
  className={`mt-3 px-5 py-2.5 rounded bg-gradient-to-r from-accent to-amber-500 text-white font-semibold text-xs shadow-md hover:shadow-lg transition-all active:scale-90 flex items-center gap-2 ${
  salawatAnimating ? "scale-105" : ""
@@ -356,7 +359,7 @@ export default function KhatmDetail() {
  >
  <Heart className="w-3.5 h-3.5 fill-current animate-pulse" />
  <span>ذکر صلوات (+۱)</span>
- </button>
+ </Button>
  </div>
  </div>
 
@@ -485,36 +488,36 @@ export default function KhatmDetail() {
  {/* Actions Bar */}
  <div className="pt-3 border-t border-border/40 flex items-center gap-2">
  {part.status === "available" ? (
- <button
+ <Button
  onClick={() => handleReservePart(part)}
  className="w-full py-2 rounded bg-accent text-accent-foreground font-semibold text-xs shadow-sm hover:bg-accent/90 transition-all active:scale-95 flex items-center justify-center gap-1"
  >
  <BookOpen className="w-3.5 h-3.5" />
  <span>رزرو این سهم</span>
- </button>
+ </Button>
  ) : part.status === "reserved" && isMine ? (
  <div className="w-full flex items-center gap-1.5">
  <Link
- to={`/quran?juz=${part.part_number}&khatm_part_id=${part.id}`}
+ href={`/quran?juz=${part.part_number}&khatm_part_id=${part.id}`}
  className="flex-1 py-2 rounded bg-accent text-accent-foreground font-semibold text-xs text-center hover:bg-accent/90 transition-all flex items-center justify-center gap-1"
  >
  <BookOpen className="w-3.5 h-3.5" />
  <span>شروع تلاوت</span>
  </Link>
- <button
+ <Button
  onClick={() => handleCompletePart(part)}
  title="علامت‌گذاری به عنوان خوانده شده"
  className="p-2 rounded bg-emerald-500 text-white hover:bg-emerald-600 transition-all text-xs font-semibold"
  >
  <Check className="w-4 h-4" />
- </button>
- <button
+ </Button>
+ <Button
  onClick={() => handleCancelReservation(part)}
  title="انصراف از سهم"
  className="p-2 rounded bg-card border border-border/70 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-all text-xs"
  >
  ✕
- </button>
+ </Button>
  </div>
  ) : part.status === "reserved" ? (
  <div className="w-full py-1.5 text-center text-xs text-muted-foreground font-medium">
@@ -549,21 +552,21 @@ export default function KhatmDetail() {
 
  {/* New Dua Input Form */}
  <form onSubmit={handleSubmitDua} className="flex gap-2">
- <input
+ <Input
  type="text"
  value={newDuaText}
  onChange={(e) => setNewDuaText(e.target.value)}
  placeholder="دعای خیر یا نیت قلبی خود را برای شرکت‌کنندگان بنویسید..."
  className="flex-1 px-4 py-3 rounded bg-background border border-border/70 text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
  />
- <button
+ <Button
  type="submit"
  disabled={submittingDua || !newDuaText.trim()}
  className="px-5 py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-sm hover:bg-accent/90 disabled:opacity-40 transition-all flex items-center gap-1.5 shrink-0"
  >
  <Send className="w-4 h-4 rotate-180" />
  <span>ثبت دعا</span>
- </button>
+ </Button>
  </form>
 
  {/* List of Duas */}

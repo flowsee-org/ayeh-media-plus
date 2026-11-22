@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "@/lib/router-compat";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
  Search,
  BookOpen,
@@ -10,6 +11,7 @@ import {
  Flame,
  Palette,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PERSIAN_ART_IMAGES, OrsiLightBeams } from "@/lib/persianArtSystem";
 
 const quickCards = [
@@ -19,7 +21,7 @@ const quickCards = [
  desc: "۱۱۴ سوره، ۳۰ جزء، تلاوت‌های فاخر — همه قرآن در یکجا",
  icon: BookOpen,
  badge: "مصحف و تلاوت",
- tagColor: "text-emerald-700 bg-emerald-50 dark:text-emerald-300 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-900/60",
+ tagColor: "text-quranic-emerald bg-quranic-emerald/10 border border-quranic-emerald/20",
  },
  {
  to: "/assistants",
@@ -27,7 +29,7 @@ const quickCards = [
  desc: "آیات خود را به شاهکارهای بصری تبدیل کنید — با هنر معماری ایران",
  icon: Palette,
  badge: "هنر و رسانه",
- tagColor: "text-amber-700 bg-amber-50 dark:text-amber-300 dark:bg-amber-950/60 border-amber-200 dark:border-amber-900/60",
+ tagColor: "text-quranic-saffron-dark bg-quranic-saffron/10 border border-quranic-saffron/20",
  },
  {
  to: "/guide",
@@ -35,7 +37,7 @@ const quickCards = [
  desc: "حال دل‌تان را بنویسید، آیه‌ای که به درد شما می‌خورد را بیابید",
  icon: Sparkles,
  badge: "دستیار تدبّر",
- tagColor: "text-teal-700 bg-teal-50 dark:text-teal-300 dark:bg-teal-950/60 border-teal-200 dark:border-teal-900/60",
+ tagColor: "text-quranic-turquoise bg-quranic-turquoise/10 border border-quranic-turquoise/20",
  },
  {
  to: "/talks",
@@ -43,7 +45,7 @@ const quickCards = [
  desc: "درس‌های عرفان، تفسیر و حکمت از زبان بزرگان علم قرآن",
  icon: Video,
  badge: "چندرسانه‌ای",
- tagColor: "text-yellow-700 bg-yellow-50 dark:text-yellow-300 dark:bg-yellow-950/60 border-yellow-200 dark:border-yellow-900/60",
+ tagColor: "text-quranic-saffron-dark bg-quranic-saffron/10 border border-quranic-saffron/20",
  },
 ];
 
@@ -56,18 +58,18 @@ const trendingTopics = [
 ];
 
 export default function Hero({ dailyVerse }) {
- const navigate = useNavigate();
+ const router = useRouter();
  const [searchQuery, setSearchQuery] = useState("");
 
  const handleSearch = (e) => {
  e.preventDefault();
  if (searchQuery.trim()) {
- navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+ router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
  }
  };
 
  const handleTopicClick = (q) => {
- navigate(`/search?q=${encodeURIComponent(q)}`);
+ router.push(`/search?q=${encodeURIComponent(q)}`);
  };
 
  return (
@@ -90,7 +92,7 @@ export default function Hero({ dailyVerse }) {
  <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
  {/* Sacred Bismillah */}
  <p
- className=" text-2xl sm:text-3xl text-amber-300/90 drop-shadow-md mb-3 tracking-wide"
+ className=" text-2xl sm:text-3xl text-quranic-saffron-light/90 drop-shadow-md mb-3 tracking-wide"
  dir="rtl"
  lang="ar"
  >
@@ -98,53 +100,53 @@ export default function Hero({ dailyVerse }) {
  </p>
 
  {/* Platform badge */}
- <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded border border-amber-400/30 bg-black/40 backdrop-blur-md text-amber-200 text-xs font-ui font-medium mb-5 shadow-lg shadow-black/20">
- <span className="flex h-2 w-2 rounded bg-emerald-400 animate-pulse" />
+ <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded border border-quranic-saffron/30 bg-black/40 backdrop-blur-md text-quranic-saffron-light text-xs font-ui font-medium mb-5 shadow-lg shadow-black/20">
+ <span className="flex h-2 w-2 rounded bg-quranic-emerald-light animate-pulse" />
  <span>پلتفرم چندرسانه‌ای تدبّر در قرآن کریم</span>
  </div>
 
  {/* Main Display Headline (Doran ExtraBold) */}
  <h1 className="font-rokh-extrabold font-black tracking-tight text-3xl sm:text-5xl lg:text-6xl leading-[1.25] text-white drop-shadow-lg mb-4">
- قرآنی باشید، <span className="text-amber-400 drop-shadow-md">حیاتان روشن شود</span>
+ قرآنی باشید، <span className="text-quranic-saffron drop-shadow-md">حیاتان روشن شود</span>
  </h1>
 
  {/* Subtitle (Doran) */}
- <p className="font-doran max-w-2xl mx-auto text-base sm:text-lg text-emerald-100/90 drop-shadow leading-relaxed mb-8">
+ <p className="font-doran max-w-2xl mx-auto text-base sm:text-lg text-quranic-emerald-light/90 drop-shadow leading-relaxed mb-8">
  مرجع جامع تلاوت، تفسیر، تدبّر و هنر قرآنی — در فضایی الهام‌بخش از معماری ایرانی-اسلامی.
  </p>
 
  {/* Professional Search Box (Doran UI) */}
  <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-5">
- <div className="relative flex items-center rounded border border-amber-400/30 bg-card/90 dark:bg-black/60 shadow-2xl backdrop-blur-xl hover:border-amber-400/60 focus-within:border-amber-400 focus-within:ring-2 focus-within:ring-amber-400/30 transition-all p-1.5 sm:p-2">
- <Search className="h-5 w-5 text-amber-400 mr-3 shrink-0" />
+ <div className="relative flex items-center rounded border border-quranic-saffron/30 bg-card/90 dark:bg-black/60 shadow-2xl backdrop-blur-xl hover:border-quranic-saffron/60 focus-within:border-quranic-saffron focus-within:ring-2 focus-within:ring-quranic-saffron/30 transition-all p-1.5 sm:p-2">
+ <Search className="h-5 w-5 text-quranic-saffron mr-3 shrink-0" />
  <input
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
  placeholder="چه می‌گردید؟ آیه، موضوع، ترجمه، اساتید..."
  className="flex-1 bg-transparent text-sm sm:text-base font-ui text-foreground placeholder:text-muted-foreground/70 focus:outline-none px-1"
  />
- <button
+ <Button
  type="submit"
- className="px-5 py-2.5 rounded bg-gradient-to-r from-emerald-600 to-teal-800 hover:from-emerald-500 hover:to-teal-700 text-white font-ui font-bold text-xs sm:text-sm shadow-md transition-all whitespace-nowrap active:scale-95"
+ className="px-5 py-2.5 rounded bg-gradient-to-r from-quranic-emerald to-quranic-turquoise hover:from-quranic-emerald-light hover:to-quranic-turquoise-light text-white font-ui font-bold text-xs sm:text-sm shadow-md transition-all whitespace-nowrap active:scale-95"
  >
  کاوش در قرآن
- </button>
+ </Button>
  </div>
  </form>
 
  {/* Trending Quick Topic Pills */}
  <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
- <span className="inline-flex items-center gap-1 text-xs font-ui text-amber-200/90 ml-1">
- <Flame className="h-3.5 w-3.5 text-amber-400 fill-amber-400" /> پرجستجو‌ترین‌ها:
+ <span className="inline-flex items-center gap-1 text-xs font-ui text-quranic-saffron-light/90 ml-1">
+ <Flame className="h-3.5 w-3.5 text-quranic-saffron fill-quranic-saffron" /> پرجستجو‌ترین‌ها:
  </span>
  {trendingTopics.map((t) => (
- <button
+ <Button
  key={t.q}
  onClick={() => handleTopicClick(t.q)}
- className="px-3 py-1 rounded text-xs font-ui font-medium bg-black/40 hover:bg-black/60 text-white border border-amber-400/20 backdrop-blur-md transition-all hover:border-amber-400/50"
+ className="px-3 py-1 rounded text-xs font-ui font-medium bg-black/40 hover:bg-black/60 text-white border border-quranic-saffron/20 backdrop-blur-md transition-all hover:border-quranic-saffron/50"
  >
  {t.label}
- </button>
+ </Button>
  ))}
  </div>
 
@@ -155,8 +157,8 @@ export default function Hero({ dailyVerse }) {
  return (
  <Link
  key={card.to}
- to={card.to}
- className="group relative flex flex-col justify-between p-5 rounded bg-card/90 dark:bg-card/75 border border-border/80 hover:border-amber-400/50 hover:shadow-2xl transition-all duration-300 backdrop-blur-lg hover:-translate-y-1"
+ href={card.to}
+ className="group relative flex flex-col justify-between p-5 rounded bg-card/90 dark:bg-card/75 border border-border/80 hover:border-quranic-saffron/50 hover:shadow-2xl transition-all duration-300 backdrop-blur-lg hover:-translate-y-1"
  >
  <div>
  <div className="flex items-center justify-between mb-3.5">
@@ -187,27 +189,27 @@ export default function Hero({ dailyVerse }) {
 
  {/* Daily Verse Card — Illuminated Persian Katibeh Card */}
  {dailyVerse && (
- <div className="max-w-3xl mx-auto rounded border border-amber-400/30 bg-card/95 dark:bg-black/60 p-6 sm:p-8 text-right shadow-2xl backdrop-blur-xl relative overflow-hidden">
+ <div className="max-w-3xl mx-auto rounded border border-quranic-saffron/30 bg-card/95 dark:bg-black/60 p-6 sm:p-8 text-right shadow-2xl backdrop-blur-xl relative overflow-hidden">
  {/* Subtle corner light sheen */}
- <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded blur-2xl pointer-events-none" />
+ <div className="absolute top-0 right-0 w-32 h-32 bg-quranic-saffron/10 rounded blur-2xl pointer-events-none" />
 
  <div className="flex items-center justify-between gap-3 mb-4 border-b border-border/70 pb-3">
  <div className="flex items-center gap-2">
- <span className="h-2 w-2 rounded bg-amber-400 animate-pulse" />
+ <span className="h-2 w-2 rounded bg-quranic-saffron animate-pulse" />
  <span className="font-rokh-bold text-xs font-bold text-foreground">
  آیه امروز برای تدبّر شما
  </span>
  </div>
  <div className="flex items-center gap-3">
  <Link
- to={`/assistants?verse_key=${dailyVerse.verse_key || "24:35"}`}
- className="inline-flex items-center gap-1 font-ui text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+ href={`/assistants?verse_key=${dailyVerse.verse_key || "24:35"}`}
+ className="inline-flex items-center gap-1 font-ui text-xs font-semibold text-quranic-saffron-dark dark:text-quranic-saffron hover:underline"
  >
  <Palette className="h-3.5 w-3.5" />
  <span>سازماندهی بصری</span>
  </Link>
  <Link
- to={dailyVerse.verse_key ? `/verse/${dailyVerse.verse_key.replace(":", "/")}` : "/quran"}
+ href={dailyVerse.verse_key ? `/verse/${dailyVerse.verse_key.replace(":", "/")}` : "/quran"}
  className="inline-flex items-center gap-1 font-ui text-xs font-medium text-primary hover:underline"
  >
  <span>مطالعه عمیق</span>

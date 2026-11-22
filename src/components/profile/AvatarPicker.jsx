@@ -6,6 +6,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { PRESETS, serializeAvatar, characterInfo } from "@/lib/avatars";
 
 /**
@@ -56,7 +57,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
           {PRESETS.map((p) => {
             const active = presetId === p.id;
             return (
-              <button
+              <Button
                 key={p.id}
                 onClick={() => setPresetId(p.id)}
                 className={`relative flex flex-col items-center gap-1.5 rounded p-2.5 border transition-all ${
@@ -73,7 +74,7 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
                     <Check className="h-2.5 w-2.5" />
                   </span>
                 )}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -82,14 +83,14 @@ export default function AvatarPicker({ open, onOpenChange, currentConfig, onSave
           <p className="text-xs text-muted-foreground">
             بارگذاری تصویر چهره مجاز نیست
           </p>
-          <button
+          <Button
             onClick={save}
             disabled={saving || !selected}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded bg-accent text-accent-foreground text-sm font-medium hover:shadow-glow transition-all disabled:opacity-50"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             انتخاب شخصیت
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

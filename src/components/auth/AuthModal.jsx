@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   User,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 import confetti from "canvas-confetti";
@@ -217,12 +218,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
         <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-amber-500/10 rounded blur-3xl pointer-events-none" />
 
         {/* Close Button */}
-        <button
+        <Button
           onClick={onClose}
           className="absolute left-4 top-4 w-8 h-8 rounded hover:bg-accent/10 flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
         >
           <X className="w-4 h-4" />
-        </button>
+        </Button>
 
         {/* Modal Header */}
         <div className="text-center space-y-2 mb-6">
@@ -280,7 +281,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                 />
 
                 {/* Reload Captcha Button */}
-                <button
+                <Button
                   type="button"
                   onClick={loadCaptcha}
                   disabled={loadingCaptcha}
@@ -288,7 +289,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
                   className="p-2.5 rounded bg-background border border-border/70 hover:border-accent hover:bg-accent/5 text-muted-foreground hover:text-accent transition-all shrink-0"
                 >
                   <RefreshCw className={`w-4 h-4 ${loadingCaptcha ? "animate-spin" : ""}`} />
-                </button>
+                </Button>
 
                 {/* Captcha Answer Input */}
                 <input
@@ -304,14 +305,14 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
               disabled={sendingOtp || !phone.trim() || !captchaAnswer.trim()}
               className="w-full mt-4 py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>{sendingOtp ? "در حال ارسال کد..." : "دریافت کد تایید پیامکی"}</span>
-            </button>
+            </Button>
           </form>
         )}
 
@@ -344,39 +345,39 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
 
             {/* Timer & Back / Resend links */}
             <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-              <button
+              <Button
                 type="button"
                 onClick={() => setStep("phone")}
                 className="hover:text-foreground flex items-center gap-1 transition-colors"
               >
                 <ArrowRight className="w-3.5 h-3.5" />
                 <span>ویرایش شماره</span>
-              </button>
+              </Button>
 
               {countdown > 0 ? (
                 <span className="font-mono">
                   ارسال مجدد ({Math.floor(countdown / 60)}:{(countdown % 60).toString().padStart(2, "0")})
                 </span>
               ) : (
-                <button
+                <Button
                   type="button"
                   onClick={handleResend}
                   className="text-accent font-semibold hover:underline"
                 >
                   ارسال مجدد کد
-                </button>
+                </Button>
               )}
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
               type="submit"
               disabled={verifyingOtp || !otp.trim()}
               className="w-full py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{verifyingOtp ? "در حال اعتبارسنجی..." : "تایید و ورود"}</span>
-            </button>
+            </Button>
           </form>
         )}
 
@@ -404,21 +405,21 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             </div>
 
             <div className="pt-2 flex flex-col gap-2">
-              <button
+              <Button
                 type="button"
                 disabled={savingProfile}
                 onClick={() => handleSaveProfile(false)}
                 className="w-full py-2.5 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all"
               >
                 {savingProfile ? "در حال ثبت..." : "ذخیره و ورود به سامانه"}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => handleSaveProfile(true)}
                 className="w-full py-2 rounded text-xs text-muted-foreground hover:text-foreground font-medium"
               >
                 بعداً تکمیل می‌کنم (ورود)
-              </button>
+              </Button>
             </div>
           </div>
         )}

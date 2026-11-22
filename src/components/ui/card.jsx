@@ -12,7 +12,7 @@ const Card = React.forwardRef(({ className, variant = "default", ...props }, ref
         "hover:shadow-lg hover:-translate-y-1 hover:border-primary/30 cursor-pointer": variant === "interactive",
         "shadow-lg": variant === "elevated",
         "bg-card/80 backdrop-blur-xl border-border/50 shadow-xl": variant === "glass",
-        "relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-primary/5 before:via-transparent before:to-accent/5 before:opacity-0 before:transition-opacity hover:before:opacity-100": variant === "sonnat",
+        "relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-primary/5 before:via-transparent before:to-accent/5 before:opacity-0 before:transition-opacity hover:before:opacity-100": variant === "quranic",
       },
       className
     )}

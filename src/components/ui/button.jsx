@@ -23,8 +23,8 @@ const buttonVariants = cva(
           "btn-accent bg-accent text-accent-foreground shadow-sm hover:bg-accent-glow hover:shadow-md",
         link:
           "text-primary underline-offset-4 hover:underline font-medium",
-        sonnat:
-          "bg-gradient-to-r from-sonnat-emerald to-sonnat-saffron text-white shadow-sonnat-glow hover:from-sonnat-emerald-light hover:to-sonnat-saffron-light hover:shadow-lg",
+        quranic:
+          "bg-gradient-to-r from-quranic-emerald to-quranic-saffron text-white shadow-emerald-glow hover:from-quranic-emerald-light hover:to-quranic-saffron-light hover:shadow-lg",
       },
       size: {
         default: "h-11 px-5 py-2.5 text-sm",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import Link from "next/link";
 import { Sparkles, ArrowLeft, HeartHandshake } from "lucide-react";
 import api from "@/lib/api";
 
@@ -90,7 +90,7 @@ export default function KhatmHomeBanner() {
               </div>
             )}
             <Link
-              to={`/khatm/${featuredKhatm.id}`}
+              href={`/khatm/${featuredKhatm.id}`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded bg-accent text-accent-foreground font-semibold text-sm shadow-md hover:bg-accent/90 transition-all active:scale-95"
             >
               <span>رزرو و شروع تلاوت سهم</span>
