@@ -23,6 +23,7 @@ import moderationRoutes from './routes/moderation.js';
 import watchHistoryRoutes from './routes/watch-history.js';
 import khatmRoutes from './routes/khatm.js';
 import liveRoutes from './routes/live.js';
+import hifzRoutes from './routes/hifz.js';
 import { initSocket } from './socket.js';
 import { initGlobalProcessLogging, logError } from './logger.js';
 
@@ -176,6 +177,7 @@ app.use('/api/moderation', moderationRoutes);
 app.use('/api/watch-history', watchHistoryRoutes);
 app.use('/api/khatm', khatmRoutes);
 app.use('/api/live', liveRoutes);
+app.use('/api/hifz', hifzRoutes);
 
 // Health check — includes a lightweight DB ping for staging/ops probes.
 app.get('/api/health', async (req, res) => {

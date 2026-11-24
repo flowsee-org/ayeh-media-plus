@@ -511,6 +511,27 @@ export const live = {
   },
 };
 
+// ── Smart Hifz Companion ──
+export const hifz = {
+  getProgress: () => request('/hifz/progress'),
+  submitReview: (data) =>
+    request('/hifz/review', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  syncProgress: (items) =>
+    request('/hifz/sync', {
+      method: 'POST',
+      body: JSON.stringify({ items }),
+    }),
+  getGoals: () => request('/hifz/goals'),
+  createGoal: (data) =>
+    request('/hifz/goals', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+};
+
 // Unified API object
 export const api = {
   auth,
@@ -523,6 +544,7 @@ export const api = {
   competitions,
   khatm,
   live,
+  hifz,
 };
 
 export default api;
