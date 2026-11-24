@@ -27,6 +27,7 @@ const primaryItems = [
 const libraryItems = [
   { to: '/watch-history', label: 'تاریخچه تماشا', icon: Clock, auth: true },
   { to: '/bookmarks', label: 'نشان‌شده‌ها', icon: Bookmark, auth: true },
+  { to: '/hifz', label: 'دستیار حفظ قرآن', icon: Trophy },
   { to: '/community', label: 'جامعه', icon: MessageCircle },
   { to: '/competitions', label: 'مسابقات', icon: Trophy },
   { to: '/quran', label: 'مصحف شریف', icon: BookOpen },
