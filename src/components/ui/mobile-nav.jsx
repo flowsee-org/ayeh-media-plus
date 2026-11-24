@@ -18,6 +18,7 @@ const mobileItems = [
   { to: '/scholars', label: 'کانال‌ها و اساتید', icon: Users },
   { to: '/collections', label: 'لیست‌های پخش', icon: FolderHeart },
   { to: '/competitions', label: 'مسابقات', icon: Trophy },
+  { to: '/hifz', label: 'دستیار حفظ قرآن', icon: Trophy },
   { to: '/community', label: 'جامعه', icon: MessageCircle },
   { to: '/quran', label: 'مصحف شریف', icon: BookOpen },
 ];

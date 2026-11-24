@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Room, RoomEvent, Track, createLocalTracks } from "livekit-client";
 import api from "@/lib/api";
 import { Loader2, Users, Send, Radio, Lock, Hand, Mic, Video, VideoOff, MicOff, Volume2, VolumeX, Settings, ChevronDown, ChevronRight, MoreHorizontal, Heart, Flag, Share2, Download, List, Grid, X, MessageSquare, Bell, Eye, Fullscreen, SkipForward, SkipBack, Play, Pause, BookOpen } from "lucide-react";
 import BackButton from "@/components/BackButton";
@@ -50,7 +51,7 @@ export default function LiveView() {
   const localCoHostVideoRef = useRef(null);
   const connRef = useRef(null);
   const subRef = useRef(null);
-  const pcRef = useRef(null);
+  const livekitRoomRef = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -99,13 +100,47 @@ export default function LiveView() {
     return () => { cancelled = true; };
   }, [id]);
 
-  const connectToRoom = (sess, me) => {
+  const connectToRoom = async (sess, me) => {
     let connId = sessionStorage.getItem("liveConnId");
     if (!connId) {
       connId = crypto.randomUUID();
       sessionStorage.setItem("liveConnId", connId);
     }
 
+    // 1. Connect to LiveKit SFU for high-performance audio/video
+    try {
+      const tokenRes = await api.live.getToken(sess.room_id, connId);
+      const room = new Room({
+        adaptiveStream: true,
+        dynacast: true,
+      });
+      livekitRoomRef.current = room;
+
+      room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+        // Broadcaster / co-host video streams
+        const isScholar = participant.identity.includes(sess.scholar_id) || participant.identity.startsWith("scholar-");
+        if (track.kind === Track.Kind.Video) {
+          if (isScholar && videoRef.current) {
+            track.attach(videoRef.current);
+          } else if (coHostVideoRef.current) {
+            track.attach(coHostVideoRef.current);
+          }
+        } else if (track.kind === Track.Kind.Audio) {
+          const audioElement = track.attach();
+          document.body.appendChild(audioElement);
+        }
+      });
+
+      room.on(RoomEvent.TrackUnsubscribed, (track) => {
+        track.detach();
+      });
+
+      await room.connect(tokenRes.url, tokenRes.token);
+    } catch (lkErr) {
+      console.warn("LiveKit viewer connect error (continuing with room state):", lkErr);
+    }
+
+    // 2. Connect to Socket.io for chat, pinned verse overlays, & hand-raising
     const conn = api.actors.LiveRoom(sess.room_id).connect({ id: connId });
     connRef.current = conn;
 
@@ -128,12 +163,6 @@ export default function LiveView() {
         setViewerCount(msg.viewerCount);
         setViewers(msg.viewers || []);
       }
-      if (msg.type === "offer") {
-        handleOffer(msg, conn);
-      }
-      if (msg.type === "ice" && pcRef.current) {
-        pcRef.current.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(() => {});
-      }
       if (msg.type === "chat") {
         setChat((prev) => [...prev, msg.message].slice(-200));
       }
@@ -144,7 +173,7 @@ export default function LiveView() {
         setPinnedVerse(msg.verse || null);
       }
       if (msg.type === "speaker_accepted") {
-        handleSpeakerAccepted(conn);
+        handleSpeakerAccepted(conn, connId, sess.room_id);
       }
       if (msg.type === "speaker_kicked") {
         handleSpeakerKicked();
@@ -172,36 +201,6 @@ export default function LiveView() {
     }, 500);
   };
 
-  const handleOffer = (msg, conn) => {
-    const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-      ],
-    });
-
-    pc.ontrack = (e) => {
-      if (videoRef.current) {
-        videoRef.current.srcObject = e.streams[0];
-      }
-    };
-
-    pc.onicecandidate = (e) => {
-      if (e.candidate) {
-        conn.send({ type: "ice", target: msg.from, candidate: e.candidate });
-      }
-    };
-
-    pc.setRemoteDescription(new RTCSessionDescription(msg.sdp)).then(() => {
-      return pc.createAnswer();
-    }).then((answer) => {
-      pc.setLocalDescription(answer);
-      conn.send({ type: "answer", target: msg.from, sdp: answer });
-    }).catch(() => {});
-
-    pcRef.current = pc;
-  };
-
   const toggleHandRaise = () => {
     if (!connRef.current || !user) {
       toast.error("برای درخواست گفتگو ابتدا وارد حساب خود شوید");
@@ -222,12 +221,13 @@ export default function LiveView() {
     }
   };
 
-  const handleSpeakerAccepted = async (conn) => {
+  const handleSpeakerAccepted = async (conn, connId, roomId) => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      const localTracks = await createLocalTracks({
         video: { width: { ideal: 1280 }, height: { ideal: 720 } },
         audio: true,
       });
+      const mediaStream = new MediaStream(localTracks.map((t) => t.mediaStreamTrack));
       setLocalStream(mediaStream);
       setIsSpeaking(true);
       setHandRaised(false);
@@ -236,13 +236,11 @@ export default function LiveView() {
       }
       toast.success("استاد درخواست شما را پذیرفت؛ شما هم‌اکنون روی خط زنده هستید!");
 
-      if (pcRef.current) {
-        mediaStream.getTracks().forEach((track) => {
-          pcRef.current.addTrack(track, mediaStream);
-        });
-        const offer = await pcRef.current.createOffer();
-        await pcRef.current.setLocalDescription(offer);
-        conn.send({ type: "offer", target: session.scholar_id, sdp: offer });
+      // If in LiveKit room, publish local tracks as accepted co-host
+      if (livekitRoomRef.current) {
+        for (const track of localTracks) {
+          await livekitRoomRef.current.localParticipant.publishTrack(track);
+        }
       }
     } catch {
       toast.error("دسترسی به دوربین یا میکروفون امکان‌پذیر نشد");
@@ -290,8 +288,11 @@ export default function LiveView() {
 
   useEffect(() => {
     return () => {
+      if (livekitRoomRef.current) {
+        livekitRoomRef.current.disconnect();
+        livekitRoomRef.current = null;
+      }
       if (localStream) localStream.getTracks().forEach((t) => t.stop());
-      if (pcRef.current) pcRef.current.close();
       if (subRef.current) subRef.current();
       if (connRef.current) connRef.current.close();
     };

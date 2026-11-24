@@ -46,10 +46,11 @@ async function fetchJSON(url, retries = 2) {
 }
 
 export const RECITERS = [
-  { id: "ar.alafasy", name: "مشاری العفاسی", bitrate: 128, style: "ترتیل" },
   { id: "ar.parhizgar", name: "استاد شهریار پرهیزگار", bitrate: 48, style: "ترتیل آموزشی" },
+  { id: "ar.husary", name: "شیخ محمود خلیل الحصری", bitrate: 128, style: "ترتیل و تجوید معیار" },
+  { id: "ar.minshawi", name: "استاد محمد صدیق منشاوی", bitrate: 128, style: "ترتیل آموزشی" },
+  { id: "ar.alafasy", name: "مشاری العفاسی", bitrate: 128, style: "ترتیل" },
   { id: "ar.abdulbasitmurattal", name: "استاد عبدالباسط عبدالصمد", bitrate: 192, style: "ترتیل" },
-  { id: "ar.minshawi", name: "استاد محمد صدیق منشاوی", bitrate: 128, style: "ترتیل" },
 ];
 
 /* ── Compute global verse number (1–6236) for audio URL construction ── */

@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { getSurahList, getSurah, getJuz, RECITERS, getAudioUrl } from "@/lib/quranApi";
+import HifzSessionRunner from "@/components/hifz/HifzSessionRunner";
+import { getLocalHifzStore } from "@/lib/hifzService";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { VerseMarker } from "@/components/IslamicDecorations";
 import { JUZ_DATA } from "@/lib/juzData";
@@ -301,6 +303,9 @@ function SurahView({ n, onBack }) {
  const [reciterDropdownOpen, setReciterDropdownOpen] = useState(false);
 
  const [prefs, updatePrefs] = useReadingPrefs();
+ const [hifzMode, setHifzMode] = useState(false);
+ const [activeHifzAyah, setActiveHifzAyah] = useState(null);
+ const [hifzStore, setHifzStore] = useState(() => getLocalHifzStore());
  const surahRouter = useRouter();
  const navigate = (path) => surahRouter.push(path);
  const { playTrack, track: currentTrack, isPlaying, togglePlay } = useAudioPlayer();
@@ -434,8 +439,21 @@ function SurahView({ n, onBack }) {
  return (
  <div className="max-w-5xl mx-auto animate-fade-in font-doran pb-28">
  {/* Top Navigation */}
- <div className="flex items-center justify-between mb-6 sm:mb-8">
+ <div className="flex items-center justify-between mb-6 sm:mb-8 flex-wrap gap-3">
  <BackButton onClick={onBack} label="همه سوره‌ها" className="mb-0" />
+ <div className="flex items-center gap-2">
+ <Button
+ type="button"
+ onClick={() => setHifzMode(!hifzMode)}
+ className={`inline-flex items-center gap-2 px-4 py-2 rounded border text-xs font-bold transition-all ${
+   hifzMode
+     ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-md ring-2 ring-amber-500/30'
+     : 'border-border bg-card hover:bg-secondary text-foreground'
+ }`}
+ >
+ <Sparkles className="h-4 w-4" />
+ <span>{hifzMode ? 'حالت حفظ فعال است' : 'فعال‌سازی حالت حفظ'}</span>
+ </Button>
  <Button
  onClick={() => setSettingsOpen(true)}
  className="inline-flex items-center gap-2 px-4 py-2 rounded border border-accent/30 bg-card/85 hover:bg-secondary text-xs font-bold text-foreground shadow-soft transition-all hover:scale-105 active:scale-95 font-ui"
@@ -443,6 +461,7 @@ function SurahView({ n, onBack }) {
  <Type className="h-4 w-4 text-accent" />
  <span>تنظیمات خط و مصحف</span>
  </Button>
+ </div>
  </div>
 
  {/* Surah Banner Card with Authentic Persian Muqarnas Ceiling */}
@@ -607,6 +626,21 @@ function SurahView({ n, onBack }) {
  {a.page ? <span>صفحه {fa(a.page)}</span> : null}
  </div>
  <div className="flex items-center gap-3">
+ {hifzMode && (
+ <Button
+ type="button"
+ onClick={(e) => {
+ e.preventDefault();
+ e.stopPropagation();
+ setActiveHifzAyah(a);
+ }}
+ className="text-xs bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold px-2.5 py-1 rounded flex items-center gap-1 shadow-xs"
+ title="شروع تمرین و تکرار این آیه"
+ >
+ <Sparkles className="h-3.5 w-3.5" />
+ <span>تمرین حفظ</span>
+ </Button>
+ )}
  <Button
  type="button"
  onClick={(e) => {
@@ -766,6 +800,23 @@ function SurahView({ n, onBack }) {
  prefs={prefs}
  onChange={updatePrefs}
  />
+
+ {/* Hifz Session Runner Modal */}
+ {activeHifzAyah && (
+ <HifzSessionRunner
+ verses={[{
+   surah_number: data.number,
+   verse_number: activeHifzAyah.numberInSurah,
+   arabic: activeHifzAyah.arabic,
+   translation: activeHifzAyah.translation,
+ }]}
+ onClose={() => setActiveHifzAyah(null)}
+ onComplete={() => {
+   setActiveHifzAyah(null);
+   setHifzStore(getLocalHifzStore());
+ }}
+ />
+ )}
  </div>
  );
 }

@@ -58,6 +58,10 @@ services:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL required}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
       OTP_PEPPER: ${OTP_PEPPER:?OTP_PEPPER required}
+      LIVEKIT_URL: ${LIVEKIT_URL:-ws://livekit:7880}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-devkey}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-secret}
+      NEXT_PUBLIC_LIVEKIT_URL: ${NEXT_PUBLIC_LIVEKIT_URL:-}
       CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN required}
       APP_PUBLIC_URL: ${APP_PUBLIC_URL:?APP_PUBLIC_URL required}
       EMAIL_PROVIDER: ${EMAIL_PROVIDER:-smtp}
@@ -148,6 +152,18 @@ services:
       retries: 8
       start_period: 15s
 
+  # LiveKit SFU (WebRTC media server for live broadcasting)
+  livekit:
+    image: livekit/livekit-server:v1.8.3
+    restart: unless-stopped
+    command: --dev --bind 0.0.0.0
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+    networks:
+      - ayeh_internal
+
   # Optional one-shot migrate helper (explicit profile — never auto-starts with `up`)
   migrate:
     profiles: ["migrate"]
@@ -162,6 +178,10 @@ services:
       # Satisfy jwt/otp import-time checks if any module loads them via prisma tooling paths
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET required}
       OTP_PEPPER: ${OTP_PEPPER:?OTP_PEPPER required}
+      LIVEKIT_URL: ${LIVEKIT_URL:-ws://livekit:7880}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-devkey}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-secret}
+      NEXT_PUBLIC_LIVEKIT_URL: ${NEXT_PUBLIC_LIVEKIT_URL:-}
     entrypoint:
       [
         "npx",

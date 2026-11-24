@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { Room, RoomEvent, createLocalTracks, Track } from "livekit-client";
 import api from "@/lib/api";
 import { usePermissions } from "@/lib/usePermissions";
 import { PERMISSIONS } from "@/lib/rbac";
@@ -35,47 +36,10 @@ export default function GoLive() {
   const coHostVideoRef = useRef(null);
   const connRef = useRef(null);
   const subRef = useRef(null);
-  const pcsRef = useRef(new Map()); // viewerId -> RTCPeerConnection
+  const livekitRoomRef = useRef(null);
 
   useEffect(() => {
     api.auth.me().then(setUser).catch(() => {});
-  }, []);
-
-  const createPeerConnection = useCallback((viewerId, mediaStream, conn, isCoHost = false) => {
-    const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-      ],
-    });
-
-    mediaStream.getTracks().forEach((track) => {
-      pc.addTrack(track, mediaStream);
-    });
-
-    pc.ontrack = (e) => {
-      if (coHostVideoRef.current && e.streams[0]) {
-        coHostVideoRef.current.srcObject = e.streams[0];
-      }
-    };
-
-    pc.onicecandidate = (e) => {
-      if (e.candidate) {
-        conn.send({ type: "ice", target: viewerId, candidate: e.candidate });
-      }
-    };
-
-    if (isCoHost) {
-      pc.addTransceiver("video", { direction: "sendrecv" });
-      pc.addTransceiver("audio", { direction: "sendrecv" });
-    }
-
-    pc.createOffer().then((offer) => {
-      pc.setLocalDescription(offer);
-      conn.send({ type: "offer", target: viewerId, sdp: offer });
-    });
-
-    pcsRef.current.set(viewerId, pc);
   }, []);
 
   const startLive = async () => {
@@ -86,73 +50,94 @@ export default function GoLive() {
     }
     setError("");
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+      // 1. Create local media tracks for broadcaster
+      const localTracks = await createLocalTracks({
         audio: true,
+        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
       });
-    setStream(mediaStream);
+      const mediaStream = new MediaStream(localTracks.map((t) => t.mediaStreamTrack));
+      setStream(mediaStream);
 
-    // Create LiveSession record — title only
-    const session = await api.entities.LiveSession.create({
-      scholar_id: user.id,
-      scholar_name: user.full_name || user.email,
-      scholar_avatar: user.avatar_config || "",
-      title: title.trim() || "جلسه تفسیری زنده",
-      room_id: `live-${user.id}-${Date.now()}`,
-      status: "live",
-    });
-    setSessionId(session.id);
+      // 2. Create LiveSession record — title only
+      const session = await api.entities.LiveSession.create({
+        scholar_id: user.id,
+        scholar_name: user.full_name || user.email,
+        scholar_avatar: user.avatar_config || "",
+        title: title.trim() || "جلسه تفسیری زنده",
+        room_id: `live-${user.id}-${Date.now()}`,
+        status: "live",
+      });
+      setSessionId(session.id);
 
-    // Connect to LiveRoom actor via socket
-    const conn = api.actors.LiveRoom(session.room_id).connect({ id: `scholar-${user.id}` });
-    connRef.current = conn;
+      // 3. Connect to LiveKit SFU room
+      try {
+        const tokenRes = await api.live.getToken(session.room_id, `scholar-${user.id}`);
+        const room = new Room({
+          adaptiveStream: true,
+          dynacast: true,
+        });
+        livekitRoomRef.current = room;
 
-    conn.send({ type: "claim_broadcaster" });
+        // Handle co-host tracks arriving from LiveKit SFU
+        room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+          if (track.kind === Track.Kind.Video && coHostVideoRef.current) {
+            track.attach(coHostVideoRef.current);
+          } else if (track.kind === Track.Kind.Audio) {
+            const audioElement = track.attach();
+            document.body.appendChild(audioElement);
+          }
+        });
 
-    // Announce stream to network
-    api.socket?.emit("scholar:start_broadcast", {
-      sessionId: session.id,
-      scholarId: user.id,
-      scholarName: user.full_name,
-      title: session.title,
-    });
+        room.on(RoomEvent.TrackUnsubscribed, (track) => {
+          track.detach();
+        });
 
-    const sub = conn.subscribe((msg) => {
-      if (msg.type === "viewer_joined") {
-        createPeerConnection(msg.viewerId, mediaStream, conn, false);
-      }
-      if (msg.type === "answer" && msg.from) {
-        const pc = pcsRef.current.get(msg.from);
-        if (pc) pc.setRemoteDescription(new RTCSessionDescription(msg.sdp)).catch(() => {});
-      }
-      if (msg.type === "ice" && msg.from) {
-        const pc = pcsRef.current.get(msg.from);
-        if (pc && msg.candidate) pc.addIceCandidate(new RTCIceCandidate(msg.candidate)).catch(() => {});
-      }
-      if (msg.type === "presence") {
-        setViewerCount(msg.viewerCount || 0);
-      }
-      if (msg.type === "chat") {
-        setChat((prev) => [...prev, msg.message]);
-      }
-      if (msg.type === "hand_raised_list") {
-        setRaisedHands(msg.list || []);
-      }
-      if (msg.type === "active_speaker_changed") {
-        setActiveSpeaker(msg.speaker || null);
-      }
-      if (msg.type === "pinned_verse_changed") {
-        // Verse pinning handled by broadcaster only
-      }
-    });
-    subRef.current = sub;
+        await room.connect(tokenRes.url, tokenRes.token);
 
-    setPhase("live");
-    setTimeout(() => {
-      if (videoRef.current) videoRef.current.srcObject = mediaStream;
-    }, 100);
+        // Publish broadcaster camera and mic tracks to SFU
+        for (const track of localTracks) {
+          await room.localParticipant.publishTrack(track);
+        }
+      } catch (lkErr) {
+        console.warn("LiveKit connection warning (falling back to local preview):", lkErr);
+      }
+
+      // 4. Connect to LiveRoom actor via socket for chat, presence, & hand moderation
+      const conn = api.actors.LiveRoom(session.room_id).connect({ id: `scholar-${user.id}` });
+      connRef.current = conn;
+
+      conn.send({ type: "claim_broadcaster" });
+
+      // Announce stream to network
+      api.socket?.emit("scholar:start_broadcast", {
+        sessionId: session.id,
+        scholarId: user.id,
+        scholarName: user.full_name,
+        title: session.title,
+      });
+
+      const sub = conn.subscribe((msg) => {
+        if (msg.type === "presence") {
+          setViewerCount(msg.viewerCount || 0);
+        }
+        if (msg.type === "chat") {
+          setChat((prev) => [...prev, msg.message]);
+        }
+        if (msg.type === "hand_raised_list") {
+          setRaisedHands(msg.list || []);
+        }
+        if (msg.type === "active_speaker_changed") {
+          setActiveSpeaker(msg.speaker || null);
+        }
+      });
+      subRef.current = sub;
+
+      setPhase("live");
+      setTimeout(() => {
+        if (videoRef.current) videoRef.current.srcObject = mediaStream;
+      }, 100);
     } catch (err) {
-    setError(err.message || "امکان دسترسی به دوربین و میکروفون فراهم نشد.");
+      setError(err.message || "امکان دسترسی به دوربین و میکروفون فراهم نشد.");
     }
   };
 
@@ -190,8 +175,10 @@ export default function GoLive() {
   };
 
   const endLive = async () => {
-    pcsRef.current.forEach((pc) => pc.close());
-    pcsRef.current.clear();
+    if (livekitRoomRef.current) {
+      livekitRoomRef.current.disconnect();
+      livekitRoomRef.current = null;
+    }
     if (stream) stream.getTracks().forEach((t) => t.stop());
     if (subRef.current) subRef.current();
     if (connRef.current) connRef.current.close();
@@ -203,9 +190,11 @@ export default function GoLive() {
 
   useEffect(() => {
     return () => {
-      pcsRef.current.forEach((pc) => pc.close());
+      if (livekitRoomRef.current) {
+        livekitRoomRef.current.disconnect();
+      }
       if (stream) stream.getTracks().forEach((t) => t.stop());
-      if (subRef.current) subRef.current.unsubscribe();
+      if (subRef.current) subRef.current();
       if (connRef.current) connRef.current.close();
     };
   }, []);
