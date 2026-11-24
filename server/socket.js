@@ -10,7 +10,7 @@ const allowedOrigins = process.env.CORS_ORIGIN
 export let io = null;
 
 // In-memory room state matching Base44's LiveRoom actor with interactive Co-host support
-const rooms = new Map();
+export const rooms = new Map();
 
 function getOrCreateRoom(roomId) {
   if (!rooms.has(roomId)) {

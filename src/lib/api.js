@@ -502,6 +502,15 @@ export const khatm = {
     request(`/khatm/parts/${partId}/complete`, { method: "POST", body: "{}" }),
 };
 
+// ── Live Streaming (LiveKit SFU) ──
+export const live = {
+  getToken: (roomId, connId) => {
+    const q = new URLSearchParams({ room: roomId });
+    if (connId) q.set('connId', connId);
+    return request(`/live/token?${q.toString()}`);
+  },
+};
+
 // Unified API object
 export const api = {
   auth,
@@ -513,6 +522,7 @@ export const api = {
   videos,
   competitions,
   khatm,
+  live,
 };
 
 export default api;

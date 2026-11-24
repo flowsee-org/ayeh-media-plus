@@ -80,7 +80,7 @@ pnpm dev              # runs Express (5000) + Next.js (5173) concurrently
 ## Known Limitations
 - Brevo SMTP + TextBee SMS: implemented & mock-tested only; live delivery unproven in CI
 - Remote Staging not deployed (provider-independent prep only)
-- WebRTC SFU partially verified
+- LiveKit SFU for live broadcasting (Node.js SDK token endpoint + livekit-client; optional self-hosted in Compose or LiveKit Cloud)
 - Media on local disk `/uploads` (no CDN/object storage)
 - Auth rate limits in-memory per Node process
 - Watch history server-backed (`WatchHistory` soft-refs `video_id`); apply PG migrations `20261110140000_watch_history_khatm_indexes` and `20261110150000_auth_otp_attempts_delivery` on deploy
