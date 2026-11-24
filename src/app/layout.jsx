@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import '@/index.css';
 import Providers from './providers';
-import { doran, rokh, tajrid, falsafeh } from './fonts';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: 'آیه مدیا پلاس — تدبّر در قرآن کریم',
@@ -40,6 +40,7 @@ export default function RootLayout({ children }) {
             {children}
           </Suspense>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
